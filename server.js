@@ -9,7 +9,7 @@ const stripe = require('stripe')('clé_secrète_stripe');
 
 const app = express();
 app.get('/', (req, res) => {
-  res.render('index'); // Rendre la vue "index.ejs"
+  res.render('/'); // Rendre la vue "index.ejs"
 });
 
 // Middleware pour servir les fichiers statiques
