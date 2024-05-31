@@ -12,6 +12,9 @@ app.get('/', (req, res) => {
   res.render('index'); // Rendre la vue "index.ejs"
 });
 
+// Middleware pour servir les fichiers statiques
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Connect to MongoDB Atlas
 mongoose.connect('mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.net/?retryWrites=true&w=majority&appName=uap-immo&tls=true')
   .then(() => {
@@ -24,9 +27,6 @@ mongoose.connect('mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.ne
 // Définir le moteur de template EJS
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-
-// Middleware pour servir les fichiers statiques
-app.use(express.static(path.join(__dirname, 'public')));
 
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
