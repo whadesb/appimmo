@@ -45,7 +45,7 @@ app.use(session({
 // Ajoutez vos routes ici
 
 // Démarrer le serveur
-const PORT = process.env.PORT || 80; // Utilisation du port 80 pour HTTP
+const PORT = process.env.PORT || 8080; // Utilisation du port 8080
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
