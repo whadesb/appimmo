@@ -8,6 +8,9 @@ const User = require('./models/User');
 const stripe = require('stripe')('clé_secrète_stripe');
 
 const app = express();
+app.get('/', (req, res) => {
+  res.redirect('http://www.uap.immo'); // Redirection en HTTP
+});
 
 // Connect to MongoDB Atlas
 mongoose.connect('mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.net/?retryWrites=true&w=majority&appName=uap-immo', {
@@ -42,7 +45,7 @@ app.use(session({
 // Ajoutez vos routes ici
 
 // Démarrer le serveur
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80; // Utilisation du port 80 pour HTTP
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
