@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>Login - UAP Immo</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="/css/templatemo-topic-listing.css" rel="stylesheet">   
+    <style>
+        .content {
+            padding: 20px;
+        }
+        .card {
+            margin-top: 20px;
+        }
+        .menu-vertical {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .menu {
+            list-style-type: none;
+            padding: 0;
+        }
+        .menu-item {
+            margin-bottom: 10px;
+        }
+        .menu-item a {
+            text-decoration: none;
+            color: #333;
+            font-size: 18px;
+        }
+        .menu-item.active a {
+            font-weight: bold;
+        }
+        .menu-item a:hover {
+            color: #000;
+        }
+        .custom-cart-icon {
+        font-size: 1.5rem; /* Taille de l'icône */
+        color: #333; /* Couleur de l'icône */
+        /* Ajoutez d'autres styles personnalisés si nécessaire */
+    }
+    </style>
+</head>
+<body id="top">
+    <main>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <i class="bi-back"></i>
+                    <span>UAP Immo</span>
+                </a>
+                <div class="d-lg-none ms-auto me-4">
+                    <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_1">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_2">Lorem</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_3">How it works</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_4">FAQs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
+                            <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
+                                <li><a class="dropdown-item" href="topics-listing.ejs">Topics Listing</a></li>
+                                <li><a class="dropdown-item" href="/contact">Contact Form</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                    <div class="d-none d-lg-block">
+                        <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
+                    </div>
+                    <div id="cart" style="display: none;">
+                        <h2>Votre panier</h2>
+                        <ul id="cart-items"></ul>
+                        <button onclick="checkout()">Payer</button>
+                    </div>
+                    <span class="navbar-icon bi-cart custom-cart-icon"></span>
+
+                    <span id="cart-counter" class="badge bg-secondary">0</span>
+
+
+                </div>
+            </div>
+        </nav>
+        <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-8 col-12 mx-auto">
+                        <h2 class="text-white text-center">Mon compte</h2>
+                        <h6 class="text-white text-center">Bienvenue, <%= userName %>!</h6>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="featured-section">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-12">
+                        <p>Bienvenue sur votre profil utilisateur. Vous pouvez voir et gérer vos informations ici.</p>
+                        <a href="/logout" class="btn btn-primary">Logout</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="contact-section section-padding section-bg" id="section_5">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="menu-vertical">
+                            <ul class="menu">
+                                <li class="menu-item active"><a href="#" onclick="showSection('account')">Mon compte</a></li>
+                                <li class="menu-item"><a href="#" onclick="showSection('landing')">Landing page</a></li>
+                                <li class="menu-item"><a href="#" onclick="showSection('publicite')">Publicité</a></li>
+                                <!-- Ajoutez d'autres liens ici -->
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-lg-9 col-md-8 col-sm-6">
+                        <div class="content">
+                            <div id="account" class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Informations de l'utilisateur</h5>
+                                    <p class="card-text">Nom: <%= userName %></p>
+                                    <p class="card-text">Email: <%= userEmail %></p>
+                                    <p class="card-text">Role: <%= userRole %></p>
+                                    <!-- autres informations de l'utilisateur ici -->
+                                </div>
+                            </div>
+                            <div id="landing" class="card" style="display: none;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Landing Page</h5>
+                                    <p class="card-text">Contenu de la landing page...</p>
+                                    <!-- Ajoutez d'autres informations sur la landing page ici -->
+                                </div>
+                            </div>
+                            <div id="publicite" class="card" style="display: none;">
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="card mb-4">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Publicité 1</h5>
+                                                <p class="card-text">Description de la publicité 1.</p>
+                                                <button class="btn btn-primary" onclick="buyItem('Publicité 1', 10)">Acheter</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="card mb-4">
+                                            <div class="card-body">
+                                                <h5 class="card-title">Publicité 2</h5>
+                                                <p class="card-text">Description de la publicité 2.</p>
+                                                <button class="btn btn-primary" onclick="buyItem('Publicité 2', 15)">Acheter</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                        <!-- Ajoutez d'autres items ici -->
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <!-- Ajoutez d'autres sections ici -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="index.html">
+                        <i class="bi-back"></i>
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Resources</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item">
+                            <a class="site-footer-link" href="#">HTML CSS</a>
+                        </li>
+                        <li class="site-footer-link-item">
+                            <a class="site-footer-link" href="#">Boostrap</a>
+                        </li>
+                        <li class="site-footer-link-item">
+                            <a class="site-footer-link" href="#">JavaScript</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item">
+                            <a class="site-footer-link" href="#">Browse Detail</a>
+                        </li>
+                        <li class="site-footer-link-item">
+                            <a class="site-footer-link" href="#">How to work</a>
+                        </li>
+                        <li class="site-footer-link-item">
+                            <a class="site-footer-link" href="#">Popular</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mx-auto">
+                    <h6 class="site-footer-title mb-3">Contact</h6>
+                    <p class="mb-2">
+                        <strong class="d-inline me-2">Email:</strong>
+                        <a href="mailto:info@company.com">info@company.com</a>
+                    </p>
+                    <p>
+                        <strong class="d-inline me-2">Phone:</strong>
+                        <a href="tel: 120-240-9600">120-240-9600</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/jquery.sticky.js"></script>
+    <script src="/js/click-scroll.js"></script>
+    <script src="/js/custom.js"></script>
+    <script>
+        let cartItems = []; // Tableau pour stocker les articles dans le panier
+    
+        function buyItem(itemName, price) {
+    // Ajoutez l'article sélectionné au panier avec sa description et son prix
+    cartItems.push({ name: itemName, price: price });
+    
+    // Mettre à jour le compteur du panier
+    const cartCounter = document.getElementById('cart-counter');
+    cartCounter.textContent = cartItems.length;
+}
+    </script>    
+    <script>
+        function showSection(sectionId) {
+            const sections = ['account', 'landing', 'publicite'];
+            sections.forEach(id => {
+                document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+            });
+        }
+    </script>
+    <script>
+        function showCart() {
+            // Affiche le panier avec les articles ajoutés
+            const cartSection = document.getElementById('cart');
+            const cartItemsList = document.getElementById('cart-items');
+            cartItemsList.innerHTML = '';
+            cartItems.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = item.name + ' - ' + item.price + '€';
+                cartItemsList.appendChild(listItem);
+            });
+            cartSection.style.display = 'block';
+        }
+    
+        function checkout() {
+            // Redirige vers la page de paiement lorsque l'utilisateur clique sur "Payer"
+            window.location.href = "/checkout"; // Remplacez "/checkout" par l'URL de votre page de paiement
+        }
+    </script>
+</body>
+</html>
+
