@@ -9,7 +9,7 @@ const stripe = require('stripe')('clé_secrète_stripe');
 
 const app = express();
 app.get('/', (req, res) => {
-  res.redirect('http://www.uap.immo'); // Redirection en HTTP
+  res.render('index'); // Rendre la vue "index.ejs"
 });
 
 // Connect to MongoDB Atlas
