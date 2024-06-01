@@ -125,13 +125,6 @@ app.use(session({
   req.session.userId = user._id;
   req.session.userName = user.firstName + ' ' + user.lastName;
 
-  // Rediriger vers la page utilisateur après la connexion
-  res.redirect('/user');
-} catch (error) {
-  console.error('Error logging in', error);
-  res.send('Une erreur est survenue lors de la connexion.');
-}
-
 // Route pour afficher le formulaire d'inscription
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
