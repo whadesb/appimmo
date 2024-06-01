@@ -196,7 +196,7 @@ app.use(session({
 
     // Rediriger vers la page utilisateur après la connexion
     res.redirect('/user');
-  } catch (error) {
+   catch (error) {
     console.error('Error logging in', error);
     res.send('Une erreur est survenue lors de la connexion.');
   }
