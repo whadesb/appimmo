@@ -8,8 +8,10 @@ const User = require('./models/User');
 const stripe = require('stripe')('clé_secrète_stripe');
 
 const app = express();
+
+// Route pour la page d'accueil
 app.get('/', (req, res) => {
-  res.render('/'); // Rendre la vue "index.ejs"
+  res.send('Hello from Node.js server!'); // Exemple de réponse à la requête GET à la racine
 });
 
 // Middleware pour servir les fichiers statiques
@@ -23,10 +25,6 @@ mongoose.connect('mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.ne
   .catch((error) => {
     console.error('Error connecting to MongoDB Atlas', error);
   });
-
-// Définir le moteur de template EJS
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
@@ -44,7 +42,7 @@ app.use(session({
 // Ajoutez vos routes ici
 
 // Démarrer le serveur
-const port = process.env.PORT || 3000; // Utilisez le port 3000 ou un autre port disponible
+const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
 });
