@@ -97,6 +97,9 @@ app.post('/register', async (req, res) => {
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
+// Middleware pour servir les fichiers statiques
+app.use(express.static(path.join(__dirname, 'public')));
+
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
 
