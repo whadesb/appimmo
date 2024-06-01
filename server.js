@@ -3,7 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require('connect-mongo');
 const User = require('./models/User');
 const stripe = require('stripe')('clé_secrète_stripe');
 
@@ -11,32 +11,13 @@ const app = express();
 
 // Route pour la page d'accueil
 app.get('/', (req, res) => {
-  res.render('index'); // Rendre la vue "index.ejs"
+  res.send('Hello from Node.js server!'); // Exemple de réponse à la requête GET à la racine
 });
 
 // Route pour la page de connexion
 app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
-
-// Route pour traiter la soumission du formulaire de connexion
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Trouver l'utilisateur par email
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.send('Email ou mot de passe incorrect.');
-    }
-
-    // Vérifier le mot de passe
-    const match = await bcrypt.compare(password, user.password);
-
-    if (!match) {
-      return res.send('Email ou mot de passe incorrect.');
-    }
 
    // Créer une session utilisateur
     req.session.userId = user._id;
@@ -48,44 +29,6 @@ app.post('/login', async (req, res) => {
     console.error('Error logging in', error);
     res.send('Une erreur est survenue lors de la connexion.');
   }
-});
-// Route pour la page utilisateur
-app.get('/user', async (req, res) => {
-  if (!req.session.userId) {
-    return res.redirect('/login');
-  }
-
-  try {
-    // Récupération de l'utilisateur à partir de la base de données en utilisant l'ID de session
-    const user = await User.findById(req.session.userId);
-
-    // Vérifier si l'utilisateur existe
-    if (!user) {
-      return res.send('Utilisateur introuvable.');
-    }
-
-    // Passez les informations utilisateur à la vue EJS
-    res.render('user', {
-      title: 'User Profile',
-      userName: user.firstName + ' ' + user.lastName,
-      userEmail: user.email,
-      userRole: user.role
-    });
-  } catch (error) {
-    console.error('Error fetching user data', error);
-    res.send('Une erreur est survenue lors de la récupération des données utilisateur.');
-  }
-});
-
-// Route pour déconnexion
-app.get('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.send('Une erreur est survenue lors de la déconnexion.');
-    }
-
-    res.redirect('/');
-  });
 });
 
 // Route pour la page de paiement
@@ -165,8 +108,8 @@ app.post('/register', async (req, res) => {
 // Définir le moteur de template EJS
 app.set('view engine', 'ejs');
 
-// Middleware pour servir les fichiers statiques
-app.use(express.static(path.join(__dirname, 'public')));
+// Middleware pour analyser les données POST
+app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB Atlas
 mongoose.connect('mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.net/?retryWrites=true&w=majority&appName=uap-immo&tls=true')
