@@ -19,6 +19,8 @@ app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
 
+res.render(path.join(__dirname, 'views', 'index'));
+
 // Route pour traiter la soumission du formulaire de connexion
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
