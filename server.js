@@ -38,7 +38,7 @@ app.post('/login', async (req, res) => {
       return res.send('Email ou mot de passe incorrect.');
     }
 
-    // Créer une session utilisateur
+   // Créer une session utilisateur
     req.session.userId = user._id;
     req.session.userName = user.firstName + ' ' + user.lastName;
 
