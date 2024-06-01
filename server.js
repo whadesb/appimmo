@@ -44,7 +44,7 @@ app.use(session({
 // Ajoutez vos routes ici
 
 // Démarrer le serveur
-const PORT = process.env.PORT || 80; // Utilisation du port 80 pour HTTP
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const port = process.env.PORT || 3000; // Utilisez le port 3000 ou un autre port disponible
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
