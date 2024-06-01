@@ -14,6 +14,8 @@ app.get('/', (req, res) => {
   res.render('index'); // Rendre la vue "index.ejs"
 });
 
+// Définir le moteur de template EJS
+app.set('view engine', 'ejs');
 
 // Middleware pour servir les fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
