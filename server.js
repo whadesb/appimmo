@@ -49,7 +49,6 @@ app.post('/login', async (req, res) => {
     res.send('Une erreur est survenue lors de la connexion.');
   }
 });
-
 // Route pour la page utilisateur
 app.get('/user', async (req, res) => {
   if (!req.session.userId) {
