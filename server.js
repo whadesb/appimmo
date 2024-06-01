@@ -95,6 +95,7 @@ app.post('/register', async (req, res) => {
 
 // Définir le moteur de template EJS
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
 
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
