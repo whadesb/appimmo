@@ -19,18 +19,6 @@ app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
 
-   // Créer une session utilisateur
-    req.session.userId = user._id;
-    req.session.userName = user.firstName + ' ' + user.lastName;
-
-    // Rediriger vers la page utilisateur après la connexion
-    res.redirect('/user');
-  } catch (error) {
-    console.error('Error logging in', error);
-    res.send('Une erreur est survenue lors de la connexion.');
-  }
-});
-
 // Route pour la page de paiement
 app.get('/payment', (req, res) => {
   res.render('payment', { stripePublicKey: 'pk_test_oKhSR5nslBRnBZpjO6KuzZeX' }); // clé publique Stripe
