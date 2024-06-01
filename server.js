@@ -3,7 +3,7 @@ const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
-const MongoStore = require('connect-mongo');
+const MongoStore = require('connect-mongo')(session);
 const User = require('./models/User');
 const stripe = require('stripe')('clé_secrète_stripe');
 
