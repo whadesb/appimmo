@@ -11,7 +11,7 @@ const app = express();
 
 // Route pour la page d'accueil
 app.get('/', (req, res) => {
-  res.send('Hello from Node.js server!'); // Exemple de réponse à la requête GET à la racine
+  res.render('index'); // Rendre la vue "index.ejs"
 });
 
 // Route pour la page de connexion
