@@ -93,6 +93,32 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// Route pour gérer la soumission du formulaire de connexion
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Vérifier les informations d'identification de l'utilisateur
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.send('Utilisateur non trouvé.');
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.send('Mot de passe incorrect.');
+    }
+
+    // Authentification réussie, rediriger vers la page de profil de l'utilisateur
+    res.redirect('/user'); // Remplacez "/user" par la route de votre choix
+  } catch (error) {
+    console.error('Error logging in user', error);
+    res.send('Une erreur est survenue lors de la connexion.');
+  }
+});
+
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
