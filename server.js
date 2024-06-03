@@ -119,15 +119,23 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.get('/user', (req, res) => {
-  // Vous pouvez récupérer les informations sur l'utilisateur à partir de req.user ou de toute autre source
-  const user = {
-    firstName: 'John',
-    lastName: 'Doe'
-  };
+app.get('/user', function(req, res) {
+    // Ici, vous devrez récupérer les informations de l'utilisateur depuis la base de données ou une autre source de données
+    // Supposons que vous ayez une fonction qui récupère les informations de l'utilisateur à partir de la base de données
+    // Cette fonction pourrait ressembler à getUserInfo(userId) où userId est l'identifiant de l'utilisateur connecté
 
-  // Rendre la vue "user.ejs" en passant les informations sur l'utilisateur
-  res.render('user', { title: 'User Profile', user: user });
+    // Exemple d'utilisation de la fonction getUserInfo
+    const userId = req.session.userId; // Supposons que vous stockiez l'identifiant de l'utilisateur dans la session
+    getUserInfo(userId)
+        .then(user => {
+            // Passez les informations de l'utilisateur à la vue
+            res.render('user', { user: user });
+        })
+        .catch(err => {
+            // Gérer les erreurs de récupération des informations de l'utilisateur
+            console.error('Erreur lors de la récupération des informations de l\'utilisateur :', err);
+            res.status(500).send('Erreur lors de la récupération des informations de l\'utilisateur');
+        });
 });
 
 
