@@ -18,7 +18,7 @@ app.use(session({
   secret: 'my-secret-key',
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: 'mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.net/?retryWrites=true&w=majority&appName=uap-immo' }),
+  store: MongoStore.create({ mongoUrl: 'mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.net/uap-immo?retryWrites=true&w=majority' }),
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
 
@@ -28,6 +28,16 @@ app.set('views', path.join(__dirname, 'views'));
 
 // Middleware pour servir les fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Connexion à MongoDB
+mongoose.connect('mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.net/uap-immo?retryWrites=true&w=majority', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => {
+  console.log('Connected to MongoDB');
+}).catch((err) => {
+  console.error('Error connecting to MongoDB', err);
+});
 
 // Route pour la page d'accueil
 app.get('/', (req, res) => {
