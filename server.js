@@ -119,9 +119,15 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Route pour la page de profil de l'utilisateur
 app.get('/user', (req, res) => {
-  res.render('user_profile', { title: 'User Profile' });
+  // Vous pouvez récupérer les informations sur l'utilisateur à partir de req.user ou de toute autre source
+  const user = {
+    firstName: 'John',
+    lastName: 'Doe'
+  };
+
+  // Rendre la vue "user.ejs" en passant les informations sur l'utilisateur
+  res.render('user', { title: 'User Profile', user: user });
 });
 
 
