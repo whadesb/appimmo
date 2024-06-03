@@ -119,6 +119,12 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Route pour la page de profil de l'utilisateur
+app.get('/user', (req, res) => {
+  res.render('user_profile', { title: 'User Profile' });
+});
+
+
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
