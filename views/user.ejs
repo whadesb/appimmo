@@ -307,6 +307,32 @@
             window.location.href = "/checkout"; // Remplacez "/checkout" par l'URL de votre page de paiement
         }
     </script>
+script>
+  // Sélectionnez l'élément où vous voulez afficher le lien
+  const generatedLinkElement = document.getElementById('generatedLink');
+
+  propertyForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    // Récupérez les données du formulaire...
+
+    try {
+      // Soumettez les données du formulaire au serveur...
+
+      if (response.ok) {
+        const data = await response.json();
+        const landingPageUrl = data.landingPageUrl;
+
+        // Mettez à jour le contenu avec le lien généré
+        generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${landingPageUrl}">${landingPageUrl}</a>`;
+      } else {
+        console.error('Erreur lors de la soumission du formulaire : ', response.statusText);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la soumission du formulaire : ', error);
+    }
+  });
+</script>
 </body>
 </html>
 
