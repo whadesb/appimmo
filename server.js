@@ -138,6 +138,19 @@ app.get('/landing-pages/:id', (req, res) => {
     res.sendFile(filePath);
 });
 
+app.post('/add-property', async (req, res) => {
+  // Code pour gérer la soumission du formulaire...
+
+  try {
+    // Après avoir ajouté le bien immobilier avec succès...
+    const landingPageUrl = generateLandingPageUrl(); // Remplacez cette ligne par le code réel pour générer l'URL de la page
+    res.status(200).json({ landingPageUrl });
+  } catch (error) {
+    console.error('Error adding property', error);
+    res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
+  }
+});
+
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
