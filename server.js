@@ -141,16 +141,17 @@ app.get('/landing-pages/:id', (req, res) => {
 app.post('/add-property', async (req, res) => {
   // Code pour gérer la soumission du formulaire...
 
-  try {
+ try {
     // Après avoir ajouté le bien immobilier avec succès...
-    const landingPageUrl = generateLandingPageUrl(); // Remplacez cette ligne par le code réel pour générer l'URL de la page
+    const propertyId = generateUniqueId(); // Générez un identifiant unique
+    const affiliateId = req.session.affiliateId; // Obtenez l'ID de l'affilié à partir de la session (supposons que vous stockiez l'ID de l'affilié dans la session)
+    const landingPageUrl = `/landing-pages/${propertyId}?affiliate=${affiliateId}`; // Ajoutez le paramètre d'affilié à l'URL de la page de destination
     res.status(200).json({ landingPageUrl });
   } catch (error) {
     console.error('Error adding property', error);
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
   }
 });
-
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
