@@ -19,9 +19,9 @@ router.post('/add-property', async (req, res) => {
     property.url = landingPageUrl;
     await property.save();
     
-    res.redirect(`/property/${property._id}`);
+    // Envoyer une réponse avec un message de confirmation et l'URL de la page générée
+    res.status(200).send(`Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : ${landingPageUrl}`);
 });
-
 async function generateLandingPage(property) {
     const template = `
     <!DOCTYPE html>
