@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const Property = require('../models/property'); // Assurez-vous de définir ce modèle
+const Property = require('../models/Property'); // Assurez-vous de définir ce modèle
 const fs = require('fs');
 const path = require('path');
 
