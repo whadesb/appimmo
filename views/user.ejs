@@ -146,11 +146,32 @@
                                     <!-- autres informations de l'utilisateur ici -->
                                 </div>
                             </div>
-<div id="landing" class="card" style="display: none;">
+     <div id="landing" class="card" style="display: none;">
                                 <div class="card-body">
-                                    <h5 class="card-title">Landing Page</h5>
-                                    <p class="card-text">Contenu de la landing page...</p>
-                                    <!-- Ajoutez d'autres informations sur la landing page ici -->
+                                    <h5 class="card-title">Ajouter un bien immobilier</h5>
+                                    <form action="/add-property" method="POST">
+                                        <div class="form-group">
+                                            <label for="rooms">Nombre de pièces</label>
+                                            <input type="number" class="form-control" id="rooms" name="rooms" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="surface">Surface (m²)</label>
+                                            <input type="number" class="form-control" id="surface" name="surface" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="price">Prix (€)</label>
+                                            <input type="number" class="form-control" id="price" name="price" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="city">Ville</label>
+                                            <input type="text" class="form-control" id="city" name="city" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="country">Pays</label>
+                                            <input type="text" class="form-control" id="country" name="country" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </form>
                                 </div>
                             </div>
                             <div id="publicite" class="card" style="display: none;">
