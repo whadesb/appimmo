@@ -9,6 +9,10 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 
+// Middleware pour analyser les données POST
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 const propertyRoutes = require('./routes/property');
 const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
 app.use(propertyRoutes);
@@ -16,10 +20,6 @@ app.use(addPropertyRoutes);
 
 require('dotenv').config();
 const Property = require('./models/Property');
-
-// Middleware pour analyser les données POST
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 
 // Configurer les sessions
 app.use(session({
