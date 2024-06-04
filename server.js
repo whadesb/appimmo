@@ -9,6 +9,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const propertyRoutes = require('./routes/property');
 require('dotenv').config();
+const Property = require('./models/Property');
 
 const app = express();
 
