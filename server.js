@@ -131,6 +131,13 @@ app.get('/user', (req, res) => {
   res.render('user');
 });
 
+// Route pour servir les pages de destination
+app.get('/landing-pages/:id', (req, res) => {
+    const landingPageId = req.params.id;
+    const filePath = path.join(__dirname, 'public', 'landing-pages', `${landingPageId}.html`);
+    res.sendFile(filePath);
+});
+
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
