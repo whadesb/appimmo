@@ -5,7 +5,10 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const User = require('./models/User');
-const stripe = require('stripe')('clé_secrète_stripe');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+const propertyRoutes = require('./routes/property');
+require('dotenv').config();
 
 const app = express();
 
@@ -15,10 +18,10 @@ app.use(express.json());
 
 // Configurer les sessions
 app.use(session({
-  secret: 'my-secret-key',
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: 'mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.net/uap-immo?retryWrites=true&w=majority' }),
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
 
@@ -30,7 +33,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Connexion à MongoDB
-mongoose.connect('mongodb+srv://tbz:dGLGH9qgQolOrF8C@uap-immo.ss4shqp.mongodb.net/uap-immo?retryWrites=true&w=majority', {
+mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
 }).then(() => {
@@ -120,9 +123,8 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/user', (req, res) => {
-    res.render('user');
+  res.render('user');
 });
-
 
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
