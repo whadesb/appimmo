@@ -8,6 +8,7 @@ const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const propertyRoutes = require('./routes/property');
+app.use(propertyRoutes);
 require('dotenv').config();
 const Property = require('./models/Property');
 
