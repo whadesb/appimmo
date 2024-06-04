@@ -1,4 +1,10 @@
-app.post('/add-property', async (req, res) => {
+const express = require('express');
+const router = express.Router();
+const Property = require('../models/Property'); // Assurez-vous de définir ce modèle
+const fs = require('fs');
+const path = require('path');
+
+router.post('/add-property', async (req, res) => {
   // Récupérer les données du formulaire depuis req.body
   const { numberOfRooms, surface, price, city, country } = req.body;
 
@@ -22,3 +28,5 @@ app.post('/add-property', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while adding the property' });
   }
 });
+
+module.exports = router; // Exportez les routes pour pouvoir les utiliser dans server.js
