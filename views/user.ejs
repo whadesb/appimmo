@@ -297,32 +297,34 @@
         }
 
         document.getElementById('add-property-form').addEventListener('submit', async (event) => {
-            event.preventDefault();
+  event.preventDefault();
 
-            const form = event.target;
-            const formData = new FormData(form);
-            const formDataJson = Object.fromEntries(formData.entries());
+  const form = event.target;
+  const formData = new FormData(form);
+  const formDataJson = Object.fromEntries(formData.entries());
 
-            try {
-                const response = await fetch('/add-property', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formDataJson),
-                });
+  try {
+    const response = await fetch('/add-property', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formDataJson),
+    });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    const generatedLinkElement = document.getElementById('generatedLink');
-                    generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${data.url}">${data.url}</a>`;
-                } else {
-                    console.error('Erreur lors de la soumission du formulaire : ', response.statusText);
-                }
-            } catch (error) {
-                console.error('Erreur lors de la soumission du formulaire : ', error);
-            }
-        });
+    if (response.ok) {
+      const data = await response.json();
+      const generatedLinkElement = document.getElementById('generatedLink');
+      generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${data.url}">${data.url}</a>`;
+    } else {
+      const errorData = await response.json();
+      console.error('Erreur lors de la soumission du formulaire : ', errorData.error);
+    }
+  } catch (error) {
+    console.error('Erreur lors de la soumission du formulaire : ', error);
+  }
+});
+
     </script>
 </body>
 </html>
