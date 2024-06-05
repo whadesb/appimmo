@@ -135,7 +135,7 @@ app.get('/user', (req, res) => {
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   // Renvoyer le fichier HTML correspondant depuis le répertoire public/landing-pages
-  res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
+   res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
 });
 
 app.post('/add-property', async (req, res) => {
