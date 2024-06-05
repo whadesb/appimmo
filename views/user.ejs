@@ -171,7 +171,6 @@
 </form>
 <!-- generer le lien -->
 <div id="generatedLink"></div>
-
                                 </div>
                             </div>
                             <div id="publicite" class="card" style="display: none;">
@@ -261,35 +260,69 @@
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
     <script>
-  document.getElementById('add-property-form').addEventListener('submit', async (event) => {
-    event.preventDefault();
+        let cartItems = []; // Tableau pour stocker les articles dans le panier
 
-    const form = event.target;
-    const formData = new FormData(form);
-    const formDataJson = Object.fromEntries(formData.entries());
+        function buyItem(itemName, price) {
+            // Ajoutez l'article sélectionné au panier avec sa description et son prix
+            cartItems.push({ name: itemName, price: price });
 
-    try {
-      const response = await fetch('/add-property', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formDataJson),
-      });
+            // Mettre à jour le compteur du panier
+            const cartCounter = document.getElementById('cart-counter');
+            cartCounter.textContent = cartItems.length;
+        }
 
-      if (response.ok) {
-        const data = await response.json();
-        const generatedLinkElement = document.getElementById('generatedLink');
-        generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${data.url}" target="_blank">${data.url}</a>`;
-      } else {
-        console.error('Erreur lors de la soumission du formulaire : ', response.statusText);
-        const errorText = await response.text();
-        console.error('Détails de l\'erreur : ', errorText);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la soumission du formulaire : ', error);
-    }
-  });
-</script>
+        function showSection(sectionId) {
+            const sections = ['account', 'landing', 'publicite'];
+            sections.forEach(id => {
+                document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+            });
+        }
+
+        function showCart() {
+            // Affiche le panier avec les articles ajoutés
+            const cartSection = document.getElementById('cart');
+            const cartItemsList = document.getElementById('cart-items');
+            cartItemsList.innerHTML = '';
+            cartItems.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = item.name + ' - ' + item.price + '€';
+                cartItemsList.appendChild(listItem);
+            });
+            cartSection.style.display = 'block';
+        }
+
+        function checkout() {
+            // Redirige vers la page de paiement lorsque l'utilisateur clique sur "Payer"
+            window.location.href = "/checkout"; // Remplacez "/checkout" par l'URL de votre page de paiement
+        }
+
+        document.getElementById('add-property-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const formDataJson = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/add-property', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formDataJson),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const generatedLinkElement = document.getElementById('generatedLink');
+                    generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${data.url}">${data.url}</a>`;
+                } else {
+                    console.error('Erreur lors de la soumission du formulaire : ', response.statusText);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la soumission du formulaire : ', error);
+            }
+        });
+    </script>
 </body>
 </html>
