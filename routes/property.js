@@ -1,13 +1,13 @@
+// property.js
+
 const express = require('express');
 const router = express.Router();
 const Property = require('../models/Property'); // Assurez-vous de définir ce modèle
 const fs = require('fs');
 const path = require('path');
 
-router.get('/add-property', (req, res) => {
-  res.render('add-property');
-});
-
+// Décommente cette route si tu veux utiliser la route /add-property dans property.js
+/*
 router.post('/add-property', async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
   const property = new Property({ rooms, surface, price, city, country });
@@ -22,6 +22,7 @@ router.post('/add-property', async (req, res) => {
   // Envoyer une réponse avec un message de confirmation et l'URL de la page générée
   res.status(200).send(`Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : ${landingPageUrl}`);
 });
+*/
 
 async function generateLandingPage(property) {
   const template = `
