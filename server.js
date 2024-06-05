@@ -138,31 +138,8 @@ app.get('/landing-pages/:id', (req, res) => {
    res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
 });
 
-app.post('/add-property', async (req, res) => {
-  console.log('Request body:', req.body); // Ajoutez un log pour vérifier le corps de la requête
-
-  const { rooms, surface, price, city, country } = req.body;
-
-  try {
-    // Créer et sauvegarder le bien immobilier
-    const property = new Property({ rooms, surface, price, city, country });
-    await property.save();
-
-    // Générer la page de destination
-    const landingPageUrl = await generateLandingPage(property);
-
-    // Ajouter l'URL de la page de destination à la propriété et sauvegarder
-    property.url = landingPageUrl;
-    await property.save();
-
-    // Envoyer une réponse JSON avec l'URL de la page générée
-    console.log('Property added successfully, URL:', landingPageUrl); // Ajoutez un log pour vérifier l'URL générée
-    res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
-  } catch (error) {
-    console.error('Error adding property', error); // Ajoutez un log pour les erreurs
-    res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
-  }
-});
+Erreur lors de la soumission du formulaire :  SyntaxError: Unexpected token 'L', "Le bien im"... is not valid JSON
+(anonyme) @ user:324
 
 async function generateLandingPage(property) {
   const template = `
