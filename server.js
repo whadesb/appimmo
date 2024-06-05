@@ -6,12 +6,33 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const cookieParser = require('cookie-parser');
+const i18n = require('./i18n');
 
 const app = express();
 
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
+app.use((req, res, next) => {
+  if (req.query.lang) {
+    res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
+    res.setLocale(req.query.lang);
+  } else if (req.cookies.locale) {
+    res.setLocale(req.cookies.locale);
+  }
+  next();
+});
+
+// Définir le moteur de template ejs
+app.set('view engine', 'ejs');
+
+// Exemple de route
+app.get('/', (req, res) => {
+  res.render('index', { i18n: res });
+});
 
 const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
 app.use(addPropertyRoutes);
