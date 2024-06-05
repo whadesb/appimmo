@@ -6,7 +6,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const cookieParser = require('./node_modules/cookie-parser');
+const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
 
 const app = express();
@@ -14,6 +14,9 @@ const app = express();
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
+// Utiliser cookie-parser avant d'utiliser d'autres middlewares
+app.use(cookieParser());
 
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
