@@ -175,6 +175,29 @@
                                                 <h5 class="card-title">Publicité 1</h5>
                                                 <p class="card-text">Description de la publicité 1.</p>
                                                 <button class="btn btn-primary" onclick="buyItem('Publicité 1', 10)">Acheter</button>
+<!-- Formulaire de paiement -->
+<form id="payment-form">
+  <div class="mb-3">
+    <label for="cardholderName" class="form-label">Nom du titulaire de la carte</label>
+    <input type="text" class="form-control" id="cardholderName" name="cardholderName" required>
+  </div>
+  <div class="mb-3">
+    <label for="cardNumber" class="form-label">Numéro de carte</label>
+    <div id="cardNumber" class="form-control"></div>
+  </div>
+  <div class="row mb-3">
+    <div class="col-md-6">
+      <label for="cardExpiry" class="form-label">Date d'expiration</label>
+      <div id="cardExpiry" class="form-control"></div>
+    </div>
+    <div class="col-md-6">
+      <label for="cardCvc" class="form-label">CVC</label>
+      <div id="cardCvc" class="form-control"></div>
+    </div>
+  </div>
+  <button type="submit" class="btn btn-primary">Payer</button>
+</form>
+
                                             </div>
                                         </div>
                                     </div>
