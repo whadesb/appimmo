@@ -138,9 +138,6 @@ app.get('/landing-pages/:id', (req, res) => {
    res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
 });
 
-Erreur lors de la soumission du formulaire :  SyntaxError: Unexpected token 'L', "Le bien im"... is not valid JSON
-(anonyme) @ user:324
-
 async function generateLandingPage(property) {
   const template = `
   <!DOCTYPE html>
