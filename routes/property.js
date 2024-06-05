@@ -94,5 +94,4 @@ async function generateLandingPage(property) {
 
   return `/landing-pages/${property._id}.html`;
 }
-
 module.exports = router;
