@@ -198,29 +198,6 @@ async function generateLandingPage(property) {
   return `/landing-pages/${property._id}.html`;
 }
 
-// Route pour traiter le paiement
-app.post('/process-payment', async (req, res) => {
-  const { token } = req.body;
-
-  try {
-    // Utilisation de l'API Stripe pour effectuer le paiement avec le jeton de carte
-    const payment = await stripe.charges.create({
-      amount: 1000, // Montant en centimes (par exemple, 10€)
-      currency: 'eur',
-      source: token, // Jeton de carte
-      description: 'Achat sur UAP Immo', // Description du paiement
-    });
-
-    // Enregistrement des détails du paiement dans la base de données MongoDB
-    // Code pour enregistrer les détails du paiement dans la base de données
-
-    res.send({ message: 'Paiement effectué avec succès.' });
-  } catch (error) {
-    console.error('Error processing payment:', error);
-    res.status(500).send({ error: 'Une erreur est survenue lors du traitement du paiement.' });
-  }
-});
-
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
