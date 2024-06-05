@@ -126,7 +126,16 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/user', (req, res) => {
-  res.render('user');
+    // Vérifiez si l'utilisateur est connecté
+    if (req.session.user) {
+        // Récupérez les informations de l'utilisateur à partir de la session
+        const user = req.session.user;
+        // Passez les informations de l'utilisateur à la vue lors du rendu de la page
+        res.render('user', { user: user });
+    } else {
+        // Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
+        res.redirect('/login');
+    }
 });
 
 // Route pour servir les pages de destination
