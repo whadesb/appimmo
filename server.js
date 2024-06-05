@@ -140,18 +140,55 @@ app.get('/landing-pages/:id', (req, res) => {
 
 app.post('/add-property', async (req, res) => {
   // Code pour gérer la soumission du formulaire...
+  const { rooms, surface, price, city, country } = req.body;
 
- try {
-    // Après avoir ajouté le bien immobilier avec succès...
-    const propertyId = generateUniqueId(); // Générez un identifiant unique
-    const affiliateId = req.session.affiliateId; // Obtenez l'ID de l'affilié à partir de la session (supposons que vous stockiez l'ID de l'affilié dans la session)
-    const landingPageUrl = `/landing-pages/${propertyId}?affiliate=${affiliateId}`; // Ajoutez le paramètre d'affilié à l'URL de la page de destination
-    res.status(200).json({ landingPageUrl });
+  try {
+    // Créer et sauvegarder le bien immobilier
+    const property = new Property({ rooms, surface, price, city, country });
+    await property.save();
+
+    // Générer la page de destination
+    const landingPageUrl = await generateLandingPage(property);
+
+    // Ajouter l'URL de la page de destination à la propriété et sauvegarder
+    property.url = landingPageUrl;
+    await property.save();
+
+    // Envoyer une réponse avec un message de confirmation et l'URL de la page générée
+    res.status(200).send(`Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : ${landingPageUrl}`);
   } catch (error) {
     console.error('Error adding property', error);
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
   }
 });
+
+async function generateLandingPage(property) {
+  const template = `
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <link rel="stylesheet" href="/css/bootstrap.min.css">
+      <style>
+          /* Ajoutez des styles CSS personnalisés ici */
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <h1>Propriété à ${property.city}</h1>
+          <p>Nombre de pièces: ${property.rooms}</p>
+          <p>Surface: ${property.surface} m²</p>
+          <p>Prix: ${property.price} €</p>
+          <p>Localisation: ${property.city}, ${property.country}</p>
+      </div>
+  </body>
+  </html>`;
+
+  const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
+  fs.writeFileSync(filePath, template);
+
+  return `/landing-pages/${property._id}.html`;
+}
+
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
