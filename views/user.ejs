@@ -42,10 +42,10 @@
             color: #000;
         }
         .custom-cart-icon {
-        font-size: 1.5rem; /* Taille de l'icône */
-        color: #333; /* Couleur de l'icône */
-        /* Ajoutez d'autres styles personnalisés si nécessaire */
-    }
+            font-size: 1.5rem; /* Taille de l'icône */
+            color: #333; /* Couleur de l'icône */
+            /* Ajoutez d'autres styles personnalisés si nécessaire */
+        }
     </style>
 </head>
 <body id="top">
@@ -96,14 +96,11 @@
                         <button onclick="checkout()">Payer</button>
                     </div>
                     <span class="navbar-icon bi-cart custom-cart-icon"></span>
-
                     <span id="cart-counter" class="badge bg-secondary">0</span>
-
-
                 </div>
             </div>
         </nav>
-                <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
+        <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8 col-12 mx-auto">
@@ -146,10 +143,10 @@
                                     <!-- autres informations de l'utilisateur ici -->
                                 </div>
                             </div>
-     <div id="landing" class="card" style="display: none;">
+                            <div id="landing" class="card" style="display: none;">
                                 <div class="card-body">
                                     <h5 class="card-title">Ajouter un bien immobilier</h5>
-                                    <form action="/add-property" method="POST">
+                                    <form id="add-property-form">
                                         <div class="form-group">
                                             <label for="rooms">Nombre de pièces</label>
                                             <input type="number" class="form-control" id="rooms" name="rooms" required>
@@ -172,9 +169,8 @@
                                         </div>
                                         <button type="submit" class="btn btn-primary">Enregistrer</button>
                                     </form>
-<!-- generer le lien -->
-<div id="generatedLink"></div>
-
+                                    <!-- générer le lien -->
+                                    <div id="generatedLink" style="margin-top: 15px;"></div>
                                 </div>
                             </div>
                             <div id="publicite" class="card" style="display: none;">
@@ -199,12 +195,7 @@
                                     </div>
                                 </div>
                             </div>
-                                        <!-- Ajoutez d'autres items ici -->
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            <!-- Ajoutez d'autres sections ici -->
+                            <!-- Ajoutez d'autres items ici -->
                         </div>
                     </div>
                 </div>
@@ -236,7 +227,7 @@
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
-                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <h6 class="site-footer-title mb3">Informations</h6>
                     <ul class="site-footer-links">
                         <li class="site-footer-link-item">
                             <a class="site-footer-link" href="#">Browse Detail</a>
@@ -270,25 +261,23 @@
     <script src="/js/custom.js"></script>
     <script>
         let cartItems = []; // Tableau pour stocker les articles dans le panier
-    
+
         function buyItem(itemName, price) {
-    // Ajoutez l'article sélectionné au panier avec sa description et son prix
-    cartItems.push({ name: itemName, price: price });
-    
-    // Mettre à jour le compteur du panier
-    const cartCounter = document.getElementById('cart-counter');
-    cartCounter.textContent = cartItems.length;
-}
-    </script>    
-    <script>
+            // Ajoutez l'article sélectionné au panier avec sa description et son prix
+            cartItems.push({ name: itemName, price: price });
+
+            // Mettre à jour le compteur du panier
+            const cartCounter = document.getElementById('cart-counter');
+            cartCounter.textContent = cartItems.length;
+        }
+
         function showSection(sectionId) {
             const sections = ['account', 'landing', 'publicite'];
             sections.forEach(id => {
                 document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
             });
         }
-    </script>
-    <script>
+
         function showCart() {
             // Affiche le panier avec les articles ajoutés
             const cartSection = document.getElementById('cart');
@@ -301,38 +290,39 @@
             });
             cartSection.style.display = 'block';
         }
-    
+
         function checkout() {
             // Redirige vers la page de paiement lorsque l'utilisateur clique sur "Payer"
             window.location.href = "/checkout"; // Remplacez "/checkout" par l'URL de votre page de paiement
         }
+
+        document.getElementById('add-property-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const formDataJson = Object.fromEntries(formData.entries());
+
+            try {
+                const response = await fetch('/add-property', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formDataJson),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const generatedLinkElement = document.getElementById('generatedLink');
+                    generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${data.url}">${data.url}</a>`;
+                } else {
+                    console.error('Erreur lors de la soumission du formulaire : ', response.statusText);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la soumission du formulaire : ', error);
+            }
+        });
     </script>
-script>
-  // Sélectionnez l'élément où vous voulez afficher le lien
-  const generatedLinkElement = document.getElementById('generatedLink');
-
-  propertyForm.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    // Récupérez les données du formulaire...
-
-    try {
-      // Soumettez les données du formulaire au serveur...
-
-      if (response.ok) {
-        const data = await response.json();
-        const landingPageUrl = data.landingPageUrl;
-
-        // Mettez à jour le contenu avec le lien généré
-        generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${landingPageUrl}">${landingPageUrl}</a>`;
-      } else {
-        console.error('Erreur lors de la soumission du formulaire : ', response.statusText);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la soumission du formulaire : ', error);
-    }
-  });
-</script>
 </body>
 </html>
-
