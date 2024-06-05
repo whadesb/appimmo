@@ -139,7 +139,6 @@ app.get('/landing-pages/:id', (req, res) => {
 });
 
 app.post('/add-property', async (req, res) => {
-  // Code pour gérer la soumission du formulaire...
   const { rooms, surface, price, city, country } = req.body;
 
   try {
@@ -154,8 +153,8 @@ app.post('/add-property', async (req, res) => {
     property.url = landingPageUrl;
     await property.save();
 
-    // Envoyer une réponse avec un message de confirmation et l'URL de la page générée
-    res.status(200).send(`Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : ${landingPageUrl}`);
+    // Envoyer une réponse JSON avec l'URL de la page générée
+    res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
   } catch (error) {
     console.error('Error adding property', error);
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
