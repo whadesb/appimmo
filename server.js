@@ -99,7 +99,6 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Route pour gérer la soumission du formulaire de connexion
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -117,8 +116,11 @@ app.post('/login', async (req, res) => {
       return res.send('Mot de passe incorrect.');
     }
 
-    // Authentification réussie, rediriger vers la page de profil de l'utilisateur
-    res.redirect('/user'); // Remplacez "/user" par la route de votre choix
+    // Authentification réussie, enregistrer l'utilisateur dans la session
+    req.session.user = user;
+
+    // Rediriger vers la page de profil de l'utilisateur
+    res.redirect('/user');
   } catch (error) {
     console.error('Error logging in user', error);
     res.send('Une erreur est survenue lors de la connexion.');
