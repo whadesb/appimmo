@@ -136,13 +136,14 @@
                     <div class="col-lg-9 col-md-8 col-sm-6">
                         <div class="content">
                             <div id="account" class="card">
-                                <div class="card-body">
-                                    <h5 class="card-title">Informations de l'utilisateur</h5>
-                                    <p class="card-text">Nom:</p>
-                                    <p class="card-text">Prénom: </p>
-                                    <!-- autres informations de l'utilisateur ici -->
-                                </div>
-                            </div>
+    <div class="card-body">
+        <h5 class="card-title">Informations de l'utilisateur</h5>
+        <p class="card-text">Nom: <%= user.firstName %></p>
+        <p class="card-text">Prénom: <%= user.lastName %></p>
+        <p class="card-text">Email: <%= user.email %></p>
+        <!-- autres informations de l'utilisateur ici -->
+    </div>
+</div>
                             <div id="landing" class="card" style="display: none;">
                                 <div class="card-body">
                                     <h5 class="card-title">Ajouter un bien immobilier</h5>
