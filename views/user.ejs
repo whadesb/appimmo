@@ -79,13 +79,6 @@
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="#section_5">Contact</a>
                         </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="navbarLightDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">Pages</a>
-                            <ul class="dropdown-menu dropdown-menu-light" aria-labelledby="navbarLightDropdownMenuLink">
-                                <li><a class="dropdown-item" href="topics-listing.ejs">Topics Listing</a></li>
-                                <li><a class="dropdown-item" href="/contact">Contact Form</a></li>
-                            </ul>
-                        </li>
                     </ul>
                     <div class="d-none d-lg-block">
                         <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
@@ -105,7 +98,7 @@
                 <div class="row">
                     <div class="col-lg-8 col-12 mx-auto">
                         <h2 class="text-white text-center">Mon compte</h2>
-                        <h6 class="text-white text-center">Bienvenue, <%= user.firstName %></h6>
+                        <h6 class="text-white text-center">Bienvenue, <%= user.lastName %> <%= user.firstName %></h6>
                     </div>
                 </div>
             </div>
