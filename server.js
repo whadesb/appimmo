@@ -138,7 +138,7 @@ app.get('/landing-pages/:id', (req, res) => {
    res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
 });
 
-aapp.post('/add-property', async (req, res) => {
+app.post('/add-property', async (req, res) => {
   console.log('Request body:', req.body); // Ajoutez un log pour vérifier le corps de la requête
 
   const { rooms, surface, price, city, country } = req.body;
