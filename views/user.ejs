@@ -334,5 +334,51 @@
 });
 
     </script>
+<script>
+// Utilisation de Stripe.js pour collecter les informations de la carte
+const stripe = Stripe('YOUR_PUBLISHABLE_KEY'); // Remplacez YOUR_PUBLISHABLE_KEY par votre clé publique Stripe
+
+const handleSubmit = async (event) => {
+  event.preventDefault();
+
+  // Collecte des informations du formulaire
+  const formData = new FormData(event.target);
+  const cardholderName = formData.get('cardholderName');
+  // Collectez d'autres informations de la carte si nécessaire
+
+  // Création d'un jeton de carte avec Stripe.js
+  const { token, error } = await stripe.createToken('card', {
+    card: {
+      name: cardholderName,
+      // Ajoutez d'autres informations de carte ici si nécessaire
+    },
+  });
+
+  if (error) {
+    // Gérer les erreurs lors de la création du jeton de carte
+    console.error(error);
+  } else {
+    // Envoi du jeton de carte au serveur
+    fetch('/process-payment', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ token: token.id }),
+    })
+      .then((response) => {
+        // Gérer la réponse du serveur après le paiement
+        console.log(response);
+      })
+      .catch((error) => {
+        // Gérer les erreurs lors de l'envoi du jeton de carte au serveur
+        console.error(error);
+      });
+  }
+};
+
+// Ajouter un écouteur d'événement pour soumettre le formulaire
+document.querySelector('#payment-form').addEventListener('submit', handleSubmit);
+</script>
 </body>
 </html>
