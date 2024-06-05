@@ -122,11 +122,8 @@
                                 <li class="menu-item active"><a href="#" onclick="showSection('account')">Mon compte</a></li>
                                 <li class="menu-item"><a href="#" onclick="showSection('landing')">Landing page</a></li>
                                 <li class="menu-item"><a href="#" onclick="showSection('publicite')">Publicité</a></li>
-                                <li class="menu-item"><a href="#" onclick="showSection('Genere')">genere</a></li>
-                              
-<!-- Ajoutez d'autres liens ici -->
-
-</ul>
+                                <!-- Ajoutez d'autres liens ici -->
+                            </ul>
                         </div>
                     </div>
                     <div class="col-lg-9 col-md-8 col-sm-6">
@@ -183,20 +180,7 @@
                                     </div>
                                 </div>
                             </div>
- <div id="genere" class="card" style="display: none;">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <div class="card mb-4">
-                                            <div class="card-body">
-        <h5 class="card-title">Pages Générées</h5>
-</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-        <!-- Contenu de la carte ici -->
-    </div>
-</div>                             <!-- Ajoutez d'autres items ici -->
+                            <!-- Ajoutez d'autres items ici -->
                         </div>
                     </div>
                 </div>
@@ -298,40 +282,33 @@
         }
 
         document.getElementById('add-property-form').addEventListener('submit', async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
-    const form = event.target;
-    const formData = new FormData(form);
-    const formDataJson = Object.fromEntries(formData.entries());
+  const form = event.target;
+  const formData = new FormData(form);
+  const formDataJson = Object.fromEntries(formData.entries());
 
-    try {
-        const response = await fetch('/add-property', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formDataJson),
-        });
+  try {
+    const response = await fetch('/add-property', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formDataJson),
+    });
 
-        if (response.ok) {
-            const data = await response.json();
-            const generatedPageElement = document.getElementById('generatedPage');
-            generatedPageElement.innerHTML = `
-                <div class="card-body">
-                    <h5 class="card-title">Pages Générées</h5>
-                    <p class="card-text">Lien vers la page générée : <a href="${data.url}">${data.url}</a></p>
-                </div>
-            `;
-            generatedPageElement.style.display = 'block';
-        } else {
-            const errorData = await response.json();
-            console.error('Erreur lors de la soumission du formulaire : ', errorData.error);
-        }
-    } catch (error) {
-        console.error('Erreur lors de la soumission du formulaire : ', error);
+    if (response.ok) {
+      const data = await response.json();
+      const generatedLinkElement = document.getElementById('generatedLink');
+      generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${data.url}">${data.url}</a>`;
+    } else {
+      const errorData = await response.json();
+      console.error('Erreur lors de la soumission du formulaire : ', errorData.error);
     }
+  } catch (error) {
+    console.error('Erreur lors de la soumission du formulaire : ', error);
+  }
 });
-
 
     </script>
 </body>
