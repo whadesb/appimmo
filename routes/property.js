@@ -11,7 +11,7 @@ router.post('/add-property', async (req, res) => {
   try {
     await property.save();
 
-    // Générer la landing page
+    // Générer la landing page avec le nouveau design
     const landingPageUrl = await generateLandingPage(property);
 
     property.url = landingPageUrl;
@@ -29,20 +29,62 @@ router.post('/add-property', async (req, res) => {
 async function generateLandingPage(property) {
   const template = `
   <!DOCTYPE html>
-  <html>
+  <html lang="en">
   <head>
-      <link rel="stylesheet" href="/css/bootstrap.min.css">
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Propriété à ${property.city}</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
       <style>
-          /* Ajoutez des styles CSS personnalisés ici */
+          /* Styles CSS personnalisés */
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f8f9fa;
+              color: #333;
+              margin: 0;
+              padding: 0;
+          }
+          .container {
+              max-width: 800px;
+              margin: auto;
+              padding: 20px;
+          }
+          .property-info {
+              background-color: #fff;
+              border-radius: 10px;
+              padding: 20px;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+          .property-info h1 {
+              font-size: 32px;
+              margin-bottom: 20px;
+          }
+          .property-info p {
+              font-size: 18px;
+              margin-bottom: 10px;
+          }
+          @media (max-width: 768px) {
+              .container {
+                  padding: 10px;
+              }
+              .property-info h1 {
+                  font-size: 28px;
+              }
+              .property-info p {
+                  font-size: 16px;
+              }
+          }
       </style>
   </head>
   <body>
       <div class="container">
-          <h1>Propriété à ${property.city}</h1>
-          <p>Nombre de pièces: ${property.rooms}</p>
-          <p>Surface: ${property.surface} m²</p>
-          <p>Prix: ${property.price} €</p>
-          <p>Localisation: ${property.city}, ${property.country}</p>
+          <div class="property-info">
+              <h1>Propriété à ${property.city}</h1>
+              <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
+              <p><strong>Surface:</strong> ${property.surface} m²</p>
+              <p><strong>Prix:</strong> ${property.price} €</p>
+              <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
+          </div>
       </div>
   </body>
   </html>`;
