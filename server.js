@@ -18,6 +18,9 @@ app.use(express.json());
 // Utiliser cookie-parser avant d'utiliser d'autres middlewares
 app.use(cookieParser());
 
+// Middleware pour initialiser i18n
+app.use(i18n.init);
+
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
   if (req.query.lang) {
