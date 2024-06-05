@@ -1,17 +1,17 @@
 const express = require('express');
 const router = express.Router();
-const Property = require('../models/Property'); // Assurez-vous de définir ce modèle
+const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
 
 router.post('/add-property', async (req, res) => {
   // Récupérer les données du formulaire depuis req.body
-  const { numberOfRooms, surface, price, city, country } = req.body;
+  const { rooms, surface, price, city, country } = req.body;
 
   try {
     // Créer une nouvelle propriété dans la base de données
     const property = new Property({
-      numberOfRooms,
+      rooms,
       surface,
       price,
       city,
@@ -22,11 +22,12 @@ router.post('/add-property', async (req, res) => {
     await property.save();
 
     // Rediriger vers une autre page ou envoyer une réponse JSON en cas de succès
-    res.status(201).json({ message: 'Property added successfully' });
+    res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.' });
   } catch (error) {
-    console.error('Error adding property', error);
-    res.status(500).json({ error: 'An error occurred while adding the property' });
+    console.error('Erreur lors de l\'ajout de la propriété : ', error);
+    // En cas d'erreur, renvoyer une réponse JSON avec le statut 500 et un message d'erreur approprié
+    res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
   }
 });
 
-module.exports = router; // Exportez les routes pour pouvoir les utiliser dans server.js
+module.exports = router;
