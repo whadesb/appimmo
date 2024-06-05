@@ -6,7 +6,7 @@ const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const cookieParser = require('cookie-parser');
+const cookieParser = require('./node_modules/cookie-parser');
 const i18n = require('./i18n');
 
 const app = express();
