@@ -110,8 +110,8 @@ app.get('/register', (req, res) => {
 });
 
 // Route pour traiter la soumission du formulaire d'inscription
-app.post('/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
+// app.post('/register', async (req, res) => {
+//  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
 
   // Vérification des mots de passe
   if (password !== confirmPassword) {
