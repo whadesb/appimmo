@@ -47,7 +47,7 @@ async function generateLandingPage(property) {
         /* Styles CSS personnalisés */
         body {
             font-family: Arial, sans-serif;
-            background-color: #f8f9fa;
+            background: rgba(0, 0, 0, 0.8) !important;
             color: #333;
             margin: 0;
             padding: 0;
