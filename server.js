@@ -109,21 +109,7 @@ app.get('/register', (req, res) => {
   res.redirect('/register');
 });
 
-// Route pour traiter la soumission du formulaire d'inscription
-// app.post('/register', async (req, res) => {
-//  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
 
-  // Vérification des mots de passe
-  if (password !== confirmPassword) {
-    return res.send('Les mots de passe ne correspondent pas.');
-  }
-
-  try {
-    // si l'utilisateur existe déjà
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.send('Un utilisateur avec cet email existe déjà.');
-    }
 
     // Hacher le mot de passe
     const hashedPassword = await bcrypt.hash(password, 10);
