@@ -1,71 +1,40 @@
-const express = require('express');
-const router = express.Router();
-const bcrypt = require('bcrypt');
-const User = require('../models/User');
-const nodemailer = require('nodemailer');
-const transporter = require('./emailConfig');
+const fs = require('fs');
+const path = require('path');
 
-// Configurer le transporteur pour l'envoi d'e-mails
-const transporter = nodemailer.createTransport({
-  host: 'smtp.ionos.fr',
-  port: 587,
-  secure: false, // true for 465, false for other ports
-  auth: {
-    user: 'communication@zebrito.fr',
-    pass: '528721Tt**'
-  }
-});
-
-// Route pour afficher le formulaire d'inscription
-router.get('/register', (req, res) => {
-  res.render('register', { title: 'Register' });
-});
+// Function to read the confirmation email HTML template
+const readConfirmationEmailTemplate = () => {
+  const filePath = path.join(__dirname, '../templatesemails/confirmation_inscription.html');
+  return fs.readFileSync(filePath, 'utf-8');
+};
 
 // Route pour traiter la soumission du formulaire d'inscription
 router.post('/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
-
-  // Vérification des mots de passe
-  if (password !== confirmPassword) {
-    return res.send('Les mots de passe ne correspondent pas.');
-  }
+  const { email, firstName } = req.body;
 
   try {
-    // si l'utilisateur existe déjà
+    // Vérification de l'existence de l'utilisateur
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.send('Un utilisateur avec cet email existe déjà.');
+      return res.send('Un utilisateur avec cet e-mail existe déjà.');
     }
 
-    // Hacher le mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Créer un nouvel utilisateur
-    const user = new User({
-      email,
-      firstName,
-      lastName,
-      role,
-      password: hashedPassword
-    });
-
-    // Sauvegarder l'utilisateur dans la base de données
+    // Création d'un nouvel utilisateur
+    const user = new User({ email, firstName });
     await user.save();
 
-    // Envoi d'un e-mail de confirmation
+    // Envoi de l'e-mail de confirmation
+    const confirmationEmailTemplate = readConfirmationEmailTemplate(); // Lecture du modèle HTML
     await transporter.sendMail({
-      from: 'votre_adresse_email@gmail.com',
+      from: 'communication@zebrito.fr',
       to: email,
-      subject: 'Confirmation de votre inscription',
-      html: `<p>Bonjour ${firstName},</p><p>Votre inscription sur notre site a été confirmée avec succès.</p><p>Cordialement,</p><p>Votre équipe UAP Immo</p>`
+      subject: 'Confirmation d\'inscription',
+      html: confirmationEmailTemplate.replace('[Votre entreprise]', 'UAP Immo')
     });
 
-    // Rediriger vers la page de connexion après l'inscription
+    // Redirection vers la page de connexion après l'inscription
     res.redirect('/login');
   } catch (error) {
-    console.error('Error registering user', error);
+    console.error('Erreur lors de l\'inscription de l\'utilisateur', error);
     res.send('Une erreur est survenue lors de l\'inscription.');
   }
 });
-
-module.exports = router;
