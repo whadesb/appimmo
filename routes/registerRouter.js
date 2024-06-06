@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const nodemailer = require('nodemailer');
+const transporter = require('./emailConfig');
 
 // Configurer le transporteur pour l'envoi d'e-mails
 const transporter = nodemailer.createTransport({
