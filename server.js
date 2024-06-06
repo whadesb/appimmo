@@ -8,6 +8,7 @@ const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
+const fs = require('fs');
 
 const app = express();
 
@@ -20,40 +21,6 @@ app.use(cookieParser());
 
 // Middleware pour initialiser i18n
 app.use(i18n.init);
-
-// Route pour traiter la soumission du formulaire de connexion
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Vérifier les informations d'identification de l'utilisateur
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.send('Utilisateur non trouvé.');
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatch) {
-      return res.send('Mot de passe incorrect.');
-    }
-
-    // Assurez-vous que req.session est défini avant d'accéder à req.session.user
-    if (!req.session) {
-      req.session = {};
-    }
-
-    // Authentification réussie, enregistrer l'utilisateur dans la session
-    req.session.user = user;
-
-    // Rediriger vers la page de profil de l'utilisateur
-    res.redirect('/user');
-  } catch (error) {
-    console.error('Error logging in user', error);
-    res.send('Une erreur est survenue lors de la connexion.');
-  }
-});
 
 // Middleware pour vérifier si l'utilisateur est connecté et récupérer l'ID utilisateur de la session
 app.use((req, res, next) => {
@@ -135,7 +102,7 @@ app.get('/register', (req, res) => {
 });
 
 // Rediriger /signup vers /register
-app.get('/register', (req, res) => {
+app.get('/signup', (req, res) => {
   res.redirect('/register');
 });
 
@@ -178,6 +145,7 @@ app.post('/register', async (req, res) => {
   }
 });
 
+// Route pour traiter la soumission du formulaire de connexion
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -236,7 +204,6 @@ app.post('/add-property', async (req, res) => {
 
     // Générer la page de destination
     const landingPageUrl = await generateLandingPage(property);
-
     // Ajouter l'URL de la page de destination à la propriété et sauvegarder
     property.url = landingPageUrl;
     await property.save();
@@ -282,3 +249,4 @@ const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
