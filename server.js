@@ -8,7 +8,6 @@ const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
-const fs = require('fs'); // Ajout pour utiliser fs
 
 const app = express();
 
@@ -35,16 +34,33 @@ app.use((req, res, next) => {
 
 // Définir le moteur de template ejs
 app.set('view engine', 'ejs');
+
+// Exemple de route
+app.get('/', (req, res) => {
+  res.render('index', { i18n: res });
+});
+
+const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
+app.use(addPropertyRoutes);
+
+require('dotenv').config();
+const Property = require('./models/Property');
+
+// Configurer les sessions
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
+}));
+
+// Définir le moteur de template EJS
+app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Middleware pour servir les fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
-
-// Passer i18n à toutes les vues
-app.use((req, res, next) => {
-  res.locals.i18n = req.i18n;
-  next();
-});
 
 // Connexion à MongoDB
 mongoose.connect(process.env.MONGODB_URI, {
@@ -56,18 +72,9 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('Error connecting to MongoDB', err);
 });
 
-// Configurer les sessions
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
-}));
-
 // Route pour la page d'accueil
 app.get('/', (req, res) => {
-  res.render('index');
+  res.render('index'); // Rendre la vue "index.ejs"
 });
 
 // Route pour la page de connexion
@@ -153,23 +160,23 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/user', (req, res) => {
-  // Vérifiez si l'utilisateur est connecté
-  if (req.session.user) {
-    // Récupérez les informations de l'utilisateur à partir de la session
-    const user = req.session.user;
-    // Passez les informations de l'utilisateur à la vue lors du rendu de la page
-    res.render('user', { user: user });
-  } else {
-    // Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
-    res.redirect('/login');
-  }
+    // Vérifiez si l'utilisateur est connecté
+    if (req.session.user) {
+        // Récupérez les informations de l'utilisateur à partir de la session
+        const user = req.session.user;
+        // Passez les informations de l'utilisateur à la vue lors du rendu de la page
+        res.render('user', { user: user });
+    } else {
+        // Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
+        res.redirect('/login');
+    }
 });
 
 // Route pour servir les pages de destination
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   // Renvoyer le fichier HTML correspondant depuis le répertoire public/landing-pages
-  res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
+   res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
 });
 
 app.post('/add-property', async (req, res) => {
