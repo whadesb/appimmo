@@ -1,3 +1,5 @@
+// routes/add-property.js
+
 const express = require('express');
 const router = express.Router();
 const Property = require('../models/Property');
@@ -5,8 +7,14 @@ const fs = require('fs');
 const path = require('path');
 
 router.post('/add-property', async (req, res) => {
+  // Vérifiez que l'utilisateur est connecté
+  if (!req.session.user) {
+    return res.status(403).json({ error: 'Utilisateur non authentifié.' });
+  }
+
   // Récupérer les données du formulaire depuis req.body
   const { rooms, surface, price, city, country } = req.body;
+  const userId = req.session.user._id;
 
   try {
     // Créer une nouvelle propriété dans la base de données
@@ -15,7 +23,8 @@ router.post('/add-property', async (req, res) => {
       surface,
       price,
       city,
-      country
+      country,
+      userId // Inclure l'ID de l'utilisateur
     });
 
     // Sauvegarder la propriété dans la base de données
@@ -23,10 +32,13 @@ router.post('/add-property', async (req, res) => {
 
     // Générer la page de destination
     const landingPageUrl = await generateLandingPage(property);
-    console.log("Landing Page URL from add-property:", landingPageUrl); // Ajout de console.log pour vérifier l'URL générée
 
-    // Rediriger vers une autre page ou envoyer une réponse JSON en cas de succès
-    res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
+    // Mettre à jour l'URL de la propriété et sauvegarder à nouveau
+    property.url = landingPageUrl;
+    await property.save();
+
+    // Envoyer une réponse avec un message de confirmation et l'URL de la page générée
+    res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la propriété : ', error);
     // En cas d'erreur, renvoyer une réponse JSON avec le statut 500 et un message d'erreur approprié
@@ -39,7 +51,10 @@ async function generateLandingPage(property) {
   <!DOCTYPE html>
   <html lang="en">
   <head>
-      <link rel="stylesheet" href="/css/bootstrap.min.css">
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Propriété à ${property.city}</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
       <style>
         /* Styles CSS personnalisés */
         body {
@@ -98,8 +113,7 @@ async function generateLandingPage(property) {
   const filePath = path.join(__dirname, '..', 'public', 'landing-pages', `${property._id}.html`);
   fs.writeFileSync(filePath, template);
 
-  const landingPageUrl = `/landing-pages/${property._id}.html`;
-  return landingPageUrl;
+  return `/landing-pages/${property._id}.html`;
 }
 
 module.exports = router;
