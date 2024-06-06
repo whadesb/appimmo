@@ -4,25 +4,12 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const User = require('./models/User');;
+const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
-const fs = require('fs');
 
 const app = express();
-
-// Configurer les sessions
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ 
-    mongoUrl: process.env.MONGODB_URI,
-    mongooseConnection: mongoose.connection // Ajoutez cette ligne pour spécifier la connexion mongoose
-  }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
-}));
 
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
@@ -33,15 +20,6 @@ app.use(cookieParser());
 
 // Middleware pour initialiser i18n
 app.use(i18n.init);
-
-// Middleware pour vérifier si l'utilisateur est connecté et récupérer l'ID utilisateur de la session
-app.use((req, res, next) => {
-  if (req.session.user) {
-    res.locals.userId = req.session.user.userId;
-    // Récupérer l'ID utilisateur et le rendre disponible dans les vues
-  }
-  next();
-});
 
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
@@ -67,6 +45,15 @@ app.use(addPropertyRoutes);
 
 require('dotenv').config();
 const Property = require('./models/Property');
+
+// Configurer les sessions
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
+}));
 
 // Définir le moteur de template EJS
 app.set('view engine', 'ejs');
@@ -106,7 +93,7 @@ app.get('/register', (req, res) => {
 });
 
 // Rediriger /signup vers /register
-app.get('/signup', (req, res) => {
+app.get('/register', (req, res) => {
   res.redirect('/register');
 });
 
@@ -149,7 +136,6 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Route pour traiter la soumission du formulaire de connexion
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -208,6 +194,7 @@ app.post('/add-property', async (req, res) => {
 
     // Générer la page de destination
     const landingPageUrl = await generateLandingPage(property);
+
     // Ajouter l'URL de la page de destination à la propriété et sauvegarder
     property.url = landingPageUrl;
     await property.save();
@@ -253,4 +240,3 @@ const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
-
