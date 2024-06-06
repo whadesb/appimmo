@@ -32,12 +32,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Définir le moteur de template ejs
-app.set('view engine', 'ejs');
-
-// Exemple de route
-app.get('/', (req, res) => {
-  res.render('index', { i18n: res });
+// Passer i18n à toutes les vues
+app.use((req, res, next) => {
+  res.locals.i18n = req.i18n;
+  next();
 });
 
 const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
