@@ -21,6 +21,43 @@ app.use(cookieParser());
 // Middleware pour initialiser i18n
 app.use(i18n.init);
 
+// Route pour traiter la soumission du formulaire de connexion
+app.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    // Vérifier les informations d'identification de l'utilisateur
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.send('Utilisateur non trouvé.');
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) {
+      return res.send('Mot de passe incorrect.');
+    }
+
+    // Authentification réussie, enregistrer l'utilisateur dans la session
+    req.session.user = user;
+
+    // Rediriger vers la page de profil de l'utilisateur
+    res.redirect('/user');
+  } catch (error) {
+    console.error('Error logging in user', error);
+    res.send('Une erreur est survenue lors de la connexion.');
+  }
+});
+
+// Middleware pour vérifier si l'utilisateur est connecté et récupérer l'ID utilisateur de la session
+app.use((req, res, next) => {
+  if (req.session.user) {
+    res.locals.userId = req.session.user.userId; // Récupérer l'ID utilisateur et le rendre disponible dans les vues
+  }
+  next();
+});
+
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
   if (req.query.lang) {
