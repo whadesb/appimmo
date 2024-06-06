@@ -19,10 +19,11 @@ app.use(session({
   saveUninitialized: false,
   store: MongoStore.create({ 
     mongoUrl: process.env.MONGODB_URI,
-    mongooseConnection: mongoose.connection
+    mongooseConnection: mongoose.connection // Ajoutez cette ligne pour spécifier la connexion mongoose
   }),
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
+
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
