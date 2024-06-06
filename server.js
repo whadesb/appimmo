@@ -8,6 +8,7 @@ const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
+const nodemailer = require('nodemailer');
 
 const app = express();
 
@@ -20,6 +21,15 @@ app.use(cookieParser());
 
 // Middleware pour initialiser i18n
 app.use(i18n.init);
+
+// Configuration du transporteur pour l'envoi d'e-mails
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'communication@zebrito.fr',
+    pass: '528721Tt**'
+  }
+});
 
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
