@@ -8,10 +8,14 @@ const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
+const addPropertyRouter = require('./routes/add-property');
+const userPropertiesRouter = require('./routes/user-properties');
+const deletePropertyRouter = require('./routes/delete-property');
 
 const app = express();
 
 // Middleware pour analyser les données POST
+app.use(session({ secret: 'votre_secret', resave: false, saveUninitialized: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -20,6 +24,10 @@ app.use(cookieParser());
 
 // Middleware pour initialiser i18n
 app.use(i18n.init);
+
+app.use('/add-property', addPropertyRouter);
+app.use('/', userPropertiesRouter); // Notez l'utilisation de '/' pour inclure le préfixe correct
+app.use('/', deletePropertyRouter); // Notez l'utilisation de '/' pour inclure le préfixe correct
 
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
