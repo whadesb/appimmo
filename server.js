@@ -147,29 +147,6 @@ app.post('/register', async (req, res) => {
   }
 });
 
-    // Hacher le mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Créer un nouvel utilisateur
-    const user = new User({
-      email,
-      firstName,
-      lastName,
-      role,
-      password: hashedPassword
-    });
-
-    // Sauvegarder l'utilisateur dans la base de données
-    await user.save();
-
-    // Rediriger vers la page de connexion après l'inscription
-    res.redirect('/login');
-  } catch (error) {
-    console.error('Error registering user', error);
-    res.send('Une erreur est survenue lors de l\'inscription.');
-  }
-});
-
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
