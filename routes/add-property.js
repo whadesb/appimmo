@@ -4,12 +4,16 @@ const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
 
-router.post('/add-property', async (req, res) => {
-  // Vérification que l'utilisateur est connecté
-  if (!req.session.user) {
-    return res.status(403).json({ error: 'Utilisateur non authentifié.' });
+// Middleware pour vérifier si l'utilisateur est connecté
+function isAuthenticated(req, res, next) {
+  if (req.session && req.session.user) {
+    return next();
+  } else {
+    res.status(403).json({ error: 'Utilisateur non authentifié.' });
   }
+}
 
+router.post('/add-property', isAuthenticated, async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
   const userId = req.session.user._id;
 
@@ -33,8 +37,11 @@ router.post('/add-property', async (req, res) => {
     property.url = landingPageUrl;
     await property.save();
 
-    // Envoyer une réponse avec l'URL de la page générée
-    res.status(200).send(`Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : ${landingPageUrl}`);
+    // Envoyer une réponse JSON avec l'URL de la page générée
+    res.status(200).json({
+      message: 'Le bien immobilier a été ajouté avec succès.',
+      url: landingPageUrl
+    });
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la propriété : ', error);
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
@@ -106,7 +113,11 @@ async function generateLandingPage(property) {
   </html>`;
 
   const filePath = path.join(__dirname, '..', 'public', 'landing-pages', `${property._id}.html`);
-  fs.writeFileSync(filePath, template);
+  try {
+    fs.writeFileSync(filePath, template);
+  } catch (err) {
+    console.error('Erreur lors de la création de la landing page :', err);
+  }
 
   return `/landing-pages/${property._id}.html`;
 }
