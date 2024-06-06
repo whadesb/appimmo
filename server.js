@@ -39,6 +39,11 @@ app.post('/login', async (req, res) => {
       return res.send('Mot de passe incorrect.');
     }
 
+    // Assurez-vous que req.session est défini avant d'accéder à req.session.user
+    if (!req.session) {
+      req.session = {};
+    }
+
     // Authentification réussie, enregistrer l'utilisateur dans la session
     req.session.user = user;
 
