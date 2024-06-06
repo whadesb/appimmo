@@ -25,10 +25,6 @@ app.use(cookieParser());
 // Middleware pour initialiser i18n
 app.use(i18n.init);
 
-app.use('/add-property', addPropertyRouter);
-app.use('/', userPropertiesRouter); // Notez l'utilisation de '/' pour inclure le préfixe correct
-app.use('/', deletePropertyRouter); // Notez l'utilisation de '/' pour inclure le préfixe correct
-
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
   if (req.query.lang) {
@@ -79,6 +75,10 @@ mongoose.connect(process.env.MONGODB_URI, {
 }).catch((err) => {
   console.error('Error connecting to MongoDB', err);
 });
+
+app.use('/properties', addPropertyRouter); // Pour ajouter des propriétés
+app.use('/properties', deletePropertyRouter); // Pour supprimer des propriétés
+app.use('/user', userPropertiesRouter); // Pour les propriétés des utilisateurs
 
 // Route pour la page d'accueil
 app.get('/', (req, res) => {
