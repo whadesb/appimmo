@@ -82,6 +82,11 @@ app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
 
+// Route pour la page faq
+app.get('/faq', (req, res) => {
+  res.render('faq', { title: 'faq' });
+});
+
 // Route pour afficher le formulaire d'inscription
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
