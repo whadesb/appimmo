@@ -3,8 +3,8 @@ const path = require('path');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
-const { default: MongoStore } = require('connect-mongo');
-const User = require('./models/User');
+const MongoStore = require('connect-mongo');
+const User = require('./models/User');;
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
@@ -18,11 +18,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ 
-    mongoUrl: process.env.MONGODB_URI // Utilisation de la variable d'environnement MONGODB_URI
+    mongoUrl: process.env.MONGODB_URI,
+    mongooseConnection: mongoose.connection
   }),
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
-
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
