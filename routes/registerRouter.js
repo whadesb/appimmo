@@ -6,7 +6,9 @@ const nodemailer = require('nodemailer');
 
 // Configurer le transporteur pour l'envoi d'e-mails
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.ionos.fr',
+  port: 587,
+  secure: false, // true for 465, false for other ports
   auth: {
     user: 'communication@zebrito.fr',
     pass: '528721Tt**'
