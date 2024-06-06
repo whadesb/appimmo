@@ -1,0 +1,31 @@
+<!-- views/user-properties.ejs -->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mes Propriétés</title>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/custom.css" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>Mes Propriétés</h1>
+    <ul class="list-group">
+      <% properties.forEach(property => { %>
+        <li class="list-group-item">
+          <h5>Propriété à <%= property.city %></h5>
+          <p>Nombre de pièces: <%= property.rooms %></p>
+          <p>Surface: <%= property.surface %> m²</p>
+          <p>Prix: <%= property.price %> €</p>
+          <p>URL: <a href="<%= property.url %>"><%= property.url %></a></p>
+          <form action="/delete-property/<%= property._id %>" method="POST" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette propriété ?');">
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+          </form>
+        </li>
+      <% }) %>
+    </ul>
+  </div>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
