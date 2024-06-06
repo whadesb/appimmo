@@ -187,27 +187,26 @@ app.get('/landing-pages/:id', (req, res) => {
 app.post('/add-property', async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
 
-  if (!req.session.user) {
-    return res.status(401).json({ error: 'Vous devez être connecté pour ajouter une propriété.' });
-  }
-
-  const userId = req.session.user._id;
-
   try {
-    const property = new Property({ rooms, surface, price, city, country, userId });
+    // Créer et sauvegarder le bien immobilier
+    const property = new Property({ rooms, surface, price, city, country });
     await property.save();
 
+    // Générer la page de destination
     const landingPageUrl = await generateLandingPage(property);
+
+    // Ajouter l'URL de la page de destination à la propriété et sauvegarder
     property.url = landingPageUrl;
     await property.save();
 
+    // Envoyer une réponse JSON avec l'URL de la page générée
     res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
   } catch (error) {
     console.error('Error adding property', error);
+    // En cas d'erreur, renvoyer une réponse JSON avec le statut 500
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
   }
 });
-
 
 async function generateLandingPage(property) {
   const template = `
@@ -235,24 +234,6 @@ async function generateLandingPage(property) {
 
   return `/landing-pages/${property._id}.html`;
 }
-
-app.get('/user-landing-pages', async (req, res) => {
-  if (!req.session.user) {
-    return res.status(401).json({ error: 'Vous devez être connecté pour accéder à vos pages.' });
-  }
-
-  const userId = req.session.user._id;
-
-  try {
-    const properties = await Property.find({ userId }).select('url');
-    const urls = properties.map(property => property.url);
-    res.status(200).json({ urls });
-  } catch (error) {
-    console.error('Error fetching landing pages', error);
-    res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des pages de destination.' });
-  }
-});
-
 
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
