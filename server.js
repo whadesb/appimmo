@@ -9,6 +9,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
 const nodemailer = require('nodemailer');
+const registerRouter = require('./routes/registerRouter');
 
 const app = express();
 
@@ -30,6 +31,11 @@ const transporter = nodemailer.createTransport({
     pass: '528721Tt**'
   }
 });
+
+// Utilisation du routeur registerRouter sur le chemin '/api/register'
+app.use('/api/register', registerRouter);
+
+app.use(bodyParser.json());
 
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
