@@ -236,6 +236,24 @@ async function generateLandingPage(property) {
   return `/landing-pages/${property._id}.html`;
 }
 
+app.get('/user-landing-pages', async (req, res) => {
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Vous devez être connecté pour accéder à vos pages.' });
+  }
+
+  const userId = req.session.user._id;
+
+  try {
+    const properties = await Property.find({ userId }).select('url');
+    const urls = properties.map(property => property.url);
+    res.status(200).json({ urls });
+  } catch (error) {
+    console.error('Error fetching landing pages', error);
+    res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des pages de destination.' });
+  }
+});
+
+
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
