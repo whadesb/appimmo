@@ -1,9 +1,12 @@
+const express = require('express');
+const router = express.Router(); // Définir router ici
+
 const fs = require('fs');
 const path = require('path');
 
 // Function to read the confirmation email HTML template
 const readConfirmationEmailTemplate = () => {
-  const filePath = path.join(__dirname, '../templatesemails/confirmation_inscription.html');
+  const filePath = path.join(__dirname, '../templates/emails/confirmation_inscription.html');
   return fs.readFileSync(filePath, 'utf-8');
 };
 
@@ -38,3 +41,5 @@ router.post('/register', async (req, res) => {
     res.send('Une erreur est survenue lors de l\'inscription.');
   }
 });
+
+module.exports = router; // Exporter le routeur à la fin du fichier
