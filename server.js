@@ -36,7 +36,8 @@ app.use(i18n.init);
 // Middleware pour vérifier si l'utilisateur est connecté et récupérer l'ID utilisateur de la session
 app.use((req, res, next) => {
   if (req.session.user) {
-    res.locals.userId = req.session.user.userId; // Récupérer l'ID utilisateur et le rendre disponible dans les vues
+    res.locals.userId = req.session.user.userId;
+    // Récupérer l'ID utilisateur et le rendre disponible dans les vues
   }
   next();
 });
