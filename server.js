@@ -8,8 +8,6 @@ const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
-const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
 
 const app = express();
 
@@ -22,19 +20,6 @@ app.use(cookieParser());
 
 // Middleware pour initialiser i18n
 app.use(i18n.init);
-
-// Configuration du transporteur pour l'envoi d'e-mails
-const transporter = nodemailer.createTransport({
-  service: 'ionos',
-  auth: {
-    user: 'communication@zebrito.fr',
-    pass: '528721Tt**'
-  }
-});
-const registerRouter = require('./routes/registerRouter');
-// Utilisation du routeur registerRouter sur le chemin '/api/register'
-app.use('/api/register', registerRouter);
-app.use(bodyParser.json());
 
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
@@ -107,6 +92,7 @@ app.get('/register', (req, res) => {
   res.redirect('/register');
 });
 
+// Route pour traiter la soumission du formulaire d'inscription
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword } = req.body;
 
