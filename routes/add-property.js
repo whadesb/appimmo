@@ -13,9 +13,20 @@ function isAuthenticated(req, res, next) {
   }
 }
 
+// Vérifiez l'état de la session dans les logs
+router.use((req, res, next) => {
+  console.log('Session user:', req.session.user);
+  next();
+});
+
 router.post('/add-property', isAuthenticated, async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
-  const userId = req.session.user._id;
+  const userId = req.session.user ? req.session.user._id : null;
+
+  // Vérifiez si userId est défini
+  if (!userId) {
+    return res.status(403).json({ error: 'Utilisateur non authentifié.' });
+  }
 
   try {
     // Créer une nouvelle propriété avec l'utilisateur associé
