@@ -9,10 +9,11 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
 const addPropertyRouter = require('./routes/add-property');
-const userPropertiesRouter = require('./routes/user-properties');
 const deletePropertyRouter = require('./routes/delete-property');
 
 const app = express();
+
+require('dotenv').config();
 
 // Middleware pour analyser les données POST
 app.use(session({ secret: 'votre_secret', resave: false, saveUninitialized: true }));
@@ -47,7 +48,8 @@ app.get('/', (req, res) => {
 const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
 app.use(addPropertyRoutes);
 
-require('dotenv').config();
+const userPropertiesRouter = require('./routes/user-properties');
+
 const Property = require('./models/Property');
 
 // Configurer les sessions
