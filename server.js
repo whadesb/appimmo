@@ -10,6 +10,7 @@ const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
 const nodemailer = require('nodemailer');
 const registerRouter = require('./routes/registerRouter');
+const bodyParser = require('body-parser');
 
 const app = express();
 
