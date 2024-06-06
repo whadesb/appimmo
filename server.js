@@ -24,7 +24,7 @@ app.use(i18n.init);
 
 // Configuration du transporteur pour l'envoi d'e-mails
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  service: 'ionos',
   auth: {
     user: 'communication@zebrito.fr',
     pass: '528721Tt**'
