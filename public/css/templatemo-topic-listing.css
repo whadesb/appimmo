@@ -1,14 +1,14 @@
 :root {
   --white-color:                  #ffffff;
   --primary-color:                #13547a;
-  --secondary-color:              #ffffff;
+  --secondary-color:              #8781dc;
   --section-bg-color:             #f0f8ff;
   --custom-btn-bg-color:          #5650b0;
   --custom-btn-bg-hover-color:    #13547a;
   --dark-color:                   #000000;
   --p-color:                      #717275;
   --border-color:                 #b67fff;
-  --link-hover-color:             #000000;
+  --link-hover-color:             #13547a;
 
   --body-font-family:             'Open Sans', sans-serif;
   --title-font-family:            'Montserrat', sans-serif;
