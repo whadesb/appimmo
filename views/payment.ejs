@@ -1,355 +1,210 @@
+
 <!doctype html>
 <html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="">
+        <meta name="author" content="">
+        <title>Payment - UAP Immo</title>    
+        <link rel="preconnect" href="https://fonts.googleapis.com">        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
+        <link href="/css/bootstrap.min.css" rel="stylesheet">
+        <link href="/css/bootstrap-icons.css" rel="stylesheet">
+        <link href="/css/templatemo-topic-listing.css" rel="stylesheet">       
+    </head>
+    <body id="top">
+        <main>
+            <nav class="navbar navbar-expand-lg">
+                <div class="container">
+                    <a class="navbar-brand" href="/">
+                        <i class="bi-back"></i>
+                        <span>UAP Immo</span>
+                    </a>
+                    <div class="d-lg-none ms-auto me-4">
+                        <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
+                    </div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_1">Home</a>
+                            </li>
 
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <title>Payment - UAP Immo</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-icons.css" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Open Sans', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-        }
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_2">Lorem</a>
+                            </li>
+    
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
+                            </li>
 
-        .container {
-            max-width: 800px;
-            margin-top: 20px;
-        }
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_4">FAQs</a>
+                            </li>
+    
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                            </li>
+                        </ul>
 
-        .custom-block {
-            padding: 20px;
-            border-radius: 10px;
-            transition: transform 0.3s ease;
-        }
-
-        .custom-block:hover {
-            transform: scale(1.05);
-        }
-
-        .custom-block-overlay {
-            background: linear-gradient(135deg, #71b7e6, #9b59b6);
-            color: white;
-        }
-
-        .shadow-lg {
-            box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
-        }
-
-        h5 {
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .btn-primary {
-            background-color: #007bff;
-            border-color: #007bff;
-        }
-
-        .btn-primary:hover {
-            background-color: #0056b3;
-            border-color: #004085;
-        }
-
-        nav.navbar {
-            background-color: #343a40;
-        }
-
-        nav.navbar a.navbar-brand,
-        nav.navbar a.nav-link {
-            color: white;
-        }
-
-        nav.navbar a.navbar-brand:hover,
-        nav.navbar a.nav-link:hover {
-            color: #007bff;
-        }
-
-        footer.site-footer {
-            background-color: #343a40;
-            color: white;
-            padding: 20px 0;
-        }
-
-        footer.site-footer a {
-            color: white;
-        }
-
-        footer.site-footer a:hover {
-            color: #007bff;
-        }
-
-        .footer-title {
-            font-weight: 700;
-        }
-    </style>
-</head>
-
-<body id="top">
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <a class="navbar-brand" href="/">
-                <i class="bi-back"></i>
-                <span>UAP Immo</span>
-            </a>
-            <div class="d-lg-none ms-auto me-4">
-                <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
-            </div>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                    <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_1">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_2">Lorem</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_4">FAQs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link click-scroll" href="#section_5">Contact</a>
-                    </li>
-                </ul>
-                <div class="d-none d-lg-block">
-                    <a href="/login" class="navbar-icon bi-person smoothscrol"></a>
+                        <div class="d-none d-lg-block">
+                            <a href="/login" class="navbar-icon bi-person smoothscrol"></a>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </nav>
+            </nav>
+            
 
-    <main>
-        <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
-            <div class="container text-center">
-                <h1 class="text-dark">UAP Immo</h1>
-                <h6>Platforme immobilière</h6>
-            </div>
-        </section>
+            <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
+                <div class="container">
+                    <div class="row">
 
-        <section class="featured-section">
-            <div class="container">
-                <div class="row justify-content-center">
+                        <div class="col-lg-8 col-12 mx-auto">
+                            <h1 class="text-white text-center">UAP Immo</h1>
+                             <h6 class="text-center">Platforme immobilière</h6>
 
-                    <!-- Colonne pour le paiement par carte bancaire Stripe -->
-                    <div class="col-lg-6 col-12 mb-4">
-                        <div class="custom-block bg-white shadow-lg">
-                            <div class="d-flex flex-column h-100">
-                                <h5 class="mb-2">Paiement CB (Stripe)</h5>
-                                <form id="stripe-form">
-                                    <div class="form-group">
-                                        <label for="card-element">Carte de crédit</label>
-                                        <div id="card-element" class="form-control">
-                                            <!-- A Stripe Element will be inserted here. -->
+
+                            <form method="get" class="custom-form mt-4 pt-2 mb-lg-0 mb-5" role="search">
+                                <div class="input-group input-group-lg">
+                                    <span class="input-group-text bi-person" id="basic-addon1">
+                                        
+                                    </span>
+
+                                    <input name="keyword" type="search" class="form-control" id="keyword" placeholder="Créer mon compte maintenant" aria-label="Search" disabled>
+
+                                    <button a href="/login" type="submit" class="form-control">Start</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+                </div>
+            </section>
+
+
+            <section class="featured-section">
+                <div class="container">
+                    <div class="row justify-content-center">
+    
+                        <!-- Colonne pour le paiement par carte bancaire Stripe -->
+                        <div class="col-lg-6 col-12 mb-4">
+                            <div class="custom-block bg-white shadow-lg">
+                                <div class="d-flex flex-column h-100">
+                                    <h5 class="mb-2">Paiement CB (Stripe)</h5>
+                                    <form id="stripe-form">
+                                        <div class="form-group">
+                                            <label for="card-element">Carte de crédit</label>
+                                            <div id="card-element" class="form-control">
+                                                <!-- A Stripe Element will be inserted here. -->
+                                            </div>
+                                            <!-- Used to display form errors. -->
+                                            <div id="card-errors" role="alert"></div>
                                         </div>
-                                        <!-- Used to display form errors. -->
-                                        <div id="card-errors" role="alert"></div>
-                                    </div>
-                                    <button class="btn btn-primary mt-3" type="submit">Payer</button>
-                                </form>
+                                        <button class="btn btn-primary mt-3" type="submit">Payer</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- Colonne pour le paiement en crypto-monnaie -->
-                    <div class="col-lg-6 col-12">
-                        <div class="custom-block custom-block-overlay shadow-lg">
-                            <div class="d-flex flex-column h-100">
-                                <h5 class="text-white mb-2">Paiement en Crypto</h5>
-                                <form id="crypto-form">
-                                    <div class="form-group">
-                                        <label for="crypto-address" class="text-white">Adresse Crypto</label>
-                                        <input type="text" id="crypto-address" class="form-control" placeholder="Votre adresse crypto" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="crypto-amount" class="text-white">Montant</label>
-                                        <input type="number" id="crypto-amount" class="form-control" placeholder="Montant à payer" required>
-                                    </div>
-                                    <button class="btn btn-primary mt-3" type="submit">Payer en Crypto</button>
-                                </form>
+    
+                        <!-- Colonne pour le paiement en crypto-monnaie -->
+                        <div class="col-lg-6 col-12">
+                            <div class="custom-block custom-block-overlay shadow-lg">
+                                <div class="d-flex flex-column h-100">
+                                    <h5 class="text-white mb-2">Paiement en Crypto</h5>
+                                    <form id="crypto-form">
+                                        <div class="form-group">
+                                            <label for="crypto-address" class="text-white">Adresse Crypto</label>
+                                            <input type="text" id="crypto-address" class="form-control" placeholder="Votre adresse crypto" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="crypto-amount" class="text-white">Montant</label>
+                                            <input type="number" id="crypto-amount" class="form-control" placeholder="Montant à payer" required>
+                                        </div>
+                                        <button class="btn btn-primary mt-3" type="submit">Payer en Crypto</button>
+                                    </form>
+                                </div>
                             </div>
                         </div>
+    
                     </div>
-
                 </div>
-            </div>
-        </section>
+            </section>
+           
 
-        <section class="faq-section section-padding" id="section_4">
+
+           
+        </main>
+
+<footer class="site-footer section-padding">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-6 col-12">
-                        <h2 class="mb-4">FAQ</h2>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div class="col-lg-5 col-12">
-                        <img src="images/faq_graphic.jpg" class="img-fluid" alt="FAQs">
-                    </div>
-                    <div class="col-lg-6 col-12 m-auto">
-                        <div class="accordion" id="accordionExample">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        Qu'est ce que UAP Immo ?
-                                    </button>
-                                </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        La plateforme UAP Immo permet de générer ses propres Landing Page de manière <strong>automatique</strong> lorem
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingTwo">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        Comment fonctionne la plateforme ?
-                                    </button>
-                                </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        Inscription <strong>Lorem</strong> achat pub
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        Autre question ?
-                                    </button>
-                                </h2>
-                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        <strong>Lorem</strong> La plateforme
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-    </main>
 
-    <footer class="site-footer">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-12 col-12 d-flex flex-wrap justify-content-between align-items-center">
-                    <div class="footer-info">
-                        <h4 class="footer-title">UAP Immo</h4>
-                        <p>Lorem Ipsum</p>
+                    <div class="col-lg-3 col-12 mb-4 pb-2">
+                        <a class="navbar-brand mb-2" href="index.html">
+                            <i class="bi-back"></i>
+                            <span>UAP Immo</span>
+                        </a>
                     </div>
-                    <div class="d-flex flex-wrap align-items-center">
-                        <a href="#" class="btn btn-primary me-3">Contact</a>
-                        <ul class="social-links d-flex flex-wrap align-items-center">
-                            <li><a href="#"><i class="bi-facebook"></i></a></li>
-                            <li><a href="#"><i class="bi-twitter"></i></a></li>
-                            <li><a href="#"><i class="bi-instagram"></i></a></li>
-                            <li><a href="#"><i class="bi-linkedin"></i></a></li>
+
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <h6 class="site-footer-title mb-3">Informations</h6>
+
+                        <ul class="site-footer-links">
+                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
+                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
+                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
                         </ul>
                     </div>
+
+                    <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
+                        <h6 class="site-footer-title mb-3">Accès</h6>
+
+                        <p class="text-white d-flex mb-1">
+                            <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
+                        </p>
+
+                        <p class="text-white d-flex">
+                            <a href="mailto:info@company.com" class="site-footer-link">
+                                contact@uap.immo
+                            </a>
+                        </p>
+                    </div>
+
+                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+    <div class="dropdown">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            
+        </button>
+
+        <ul class="dropdown-menu">
+            <li>
+                <a class="dropdown-item" href="/?lang=en">English</a>
+            </li>
+           <li>
+                <a class="dropdown-item" href="/?lang=fr">Français</a>
+            </li>
+        </ul>
+    </div>
+</div>
+                        <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>                  
+                    </div>
+
                 </div>
             </div>
-        </div>
-    </footer>
+        </footer>
 
-    <!-- Stripe JS -->
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-        // Initialize Stripe elements
-        var stripe = Stripe('your-publishable-key-here');
-        var elements = stripe.elements();
 
-        // Custom styling can be passed to options when creating an Element.
-        var style = {
-            base: {
-                color: '#32325d',
-                fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
-                fontSmoothing: 'antialiased',
-                fontSize: '16px',
-                '::placeholder': {
-                    color: '#aab7c4'
-                }
-            },
-            invalid: {
-                color: '#fa755a',
-                iconColor: '#fa755a'
-            }
-        };
+        <!-- JAVASCRIPT FILES -->
+        <script src="js/jquery.min.js"></script>
+        <script src="js/bootstrap.bundle.min.js"></script>
+        <script src="js/jquery.sticky.js"></script>
+        <script src="js/click-scroll.js"></script>
+        <script src="js/custom.js"></script>
 
-        // Create an instance of the card Element.
-        var card = elements.create('card', { style: style });
-
-        // Add an instance of the card Element into the `card-element` <div>.
-        card.mount('#card-element');
-
-        // Create a token or display an error when the form is submitted.
-        var form = document.getElementById('stripe-form');
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
-
-            stripe.createToken(card).then(function (result) {
-                if (result.error) {
-                    // Inform the customer that there was an error.
-                    var errorElement = document.getElementById('card-errors');
-                    errorElement.textContent = result.error.message;
-                } else {
-                    // Send the token to your server.
-                    stripeTokenHandler(result.token);
-                }
-            });
-        });
-
-        function stripeTokenHandler(token) {
-            // Insert the token ID into the form so it gets submitted to the server
-            var hiddenInput = document.createElement('input');
-            hiddenInput.setAttribute('type', 'hidden');
-            hiddenInput.setAttribute('name', 'stripeToken');
-            hiddenInput.setAttribute('value', token.id);
-            form.appendChild(hiddenInput);
-
-            // Submit the form
-            form.submit();
-        }
-    </script>
-    <!-- Crypto Payments JS -->
-    <script>
-        document.getElementById('crypto-form').addEventListener('submit', function (event) {
-            event.preventDefault();
-            // Logic for handling crypto payments
-            var cryptoAddress = document.getElementById('crypto-address').value;
-            var cryptoAmount = document.getElementById('crypto-amount').value;
-
-            // Send the crypto payment data to your server
-            fetch('/crypto-payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ address: cryptoAddress, amount: cryptoAmount })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        alert('Paiement en crypto effectué avec succès!');
-                    } else {
-                        alert('Erreur lors du paiement en crypto.');
-                    }
-                });
-        });
-    </script>
-
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.bundle.min.js"></script>
-</body>
-
+    </body>
 </html>
