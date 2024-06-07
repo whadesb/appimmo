@@ -346,5 +346,25 @@
             }
         });
     </script>
+<script>
+    // Fonction pour copier l'URL dans le presse-papiers
+    function copyURL(url) {
+        navigator.clipboard.writeText(url)
+            .then(() => {
+                alert('URL copiée avec succès!');
+            })
+            .catch(err => {
+                console.error('Impossible de copier l\'URL : ', err);
+            });
+    }
+
+    // Fonction pour payer la page
+    function payForPage(url) {
+        // Vous pouvez rediriger l'utilisateur vers la page de paiement avec l'URL en paramètre
+        // Par exemple, vous pouvez utiliser une requête AJAX ici pour gérer le paiement en arrière-plan
+        // window.location.href = "/payment?url=" + encodeURIComponent(url);
+        alert('Fonction de paiement non implémentée.');
+    }
+</script>
 </body>
 </html>
