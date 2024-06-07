@@ -1,12 +1,10 @@
-// routes/add-property.js
 const express = require('express');
 const router = express.Router();
 const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
-const authMiddleware = require('../middleware/auth'); // Importer le middleware d'authentification
 
-router.post('/add-property', authMiddleware, async (req, res) => {
+router.post('/add-property', async (req, res) => {
   // Récupérer les données du formulaire depuis req.body
   const { rooms, surface, price, city, country } = req.body;
 
@@ -17,8 +15,7 @@ router.post('/add-property', authMiddleware, async (req, res) => {
       surface,
       price,
       city,
-      country,
-      owner: req.session.user._id  // Associer la propriété à l'utilisateur connecté
+      country
     });
 
     // Sauvegarder la propriété dans la base de données
@@ -47,7 +44,7 @@ async function generateLandingPage(property) {
         /* Styles CSS personnalisés */
         body {
             font-family: Arial, sans-serif;
-            background: rgba(0, 0, 0, 0.8) !important;
+            background-color: #f8f9fa;
             color: #333;
             margin: 0;
             padding: 0;
