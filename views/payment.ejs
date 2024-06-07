@@ -12,6 +12,37 @@
         <link href="/css/bootstrap.min.css" rel="stylesheet">
         <link href="/css/bootstrap-icons.css" rel="stylesheet">
         <link href="/css/templatemo-topic-listing.css" rel="stylesheet">       
+        <style>
+    .custom-block-stripe {
+        background-color: #f8f9fa; /* Couleur de fond claire pour Stripe */
+        border-radius: 10px; /* Coins arrondis pour un look plus moderne */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Légère ombre pour l'effet de profondeur */
+        padding: 20px;
+    }
+
+    .custom-block-crypto {
+        background-color: #e9ecef; /* Couleur de fond différente mais complémentaire pour Crypto */
+        border-radius: 10px; /* Coins arrondis pour un look plus moderne */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Légère ombre pour l'effet de profondeur */
+        padding: 20px;
+    }
+
+    .payment-title {
+        color: #343a40; /* Couleur de titre pro et lisible */
+        font-weight: 600; /* Légèrement plus gras pour la lisibilité */
+    }
+
+    .btn-primary {
+        background-color: #007bff;
+        border-color: #007bff;
+        transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+    }
+</style>
     </head>
     <body id="top">
         <main>
@@ -121,52 +152,44 @@
                     </div>
                 </div>
             </section>
-
-            <!-- Section de paiement ajoutée -->
-            <section class="payment-section section-padding" id="section_payment">
-                <div class="container">
-                    <div class="row justify-content-center">
-
-                        <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                            <div class="custom-block bg-white shadow-lg p-4">
-                                <h5 class="mb-2">Paiement CB (Stripe)</h5>
-                                <form id="stripe-form">
-                                    <div class="form-group">
-                                        <label for="card-element">Carte de crédit</label>
-                                        <div id="card-element" class="form-control">
-                                            <!-- A Stripe Element will be inserted here. -->
-                                        </div>
-                                        <!-- Used to display form errors. -->
-                                        <div id="card-errors" role="alert"></div>
-                                    </div>
-                                    <button class="btn btn-primary mt-3" type="submit">Payer</button>
-                                </form>
+<section class="payment-section section-padding" id="section_payment">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-4 col-12 mb-4 mb-lg-0">
+                <div class="custom-block custom-block-stripe">
+                    <h5 class="payment-title mb-2">Paiement CB (Stripe)</h5>
+                    <form id="stripe-form">
+                        <div class="form-group">
+                            <label for="card-element">Carte de crédit</label>
+                            <div id="card-element" class="form-control">
+                                <!-- A Stripe Element will be inserted here. -->
                             </div>
+                            <!-- Used to display form errors. -->
+                            <div id="card-errors" role="alert"></div>
                         </div>
-
-                        <div class="col-lg-6 col-12">
-                            <div class="custom-block bg-white shadow-lg p-4">
-                                <h5 class="mb-2">Paiement en Crypto</h5>
-                                <form id="crypto-form">
-                                    <div class="form-group">
-                                        <label for="crypto-address">Adresse Crypto</label>
-                                        <input type="text" id="crypto-address" class="form-control" placeholder="Votre adresse crypto" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="crypto-amount">Montant</label>
-                                        <input type="number" id="crypto-amount" class="form-control" placeholder="Montant à payer" required>
-                                    </div>
-                                    <button class="btn btn-primary mt-3" type="submit">Payer en Crypto</button>
-                                </form>
-                            </div>
-                        </div>
-
-                    </div>
+                        <button class="btn btn-primary mt-3" type="submit">Payer</button>
+                    </form>
                 </div>
-            </section>
-
-
-            
+            </div>
+            <div class="col-lg-6 col-12">
+                <div class="custom-block custom-block-crypto">
+                    <h5 class="payment-title mb-2">Paiement en Crypto</h5>
+                    <form id="crypto-form">
+                        <div class="form-group">
+                            <label for="crypto-address">Adresse Crypto</label>
+                            <input type="text" id="crypto-address" class="form-control" placeholder="Votre adresse crypto" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="crypto-amount">Montant</label>
+                            <input type="number" id="crypto-amount" class="form-control" placeholder="Montant à payer" required>
+                        </div>
+                        <button class="btn btn-primary mt-3" type="submit">Payer en Crypto</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
         </main>
 
 <footer class="site-footer section-padding">
