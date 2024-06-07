@@ -193,24 +193,16 @@
                                 <div class="card-body">
                                     <h5 class="card-title">Pages créées</h5>
                                     <table class="table">
-    <thead>
-        <tr>
-            <th scope="col">URL</th>
-            <th scope="col">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% user.pages.forEach(page => { %>
-            <tr>
-                <td><%= page.url %></td>
-                <td>
-                    <button class="btn btn-danger" onclick="deletePage('<%= page._id %>')">Supprimer</button>
-                    <button class="btn btn-primary" onclick="testPage('<%= page.url %>')">Test</button>
-                </td>
-            </tr>
-        <% }); %>
-    </tbody>
-</table>
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">URL</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Les lignes de pages seront ajoutées ici dynamiquement -->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </div>
                             <!-- Ajoutez d'autres items ici -->
@@ -343,29 +335,5 @@
             }
         });
     </script>
-<script>
-    async function deletePage(pageId) {
-        try {
-            const response = await fetch(`/delete-page/${pageId}`, {
-                method: 'DELETE',
-            });
-
-            if (response.ok) {
-                // Rafraîchir la liste des pages après suppression
-                window.location.reload();
-            } else {
-                const errorData = await response.json();
-                console.error('Erreur lors de la suppression de la page : ', errorData.error);
-            }
-        } catch (error) {
-            console.error('Erreur lors de la suppression de la page : ', error);
-        }
-    }
-
-    function testPage(url) {
-        // Rediriger l'utilisateur vers l'URL de test
-        window.open(url, '_blank');
-    }
-</script>
 </body>
 </html>
