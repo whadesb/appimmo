@@ -87,6 +87,11 @@ app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
 
+// Route pour la page de paiement
+app.get('/payment', (req, res) => {
+  res.render('payment', { title: 'Payment' });
+});
+
 // Route pour afficher le formulaire d'inscription
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
