@@ -91,6 +91,15 @@ app.get('/faq', (req, res) => {
 app.get('/payment', (req, res) => {
   res.render('payment', { title: 'Payment' });
 });
+// Route pour gérer le paiement par Stripe
+app.post('/stripe-payment', (req, res) => {
+  // Logique pour traiter le paiement avec Stripe
+});
+
+// Route pour gérer le paiement en crypto
+app.post('/crypto-payment', (req, res) => {
+  // Logique pour traiter le paiement en crypto
+});
 
 // Route pour afficher le formulaire d'inscription
 app.get('/register', (req, res) => {
