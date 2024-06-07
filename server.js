@@ -244,6 +244,27 @@ async function generateLandingPage(property) {
   return `/landing-pages/${property._id}.html`;
 }
 
+// Route pour créer une intention de paiement
+app.post('/create-payment-intent', async (req, res) => {
+  const { amount, currency } = req.body;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100,
+      currency: currency,
+    });
+
+    res.status(200).json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error('Error creating payment intent', error);
+    res.status(500).json({ error: 'Failed to create payment intent' });
+  }
+});
+
+app.get('/payment', (req, res) => {
+  res.render('payment', { title: 'Payment', stripePublicKey: process.env.STRIPE_PUBLIC_KEY });
+});
+
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
 app.listen(port, () => {
