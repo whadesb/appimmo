@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>User - UAP Immo</title>
+    <title>Login - UAP Immo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
@@ -13,27 +13,16 @@
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/templatemo-topic-listing.css" rel="stylesheet">
     <style>
-       body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: #f8f9fa;
-        }
         .content {
             padding: 20px;
-            margin-left: 280px;
         }
         .card {
-            margin-bottom: 20px;
-            height: 100%;
+            margin-top: 20px;
         }
         .menu-vertical {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 250px;
             background-color: #343a40;
             padding: 20px;
             border-radius: 8px;
-            color: #fff;
             height: 100%;
         }
         .menu {
@@ -53,6 +42,13 @@
         }
         .menu-item a:hover {
             color: #adb5bd;
+        }
+        .custom-cart-icon {
+            font-size: 1.5rem;
+            color: #333;
+        }
+        .badge {
+            background-color: #ffc107;
         }
     </style>
 </head>
@@ -109,48 +105,7 @@
                 </div>
             </div>
         </section>
-<div class="menu-vertical">
-        <ul class="menu">
-            <li class="menu-item active"><a href="#" onclick="showSection('account')">Mon compte</a></li>
-            <li class="menu-item"><a href="#" onclick="showSection('landing')">Landing page</a></li>
-            <li class="menu-item"><a href="#" onclick="showSection('publicite')">Publicité</a></li>
-            <li class="menu-item"><a href="#" onclick="showSection('created-pages')">Pages créées</a></li>
-            <!-- Ajoutez d'autres liens ici -->
-        </ul>
-    </div>
-
-    <div class="content">
-        <div id="account" class="card">
-            <div class="card-body">
-                <h5 class="card-title">Mes Informations :</h5>
-                <p class="card-text">Nom: <%= user.firstName %></p>
-                <p class="card-text">Prénom: <%= user.lastName %></p>
-                <p class="card-text">Email: <%= user.email %></p>
-                <!-- autres informations de l'utilisateur ici -->
-            </div>
-        </div>
-        <div id="landing" class="card" style="display: none;">
-            <div class="card-body">
-                <h5 class="card-title">Ajouter un bien immobilier</h5>
-                <form id="add-property-form" action="/add-property" method="POST">
-                    <!-- Votre formulaire ici -->
-                </form>
-                <div id="generatedLink" class="mt-3"></div>
-            </div>
-        </div>
-        <div id="publicite" class="card" style="display: none;">
-            <div class="card-body">
-                <h5 class="card-title">Publicité</h5>
-                <!-- Contenu de la publicité ici -->
-            </div>
-        </div>
-        <div id="created-pages" class="card" style="display: none;">
-            <div class="card-body">
-                <h5 class="card-title">Pages créées</h5>
-                <!-- Contenu des pages créées ici -->
-            </div>
-        </div>        
-<section class="featured-section">
+        <section class="featured-section">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8 col-12">
@@ -378,15 +333,5 @@
             }
         });
     </script>
-    <script>
-        function showSection(sectionId) {
-            const sections = ['account', 'landing', 'publicite', 'created-pages'];
-            sections.forEach(id => {
-                const section = document.getElementById(id);
-                if (section) {
-                    section.style.display = id === sectionId ? 'block' : 'none';
-                }
-            });
-        }
 </body>
 </html>
