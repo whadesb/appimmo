@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>Login - UAP Immo</title>
+    <title>User - UAP Immo</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
@@ -95,87 +95,6 @@
                     </div>
                 </div>
             </nav>
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container">
-        <a class="navbar-brand" href="/">UAP Immo</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/logout">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>
-
-<!-- Contenu de la page -->
-<div class="container mt-5">
-    <div class="row">
-        <!-- Mes Informations -->
-        <div class="col-lg-4">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Mes Informations :</h5>
-                    <p class="card-text">Nom: <%= user.firstName %></p>
-                    <p class="card-text">Prénom: <%= user.lastName %></p>
-                    <p class="card-text">Email: <%= user.email %></p>
-                    <!-- autres informations de l'utilisateur ici -->
-                </div>
-            </div>
-        </div>
-        <!-- Mes Pages -->
-        <div class="col-lg-8">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">Mes Pages :</h5>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th scope="col">URL</th>
-                                    <th scope="col">Date de Création</th>
-                                    <th scope="col">Durée</th>
-                                    <th scope="col">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Lignes de données des pages créées -->
-                            </tbody>
-                        </table>
-                    </div>
-                    <!-- Bouton pour générer une nouvelle page -->
-                    <button class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#generatePageModal">Générer</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal de Génération de Page -->
-<div class="modal fade" id="generatePageModal" tabindex="-1" aria-labelledby="generatePageModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="generatePageModalLabel">Générer une nouvelle page</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Formulaire pour générer une nouvelle page -->
-                <form id="generatePageForm">
-                    <div class="mb-3">
-                        <label for="pageTitle" class="form-label">Titre de la Page</label>
-                        <input type="text" class="form-control" id="pageTitle" required>
-                    </div>
-                    <!-- Autres champs du formulaire -->
-                    <button type="submit" class="btn btn-primary">Générer</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
         <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
             <div class="container">
                 <div class="row">
