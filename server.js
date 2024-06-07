@@ -8,15 +8,10 @@ const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
-const addPropertyRouter = require('./routes/add-property');
-const deletePropertyRouter = require('./routes/delete-property');
 
 const app = express();
 
-require('dotenv').config();
-
 // Middleware pour analyser les données POST
-app.use(session({ secret: 'votre_secret', resave: false, saveUninitialized: true }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
@@ -48,8 +43,7 @@ app.get('/', (req, res) => {
 const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
 app.use(addPropertyRoutes);
 
-const userPropertiesRouter = require('./routes/user-properties');
-
+require('dotenv').config();
 const Property = require('./models/Property');
 
 // Configurer les sessions
@@ -78,10 +72,6 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('Error connecting to MongoDB', err);
 });
 
-app.use('/properties', addPropertyRouter); // Pour ajouter des propriétés
-app.use('/properties', deletePropertyRouter); // Pour supprimer des propriétés
-app.use('/user', userPropertiesRouter); // Pour les propriétés des utilisateurs
-
 // Route pour la page d'accueil
 app.get('/', (req, res) => {
   res.render('index'); // Rendre la vue "index.ejs"
@@ -100,6 +90,11 @@ app.get('/faq', (req, res) => {
 // Route pour afficher le formulaire d'inscription
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
+});
+
+// Rediriger /signup vers /register
+app.get('/register', (req, res) => {
+  res.redirect('/register');
 });
 
 // Route pour traiter la soumission du formulaire d'inscription
@@ -189,7 +184,6 @@ app.get('/landing-pages/:id', (req, res) => {
    res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
 });
 
-// Route pour la création de propriété
 app.post('/add-property', async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
 
@@ -213,7 +207,6 @@ app.post('/add-property', async (req, res) => {
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
   }
 });
-
 
 async function generateLandingPage(property) {
   const template = `
