@@ -4,12 +4,13 @@ const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
+const passport = require('passport');
 
-router.post('/add-property', async (req, res) => {
+router.post('/add-property', passport.authenticate('jwt', { session: false }), async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
 
-    // Récupérer l'ID de l'utilisateur à partir de la session ou de toute autre source
-    const userId = req.user.id; // Exemple : si vous stockez l'ID de l'utilisateur dans la session
+    // L'ID de l'utilisateur est accessible à partir de req.user.id
+    const userId = req.user.id;
 
     try {
         // Créer une nouvelle propriété dans la base de données
