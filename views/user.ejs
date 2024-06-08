@@ -364,5 +364,31 @@
         alert('Fonction de paiement non implémentée.');
     }
 </script>
+<script>
+document.getElementById('add-property-form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const formDataJson = Object.fromEntries(formData.entries());
+
+    // Ajoutez l'userId à l'objet formDataJson
+    formDataJson.userId = userId;
+
+    try {
+        const response = await axios.post('/add-property', formDataJson);
+
+        if (response.status === 200) {
+            const data = response.data;
+            const generatedLinkElement = document.getElementById('generatedLink');
+            generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${data.url}">${data.url}</a>`;
+        } else {
+            console.error('Erreur lors de la soumission du formulaire : ', response.data.error);
+        }
+    } catch (error) {
+        console.error('Erreur lors de la soumission du formulaire : ', error);
+    }
+});
+</script>
 </body>
 </html>
