@@ -240,9 +240,8 @@ async function generateLandingPage(property) {
 // Route pour afficher les propriétés d'un utilisateur spécifique
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
-    // Trouver les propriétés créées par l'utilisateur connecté
     const properties = await Property.find({ user: req.user._id });
-    res.render('user-properties', { properties, user: req.user });
+    res.json(properties); // Renvoie les propriétés sous forme de JSON
   } catch (error) {
     console.error('Error fetching user properties', error);
     res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
@@ -283,17 +282,6 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
     res.status(500).send('Une erreur est survenue lors de la suppression de la propriété.');
   }
 });
-
-app.get('/user/properties', isAuthenticated, async (req, res) => {
-  try {
-    const properties = await Property.find({ user: req.user._id });
-    res.json(properties); // Renvoie les propriétés sous forme de JSON
-  } catch (error) {
-    console.error('Error fetching user properties', error);
-    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
-  }
-});
-
 
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
