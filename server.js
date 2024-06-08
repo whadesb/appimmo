@@ -16,12 +16,15 @@ const app = express();
 // Utilisez express-flash middleware
 app.use(flash());
 
-// Utiliser express-session middleware avec l'option secret provenant de l'environnement
+// Configurer les sessions
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
-  saveUninitialized: false
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
+
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -56,15 +59,6 @@ app.use(addPropertyRoutes);
 
 require('dotenv').config();
 const Property = require('./models/Property');
-
-// Configurer les sessions
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
-}));
 
 // Initialiser Passport.js
 app.use(passport.initialize());
