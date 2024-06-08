@@ -8,7 +8,6 @@
     <title>Login - UAP Immo</title>    
     <link rel="preconnect" href="https://fonts.googleapis.com">        
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/templatemo-topic-listing.css" rel="stylesheet">  
@@ -67,7 +66,7 @@
                         </ul>
 
                         <div class="d-none d-lg-block">
-                            <a href="/login" class="navbar-icon bi-person smoothscrol"></a>
+                            <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                         </div>
                     </div>
                 </div>
@@ -108,126 +107,106 @@
                 </div>
             </div>
         </section>
-
-    
            <section class="contact-section section-padding section-bg" id="section_5">
                 <div class="container">
                     <div class="row">
-<div class="row justify-content-center">
-                        <div class="col-lg-12 col-12 text-center">
-                            <h2 class="mb-5">Contact</h2>
+                        <div class="row justify-content-center">
+                            <div class="col-lg-12 col-12 text-center">
+                                <h2 class="mb-5">Contact</h2>
+                            </div>
+                            <div class="col-lg-6 col-12">
+                                <form action="#" method="post" class="custom-form contact-form" role="form">
+                                    <div class="row">
+                                        <div class="col-lg-6 col-md-6 col-12">
+                                            <div class="form-floating">
+                                                <input type="text" name="name" id="name" class="form-control" placeholder="Name" required="">
+                                                <label for="floatingInput">Nom</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-6 col-md-6 col-12">
+                                            <div class="form-floating">
+                                                <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required="">
+                                                <label for="floatingInput">Adresse mail</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-12 col-12">
+                                            <div class="form-floating">
+                                                <input type="text" name="subject" id="name" class="form-control" placeholder="Name" required="">
+                                                <label for="floatingInput">Objet</label>
+                                            </div>
+
+                                            <div class="form-floating">
+                                                <textarea class="form-control" id="message" name="message" placeholder="Tell me about the project"></textarea>
+                                                <label for="floatingTextarea">Votre message</label>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-lg-4 col-12 ms-auto">
+                                            <button type="submit" class="form-control">Envoyer</button>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
- <div class="col-lg-6 col-12">
-                            <form action="#" method="post" class="custom-form contact-form" role="form">
-                                <div class="row">
-                                    <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-floating">
-                                            <input type="text" name="name" id="name" class="form-control" placeholder="Name" required="">
-                                           
-                                            <label for="floatingInput">Nom</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-6 col-md-6 col-12">
-                                        <div class="form-floating">
-                                            <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" class="form-control" placeholder="Email address" required="">
-                                           
-                                            <label for="floatingInput">Adresse mail</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-12 col-12">
-                                        <div class="form-floating">
-                                            <input type="text" name="subject" id="name" class="form-control" placeholder="Name" required="">
-                                           
-                                            <label for="floatingInput">Objet</label>
-                                        </div>
-
-                                        <div class="form-floating">
-                                            <textarea class="form-control" id="message" name="message" placeholder="Tell me about the project"></textarea>
-                                           
-                                            <label for="floatingTextarea">Votre message</label>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-lg-4 col-12 ms-auto">
-                                        <button type="submit" class="form-control">Envoyer</button>
-                                    </div>
-
-                                </div>
-                            </form>
-                        </div>
-</div>
-
                     </div>
                 </div>
             </section>
         </main>
 
-<footer class="site-footer section-padding">
+        <footer class="site-footer section-padding">
             <div class="container">
                 <div class="row">
-
                     <div class="col-lg-3 col-12 mb-4 pb-2">
-                        <a class="navbar-brand mb-2" href="index.html">
+                        <a class="navbar-brand mb-2" href="/">
                             <i class="bi-back"></i>
                             <span>UAP Immo</span>
                         </a>
                     </div>
-
                     <div class="col-lg-3 col-md-4 col-6">
                         <h6 class="site-footer-title mb-3">Informations</h6>
-
                         <ul class="site-footer-links">
                             <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
                             <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
                             <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
                         </ul>
                     </div>
-
                     <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
                         <h6 class="site-footer-title mb-3">Accès</h6>
-
                         <p class="text-white d-flex mb-1">
                             <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
                         </p>
-
                         <p class="text-white d-flex">
                             <a href="mailto:info@company.com" class="site-footer-link">
                                 contact@uap.immo
                             </a>
                         </p>
                     </div>
-
                     <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-   <div class="dropdown">
-    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        
-    </button>
-
-    <ul class="dropdown-menu">
-        <li>
-            <a class="dropdown-item" href="#">English</a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="#">Français</a>
-        </li>
-    </ul>
-</div></div>
-                        <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>                  
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#">English</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Français</a>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
-
+                    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
                 </div>
             </div>
         </footer>
 
-
         <!-- JAVASCRIPT FILES -->
-        <script src="js/jquery.min.js"></script>
-        <script src="js/bootstrap.bundle.min.js"></script>
-        <script src="js/jquery.sticky.js"></script>
-        <script src="js/click-scroll.js"></script>
-        <script src="js/custom.js"></script>
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        <script src="/js/jquery.sticky.js"></script>
+        <script src="/js/click-scroll.js"></script>
+        <script src="/js/custom.js"></script>
 
     </body>
 </html>
