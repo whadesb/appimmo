@@ -9,23 +9,24 @@ router.post('/add-property', async (req, res) => {
 
     try {
         // Créer une nouvelle propriété dans la base de données
-        const property = new Property({
-            rooms,
-            surface,
-            price,
-            city,
-            country
-        });
-
+        
         // Sauvegarder la propriété dans la base de données
-        await property.save();
+const property = new Property({
+    rooms,
+    surface,
+    price,
+    city,
+    country
+});
 
-        // Générer la page de destination
-        const landingPageUrl = await generateLandingPage(property);
+await property.save();
 
-        // Mettre à jour l'URL de la propriété et sauvegarder de nouveau
-        property.url = landingPageUrl;
-        await property.save();
+// Générer la page de destination
+const landingPageUrl = await generateLandingPage(property);
+
+// Mettre à jour l'URL de la propriété et sauvegarder de nouveau
+property.url = landingPageUrl;
+await property.save();
 
         // Rediriger vers une autre page ou envoyer une réponse JSON en cas de succès
         res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
