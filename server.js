@@ -69,6 +69,16 @@ app.get('/', (req, res) => {
   res.render('index', { i18n: res });
 });
 
+// Route pour la page de profil de l'utilisateur
+app.get('/user', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.render('user', { user: req.user });
+  } else {
+    res.redirect('/login');
+  }
+});
+
+
 const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
 app.use(addPropertyRoutes);
 
