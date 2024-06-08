@@ -217,6 +217,26 @@ app.post('/add-property', async (req, res) => {
   }
 });
 
+app.post('/create-payment-intent', async (req, res) => {
+  const { amount, currency } = req.body;
+
+  try {
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: amount * 100, // montant en centimes
+      currency: currency,
+    });
+
+    res.status(200).json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    console.error('Error creating payment intent', error);
+    res.status(500).json({ error: 'Failed to create payment intent' });
+  }
+});
+
+app.get('/payment', (req, res) => {
+  res.render('payment', { title: 'Payment', stripePublicKey: process.env.STRIPE_PUBLIC_KEY });
+});
+
 async function generateLandingPage(property) {
   const template = `
   <!DOCTYPE html>
