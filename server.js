@@ -20,9 +20,13 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }), // Assurez-vous que MONGODB_URI est correctement configuré dans votre fichier .env
+  store: MongoStore.create({ clientPromise: mongoose.connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+  }) }), // Assurez-vous que MONGODB_URI est correctement configuré dans votre fichier .env
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
+
 
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
