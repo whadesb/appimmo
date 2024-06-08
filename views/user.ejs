@@ -185,8 +185,8 @@
                                         <thead>
                                             <tr>
                                                 <th scope="col">Nombre de pièces</th>
-                                                <th scope="col">Surface</th>
-                                                <th scope="col">Prix</th>
+                                                <th scope="col">Surface (m²)</th>
+                                                <th scope="col">Prix (€)</th>
                                                 <th scope="col">Ville</th>
                                                 <th scope="col">Pays</th>
                                                 <th scope="col">URL</th>
@@ -198,6 +198,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -336,8 +337,8 @@
                             <td>${property.country}</td>
                             <td><a href="${property.url}">${property.url}</a></td>
                             <td>
-                                <button class="btn btn-secondary" onclick="copyURL('${property.url}')">Copie</button>
-                                <button class="btn btn-primary" onclick="window.location.href='${property.url}'">Test</button>
+                                <button class="btn btn-primary" onclick="copyURL('${property.url}')">Copie</button>
+                                <button class="btn btn-secondary" onclick="testURL('${property.url}')">Test</button>
                             </td>
                         `;
                         propertiesList.appendChild(row);
@@ -351,7 +352,7 @@
         }
 
         // Charger les propriétés de l'utilisateur lorsque la section "Pages créées" est affichée
-        document.querySelector('.menu-item a[href="#"]').addEventListener('click', loadProperties);
+        document.querySelector('.menu-item a[onclick="showSection(\'created-pages\')"]').addEventListener('click', loadProperties);
 
         // Fonction pour copier l'URL dans le presse-papiers
         function copyURL(url) {
@@ -364,9 +365,9 @@
                 });
         }
 
-        // Fonction pour payer la page
-        function payForPage(url) {
-            alert('Fonction de paiement non implémentée.');
+        // Fonction pour tester l'URL
+        function testURL(url) {
+            window.open(url, '_blank');
         }
     </script>
 </body>
