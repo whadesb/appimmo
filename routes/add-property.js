@@ -99,6 +99,8 @@ async function generateLandingPage(property) {
 
     const filePath = path.join(__dirname, '..', 'public', 'landing-pages', `${property._id}.html`);
     fs.writeFileSync(filePath, template);
+console.log('URL générée pour la page de destination :', landingPageUrl);
+    console.log('Chemin du fichier généré :', filePath);
 
     const landingPageUrl = `/landing-pages/${property._id}.html`;
     return landingPageUrl;
