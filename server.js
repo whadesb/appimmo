@@ -16,9 +16,11 @@ const app = express();
 // Utilisez express-flash middleware
 app.use(flash());
 
-// Utilisez express-session middleware
+// Utiliser express-session middleware avec l'option secret provenant de l'environnement
 app.use(session({
-  // Configuration de la session
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false
 }));
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
