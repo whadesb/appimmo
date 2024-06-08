@@ -48,7 +48,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 // Utiliser le modèle User pour l'authentification locale avec Passport
-passport.use(new LocalStrategy(User.authenticate()));
+passport.use(new LocalStrategy({
+  usernameField: 'email'
+}, User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
