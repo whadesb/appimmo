@@ -6,16 +6,21 @@ const path = require('path');
 
 router.post('/add-property', async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
-    const property = new Property({ rooms, surface, price, city, country });
 
     try {
+        // Créer une nouvelle propriété dans la base de données
+        const property = new Property({ rooms, surface, price, city, country });
+
+        // Sauvegarder la propriété dans la base de données
         await property.save();
 
-        // Générer la landing page avec le nouveau design
+        // Générer la page de destination
         const landingPageUrl = await generateLandingPage(property);
 
-        // Mettre à jour l'URL de la propriété et sauvegarder de nouveau
+        // Mettre à jour l'URL de la propriété avec l'URL de la page de destination
         property.url = landingPageUrl;
+
+        // Sauvegarder de nouveau la propriété avec l'URL mise à jour
         await property.save();
 
         // Envoyer une réponse avec un message de confirmation et l'URL de la page générée
