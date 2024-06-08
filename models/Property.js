@@ -24,8 +24,7 @@ const propertySchema = new Schema({
     },
     url: {
         type: String,
-        required: true
-    }, // Champ pour l'URL de la page de destination
+         }, // Champ pour l'URL de la page de destination
     createdAt: { 
         type: Date, 
         default: Date.now 
