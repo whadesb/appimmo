@@ -237,8 +237,10 @@ async function generateLandingPage(property) {
   return `/landing-pages/${property._id}.html`;
 }
 
+// Route pour afficher les propriétés d'un utilisateur spécifique
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
+    // Trouver les propriétés créées par l'utilisateur connecté
     const properties = await Property.find({ user: req.user._id });
     res.render('user-properties', { properties, user: req.user });
   } catch (error) {
@@ -246,6 +248,43 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
     res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
   }
 });
+
+// Route pour afficher une propriété spécifique
+app.get('/property/:id', isAuthenticated, async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+
+    // Vérifiez que l'utilisateur connecté est bien le propriétaire de la propriété
+    if (property.user.equals(req.user._id)) {
+      res.render('property', { property });
+    } else {
+      res.status(403).send('Vous n\'êtes pas autorisé à voir cette propriété.');
+    }
+  } catch (error) {
+    console.error('Error fetching property', error);
+    res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
+  }
+});
+
+// Route pour supprimer une propriété
+app.delete('/property/:id', isAuthenticated, async (req, res) => {
+  try {
+    const property = await Property.findById(req.params.id);
+
+    // Vérifiez que l'utilisateur connecté est bien le propriétaire de la propriété
+    if (property.user.equals(req.user._id)) {
+      await property.remove();
+      res.status(200).send('Propriété supprimée avec succès.');
+    } else {
+      res.status(403).send('Vous n\'êtes pas autorisé à supprimer cette propriété.');
+    }
+  } catch (error) {
+    console.error('Error deleting property', error);
+    res.status(500).send('Une erreur est survenue lors de la suppression de la propriété.');
+  }
+});
+
+
 
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
