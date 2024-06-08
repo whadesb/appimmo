@@ -223,8 +223,7 @@ async function generateLandingPage(property) {
           <p>Nombre de pièces: ${property.rooms}</p>
           <p>Surface: ${property.surface} m²</p>
           <p>Prix: ${property.price} €</p>
-          <p>Localisation: ${
-<p>Localisation: ${property.city}, ${property.country}</p>
+          <p>Localisation: ${property.city}, ${property.country}</p>
       </div>
   </body>
   </html>`;
