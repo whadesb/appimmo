@@ -16,6 +16,11 @@ const flash = require('express-flash');
 
 const app = express();
 
+// Middleware pour analyser les données POST
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
+// Utiliser cookie-parser avant d'utiliser d'autres middlewares
 app.use(cookieParser());
 
 app.use(flash());
@@ -31,6 +36,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Configurer les sessions
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -39,51 +45,11 @@ app.use(session({
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
 
-
-// Middleware pour analyser les données POST
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-// Utiliser cookie-parser avant d'utiliser d'autres middlewares
-app.use(cookieParser());
-
 // Middleware pour initialiser i18n
 app.use(i18n.init);
 
-// Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
-app.use((req, res, next) => {
-  if (req.query.lang) {
-    res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
-    res.setLocale(req.query.lang);
-  } else if (req.cookies.locale) {
-    res.setLocale(req.cookies.locale);
-  }
-  next();
-});
-
 // Définir le moteur de template ejs
 app.set('view engine', 'ejs');
-
-// Exemple de route
-app.get('/', (req, res) => {
-  res.render('index', { i18n: res });
-});
-
-// Route pour la page de profil de l'utilisateur
-app.get('/user', (req, res) => {
-  if (req.isAuthenticated()) {
-    res.render('user', { user: req.user });
-  } else {
-    res.redirect('/login');
-  }
-});
-
-
-const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
-app.use(addPropertyRoutes);
-
-require('dotenv').config();
-const Property = require('./models/Property');
 
 // Initialiser Passport.js
 app.use(passport.initialize());
@@ -107,9 +73,14 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('Error connecting to MongoDB', err);
 });
 
-// Route pour la page d'accueil
+// Exemple de route
 app.get('/', (req, res) => {
-  res.render('index'); // Rendre la vue "index.ejs"
+  res.render('index', { i18n: res });
+});
+
+// Route pour afficher le formulaire de connexion
+app.get('/login', (req, res) => {
+  res.render('login', { title: 'Login' });
 });
 
 // Route pour gérer la soumission du formulaire de connexion
@@ -119,6 +90,15 @@ app.post('/login', passport.authenticate('local', {
   failureFlash: true // Activer les messages flash en cas d'échec de l'authentification
 }));
 
+// Route pour la page de profil de l'utilisateur
+app.get('/user', (req, res) => {
+  if (req.isAuthenticated()) {
+    res.render('user', { user: req.user });
+  } else {
+    res.redirect('/login');
+  }
+});
+
 // Route pour la page faq
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
@@ -127,11 +107,6 @@ app.get('/faq', (req, res) => {
 // Route pour la page de paiement
 app.get('/payment', (req, res) => {
   res.render('payment', { title: 'Payment' });
-});
-
-// Route pour afficher le formulaire de connexion
-app.get('/login', (req, res) => {
-  res.render('login', { title: 'Login' });
 });
 
 // Route pour gérer le paiement par Stripe
@@ -161,11 +136,6 @@ app.post('/register', async (req, res) => {
     console.error('Error registering user', error);
     res.send('Une erreur est survenue lors de l\'inscription.');
   }
-});
-
-// Route pour la page de profil de l'utilisateur
-app.get('/user', (req, res) => {
-  res.render('user');
 });
 
 // Route pour servir les pages de destination
@@ -205,6 +175,7 @@ app.post('/add-property', passport.authenticate('local'), async (req, res) => {
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
   }
 });
+
 async function generateLandingPage(property) {
   const template = `
   <!DOCTYPE html>
@@ -283,7 +254,6 @@ app.get('/user/properties', async (req, res) => {
     res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
   }
 });
-
 
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
