@@ -6,12 +6,15 @@ const path = require('path');
 const axios = require('axios');
 
 router.post('/add-property', async (req, res) => {
-    const { rooms, surface, price, city, country, userId } = req.body;
+    const { rooms, surface, price, city, country } = req.body;
+
+    // Récupérer l'ID de l'utilisateur à partir de la session ou de toute autre source
+    const userId = req.user.id; // Exemple : si vous stockez l'ID de l'utilisateur dans la session
 
     try {
         // Créer une nouvelle propriété dans la base de données
         const property = new Property({
-            user: userId,
+            user: userId, // Ajouter l'ID de l'utilisateur
             rooms,
             surface,
             price,
