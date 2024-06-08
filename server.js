@@ -284,6 +284,17 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
   }
 });
 
+app.get('/user/properties', isAuthenticated, async (req, res) => {
+  try {
+    const properties = await Property.find({ user: req.user._id });
+    res.json(properties);
+  } catch (error) {
+    console.error('Error fetching user properties', error);
+    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
+  }
+});
+
+
 
 
 // Démarrer le serveur
