@@ -27,10 +27,6 @@ router.post('/add-property', async (req, res) => {
         property.url = landingPageUrl;
         await property.save();
 
-        // Enregistrer l'URL de la landing page dans la base de données
-        property.landingPageUrl = landingPageUrl;
-        await property.save();
-
         // Rediriger vers une autre page ou envoyer une réponse JSON en cas de succès
         res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
