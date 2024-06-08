@@ -8,9 +8,7 @@ router.post('/add-property', async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
 
     try {
-        // Créer une nouvelle propriété dans la base de données
         
-        // Sauvegarder la propriété dans la base de données
 const property = new Property({
     rooms,
     surface,
@@ -25,7 +23,7 @@ await property.save();
 const landingPageUrl = await generateLandingPage(property);
 
 // Mettre à jour l'URL de la propriété et sauvegarder de nouveau
-property.url = landingPageUrl;
+ property.url = landingPageUrl;
 await property.save();
 
         // Rediriger vers une autre page ou envoyer une réponse JSON en cas de succès
