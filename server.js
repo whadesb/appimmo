@@ -196,27 +196,32 @@ app.get('/landing-pages/:id', (req, res) => {
 app.post('/add-property', async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
 
-  try {
-    // Créer et sauvegarder le bien immobilier
-    const property = new Property({ rooms, surface, price, city, country });
-    await property.save();
+  if (!req.session.user) {
+    return res.status(401).json({ error: 'Utilisateur non authentifié' });
+  }
 
-    // Générer la page de destination
+  try {
+    const property = new Property({
+      rooms,
+      surface,
+      price,
+      city,
+      country,
+      user: req.session.user._id // Associer l'utilisateur à la propriété
+    });
+
+    await property.save();
     const landingPageUrl = await generateLandingPage(property);
 
-    // Ajouter l'URL de la page de destination à la propriété et sauvegarder
     property.url = landingPageUrl;
     await property.save();
 
-    // Envoyer une réponse JSON avec l'URL de la page générée
     res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
   } catch (error) {
     console.error('Error adding property', error);
-    // En cas d'erreur, renvoyer une réponse JSON avec le statut 500
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
   }
 });
-
 async function generateLandingPage(property) {
   const template = `
   <!DOCTYPE html>
@@ -243,6 +248,20 @@ async function generateLandingPage(property) {
 
   return `/landing-pages/${property._id}.html`;
 }
+
+app.get('/user/properties', async (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
+  try {
+    const properties = await Property.find({ user: req.session.user._id });
+    res.render('user-properties', { properties, user: req.session.user });
+  } catch (error) {
+    console.error('Error fetching user properties', error);
+    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
+  }
+});
 
 
 // Démarrer le serveur
