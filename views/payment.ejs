@@ -90,6 +90,17 @@
                 </div>
             </div>
         </section>
+<div class="col-lg-4 col-12 mb-4 mb-lg-0">
+    <div class="custom-block custom-block-stripe">
+        <h5 class="payment-title mb-2">Paiement CB (Stripe)</h5>
+        <div>
+            <h6>Nom du Produit: Votre Produit</h6>
+            <p>Description du Produit: Une description de votre produit.</p>
+            <p>Prix: 300€</p>
+        </div>
+        <button id="checkout-button" class="btn btn-primary">Payer 300€</button>
+    </div>
+</div>
         <section class="payment-section section-padding" id="section_payment">
             <div class="container">
                 <div class="row justify-content-center">
@@ -105,7 +116,7 @@
                                     <!-- Used to display form errors. -->
                                     <div id="card-errors" role="alert"></div>
                                 </div>
-                                <button class="btn btn-primary mt-3" type="submit">Payer 300€</button>
+                                <button class="btn btn-primary mt-3" type="submit">Payer</button>
                             </form>
                         </div>
                     </div>
@@ -187,7 +198,7 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script>
         // Stripe integration script
-        var stripe = Stripe('<%= stripePublicKey %>');
+        var stripe = Stripe('YOUR_PUBLIC_KEY');
         var elements = stripe.elements();
         var card = elements.create('card');
         card.mount('#card-element');
@@ -208,14 +219,14 @@
             const { clientSecret } = await fetch('/create-payment-intent', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ amount: 300, currency: 'eur' }) // Replace with your amount and currency
+                body: JSON.stringify({ amount: 5000 }) // Replace with your amount
             }).then(r => r.json());
 
             stripe.confirmCardPayment(clientSecret, {
                 payment_method: {
                     card: card,
                     billing_details: {
-                        name: 'Jenny Rosen' // replace with the name of the user if available
+                        name: 'Jenny Rosen'
                     }
                 }
             }).then(function(result) {
