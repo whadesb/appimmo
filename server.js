@@ -9,6 +9,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
 const User = require('./models/User');
+const Property = require('./models/Property');
+const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
 
