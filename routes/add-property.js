@@ -27,6 +27,10 @@ router.post('/add-property', async (req, res) => {
         property.url = landingPageUrl;
         await property.save();
 
+        // Enregistrer l'URL de la landing page dans la base de données
+        property.landingPageUrl = landingPageUrl;
+        await property.save();
+
         // Rediriger vers une autre page ou envoyer une réponse JSON en cas de succès
         res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
@@ -41,7 +45,10 @@ async function generateLandingPage(property) {
     <!DOCTYPE html>
     <html lang="en">
     <head>
-        <link rel="stylesheet" href="/css/bootstrap.min.css">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Propriété à ${property.city}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
             /* Styles CSS personnalisés */
             body {
@@ -98,50 +105,9 @@ async function generateLandingPage(property) {
     </html>`;
 
     const filePath = path.join(__dirname, '..', 'public', 'landing-pages', `${property._id}.html`);
-fs.writeFileSync(filePath, template);
-const landingPageUrl = `/landing-pages/${property._id}.html`; // Déplacer la déclaration ici
-console.log('URL générée pour la page de destination :', landingPageUrl);
-console.log('Chemin du fichier généré :', filePath);
+    fs.writeFileSync(filePath, template);
 
-return landingPageUrl;
-
+    return `/landing-pages/${property._id}.html`;
 }
-
-router.post('/add-property', async (req, res) => {
-    const { rooms, surface, price, city, country } = req.body;
-
-    try {
-        // Créer une nouvelle propriété dans la base de données
-        const property = new Property({
-            rooms,
-            surface,
-            price,
-            city,
-            country
-        });
-
-        // Sauvegarder la propriété dans la base de données
-        await property.save();
-
-        // Générer la page de destination
-        const landingPageUrl = await generateLandingPage(property);
-
-        // Mettre à jour l'URL de la propriété et sauvegarder de nouveau
-        property.url = landingPageUrl;
-        await property.save();
-
-        // Enregistrer l'URL de la landing page dans la base de données
-        property.landingPageUrl = landingPageUrl;
-        await property.save();
-
-        // Rediriger vers une autre page ou envoyer une réponse JSON en cas de succès
-        res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
-    } catch (error) {
-        console.error('Erreur lors de l\'ajout de la propriété : ', error);
-        // En cas d'erreur, renvoyer une réponse JSON avec le statut 500 et un message d'erreur approprié
-        res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
-    }
-});
-
 
 module.exports = router;
