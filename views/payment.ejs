@@ -187,6 +187,22 @@
                 <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
             </div>
         </div>
+<div class="col-lg-4 col-12 mb-4 mb-lg-0">
+    <div class="custom-block custom-block-stripe">
+        <h5 class="payment-title mb-2">Paiement CB (Stripe)</h5>
+        <form id="stripe-form">
+            <div class="form-group">
+                <label for="card-element">Carte de crédit</label>
+                <div id="card-element" class="form-control">
+                    <!-- A Stripe Element will be inserted here. -->
+                </div>
+                <!-- Used to display form errors. -->
+                <div id="card-errors" role="alert"></div>
+            </div>
+            <button class="btn btn-primary mt-3" type="submit">Payer 300€</button>
+        </form>
+    </div>
+</div>
     </footer>
 
     <!-- JAVASCRIPT FILES -->
@@ -242,5 +258,50 @@
             });
         });
     </script>
+<script>
+    var stripe = Stripe('<%= stripePublicKey %>');
+    var elements = stripe.elements();
+    var card = elements.create('card');
+    card.mount('#card-element');
+
+    card.on('change', function(event) {
+        var displayError = document.getElementById('card-errors');
+        if (event.error) {
+            displayError.textContent = event.error.message;
+        } else {
+            displayError.textContent = '';
+        }
+    });
+
+    var form = document.getElementById('stripe-form');
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();
+
+        const { clientSecret } = await fetch('/create-payment-intent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ amount: 300, currency: 'eur' }) // Replace with your amount and currency
+        }).then(r => r.json());
+
+        stripe.confirmCardPayment(clientSecret, {
+            payment_method: {
+                card: card,
+                billing_details: {
+                    name: 'Jenny Rosen'
+                }
+            }
+        }).then(function(result) {
+            if (result.error) {
+                var errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+            } else {
+                if (result.paymentIntent.status === 'succeeded') {
+                    // Payment succeeded
+                    alert('Payment successful!');
+                }
+            }
+        });
+    });
+</script>
 </body>
 </html>
