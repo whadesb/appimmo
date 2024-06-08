@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -12,6 +14,8 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
 
+console.log(process.env.MONGODB_URI); // Vérifiez que la variable d'environnement est correctement lue
+
 const app = express();
 // Utilisez express-flash middleware
 app.use(flash());
@@ -23,7 +27,7 @@ app.use(session({
   store: MongoStore.create({ clientPromise: mongoose.connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true
-  }) }), // Assurez-vous que MONGODB_URI est correctement configuré dans votre fichier .env
+  }) }),
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
 
