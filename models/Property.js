@@ -24,8 +24,8 @@ const propertySchema = new Schema({
     },
     url: {
         type: String,
-         required: true
-         }, // Champ pour l'URL de la page de destination
+        required: false // Rendre le champ `url` facultatif
+    },
     createdAt: { 
         type: Date, 
         default: Date.now 
@@ -37,7 +37,7 @@ const propertySchema = new Schema({
     user: { 
         type: Schema.Types.ObjectId, 
         ref: 'User' 
-    } // Référence à l'utilisateur
+    }
 });
 
 const Property = mongoose.model('Property', propertySchema);
