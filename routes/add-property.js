@@ -8,29 +8,29 @@ router.post('/add-property', async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
 
     try {
-        
-const property = new Property({
-    rooms,
-    surface,
-    price,
-    city,
-    country
-});
+        // Créer une nouvelle propriété dans la base de données
+        const property = new Property({
+            rooms,
+            surface,
+            price,
+            city,
+            country,
+            url: '' // Initialisez l'URL avec une chaîne vide ou une valeur par défaut
+        });
 
-await property.save();
+        await property.save();
 
-// Générer la page de destination
-const landingPageUrl = await generateLandingPage(property);
+        // Générer la page de destination
+        const landingPageUrl = await generateLandingPage(property);
 
-// Mettre à jour l'URL de la propriété et sauvegarder de nouveau
- property.url = landingPageUrl;
-await property.save();
+        // Mettre à jour l'URL de la propriété et sauvegarder de nouveau
+        property.url = landingPageUrl;
+        await property.save();
 
         // Rediriger vers une autre page ou envoyer une réponse JSON en cas de succès
         res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
         console.error('Erreur lors de l\'ajout de la propriété : ', error);
-        // En cas d'erreur, renvoyer une réponse JSON avec le statut 500 et un message d'erreur approprié
         res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
     }
 });
