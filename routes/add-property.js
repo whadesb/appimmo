@@ -4,23 +4,27 @@ const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
-const passport = require('passport');
 
-router.post('/add-property', passport.authenticate('jwt', { session: false }), async (req, res) => {
-    const { rooms, surface, price, city, country } = req.body;
+// Middleware pour vérifier l'authentification de l'utilisateur
+function isAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
 
-    // L'ID de l'utilisateur est accessible à partir de req.user.id
-    const userId = req.user.id;
+router.post('/add-property', isAuthenticated, async (req, res) => {
+    const { rooms, surface, price, city, country, userId } = req.body;
 
     try {
         // Créer une nouvelle propriété dans la base de données
         const property = new Property({
-            user: userId, // Ajouter l'ID de l'utilisateur
             rooms,
             surface,
             price,
             city,
             country,
+            user: userId,
             url: '' // Initialisez l'URL avec une chaîne vide ou une valeur par défaut
         });
 
@@ -33,7 +37,7 @@ router.post('/add-property', passport.authenticate('jwt', { session: false }), a
         property.url = landingPageUrl;
         await property.save();
 
-        // Rediriger vers une autre page ou envoyer une réponse JSON en cas de succès
+        // Envoyer une réponse JSON en cas de succès
         res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
         console.error('Erreur lors de l\'ajout de la propriété : ', error);
@@ -51,7 +55,6 @@ async function generateLandingPage(property) {
         <title>Propriété à ${property.city}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
-            /* Styles CSS personnalisés */
             body {
                 font-family: Arial, sans-serif;
                 background-color: #f8f9fa;
@@ -59,15 +62,15 @@ async function generateLandingPage(property) {
                 margin: 0;
                 padding: 0;
                 display: flex;
-                justify-content: center; /* Centrer horizontalement */
-                align-items: center; /* Centrer verticalement */
-                height: 100vh; /* 100% de la hauteur de l'écran */
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
             }
             .container {
                 max-width: 800px;
                 padding: 20px;
-                text-align: center; /* Centrer le contenu */
-                background-color: #fff; /* Couleur de fond du contenu */
+                text-align: center;
+                background-color: #fff;
                 border-radius: 10px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
