@@ -5,11 +5,12 @@ const fs = require('fs');
 const path = require('path');
 
 router.post('/add-property', async (req, res) => {
-    const { rooms, surface, price, city, country } = req.body;
+    const { rooms, surface, price, city, country, userId } = req.body;
 
     try {
         // Créer une nouvelle propriété dans la base de données
         const property = new Property({
+            user: userId,
             rooms,
             surface,
             price,
