@@ -188,35 +188,33 @@
                                 </div>
                             </div>
                             <div id="created-pages" class="card" style="display: none;">
-                                <div class="card-body">
-                                    <h5 class="card-title">Pages créées</h5>
-                                    <table class="table">
-    <thead>
-        <tr>
-            <th scope="col">URL</th>
-            <th scope="col">Date de création</th>
-            <th scope="col">Date limite</th>
-            <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!-- Les lignes de pages seront ajoutées ici dynamiquement -->
-        <% user.pages.forEach(page => { %>
-            <tr>
-                <td><%= page.url %></td>
-                <td><%= page.createdAt %></td>
-                <td><%= page.deadline %></td>
-                <td>
-                    <button class="btn btn-primary" onclick="copyURL('<%= page.url %>')">Copier l'URL</button>
-                    <button class="btn btn-success" onclick="payForPage('<%= page.url %>')">Payer</button>
-                </td>
-            </tr>
-        <% }); %>
-    </tbody>
-</table>
-                                </div>
-                            </div>
-                            <!-- Ajoutez d'autres items ici -->
+    <div class="card-body">
+        <h5 class="card-title">Pages créées</h5>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Pages URL</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% if (user.pages && user.pages.length > 0) { %>
+                    <% user.pages.forEach(page => { %>
+                        <tr>
+                            <td>
+                                <a href="<%= page.url %>"><%= page.url %></a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                <% } else { %>
+                    <tr>
+                        <td colspan="4">Aucune page créée pour le moment.</td>
+                    </tr>
+                <% } %>
+            </tbody>
+        </table>
+    </div>
+</div>
+               <!-- Ajoutez d'autres items ici -->
                         </div>
                     </div>
                 </div>
