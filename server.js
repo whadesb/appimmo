@@ -138,7 +138,7 @@ app.post('/register', async (req, res) => {
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   // Renvoyer le fichier HTML correspondant depuis le répertoire public/landing-pages
-  res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
+  res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
 });
 
 app.post('/add-property', isAuthenticated, async (req, res) => {
@@ -218,7 +218,6 @@ async function generateLandingPage(property) {
                 }
             }
         </style>
-      </style>
   </head>
   <body>
       <div class="container">
