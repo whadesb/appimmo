@@ -8,8 +8,6 @@ const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
-const fs = require('fs');
-require('dotenv').config();
 
 const app = express();
 
@@ -36,6 +34,29 @@ app.use((req, res, next) => {
 
 // Définir le moteur de template ejs
 app.set('view engine', 'ejs');
+
+// Exemple de route
+app.get('/', (req, res) => {
+  res.render('index', { i18n: res });
+});
+
+const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
+app.use(addPropertyRoutes);
+
+require('dotenv').config();
+const Property = require('./models/Property');
+
+// Configurer les sessions
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
+}));
+
+// Définir le moteur de template EJS
+app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Middleware pour servir les fichiers statiques
@@ -51,22 +72,9 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('Error connecting to MongoDB', err);
 });
 
-// Configurer les sessions
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
-}));
-
-// Routes
-const addPropertyRoutes = require('./routes/add-property'); // Importez les routes pour add-property.js
-app.use(addPropertyRoutes);
-
 // Route pour la page d'accueil
 app.get('/', (req, res) => {
-  res.render('index', { i18n: res }); // Rendre la vue "index.ejs"
+  res.render('index'); // Rendre la vue "index.ejs"
 });
 
 // Route pour la page de connexion
@@ -74,9 +82,23 @@ app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
 
-// Route pour la page FAQ
+// Route pour la page faq
 app.get('/faq', (req, res) => {
-  res.render('faq', { title: 'FAQ' });
+  res.render('faq', { title: 'faq' });
+});
+
+// Route pour la page de paiement
+app.get('/payment', (req, res) => {
+  res.render('payment', { title: 'Payment' });
+});
+// Route pour gérer le paiement par Stripe
+app.post('/stripe-payment', (req, res) => {
+  // Logique pour traiter le paiement avec Stripe
+});
+
+// Route pour gérer le paiement en crypto
+app.post('/crypto-payment', (req, res) => {
+  // Logique pour traiter le paiement en crypto
 });
 
 // Route pour afficher le formulaire d'inscription
@@ -94,7 +116,7 @@ app.post('/register', async (req, res) => {
   }
 
   try {
-    // Si l'utilisateur existe déjà
+    // si l'utilisateur existe déjà
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.send('Un utilisateur avec cet email existe déjà.');
@@ -123,7 +145,6 @@ app.post('/register', async (req, res) => {
   }
 });
 
-// Route pour gérer la soumission du formulaire de connexion
 app.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -152,28 +173,26 @@ app.post('/login', async (req, res) => {
   }
 });
 
-// Route pour afficher la page de profil de l'utilisateur
 app.get('/user', (req, res) => {
-  // Vérifiez si l'utilisateur est connecté
-  if (req.session.user) {
-    // Récupérez les informations de l'utilisateur à partir de la session
-    const user = req.session.user;
-    // Passez les informations de l'utilisateur à la vue lors du rendu de la page
-    res.render('user', { user: user });
-  } else {
-    // Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
-    res.redirect('/login');
-  }
+    // Vérifiez si l'utilisateur est connecté
+    if (req.session.user) {
+        // Récupérez les informations de l'utilisateur à partir de la session
+        const user = req.session.user;
+        // Passez les informations de l'utilisateur à la vue lors du rendu de la page
+        res.render('user', { user: user });
+    } else {
+        // Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
+        res.redirect('/login');
+    }
 });
 
 // Route pour servir les pages de destination
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   // Renvoyer le fichier HTML correspondant depuis le répertoire public/landing-pages
-  res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
+   res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
 });
 
-// Route pour ajouter une propriété
 app.post('/add-property', async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
 
@@ -198,29 +217,6 @@ app.post('/add-property', async (req, res) => {
   }
 });
 
-// Route pour créer une intention de paiement
-app.post('/create-payment-intent', async (req, res) => {
-  const { amount, currency } = req.body;
-
-  try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: amount * 100, // montant en centimes
-      currency: currency,
-    });
-
-    res.status(200).json({ clientSecret: paymentIntent.client_secret });
-  } catch (error) {
-    console.error('Error creating payment intent', error);
-    res.status(500).json({ error: 'Failed to create payment intent' });
-  }
-});
-
-// Route pour la page de paiement
-app.get('/payment', (req, res) => {
-  res.render('payment', { title: 'Payment', stripePublicKey: process.env.STRIPE_PUBLIC_KEY });
-});
-
-// Fonction pour générer une page de destination pour une propriété
 async function generateLandingPage(property) {
   const template = `
   <!DOCTYPE html>
@@ -247,6 +243,7 @@ async function generateLandingPage(property) {
 
   return `/landing-pages/${property._id}.html`;
 }
+
 
 // Démarrer le serveur
 const port = process.env.PORT || 8080; // Utilisez le port 8080 ou un autre port disponible
