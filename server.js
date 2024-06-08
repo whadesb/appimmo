@@ -20,14 +20,22 @@ const app = express();
 // Utilisez express-flash middleware
 app.use(flash());
 
+// Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
+app.use((req, res, next) => {
+  if (req.query.lang) {
+    res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
+    res.setLocale(req.query.lang);
+  } else if (req.cookies.locale) {
+    res.setLocale(req.cookies.locale);
+  }
+  next();
+});
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ clientPromise: mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-  }) }),
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
 
