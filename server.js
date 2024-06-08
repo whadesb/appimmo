@@ -14,18 +14,18 @@ const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
 
-console.log(process.env.MONGODB_URI); // Vérifiez que la variable d'environnement est correctement lue
-
 const app = express();
-// Utilisez express-flash middleware
+
+app.use(cookieParser());
+
 app.use(flash());
 
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
-  if (req.query.lang) {
+  if (req.cookies && req.query.lang) {
     res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
     res.setLocale(req.query.lang);
-  } else if (req.cookies.locale) {
+  } else if (req.cookies && req.cookies.locale) {
     res.setLocale(req.cookies.locale);
   }
   next();
