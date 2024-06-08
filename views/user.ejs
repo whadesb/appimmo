@@ -184,7 +184,13 @@
                                     <table class="table">
                                         <thead>
                                             <tr>
-                                                <th scope="col">Pages URL</th>
+                                                <th scope="col">Nombre de pièces</th>
+                                                <th scope="col">Surface</th>
+                                                <th scope="col">Prix</th>
+                                                <th scope="col">Ville</th>
+                                                <th scope="col">Pays</th>
+                                                <th scope="col">URL</th>
+                                                <th scope="col">Actions</th>
                                             </tr>
                                         </thead>
                                         <tbody id="properties-list">
@@ -192,7 +198,6 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -250,7 +255,7 @@
     <script src="/js/jquery.sticky.js"></script>
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
-        <script>
+    <script>
         let cartItems = [];
 
         function buyItem(itemName, price) {
@@ -323,12 +328,18 @@
 
                     properties.forEach(property => {
                         const row = document.createElement('tr');
-                        const cell = document.createElement('td');
-                        const link = document.createElement('a');
-                        link.href = property.url;
-                        link.textContent = property.url;
-                        cell.appendChild(link);
-                        row.appendChild(cell);
+                        row.innerHTML = `
+                            <td>${property.rooms}</td>
+                            <td>${property.surface}</td>
+                            <td>${property.price}</td>
+                            <td>${property.city}</td>
+                            <td>${property.country}</td>
+                            <td><a href="${property.url}">${property.url}</a></td>
+                            <td>
+                                <button class="btn btn-secondary" onclick="copyURL('${property.url}')">Copie</button>
+                                <button class="btn btn-primary" onclick="window.location.href='${property.url}'">Test</button>
+                            </td>
+                        `;
                         propertiesList.appendChild(row);
                     });
                 } else {
@@ -340,9 +351,8 @@
         }
 
         // Charger les propriétés de l'utilisateur lorsque la section "Pages créées" est affichée
-        document.querySelector('.menu-item a[href="#created-pages"]').addEventListener('click', loadProperties);
-    </script>
-    <script>
+        document.querySelector('.menu-item a[href="#"]').addEventListener('click', loadProperties);
+
         // Fonction pour copier l'URL dans le presse-papiers
         function copyURL(url) {
             navigator.clipboard.writeText(url)
