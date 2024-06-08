@@ -98,12 +98,13 @@ async function generateLandingPage(property) {
     </html>`;
 
     const filePath = path.join(__dirname, '..', 'public', 'landing-pages', `${property._id}.html`);
-    fs.writeFileSync(filePath, template);
+fs.writeFileSync(filePath, template);
+const landingPageUrl = `/landing-pages/${property._id}.html`; // Déplacer la déclaration ici
 console.log('URL générée pour la page de destination :', landingPageUrl);
-    console.log('Chemin du fichier généré :', filePath);
+console.log('Chemin du fichier généré :', filePath);
 
-    const landingPageUrl = `/landing-pages/${property._id}.html`;
-    return landingPageUrl;
+return landingPageUrl;
+
 }
 
 module.exports = router;
