@@ -3,6 +3,7 @@ const router = express.Router();
 const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
+const axios = require('axios');
 
 router.post('/add-property', async (req, res) => {
     const { rooms, surface, price, city, country, userId } = req.body;
