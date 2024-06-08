@@ -8,6 +8,8 @@ const User = require('./models/User');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
 
 const app = express();
 
@@ -55,9 +57,14 @@ app.use(session({
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
 
-// Définir le moteur de template EJS
-app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
+// Initialiser Passport.js
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Utiliser le modèle User pour l'authentification locale avec Passport
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // Middleware pour servir les fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
@@ -110,34 +117,9 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword } = req.body;
 
-  // Vérification des mots de passe
-  if (password !== confirmPassword) {
-    return res.send('Les mots de passe ne correspondent pas.');
-  }
-
+  // Vérification des mots de passe et création d'un nouvel utilisateur
   try {
-    // si l'utilisateur existe déjà
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.send('Un utilisateur avec cet email existe déjà.');
-    }
-
-    // Hacher le mot de passe
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Créer un nouvel utilisateur
-    const user = new User({
-      email,
-      firstName,
-      lastName,
-      role,
-      password: hashedPassword
-    });
-
-    // Sauvegarder l'utilisateur dans la base de données
-    await user.save();
-
-    // Rediriger vers la page de connexion après l'inscription
+    const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
     res.redirect('/login');
   } catch (error) {
     console.error('Error registering user', error);
@@ -145,60 +127,20 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.post('/login', async (req, res) => {
-  const { email, password } = req.body;
-
-  try {
-    // Vérifier les informations d'identification de l'utilisateur
-    const user = await User.findOne({ email });
-
-    if (!user) {
-      return res.send('Utilisateur non trouvé.');
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-
-    if (!passwordMatch) {
-      return res.send('Mot de passe incorrect.');
-    }
-
-    // Authentification réussie, enregistrer l'utilisateur dans la session
-    req.session.user = user;
-
-    // Rediriger vers la page de profil de l'utilisateur
-    res.redirect('/user');
-  } catch (error) {
-    console.error('Error logging in user', error);
-    res.send('Une erreur est survenue lors de la connexion.');
-  }
-});
-
+// Route pour la page de profil de l'utilisateur
 app.get('/user', (req, res) => {
-    // Vérifiez si l'utilisateur est connecté
-    if (req.session.user) {
-        // Récupérez les informations de l'utilisateur à partir de la session
-        const user = req.session.user;
-        // Passez les informations de l'utilisateur à la vue lors du rendu de la page
-        res.render('user', { user: user });
-    } else {
-        // Redirigez l'utilisateur vers la page de connexion s'il n'est pas connecté
-        res.redirect('/login');
-    }
+  res.render('user');
 });
 
 // Route pour servir les pages de destination
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   // Renvoyer le fichier HTML correspondant depuis le répertoire public/landing-pages
-   res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
+  res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
 });
 
-app.post('/add-property', async (req, res) => {
+app.post('/add-property', passport.authenticate('local'), async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
-
-  if (!req.session.user) {
-    return res.status(401).json({ error: 'Utilisateur non authentifié' });
-  }
 
   try {
     const property = new Property({
@@ -207,7 +149,7 @@ app.post('/add-property', async (req, res) => {
       price,
       city,
       country,
-      user: req.session.user._id // Associer l'utilisateur à la propriété
+      user: req.session.passport.user // Associer l'utilisateur à la propriété
     });
 
     await property.save(); // Enregistrez la propriété sans l'URL
@@ -227,7 +169,6 @@ app.post('/add-property', async (req, res) => {
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
   }
 });
-
 async function generateLandingPage(property) {
   const template = `
   <!DOCTYPE html>
@@ -244,7 +185,8 @@ async function generateLandingPage(property) {
           <p>Nombre de pièces: ${property.rooms}</p>
           <p>Surface: ${property.surface} m²</p>
           <p>Prix: ${property.price} €</p>
-          <p>Localisation: ${property.city}, ${property.country}</p>
+          <p>Localisation: ${
+<p>Localisation: ${property.city}, ${property.country}</p>
       </div>
   </body>
   </html>`;
