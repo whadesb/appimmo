@@ -10,9 +10,16 @@ const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const flash = require('express-flash');
 
 const app = express();
+// Utilisez express-flash middleware
+app.use(flash());
 
+// Utilisez express-session middleware
+app.use(session({
+  // Configuration de la session
+}));
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
