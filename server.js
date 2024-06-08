@@ -210,11 +210,16 @@ app.post('/add-property', async (req, res) => {
       user: req.session.user._id // Associer l'utilisateur à la propriété
     });
 
-    await property.save();
+    await property.save(); // Enregistrez la propriété sans l'URL
+
+    // Générez l'URL de la page de destination
     const landingPageUrl = await generateLandingPage(property);
 
-    property.url = landingPageUrl; // Attribuer l'URL de la page de destination
-    await property.save(); // Sauvegarder la propriété avec l'URL de la page de destination
+    // Mettez à jour la propriété avec l'URL de la page de destination
+    property.url = landingPageUrl;
+    
+    // Sauvegardez la propriété avec l'URL de la page de destination
+    await property.save();
 
     res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
   } catch (error) {
@@ -222,6 +227,7 @@ app.post('/add-property', async (req, res) => {
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
   }
 });
+
 async function generateLandingPage(property) {
   const template = `
   <!DOCTYPE html>
