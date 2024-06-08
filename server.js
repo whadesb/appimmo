@@ -118,6 +118,12 @@ app.get('/faq', (req, res) => {
 app.get('/payment', (req, res) => {
   res.render('payment', { title: 'Payment' });
 });
+
+// Route pour afficher le formulaire de connexion
+app.get('/login', (req, res) => {
+  res.render('login', { title: 'Login' });
+});
+
 // Route pour gérer le paiement par Stripe
 app.post('/stripe-payment', (req, res) => {
   // Logique pour traiter le paiement avec Stripe
