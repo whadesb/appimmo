@@ -16,12 +16,11 @@ const app = express();
 // Utilisez express-flash middleware
 app.use(flash());
 
-// Configurer les sessions
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }), // Assurez-vous que MONGODB_URI est correctement configuré dans votre fichier .env
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
 
