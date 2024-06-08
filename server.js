@@ -84,10 +84,12 @@ app.get('/', (req, res) => {
   res.render('index'); // Rendre la vue "index.ejs"
 });
 
-// Route pour la page de connexion
-app.get('/login', (req, res) => {
-  res.render('login', { title: 'Login' });
-});
+// Route pour gérer la soumission du formulaire de connexion
+app.post('/login', passport.authenticate('local', {
+  successRedirect: '/user', // Redirection en cas de succès de l'authentification
+  failureRedirect: '/login', // Redirection en cas d'échec de l'authentification
+  failureFlash: true // Activer les messages flash en cas d'échec de l'authentification
+}));
 
 // Route pour la page faq
 app.get('/faq', (req, res) => {
