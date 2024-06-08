@@ -3,34 +3,32 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const User = require('./models/User');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const cookieParser = require('cookie-parser');
-const i18n = require('./i18n');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
+const User = require('./models/User');
+const cookieParser = require('cookie-parser');
+const i18n = require('./i18n');
 
 const app = express();
+
+// Utiliser cookie-parser avant d'utiliser d'autres middlewares
+app.use(cookieParser());
 
 // Middleware pour analyser les données POST
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Utiliser cookie-parser avant d'utiliser d'autres middlewares
-app.use(cookieParser());
-
 app.use(flash());
 
 // Middleware pour définir la langue en fonction des cookies ou des paramètres de requête
 app.use((req, res, next) => {
-  if (req.cookies && req.query.lang) {
+  if (req.query.lang) {
     res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
     res.setLocale(req.query.lang);
-  } else if (req.cookies && req.cookies.locale) {
+  } else if (req.cookies.locale) {
     res.setLocale(req.cookies.locale);
   }
   next();
@@ -45,12 +43,6 @@ app.use(session({
   cookie: { maxAge: 1000 * 60 * 60 * 24 } // 1 jour
 }));
 
-// Middleware pour initialiser i18n
-app.use(i18n.init);
-
-// Définir le moteur de template ejs
-app.set('view engine', 'ejs');
-
 // Initialiser Passport.js
 app.use(passport.initialize());
 app.use(passport.session());
@@ -59,6 +51,12 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// Middleware pour initialiser i18n
+app.use(i18n.init);
+
+// Définir le moteur de template ejs
+app.set('view engine', 'ejs');
 
 // Middleware pour servir les fichiers statiques
 app.use(express.static(path.join(__dirname, 'public')));
@@ -73,7 +71,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('Error connecting to MongoDB', err);
 });
 
-// Exemple de route
+// Route pour la page d'accueil
 app.get('/', (req, res) => {
   res.render('index', { i18n: res });
 });
@@ -85,18 +83,22 @@ app.get('/login', (req, res) => {
 
 // Route pour gérer la soumission du formulaire de connexion
 app.post('/login', passport.authenticate('local', {
-  successRedirect: '/user', // Redirection en cas de succès de l'authentification
-  failureRedirect: '/login', // Redirection en cas d'échec de l'authentification
-  failureFlash: true // Activer les messages flash en cas d'échec de l'authentification
+  successRedirect: '/user',
+  failureRedirect: '/login',
+  failureFlash: true
 }));
 
-// Route pour la page de profil de l'utilisateur
-app.get('/user', (req, res) => {
+// Middleware pour vérifier si l'utilisateur est authentifié
+function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
-    res.render('user', { user: req.user });
-  } else {
-    res.redirect('/login');
+    return next();
   }
+  res.redirect('/login');
+}
+
+// Route pour la page de profil de l'utilisateur
+app.get('/user', isAuthenticated, (req, res) => {
+  res.render('user', { user: req.user });
 });
 
 // Route pour la page faq
@@ -107,16 +109,6 @@ app.get('/faq', (req, res) => {
 // Route pour la page de paiement
 app.get('/payment', (req, res) => {
   res.render('payment', { title: 'Payment' });
-});
-
-// Route pour gérer le paiement par Stripe
-app.post('/stripe-payment', (req, res) => {
-  // Logique pour traiter le paiement avec Stripe
-});
-
-// Route pour gérer le paiement en crypto
-app.post('/crypto-payment', (req, res) => {
-  // Logique pour traiter le paiement en crypto
 });
 
 // Route pour afficher le formulaire d'inscription
@@ -145,7 +137,7 @@ app.get('/landing-pages/:id', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', pageId));
 });
 
-app.post('/add-property', passport.authenticate('local'), async (req, res) => {
+app.post('/add-property', isAuthenticated, async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
 
   try {
@@ -155,7 +147,7 @@ app.post('/add-property', passport.authenticate('local'), async (req, res) => {
       price,
       city,
       country,
-      user: req.session.passport.user // Associer l'utilisateur à la propriété
+      user: req.user._id // Associer l'utilisateur à la propriété
     });
 
     await property.save(); // Enregistrez la propriété sans l'URL
@@ -241,14 +233,10 @@ async function generateLandingPage(property) {
   return `/landing-pages/${property._id}.html`;
 }
 
-app.get('/user/properties', async (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/login');
-  }
-
+app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
-    const properties = await Property.find({ user: req.session.user._id });
-    res.render('user-properties', { properties, user: req.session.user });
+    const properties = await Property.find({ user: req.user._id });
+    res.render('user-properties', { properties, user: req.user });
   } catch (error) {
     console.error('Error fetching user properties', error);
     res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
