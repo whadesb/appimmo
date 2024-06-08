@@ -213,8 +213,8 @@ app.post('/add-property', async (req, res) => {
     await property.save();
     const landingPageUrl = await generateLandingPage(property);
 
-    property.url = landingPageUrl;
-    await property.save();
+    property.url = landingPageUrl; // Attribuer l'URL de la page de destination
+    await property.save(); // Sauvegarder la propriété avec l'URL de la page de destination
 
     res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
   } catch (error) {
