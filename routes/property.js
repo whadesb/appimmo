@@ -106,17 +106,27 @@ async function generateLandingPage(property) {
 
 // Route pour afficher la page de paiement avec les détails de la propriété
 router.get('/payment', async (req, res) => {
-    const { propertyId, rooms, surface, price, city, country, url } = req.query;
+    const { propertyId } = req.query;
 
-    res.render('payment', {
-        propertyId,
-        rooms,
-        surface,
-        price,
-        city,
-        country,
-        url
-    });
+    try {
+        const property = await Property.findById(propertyId);
+        if (!property) {
+            return res.status(404).send('Property not found');
+        }
+
+        res.render('payment', {
+            propertyId: property._id,
+            rooms: property.rooms,
+            surface: property.surface,
+            price: property.price,
+            city: property.city,
+            country: property.country,
+            url: property.url
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la propriété : ', error);
+        res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de la propriété.' });
+    }
 });
 
 module.exports = router;
