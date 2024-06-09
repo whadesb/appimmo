@@ -4,6 +4,7 @@ const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
 
+// Route pour ajouter une propriété
 router.post('/add-property', async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
 
@@ -32,6 +33,7 @@ router.post('/add-property', async (req, res) => {
     }
 });
 
+// Fonction pour générer une page de destination pour une propriété
 async function generateLandingPage(property) {
     const template = `
     <!DOCTYPE html>
@@ -101,9 +103,11 @@ async function generateLandingPage(property) {
 
     return `/landing-pages/${property._id}.html`;
 }
+
+// Route pour afficher la page de paiement avec les détails de la propriété
 router.get('/payment', async (req, res) => {
     const { propertyId, rooms, surface, price, city, country, url } = req.query;
-    
+
     res.render('payment', {
         propertyId,
         rooms,
@@ -114,4 +118,5 @@ router.get('/payment', async (req, res) => {
         url
     });
 });
+
 module.exports = router;
