@@ -10,7 +10,7 @@ router.post('/add-property', async (req, res) => {
 
     try {
         // Créer une nouvelle propriété dans la base de données
-        const property = new Property({ rooms, surface, price, city, country });
+        const property = new Property({ rooms, surface, price, city, country, user: req.user._id });
 
         // Sauvegarder la propriété dans la base de données
         await property.save();
@@ -25,10 +25,9 @@ router.post('/add-property', async (req, res) => {
         await property.save();
 
         // Envoyer une réponse avec un message de confirmation et l'URL de la page générée
-        res.status(200).send(`Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : ${landingPageUrl}`);
+        res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
         console.error('Erreur lors de l\'ajout de la propriété : ', error);
-        // En cas d'erreur, renvoyer une réponse JSON avec le statut 500 et un message d'erreur approprié
         res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
     }
 });
@@ -44,7 +43,6 @@ async function generateLandingPage(property) {
         <title>Propriété à ${property.city}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
-            /* Styles CSS personnalisés */
             body {
                 font-family: Arial, sans-serif;
                 background-color: #f8f9fa;
@@ -52,15 +50,15 @@ async function generateLandingPage(property) {
                 margin: 0;
                 padding: 0;
                 display: flex;
-                justify-content: center; /* Centrer horizontalement */
-                align-items: center; /* Centrer verticalement */
-                height: 100vh; /* 100% de la hauteur de l'écran */
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
             }
             .container {
                 max-width: 800px;
                 padding: 20px;
-                text-align: center; /* Centrer le contenu */
-                background-color: #fff; /* Couleur de fond du contenu */
+                text-align: center;
+                background-color: #fff;
                 border-radius: 10px;
                 box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             }
