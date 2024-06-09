@@ -10,9 +10,11 @@ const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
 const User = require('./models/User');
 const Property = require('./models/Property');
+const Order = require('./models/Order'); // Assurez-vous de créer le modèle Order
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 
@@ -111,8 +113,8 @@ app.get('/faq', (req, res) => {
 });
 
 // Route pour la page de paiement
-app.get('/payment', (req, res) => {
-  res.render('payment', { title: 'Payment' });
+app.get('/payment', isAuthenticated, (req, res) => {
+  res.render('payment', { title: 'Payment', user: req.user });
 });
 
 // Route pour afficher le formulaire d'inscription
@@ -280,6 +282,48 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
     console.error('Error deleting property', error);
     res.status(500).send('Une erreur est survenue lors de la suppression de la propriété.');
   }
+});
+
+// Route pour créer une session de paiement Stripe
+app.post('/create-checkout-session', isAuthenticated, async (req, res) => {
+  const session = await stripe.checkout.sessions.create({
+    payment_method_types: ['card'],
+    line_items: [{
+      price_data: {
+        currency: 'eur',
+        product_data: {
+          name: 'UAP Immo Service',
+        },
+        unit_amount: 30000, // Montant en centimes (300€)
+      },
+      quantity: 1,
+    }],
+    mode: 'payment',
+    success_url: `${req.headers.origin}/success?session_id={CHECKOUT_SESSION_ID}`,
+    cancel_url: `${req.headers.origin}/cancel`,
+  });
+
+  // Enregistrement de la commande dans la base de données
+  const newOrder = new Order({
+    userId: req.user._id,
+    sessionId: session.id,
+    amount: 30000,
+    currency: 'eur',
+    status: 'pending'
+  });
+  await newOrder.save();
+
+  res.json({ id: session.id });
+});
+
+// Route pour la page de succès de paiement
+app.get('/success', isAuthenticated, async (req, res) => {
+  res.render('success', { title: 'Payment Success' });
+});
+
+// Route pour la page d'annulation de paiement
+app.get('/cancel', isAuthenticated, async (req, res) => {
+  res.render('cancel', { title: 'Payment Cancelled' });
 });
 
 // Démarrer le serveur
