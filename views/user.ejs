@@ -206,4 +206,168 @@
                 </div>
             </div>
         </section>
+    </main>
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="index.html">
+                        <i class="bi-back"></i>
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
+                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
+                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
+                    <h6 class="site-footer-title mb-3">Accès</h6>
+                    <p class="text-white d-flex mb-1">
+                        <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
+                    </p>
+                    <p class="text-white d-flex">
+                        <a href="mailto:info@company.com" class="site-footer-link">
+                            contact@uap.immo
+                        </a>
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="/?lang=en">English</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/?lang=fr">Français</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/jquery.sticky.js"></script>
+    <script src="/js/click-scroll.js"></script>
+    <script src="/js/custom.js"></script>
+    <script>
+        let cartItems = [];
+
+        function buyItem(itemName, price) {
+            cartItems.push({ name: itemName, price: price });
+            const cartCounter = document.getElementById('cart-counter');
+            cartCounter.textContent = cartItems.length;
+        }
+
+        function showSection(sectionId) {
+            const sections = ['account', 'landing', 'publicite', 'created-pages'];
+            sections.forEach(id => {
+                document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+            });
+        }
+
+        function showCart() {
+            const cartSection = document.getElementById('cart');
+            const cartItemsList = document.getElementById('cart-items');
+            cartItemsList.innerHTML = '';
+            cartItems.forEach(item => {
+                const listItem = document.createElement('li');
+                listItem.textContent = item.name + ' - ' + item.price + '€';
+                cartItemsList.appendChild(listItem);
+            });
+            cartSection.style.display = 'block';
+        }
+
+        function checkout() {
+            window.location.href = "/checkout";
+        }
+
+        document.getElementById('add-property-form').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const form = event.target;
+            const formData = new FormData(form);
+            const formDataJson = Object.fromEntries(formData.entries());
+
+            console.log("Form data to send:", formDataJson);  // Ajoutez ceci pour logguer les données du formulaire
+
+            try {
+                const response = await fetch('/add-property', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formDataJson),
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const generatedLinkElement = document.getElementById('generatedLink');
+                    generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${data.url}">${data.url}</a>`;
+                } else {
+                    const errorData = await response.json();
+                    console.error('Erreur lors de la soumission du formulaire : ', errorData.error);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la soumission du formulaire : ', error);
+            }
+        });
+
+        async function loadProperties() {
+            try {
+                const response = await fetch('/user/properties');
+                if (response.ok) {
+                    const properties = await response.json();
+                    const propertiesList = document.getElementById('properties-list');
+                    propertiesList.innerHTML = '';
+
+                    properties.forEach(property => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${property.rooms}</td>
+                            <td>${property.surface}</td>
+                            <td>${property.price}</td>
+                            <td>${property.city}</td>
+                            <td>${property.country}</td>
+                            <td><a href="${property.url}">${property.url}</a></td>
+                            <td>
+                                <button class="btn btn-primary" onclick="copyURL('${property.url}')">Copie</button>
+                                <button class="btn btn-secondary" onclick="testURL('${property._id}')">Test</button>
+                            </td>
+                        `;
+                        propertiesList.appendChild(row);
+                    });
+                } else {
+                    console.error('Erreur lors du chargement des propriétés');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des propriétés : ', error);
+            }
+        }
+
+        document.querySelector('.menu-item a[onclick="showSection(\'created-pages\')"]').addEventListener('click', loadProperties);
+
+        function copyURL(url) {
+            navigator.clipboard.writeText(url)
+                .then(() => {
+                    alert('URL copiée avec succès!');
+                })
+                .catch(err => {
+                    console.error('Impossible de copier l\'URL : ', err);
+                });
+        }
+
+        function testURL(propertyId) {
+            window.location.href = `/payment?propertyId=${propertyId}`;
+        }
+    </script>
+</body>
+</html>
 
