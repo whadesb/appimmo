@@ -5,49 +5,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>UAP Immo | My account</title>
+    <title>UAP Immo | Payment</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/templatemo-topic-listing.css" rel="stylesheet">
     <style>
-        .content {
+        .order-summary {
+            border: 1px solid #ddd;
             padding: 20px;
-        }
-        .card {
             margin-top: 20px;
         }
-        .menu-vertical {
-            background-color: #343a40;
+        .card-info {
+            background-color: #f8f9fa;
             padding: 20px;
-            border-radius: 8px;
-            height: 100%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
         }
-        .menu {
-            list-style-type: none;
-            padding: 0;
+        .card-info .form-control {
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid #ced4da;
+            border-radius: 0;
+            box-shadow: none;
         }
-        .menu-item {
-            margin-bottom: 10px;
+        .card-info .form-control:focus {
+            border-color: #495057;
+            box-shadow: none;
         }
-        .menu-item a {
-            text-decoration: none;
-            color: #fff;
-            font-size: 18px;
-        }
-        .menu-item.active a {
-            font-weight: bold;
-        }
-        .menu-item a:hover {
-            color: #adb5bd;
-        }
-        .custom-cart-icon {
-            font-size: 1.5rem;
-            color: #333;
-        }
-        .badge {
-            background-color: #ffc107;
+        .card-info .btn {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -87,11 +76,9 @@
                         <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                     </div>
                 </div>
-                <div class="d-lg-none mt-3">
-                    <a href="/login" class="btn btn-primary w-100">Login</a>
-                </div>
             </div>
-        </nav>        <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
+        </nav>
+        <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-8 col-12 mx-auto">
@@ -135,11 +122,11 @@
                                 <div id="card-element">
                                     <!-- Stripe Element will be inserted here -->
                                 </div>
-                                <button type="submit" class="btn btn-primary btn-block">Payer</button>
+                                <button type="submit" class="btn btn-primary btn-block">Payer 300€</button>
                             </form>
                         </div>
                     </div>
-                                <div class="col-lg-6 col-12">
+                    <div class="col-lg-6 col-12">
                         <h4>Récapitulatif de la Commande</h4>
                         <div class="order-summary">
                             <p><strong>Nombre de pièces:</strong> <%= rooms %></p>
@@ -189,10 +176,10 @@
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="/?lang=en">English</a>
+                                <a class="dropdown-item" href="#">English</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="/?lang=fr">Français</a>
+                                <a class="dropdown-item" href="#">Français</a>
                             </li>
                         </ul>
                     </div>
