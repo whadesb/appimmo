@@ -140,69 +140,49 @@
                 </div>
             </div>
         </section>
- <section class="faq-section section-padding" id="section_4">
-                <div class="container">
-                    <div class="row">
 
-                        <div class="col-lg-6 col-12">
-                            <h2 class="mb-4">FAQ</h2>
-                        </div>
 
-                        <div class="clearfix"></div>
+<section class="faq-section section-padding" id="section_4">
+    <div class="container">
+        <div class="row">
 
-                        <div class="col-lg-5 col-12">
-                            <img src="images/faq_graphic.jpg" class="img-fluid" alt="FAQs">
-                        </div>
-
-                        <div class="col-lg-6 col-12 m-auto">
-                            <div class="accordion" id="accordionExample">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingOne">
-                                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        Qu'est ce que UAP Immo ?
-                                        </button>
-                                    </h2>
-
-                                    <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            La plateforme UAP Immo permet de générer ses propres Landing Page de manière <strong>automatique</strong> lorem
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingTwo">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        Comment fonctionne la plateforme ?
-                                    </button>
-                                    </h2>
-
-                                    <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            Inscription <strong>Lorem</strong> achat pub
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="headingThree">
-                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        Autre question ?
-                                    </button>
-                                    </h2>
-
-                                    <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                        <div class="accordion-body">
-                                            Moyen de paiement et autre.
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
+            <div class="col-lg-6 col-12">
+            <h2>Informations de Paiement</h2>
+            <div class="card-info">
+                <form id="payment-form">
+                    <div class="form-group">
+                        <label for="name">Nom sur la carte</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
                     </div>
-                </div>
-            </section>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" class="form-control" id="address" name="address" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" class="form-control" id="city" name="city" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="country">Country</label>
+                        <input type="text" class="form-control" id="country" name="country" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="zip">ZIP Code</label>
+                        <input type="text" class="form-control" id="zip" name="zip" required>
+                    </div>
+                    <div id="card-element">
+                        <!-- Stripe Element will be inserted here -->
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Payer 300€</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
     </main>
     <footer class="site-footer section-padding">
         <div class="container">
