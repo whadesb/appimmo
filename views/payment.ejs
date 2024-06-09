@@ -197,45 +197,51 @@
     <script src="/js/custom.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-       const stripe = Stripe('<%= process.env.STRIPE_PUBLIC_KEY %>');
-    const elements = stripe.elements();
-    const cardElement = elements.create('card');
-    cardElement.mount('#card-element');
+        async function initializeStripe() {
+            const response = await fetch('/config');
+            const { publicKey } = await response.json();
+            const stripe = Stripe(publicKey);
+            const elements = stripe.elements();
+            const cardElement = elements.create('card');
+            cardElement.mount('#card-element');
 
-    const form = document.getElementById('payment-form');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        const { token, error } = await stripe.createToken(cardElement);
-        if (error) {
-            console.error('Error creating payment token:', error);
-            return;
-        }
-        const formData = new FormData(event.target);
-        formData.append('stripeToken', token.id);
+            const form = document.getElementById('payment-form');
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const { token, error } = await stripe.createToken(cardElement);
+                if (error) {
+                    console.error('Error creating payment token:', error);
+                    return;
+                }
+                const formData = new FormData(event.target);
+                formData.append('stripeToken', token.id);
 
-        try {
-            const response = await fetch('/process-payment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(Object.fromEntries(formData.entries())),
+                try {
+                    const response = await fetch('/process-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(Object.fromEntries(formData.entries())),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        alert('Payment successful!');
+                        window.location.href = '/user';
+                    } else {
+                        const errorData = await response.json();
+                        console.error('Payment error:', errorData.error);
+                        alert('Payment failed. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Payment processing error:', error);
+                    alert('Payment processing failed. Please try again.');
+                }
             });
-
-            if (response.ok) {
-                const data = await response.json();
-                alert('Payment successful!');
-                window.location.href = '/user';
-            } else {
-                const errorData = await response.json();
-                console.error('Payment error:', errorData.error);
-                alert('Payment failed. Please try again.');
-            }
-        } catch (error) {
-            console.error('Payment processing error:', error);
-            alert('Payment processing failed. Please try again.');
         }
-    });
-</script>
+
+        document.addEventListener('DOMContentLoaded', initializeStripe);
+    </script>
 </body>
 </html>
