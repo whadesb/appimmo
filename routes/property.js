@@ -101,5 +101,17 @@ async function generateLandingPage(property) {
 
     return `/landing-pages/${property._id}.html`;
 }
-
+router.get('/payment', async (req, res) => {
+    const { propertyId, rooms, surface, price, city, country, url } = req.query;
+    
+    res.render('payment', {
+        propertyId,
+        rooms,
+        surface,
+        price,
+        city,
+        country,
+        url
+    });
+});
 module.exports = router;
