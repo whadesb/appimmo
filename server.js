@@ -15,7 +15,7 @@ const Order = require('./models/Order');  // Import Order model
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);  // Initialize Stripe with secret key
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const app = express();
 
