@@ -264,6 +264,14 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
   }
 });
 
+// Utilisez la clé publique pour Stripe.js dans vos fichiers front-end
+const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
+
+// Rendre la clé publique accessible au front-end
+app.get('/config', (req, res) => {
+  res.json({ publicKey: stripePublicKey });
+});
+
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
