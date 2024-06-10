@@ -1,5 +1,3 @@
-// server.js
-
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
@@ -11,7 +9,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
 const User = require('./models/User');
 const Property = require('./models/Property');
-const Order = require('./models/Order');  // Import Order model
+const Order = require('./models/Order');  
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
@@ -270,10 +268,8 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
     }
 });
 
-// Utilisez la clé publique pour Stripe.js dans vos fichiers front-end
 const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
 
-// Rendre la clé publique accessible au front-end
 app.get('/config', (req, res) => {
   res.json({ publicKey: stripePublicKey });
 });
