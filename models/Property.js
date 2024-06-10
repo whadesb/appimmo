@@ -24,7 +24,7 @@ const propertySchema = new Schema({
     },
     url: {
         type: String,
-        required: false // Rendre le champ `url` facultatif
+        required: false 
     },
     createdAt: { 
         type: Date, 
