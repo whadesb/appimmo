@@ -4,27 +4,27 @@ const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
 
-// Route pour ajouter une propriété
+
 router.post('/add-property', async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
 
     try {
-        // Créer une nouvelle propriété dans la base de données
+        
         const property = new Property({ rooms, surface, price, city, country, user: req.user._id });
 
-        // Sauvegarder la propriété dans la base de données
+        
         await property.save();
 
-        // Générer la page de destination
+        
         const landingPageUrl = await generateLandingPage(property);
 
-        // Mettre à jour l'URL de la propriété avec l'URL de la page de destination
+        
         property.url = landingPageUrl;
 
-        // Sauvegarder de nouveau la propriété avec l'URL mise à jour
+        
         await property.save();
 
-        // Envoyer une réponse avec un message de confirmation et l'URL de la page générée
+        
         res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
         console.error('Erreur lors de l\'ajout de la propriété : ', error);
@@ -32,7 +32,7 @@ router.post('/add-property', async (req, res) => {
     }
 });
 
-// Fonction pour générer une page de destination pour une propriété
+
 async function generateLandingPage(property) {
     const template = `
     <!DOCTYPE html>
@@ -102,7 +102,7 @@ async function generateLandingPage(property) {
     return `/landing-pages/${property._id}.html`;
 }
 
-// Route pour afficher la page de paiement avec les détails de la propriété
+
 router.get('/payment', async (req, res) => {
     const { propertyId } = req.query;
 
