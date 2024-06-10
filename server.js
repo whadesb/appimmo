@@ -116,25 +116,9 @@ app.post('/register', async (req, res) => {
     res.send('Une erreur est survenue lors de l\'inscription.');
   }
 });
-app.get('/landing-pages/:id', async (req, res) => {
+app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
-
-  try {
-    const property = await Property.findById(pageId);
-
-    if (!property) {
-      return res.status(404).send('Property not found');
-    }
-
-    // Incrémenter le compteur de vues
-    property.views += 1;
-    await property.save();
-
-    res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
-  } catch (error) {
-    console.error('Error fetching property:', error);
-    res.status(500).send('Error fetching property');
-  }
+  res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
 });
 app.post('/add-property', isAuthenticated, async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
