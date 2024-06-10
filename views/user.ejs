@@ -277,8 +277,7 @@
             cartCounter.textContent = cartItems.length;
         }
 
-    function showSection(event, sectionId) {
-            event.preventDefault();
+        function showSection(sectionId) {
             const sections = ['account', 'landing', 'publicite', 'created-pages'];
             sections.forEach(id => {
                 document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
