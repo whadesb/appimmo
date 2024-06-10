@@ -19,39 +19,28 @@
             margin-top: 20px;
         }
         .menu-vertical {
-            background-color: none;
+            background-color: #343a40;
             padding: 20px;
             border-radius: 8px;
-            height: 400px;
-            overflow-y: auto;
+            height: 100%;
         }
         .menu {
             list-style-type: none;
-            padding: 20px;
-            margin: 0; 
-            height: 100%; 
+            padding: 0;
         }
         .menu-item {
             margin-bottom: 10px;
         }
         .menu-item a {
             text-decoration: none;
-            text-align: center;
-            color: #000;
+            color: #fff;
             font-size: 18px;
-            display: block; 
-            border: 1px solid grey;
-             
         }
         .menu-item.active a {
             font-weight: bold;
-            background-color: #5c4085; 
-            border-radius: 35px;  
-            color: #fff;
-            padding: 10px;
         }
         .menu-item a:hover {
-            color: #000000;
+            color: #adb5bd;
         }
         .custom-cart-icon {
             font-size: 1.5rem;
@@ -82,7 +71,7 @@
                             <a class="nav-link click-scroll" href="#section_1">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_2">Services</a>
+                            <a class="nav-link click-scroll" href="#section_2">Lorem</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
@@ -128,10 +117,10 @@
                     <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
                         <div class="menu-vertical">
                             <ul class="menu">
-                                <li class="menu-item active"><a href="#" onclick="showSection(event, 'account')">Mon compte</a></li>
-                                <li class="menu-item"><a href="#" onclick="showSection(event, 'landing')">Landing page</a></li>
-                                <li class="menu-item"><a href="#" onclick="showSection(event, 'publicite')">Publicité</a></li>
-                                <li class="menu-item"><a href="#" onclick="showSection(event, 'created-pages')">Pages créées</a></li>
+                                <li class="menu-item active"><a href="#" onclick="showSection('account')">Mon compte</a></li>
+                                <li class="menu-item"><a href="#" onclick="showSection('landing')">Landing page</a></li>
+                                <li class="menu-item"><a href="#" onclick="showSection('publicite')">Publicité</a></li>
+                                <li class="menu-item"><a href="#" onclick="showSection('created-pages')">Pages créées</a></li>
                             </ul>
                         </div>
                     </div>
