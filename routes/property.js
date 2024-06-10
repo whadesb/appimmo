@@ -34,67 +34,68 @@ router.post('/add-property', async (req, res) => {
 
 
 async function generateLandingPage(property) {
-    const template = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Propriété à ${property.city}</title>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                background-color: #f8f9fa;
-                color: #333;
-                margin: 0;
-                padding: 0;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-            .container {
-                max-width: 800px;
-                padding: 20px;
-                text-align: center;
-                background-color: #fff;
-                border-radius: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-            .property-info h1 {
-                font-size: 32px;
-                margin-bottom: 20px;
-            }
-            .property-info p {
-                font-size: 18px;
-                margin-bottom: 10px;
-            }
-            @media (max-width: 768px) {
-                .container {
-                    padding: 10px;
-                }
-                .property-info h1 {
-                    font-size: 28px;
-                }
-                .property-info p {
-                    font-size: 16px;
-                }
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="property-info">
-                <h1>Propriété à ${property.city}</h1>
-                <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
-                <p><strong>Surface:</strong> ${property.surface} m²</p>
-                <p><strong>Prix:</strong> ${property.price} €</p>
-                <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
-            </div>
-        </div>
-    </body>
-    </html>`;
+  const template = `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Propriété à ${property.city}</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f8f9fa;
+              color: #333;
+              margin: 0;
+              padding: 0;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+              background: rgba(0, 0, 0, 0.5); /* Fond noir légèrement transparent */
+          }
+          .container {
+              max-width: 800px;
+              padding: 20px;
+              text-align: center;
+              background-color: rgba(255, 255, 255, 0.9); /* Fond blanc légèrement transparent */
+              border-radius: 10px;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+          }
+          .property-info h1 {
+              font-size: 32px;
+              margin-bottom: 20px;
+          }
+          .property-info p {
+              font-size: 18px;
+              margin-bottom: 10px;
+          }
+          @media (max-width: 768px) {
+              .container {
+                  padding: 10px;
+              }
+              .property-info h1 {
+                  font-size: 28px;
+              }
+              .property-info p {
+                  font-size: 16px;
+              }
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="property-info">
+              <h1>Propriété à ${property.city}</h1>
+              <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
+              <p><strong>Surface:</strong> ${property.surface} m²</p>
+              <p><strong>Prix:</strong> ${property.price} €</p>
+              <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
+          </div>
+      </div>
+  </body>
+  </html>`;
 
     const filePath = path.join(__dirname, '..', 'public', 'landing-pages', `${property._id}.html`);
     fs.writeFileSync(filePath, template);
