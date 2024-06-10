@@ -21,6 +21,7 @@ app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(flash());
+app.use(i18n.init);
 app.use((req, res, next) => {
   if (req.query.lang) {
     res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
@@ -44,7 +45,6 @@ passport.use(new LocalStrategy({
 }, User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-app.use(i18n.init);
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
