@@ -5,7 +5,6 @@ const fs = require('fs');
 const path = require('path');
 const axios = require('axios');
 
-// Middleware pour vérifier l'authentification de l'utilisateur
 function isAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
@@ -16,10 +15,10 @@ function isAuthenticated(req, res, next) {
 router.post('/add-property', isAuthenticated, async (req, res) => {
     const { rooms, surface, price, city, country, userId } = req.body;
 
-    console.log("Received data:", req.body);  // Ajoutez ceci pour logguer les données reçues
+    console.log("Received data:", req.body);  
 
     try {
-        // Créer une nouvelle propriété dans la base de données
+        
         const property = new Property({
             rooms,
             surface,
@@ -27,22 +26,22 @@ router.post('/add-property', isAuthenticated, async (req, res) => {
             city,
             country,
             user: userId,
-            url: '' // Initialisez l'URL avec une chaîne vide ou une valeur par défaut
+            url: '' 
         });
 
         await property.save();
 
-        // Générer la page de destination
+       
         const landingPageUrl = await generateLandingPage(property);
 
-        // Mettre à jour l'URL de la propriété et sauvegarder de nouveau
+        
         property.url = landingPageUrl;
         await property.save();
 
-        // Envoyer une réponse JSON en cas de succès
+        
         res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
-        console.error('Erreur lors de l\'ajout de la propriété : ', error);  // Logguer l'erreur
+        console.error('Erreur lors de l\'ajout de la propriété : ', error);  
         res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
     }
 });
