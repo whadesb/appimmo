@@ -196,7 +196,7 @@
                                             </tr>
                                         </thead>
                                         <tbody id="properties-list">
-                                            <!-- Les propriétés de l'utilisateur seront insérées ici -->
+                                            <!-- Propriétés de l'utilisateur ici -->
                                         </tbody>
                                     </table>
                                 </div>
@@ -296,7 +296,7 @@
             const formData = new FormData(form);
             const formDataJson = Object.fromEntries(formData.entries());
 
-            console.log("Form data to send:", formDataJson);  // Ajoutez ceci pour logguer les données du formulaire
+            console.log("Form data to send:", formDataJson);  
 
             try {
                 const response = await fetch('/add-property', {
