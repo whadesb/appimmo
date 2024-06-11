@@ -11,43 +11,81 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/templatemo-topic-listing.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        .content {
-            padding: 20px;
-        }
-        .card {
-            margin-top: 20px;
-        }
-        .menu-vertical {
-            background-color: #343a40;
-            padding: 20px;
-            border-radius: 8px;
+        html, body {
             height: 100%;
         }
-        .menu {
-            list-style-type: none;
-            padding: 0;
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
         }
-        .menu-item {
-            margin-bottom: 10px;
+        .navbar {
+            margin-bottom: 20px;
         }
-        .menu-item a {
+        .main-section {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-left: 10px; /* Small margin */
+        }
+        .sidebar {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 60px;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+        }
+        .sidebar a {
+            margin: 10px 0;
+            color: #343a40;
+            font-size: 24px;
             text-decoration: none;
+        }
+        .sidebar a:hover {
+            color: #007bff;
+        }
+        .footer {
+            background-color: #343a40;
             color: #fff;
-            font-size: 18px;
+            padding: 20px 0;
         }
-        .menu-item.active a {
-            font-weight: bold;
-        }
-        .menu-item a:hover {
-            color: #adb5bd;
-        }
-        .custom-cart-icon {
-            font-size: 1.5rem;
-            color: #333;
-        }
-        .badge {
-            background-color: #ffc107;
+        @media (max-width: 767px) {
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            .row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .main-section {
+                margin-left: 0;
+                margin-top: 20px;
+                width: 100%;
+            }
+            .sidebar {
+                position: static;
+                margin-bottom: 20px;
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+            .sidebar a {
+                margin: 0 5px;
+                font-size: 20px;
+            }
         }
     </style>
 </head>
@@ -112,20 +150,18 @@
             </div>
         </section>
         <section class="contact-section section-padding section-bg" id="section_5">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
-                        <div class="menu-vertical">
-                            <ul class="menu">
-                                <li class="menu-item active"><a href="#" onclick="showSection('account')">Mon compte</a></li>
-                                <li class="menu-item"><a href="#" onclick="showSection('landing')">Landing page</a></li>
-                                <li class="menu-item"><a href="#" onclick="showSection('publicite')">Publicité</a></li>
-                                <li class="menu-item"><a href="#" onclick="showSection('created-pages')">Pages créées</a></li>
-                            </ul>
+            <div class="container-fluid">
+                <div class="row mt-4">
+                    <div class="col-auto p-0">
+                        <div class="sidebar">
+                            <a href="#" title="Mon compte" onclick="showSection('account')"><i class="fa fa-user"></i></a>
+                            <a href="#" title="Landing page" onclick="showSection('landing')"><i class="fa fa-file-alt"></i></a>
+                            <a href="#" title="Publicité" onclick="showSection('publicite')"><i class="fa fa-file-invoice"></i></a>
+                            <a href="#" title="Pages créées" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i></a>
                         </div>
                     </div>
-                    <div class="col-lg-9 col-md-8 col-sm-6">
-                        <div class="content">
+                    <div class="col">
+                        <div class="main-section">
                             <div id="account" class="card">
                                 <div class="card-body">
                                     <h5 class="card-title">Mes Informations :</h5>
@@ -258,14 +294,6 @@
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
     <script>
-        let cartItems = [];
-
-        function buyItem(itemName, price) {
-            cartItems.push({ name: itemName, price: price });
-            const cartCounter = document.getElementById('cart-counter');
-            cartCounter.textContent = cartItems.length;
-        }
-
         function showSection(sectionId) {
             const sections = ['account', 'landing', 'publicite', 'created-pages'];
             sections.forEach(id => {
@@ -273,52 +301,7 @@
             });
         }
 
-        function showCart() {
-            const cartSection = document.getElementById('cart');
-            const cartItemsList = document.getElementById('cart-items');
-            cartItemsList.innerHTML = '';
-            cartItems.forEach(item => {
-                const listItem = document.createElement('li');
-                listItem.textContent = item.name + ' - ' + item.price + '€';
-                cartItemsList.appendChild(listItem);
-            });
-            cartSection.style.display = 'block';
-        }
-
-        function checkout() {
-            window.location.href = "/checkout";
-        }
-
-        document.getElementById('add-property-form').addEventListener('submit', async (event) => {
-            event.preventDefault();
-
-            const form = event.target;
-            const formData = new FormData(form);
-            const formDataJson = Object.fromEntries(formData.entries());
-
-            console.log("Form data to send:", formDataJson);  
-
-            try {
-                const response = await fetch('/add-property', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formDataJson),
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    const generatedLinkElement = document.getElementById('generatedLink');
-                    generatedLinkElement.innerHTML = `Le bien immobilier a été ajouté avec succès. Vous pouvez le voir ici : <a href="${data.url}">${data.url}</a>`;
-                } else {
-                    const errorData = await response.json();
-                    console.error('Erreur lors de la soumission du formulaire : ', errorData.error);
-                }
-            } catch (error) {
-                console.error('Erreur lors de la soumission du formulaire : ', error);
-            }
-        });
+        document.querySelector('.sidebar a[title="Pages créées"]').addEventListener('click', loadProperties);
 
         async function loadProperties() {
             try {
@@ -352,8 +335,6 @@
             }
         }
 
-        document.querySelector('.menu-item a[onclick="showSection(\'created-pages\')"]').addEventListener('click', loadProperties);
-
         function copyURL(url) {
             navigator.clipboard.writeText(url)
                 .then(() => {
@@ -370,4 +351,3 @@
     </script>
 </body>
 </html>
-
