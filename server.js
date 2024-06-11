@@ -14,8 +14,11 @@ const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const compression = require('compression');
 
 const app = express();
+
+app.use(compression()); 
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
