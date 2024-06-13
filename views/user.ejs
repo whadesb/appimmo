@@ -37,6 +37,16 @@
         .navbar .navbar-icon.red {
             color: #ff0000; /* Red color when user is logged in */
         }
+        .navbar .logout-btn {
+            background: none;
+            border: none;
+            color: #ff0000; /* Red color */
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .navbar .logout-btn i {
+            margin-right: 8px;
+        }
         .main-section {
             flex: 1;
             padding: 20px;
@@ -122,7 +132,9 @@
                 <div class="d-lg-none ms-auto me-4">
                     <% if (user) { %>
                         <form action="/logout" method="POST" class="d-inline">
-                            <button type="submit" class="navbar-icon bi-person red" style="background: none; border: none;"></button>
+                            <button type="submit" class="logout-btn">
+                                <i class="fas fa-sign-out-alt"></i> Déconnexion
+                            </button>
                         </form>
                     <% } else { %>
                         <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
@@ -152,7 +164,9 @@
                     <div class="d-none d-lg-block">
                         <% if (user) { %>
                             <form action="/logout" method="POST" class="d-inline">
-                                <button type="submit" class="navbar-icon bi-person red" style="background: none; border: none;"></button>
+                                <button type="submit" class="logout-btn">
+                                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                                </button>
                             </form>
                         <% } else { %>
                             <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
