@@ -14,6 +14,7 @@
     <style>
         body, html {
             height: 100%;
+            margin: 0;
         }
         .form-container {
             max-width: 400px;
@@ -35,8 +36,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            min-height: calc(100vh - 56px); /* Adjust for navbar height */
             background-color: #f8f9fa;
+            padding: 20px 0;
         }
         .form-control-icon {
             position: relative;
@@ -68,6 +70,14 @@
         }
         .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
             color: #ffffff;
+        }
+        @media (max-width: 576px) {
+            .new-section {
+                padding: 10px 0;
+            }
+            .form-container {
+                padding: 15px;
+            }
         }
     </style>
 </head>
