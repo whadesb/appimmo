@@ -60,6 +60,22 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('Error connecting to MongoDB', err);
 });
 
+app.post('/logout', (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return next(err);
+    }
+    req.session.destroy((err) => {
+      if (err) {
+        return next(err);
+      }
+      res.clearCookie('connect.sid');
+      res.redirect('/');
+    });
+  });
+});
+
+
 app.get('/', (req, res) => {
   res.render('index', { i18n: res });
 });
