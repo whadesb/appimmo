@@ -5,89 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>UAP Immo | User Profile</title>    
-    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <title>UAP Immo | My account</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
-    <link href="/css/templatemo-topic-listing.css" rel="stylesheet">  
+    <link href="/css/templatemo-topic-listing.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        .form-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        html, body {
+            height: 100%;
         }
-        .form-container h2 {
-            margin-bottom: 20px;
-        }
-        .form-container .form-text {
-            margin-bottom: 15px;
-        }
-        .new-section {
-            padding: 60px 0; /* Padding for the new section */
-            background-color: #f8f9fa; /* Light background color */
-        }
-        .hero-section {
-            padding-top: 100px; /* Ensure content is not hidden behind the fixed navbar */
-        }
-        .form-control-icon {
-            position: relative;
-        }
-        .form-control-icon input {
-            padding-right: 2.5rem;
-        }
-        .form-control-icon .icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-        .btn-primary {
-            background-color: #8140de;
-            border-color: #000;
-        }
-        .btn-primary:hover {
-            background-color: #8140de;
-            border-color: #8140de;
-        }
-        .form-container .form-label {
-            font-weight: bold;
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
         }
         .navbar {
-            background-color: #8140de; /* Set background color */
-            transition: background-color 0.3s;
+            margin-bottom: 20px;
         }
-        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #ffffff; /* Set text color */
+        .main-section {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-left: 10px; /* Small margin */
         }
-        .navbar .navbar-icon {
-            font-size: 1.5rem;
+        .main-section .card {
+            border: none; /* Removing internal borders of cards */
+            box-shadow: none; /* Removing shadow if any */
         }
-        .navbar .navbar-icon.bi-person {
-            color: #ffffff !important;
+        .sidebar {
+            background-color: #8b86ff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 60px;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 20px;
         }
-        .input-group-append {
-            cursor: pointer;
+        .sidebar a {
+            margin: 10px 0;
+            color: #000;
+            font-size: 24px;
+            text-decoration: none;
         }
-        .toggle-password {
-            cursor: pointer;
+        .sidebar a:hover {
+            color: #000;
         }
-    </style>    
+        .footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 0;
+        }
+        @media (max-width: 767px) {
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            .row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .main-section {
+                margin-left: 0;
+                margin-top: 20px;
+                width: 100%;
+            }
+            .sidebar {
+                position: static;
+                margin-bottom: 20px;
+                width: 100%;
+                flex-direction: row;
+                justify-content: space-around;
+            }
+            .sidebar a {
+                margin: 0 5px;
+                font-size: 20px;
+            }
+        }
+    </style>
 </head>
 <body id="top">
     <main>
-        <nav class="navbar navbar-expand-lg fixed-top">
+        <nav class="navbar navbar-expand-lg">
             <div class="container">
                 <a class="navbar-brand" href="/">
                     <i class="bi-back"></i>
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto me-4">
-                    <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
+                    <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -98,7 +113,7 @@
                             <a class="nav-link click-scroll" href="#section_1">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_2">Services</a>
+                            <a class="nav-link click-scroll" href="#section_2">Lorem</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
@@ -110,58 +125,138 @@
                             <a class="nav-link click-scroll" href="#section_5">Contact</a>
                         </li>
                     </ul>
-
                     <div class="d-none d-lg-block">
-                        <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
+                        <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                     </div>
+                </div>
+                <div class="d-lg-none mt-3">
+                    <a href="/login" class="btn btn-primary w-100">Login</a>
                 </div>
             </div>
         </nav>
-
-        <!-- User Section Start -->
-        <section class="new-section">
+     
+       
+            <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
             <div class="container">
                 <div class="row">
-                    <div class="col-12 col-lg-8 mx-auto">
-                        <div class="form-container">
-                            <h2 class="text-center">Mon Profil</h2>
-                            <form action="/user/update" method="POST">
-                                <div class="mb-3">
-                                    <label for="username" class="form-label">Nom d'utilisateur</label>
-                                    <input type="text" class="form-control" id="username" name="username" value="<%= user.username %>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" value="<%= user.email %>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="firstName" class="form-label">Prénom</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" value="<%= user.firstName %>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lastName" class="form-label">Nom</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" value="<%= user.lastName %>" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="role" class="form-label">Rôle</label>
-                                    <input type="text" class="form-control" id="role" name="role" value="<%= user.role %>" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
-                            </form>
-                        </div>
+                    <div class="col-lg-8 col-12 mx-auto">
+                        <h2 class="text-white text-center">Mon compte</h2>
+                        <h6 class="text-white text-center">Bienvenue, <%= user.lastName %> <%= user.firstName %></h6>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- User Section End -->
-
+       
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8 col-12">
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+       
+       
+        <section class="contact-section section-padding section-bg" id="section_5">
+<div class="container">
+            <div class="container-fluid">
+                <div class="row mt-4">
+                    <div class="col-auto p-0">
+                        <div class="sidebar">
+                            <a href="#" title="Mon compte" onclick="showSection('account')"><i class="fa fa-user"></i></a>
+                            <a href="#" title="Landing page" onclick="showSection('landing')"><i class="fa fa-file-alt"></i></a>
+                            <a href="#" title="Publicité" onclick="showSection('publicite')"><i class="fa fa-file-invoice"></i></a>
+                            <a href="#" title="Pages créées" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i></a>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="main-section">
+                            <div id="account" class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">Mes Informations :</h5>
+                                    <p class="card-text">Nom: <%= user.firstName %></p>
+                                    <p class="card-text">Prénom: <%= user.lastName %></p>
+                                    <p class="card-text">Email: <%= user.email %></p>
+                                </div>
+                            </div>
+                            <div id="landing" class="card" style="display: none;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Ajouter un bien immobilier</h5>
+                                    <form id="add-property-form" action="/add-property" method="POST">
+                                        <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
+                                        <div class="form-group">
+                                            <label for="rooms">Nombre de pièces</label>
+                                            <input type="number" class="form-control" id="rooms" name="rooms" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="surface">Surface (m²)</label>
+                                            <input type="number" class="form-control" id="surface" name="surface" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="price">Prix (€)</label>
+                                            <input type="number" class="form-control" id="price" name="price" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="city">Ville</label>
+                                            <input type="text" class="form-control" id="city" name="city" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="country">Pays</label>
+                                            <input type="text" class="form-control" id="country" name="country" required>
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                                    </form>
+                                    <div id="generatedLink" class="mt-3"></div>
+                                </div>
+                            </div>
+                            <div id="publicite" class="card" style="display: none;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Publicité</h5>
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <div class="card mb-4">
+                                                <div class="card-body">
+                                                    <h5 class="card-title">Publicité 1</h5>
+                                                    <p class="card-text">Description de la publicité 1.</p>
+                                                    <button class="btn btn-primary" onclick="buyItem('Publicité 1', 10)">Acheter</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="created-pages" class="card" style="display: none;">
+                                <div class="card-body">
+                                    <h5 class="card-title">Pages créées</h5>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Nombre de pièces</th>
+                                                <th scope="col">Surface (m²)</th>
+                                                <th scope="col">Prix (€)</th>
+                                                <th scope="col">Ville</th>
+                                                <th scope="col">Pays</th>
+                                                <th scope="col">URL</th>
+                                                <th scope="col">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="properties-list">
+                                            <!-- Propriétés de l'utilisateur ici -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+</div>
+        </section>
     </main>
-
     <footer class="site-footer section-padding">
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-12 mb-4 pb-2">
-                    <a class="navbar-brand mb-2" href="/">
+                    <a class="navbar-brand mb-2" href="index.html">
                         <i class="bi-back"></i>
                         <span>UAP Immo</span>
                     </a>
@@ -175,7 +270,7 @@
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
-                    <h6 class="site-footer-title mb3">Accès</h6>
+                    <h6 class="site-footer-title mb-3">Accès</h6>
                     <p class="text-white d-flex mb-1">
                         <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
                     </p>
@@ -190,10 +285,10 @@
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                         <ul class="dropdown-menu">
                             <li>
-                                <a class="dropdown-item" href="#">English</a>
+                                <a class="dropdown-item" href="/?lang=en">English</a>
                             </li>
                             <li>
-                                <a class="dropdown-item" href="#">Français</a>
+                                <a class="dropdown-item" href="/?lang=fr">Français</a>
                             </li>
                         </ul>
                     </div>
@@ -202,10 +297,66 @@
             </div>
         </div>
     </footer>
-
-    <!-- JAVASCRIPT FILES -->
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/jquery.sticky.js"></script>
+    <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
+    <script>
+        function showSection(sectionId) {
+            const sections = ['account', 'landing', 'publicite', 'created-pages'];
+            sections.forEach(id => {
+                document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+            });
+        }
+
+        document.querySelector('.sidebar a[title="Pages créées"]').addEventListener('click', loadProperties);
+
+        async function loadProperties() {
+            try {
+                const response = await fetch('/user/properties');
+                if (response.ok) {
+                    const properties = await response.json();
+                    const propertiesList = document.getElementById('properties-list');
+                    propertiesList.innerHTML = '';
+
+                    properties.forEach(property => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${property.rooms}</td>
+                            <td>${property.surface}</td>
+                            <td>${property.price}</td>
+                            <td>${property.city}</td>
+                            <td>${property.country}</td>
+                            <td><a href="${property.url}">${property.url}</a></td>
+                            <td>
+                                <button class="btn btn-primary" onclick="copyURL('${property.url}')">Copie</button>
+                                <button class="btn btn-secondary" onclick="testURL('${property._id}')">Test</button>
+                            </td>
+                        `;
+                        propertiesList.appendChild(row);
+                    });
+                } else {
+                    console.error('Erreur lors du chargement des propriétés');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des propriétés : ', error);
+            }
+        }
+
+        function copyURL(url) {
+            navigator.clipboard.writeText(url)
+                .then(() => {
+                    alert('URL copiée avec succès!');
+                })
+                .catch(err => {
+                    console.error('Impossible de copier l\'URL : ', err);
+                });
+        }
+
+        function testURL(propertyId) {
+            window.location.href = `/payment?propertyId=${propertyId}`;
+        }
+    </script>
 </body>
 </html>
