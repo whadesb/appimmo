@@ -14,29 +14,25 @@
     <style>
         body, html {
             height: 100%;
-        }
-        .form-container {
-            max-width: 700px;
-            padding: 30px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-        }
-        .form-container h2 {
-            margin-bottom: 20px;
-        }
-        .form-container .form-text {
-            margin-bottom: 15px;
-        }
-        .new-section {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: calc(100vh - 56px); /* Adjust for navbar height */
-            background-color: #f8f9fa; /* Light background color */
+            background-color: #f8f9fa;
+            margin: 0;
         }
-        .hero-section {
-            padding-top: 100px; /* Ensure content is not hidden behind the fixed navbar */
+        .form-container {
+            width: 100%;
+            max-width: 400px;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
         }
         .form-control-icon {
             position: relative;
@@ -49,11 +45,12 @@
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
-            cursor: pointer;
+            color: #6c757d;
         }
         .btn-primary {
             background-color: #007bff;
             border-color: #007bff;
+            font-size: 16px;
         }
         .btn-primary:hover {
             background-color: #0056b3;
@@ -73,144 +70,138 @@
 </head>
 <body id="top">
     <main>
-          <nav class="navbar navbar-expand-lg fixed-top">
-                <div class="container">
-                    <a class="navbar-brand" href="/">
-                        <i class="bi-back"></i>
-                        <span>UAP Immo</span>
-                    </a>
-                    <div class="d-lg-none ms-auto me-4">
-                        <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
-                    </div>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_1">Home</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_2">Services</a>
-                            </li>
-   
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_4">FAQs</a>
-                            </li>
-   
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_5">Contact</a>
-                            </li>
-                        </ul>
-
-                        <div class="d-none d-lg-block">
-                            <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
-                        </div>
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <i class="bi-back"></i>
+                    <span>UAP Immo</span>
+                </a>
+                <div class="d-lg-none ms-auto me-4">
+                    <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_1">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_2">Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_4">FAQs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                        </li>
+                    </ul>
+                    <div class="d-none d-lg-block">
+                        <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                     </div>
                 </div>
-            </nav>
+            </div>
+        </nav>
 
-            <section class="new-section">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-12 col-lg-8 mx-auto">
-                            <div class="form-container">
-                                <h2 class="text-center">Connexion</h2>
-                                <form action="/login" method="POST">
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <div class="form-control-icon">
-                                            <input type="email" class="form-control" id="email" name="email" required>
-                                            <i class="bi bi-envelope-fill icon"></i>
-                                        </div>
-                                        <div id="emailHelp" class="form-text">Vous pouvez utiliser votre email pour vous connecter.</div>
+        <section class="new-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="form-container">
+                            <h2>Connexion</h2>
+                            <form action="/login" method="POST">
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <div class="form-control-icon">
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                        <i class="bi bi-envelope-fill icon"></i>
                                     </div>
-                                    <div class="mb-3">
-                                        <label for="password" class="form-label">Mot de passe</label>
-                                        <div class="form-control-icon">
-                                            <input type="password" class="form-control" id="password" name="password" required>
-                                            <i class="bi bi-eye-fill icon" id="togglePassword"></i>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary w-100">Connexion</button>
-                                </form>
-                                <div class="mt-3 text-center">
-                                    <span>Pas encore de compte ? <a href="/register">Inscrivez-vous ici</a></span>
+                                    <div id="emailHelp" class="form-text">Utilisez votre email pour vous connecter.</div>
                                 </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Mot de passe</label>
+                                    <div class="form-control-icon">
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                        <i class="bi bi-eye-fill icon" id="togglePassword"></i>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Connexion</button>
+                            </form>
+                            <div class="mt-3 text-center">
+                                <span>Pas encore de compte ? <a href="/register">Inscrivez-vous ici</a></span>
                             </div>
                         </div>
                     </div>
                 </div>
-            </section>
-        
-        </main>
+            </div>
+        </section>
+    </main>
 
-        <footer class="site-footer section-padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-12 mb-4 pb-2">
-                        <a class="navbar-brand mb-2" href="/">
-                            <i class="bi-back"></i>
-                            <span>UAP Immo</span>
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/">
+                        <i class="bi-back"></i>
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
+                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
+                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
+                    <h6 class="site-footer-title mb3">Accès</h6>
+                    <p class="text-white d-flex mb-1">
+                        <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
+                    </p>
+                    <p class="text-white d-flex">
+                        <a href="mailto:info@company.com" class="site-footer-link">
+                            contact@uap.immo
                         </a>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Informations</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
-                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
-                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="#">English</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Français</a>
+                            </li>
                         </ul>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
-                        <h6 class="site-footer-title mb3">Accès</h6>
-                        <p class="text-white d-flex mb-1">
-                            <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
-                        </p>
-                        <p class="text-white d-flex">
-                            <a href="mailto:info@company.com" class="site-footer-link">
-                                contact@uap.immo
-                            </a>
-                        </p>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="#">English</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">Français</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
                 </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
             </div>
-        </footer>
+        </div>
+    </footer>
 
-        <!-- JAVASCRIPT FILES -->
-        <script src="/js/jquery.min.js"></script>
-        <script src="/js/bootstrap.bundle.min.js"></script>
-        <!-- Remove or comment out the following scripts if they control the sticky navbar behavior -->
-        <!-- <script src="/js/jquery.sticky.js"></script> -->
-        <!-- <script src="/js/click-scroll.js"></script> -->
-        <script src="/js/custom.js"></script>
-        <script>
-            document.getElementById('togglePassword').addEventListener('click', function (e) {
-                const passwordInput = document.getElementById('password');
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                this.classList.toggle('bi-eye-fill');
-                this.classList.toggle('bi-eye-slash-fill');
-            });
-        </script>
-    </body>
+    <!-- JAVASCRIPT FILES -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <!-- Remove or comment out the following scripts if they control the sticky navbar behavior -->
+    <!-- <script src="/js/jquery.sticky.js"></script> -->
+    <!-- <script src="/js/click-scroll.js"></script> -->
+    <script src="/js/custom.js"></script>
+    <script>
+        document.getElementById('togglePassword').addEventListener('click', function (e) {
+            const passwordInput = document.getElementById('password');
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.classList.toggle('bi-eye-fill');
+            this.classList.toggle('bi-eye-slash-fill');
+        });
+    </script>
+</body>
 </html>
