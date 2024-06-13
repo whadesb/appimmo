@@ -26,66 +26,76 @@
         .form-container .form-text {
             margin-bottom: 15px;
         }
-        .custom-section {
-            padding: 60px 0;
-            background-color: #f8f9fa;
+        .navbar {
+            transition: none; /* Remove transition effects */
+            background-color: transparent; /* Default background */
         }
-        .custom-section h2 {
-            font-weight: 700;
-            margin-bottom: 20px;
+        .navbar.sticky {
+            background-color: transparent; /* Ensure no background color change */
+            box-shadow: none; /* Ensure no shadow */
         }
-        .custom-section p {
-            font-size: 18px;
-            color: #6c757d;
+        .new-section {
+            padding: 60px 0; /* Padding for the new section */
+            background-color: #f8f9fa; /* Light background color */
         }
     </style>    
 </head>
 <body id="top">
     <main>
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <i class="bi-back"></i>
-                    <span>UAP Immo</span>
-                </a>
-                <div class="d-lg-none ms-auto me-4">
-                    <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_1">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_2">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_4">FAQs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
-                        </li>
-                    </ul>
-                    <div class="d-none d-lg-block">
-                        <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+          <nav class="navbar navbar-expand-lg">
+                <div class="container">
+                    <a class="navbar-brand" href="/">
+                        <i class="bi-back"></i>
+                        <span>UAP Immo</span>
+                    </a>
+                    <div class="d-lg-none ms-auto me-4">
+                        <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
+                    </div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_1">Home</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_2">Services</a>
+                            </li>
+   
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_4">FAQs</a>
+                            </li>
+   
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                            </li>
+                        </ul>
+
+                        <div class="d-none d-lg-block">
+                            <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </nav>
+            </nav>
 
-        <!-- Nouvelle section ajoutée ici -->
-        <section class="custom-section text-center">
-            <div class="container">
-                <h2>Bienvenue sur UAP Immo</h2>
-                <p>Découvrez notre plateforme de génération automatique de landing pages pour vos biens immobiliers. Connectez-vous pour accéder à votre espace personnel et découvrir tous nos services.</p>
-            </div>
-        </section>
+            <!-- New Section Start -->
+            <section class="new-section">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <h2>Nouvelle Section</h2>
+                            <p>Ceci est une nouvelle section ajoutée entre le menu de navigation et la section de connexion.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- New Section End -->
 
         <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
             <div class="container">
@@ -97,7 +107,6 @@
                 </div>
             </div>
         </section>
-        
         <section class="featured-section">
             <div class="container">
                 <div class="row justify-content-center">
@@ -124,60 +133,61 @@
                 </div>
             </div>
         </section>
-    </main>
+        </main>
 
-    <footer class="site-footer section-padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-12 mb-4 pb-2">
-                    <a class="navbar-brand mb-2" href="/">
-                        <i class="bi-back"></i>
-                        <span>UAP Immo</span>
-                    </a>
-                </div>
-                <div class="col-lg-3 col-md-4 col-6">
-                    <h6 class="site-footer-title mb-3">Informations</h6>
-                    <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
-                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
-                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
-                    <h6 class="site-footer-title mb-3">Accès</h6>
-                    <p class="text-white d-flex mb-1">
-                        <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
-                    </p>
-                    <p class="text-white d-flex">
-                        <a href="mailto:info@company.com" class="site-footer-link">
-                            contact@uap.immo
+        <footer class="site-footer section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-12 mb-4 pb-2">
+                        <a class="navbar-brand mb-2" href="/">
+                            <i class="bi-back"></i>
+                            <span>UAP Immo</span>
                         </a>
-                    </p>
-                </div>
-                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="#">English</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Français</a>
-                            </li>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <h6 class="site-footer-title mb-3">Informations</h6>
+                        <ul class="site-footer-links">
+                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
+                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
+                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
                         </ul>
                     </div>
+                    <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
+                        <h6 class="site-footer-title mb-3">Accès</h6>
+                        <p class="text-white d-flex mb-1">
+                            <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
+                        </p>
+                        <p class="text-white d-flex">
+                            <a href="mailto:info@company.com" class="site-footer-link">
+                                contact@uap.immo
+                            </a>
+                        </p>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#">English</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Français</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
                 </div>
-                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
             </div>
-        </div>
-    </footer>
+        </footer>
 
-    <!-- JAVASCRIPT FILES -->
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/jquery.sticky.js"></script>
-    <script src="/js/click-scroll.js"></script>
-    <script src="/js/custom.js"></script>
+        <!-- JAVASCRIPT FILES -->
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        <!-- Remove or comment out the following scripts if they control the sticky navbar behavior -->
+        <!-- <script src="/js/jquery.sticky.js"></script> -->
+        <!-- <script src="/js/click-scroll.js"></script> -->
+        <script src="/js/custom.js"></script>
 
-</body>
+    </body>
 </html>
