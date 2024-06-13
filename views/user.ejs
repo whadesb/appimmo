@@ -28,7 +28,11 @@
             text-align: left; /* Align to the left */
         }
         .navbar {
+            background-color: #8140de; /* Set background color */
             margin-bottom: 20px;
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+            color: #ffffff; /* Set text color */
         }
         .main-section {
             flex: 1;
@@ -99,14 +103,14 @@
 </head>
 <body id="top">
     <main>
-        <nav class="navbar navbar-expand-lg">
+        <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
                     <i class="bi-back"></i>
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto me-4">
-                    <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+                    <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -130,7 +134,7 @@
                         </li>
                     </ul>
                     <div class="d-none d-lg-block">
-                        <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+                        <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
                     </div>
                 </div>
                 <div class="d-lg-none mt-3">
