@@ -94,15 +94,16 @@
                 background-color: transparent; /* Remove background color */
                 box-shadow: none; /* Remove box-shadow */
                 flex-direction: row;
-                justify-content: space-between;
+                justify-content: space-around;
+                padding: 0; /* Remove padding */
             }
             .sidebar a {
-                margin: 0;
-                font-size: 24px;
-                color: #000; /* Ensure icon color is black */
-                flex: 1; /* Make each icon take up equal space */
+                flex-grow: 1; /* Make each icon grow to fill available space */
                 text-align: center; /* Center icons horizontally */
                 padding: 10px 0; /* Add vertical padding */
+                margin: 5px; /* Add margin between icons */
+                font-size: 24px;
+                color: #000; /* Ensure icon color is black */
             }
         }
     </style>
