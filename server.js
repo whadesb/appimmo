@@ -9,7 +9,7 @@ const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
 const User = require('./models/User');
 const Property = require('./models/Property');
-const Order = require('./models/Order');  
+const Order = require('./models/Order');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
@@ -18,7 +18,7 @@ const compression = require('compression');
 
 const app = express();
 
-app.use(compression()); 
+app.use(compression());
 
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
@@ -60,7 +60,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('Error connecting to MongoDB', err);
 });
 
-app.post('/logout', (req, res) => {
+app.post('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
       return next(err);
@@ -74,7 +74,6 @@ app.post('/logout', (req, res) => {
     });
   });
 });
-
 
 app.get('/', (req, res) => {
   res.render('index', { i18n: res });
