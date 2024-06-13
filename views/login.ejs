@@ -5,181 +5,72 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <title>UAP Immo | Login</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>UAP Immo | Login</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com">        
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
-    <link href="/css/templatemo-topic-listing.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link href="/css/templatemo-topic-listing.css" rel="stylesheet">  
     <style>
-        html, body {
-            height: 100%;
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-        }
-        .navbar {
+        .form-container h2 {
             margin-bottom: 20px;
         }
-        .main-section {
-            flex: 1;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-left: 10px; /* Small margin */
+        .form-container .form-text {
+            margin-bottom: 15px;
         }
-        .main-section .card {
-            border: none; /* Removing internal borders of cards */
-            box-shadow: none; /* Removing shadow if any */
-        }
-        .sidebar {
-            background-color: #8b86ff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 60px;
-            height: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: sticky;
-            top: 20px;
-        }
-        .sidebar a {
-            margin: 10px 0;
-            color: #000;
-            font-size: 24px;
-            text-decoration: none;
-        }
-        .sidebar a:hover {
-            color: #000;
-        }
-        .footer {
-            background-color: #343a40;
-            color: #fff;
-            padding: 20px 0;
-        }
-        @media (max-width: 767px) {
-            .container {
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-            .row {
-                flex-direction: column;
-                align-items: center;
-            }
-            .main-section {
-                margin-left: 0;
-                margin-top: 20px;
-                width: 100%;
-            }
-            .sidebar {
-                position: static;
-                margin-bottom: 20px;
-                width: 100%;
-                flex-direction: row;
-                justify-content: space-around;
-            }
-            .sidebar a {
-                margin: 0 5px;
-                font-size: 20px;
-            }
-        }
-    </style>
+    </style>    
 </head>
 <body id="top">
     <main>
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <i class="bi-back"></i>
-                    <span>UAP Immo</span>
-                </a>
-                <div class="d-lg-none ms-auto me-4">
-                    <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_1">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_2">Lorem</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_4">FAQs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
-                        </li>
-                    </ul>
-                    <div class="d-none d-lg-block">
-                        <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+          <nav class="navbar navbar-expand-lg">
+                <div class="container">
+                    <a class="navbar-brand" href="/">
+                        <i class="bi-back"></i>
+                        <span>UAP Immo</span>
+                    </a>
+                    <div class="d-lg-none ms-auto me-4">
+                        <a href="#top" class="navbar-icon bi-person smoothscroll"></a>
                     </div>
-                </div>
-                <div class="d-lg-none mt-3">
-                    <a href="/login" class="btn btn-primary w-100">Login</a>
-                </div>
-            </div>
-        </nav>
-      
-        
-            <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-12 mx-auto">
-                          
-                    </div>
-                </div>
-            </div>
-        </section>
-       
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-8 col-12">
-                        <p></p>
-                    </div>
-                </div>
-            </div>
-       
-         <section class="featured-section">
-            <div class="container">
-                <div class="row justify-content-center">
-                    <div class="col-lg-6 col-12">
-                        <div class="form-container">
-                            <h2>Connexion</h2>
-                            <form action="/login" method="POST">
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="text" class="form-control" id="email" name="email" required>
-                                    <div id="emailHelp" class="form-text">Vous pouvez utiliser votre email pour vous connecter.</div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label">Mot de passe</label>
-                                    <input type="password" class="form-control" id="password" name="password" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">Connexion</button>
-                            </form>                            
-                            <div class="mt-3 text-center">
-                                <span>Pas encore de compte ? <a href="/register">Inscrivez-vous ici</a></span>
-                            </div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_1">Home</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_2">Services</a>
+                            </li>
+   
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_4">FAQs</a>
+                            </li>
+   
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                            </li>
+                        </ul>
+
+                        <div class="d-none d-lg-block">
+                            <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                         </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </nav>
         <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
             <div class="container">
                 <div class="row">
