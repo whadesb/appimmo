@@ -18,7 +18,10 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-router.post('/add-property', authMiddleware, upload.fields([{ name: 'photo1', maxCount: 1 }, { name: 'photo2', maxCount: 1 }]), async (req, res) => {
+router.post('/add-property', authMiddleware, upload.fields([
+    { name: 'photo1', maxCount: 1 },
+    { name: 'photo2', maxCount: 1 }
+]), async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
 
     console.log("Received body data:", req.body);  // Pour vérifier les données du formulaire
