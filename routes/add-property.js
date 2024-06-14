@@ -20,6 +20,9 @@ const upload = multer({ storage: storage });
 
 router.post('/add-property', authMiddleware, upload.fields([{ name: 'photo1', maxCount: 1 }, { name: 'photo2', maxCount: 1 }]), async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
+    console.log("Received data:", req.body);  // Ajout de console.log pour vérifier les données reçues
+    console.log("Received files:", req.files);  // Ajout de console.log pour vérifier les fichiers reçus
+    
     let photo1 = null;
     let photo2 = null;
 
