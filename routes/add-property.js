@@ -72,6 +72,7 @@ router.post('/add-property', authMiddleware, upload.fields([{ name: 'photo1', ma
     }
 });
 
+
 async function generateLandingPage(property) {
     const template = `
     <!DOCTYPE html>
