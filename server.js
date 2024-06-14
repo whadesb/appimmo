@@ -17,6 +17,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const compression = require('compression');
 const multer = require('multer');
 const sharp = require('sharp');
+const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
@@ -141,13 +142,13 @@ app.get('/landing-pages/:id', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
 });
 
-// Configuration de Multer pour le téléchargement des fichiers
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads');
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + path.extname(file.originalname));
+    const uniqueName = uuidv4() + path.extname(file.originalname);
+    cb(null, uniqueName);
   }
 });
 const upload = multer({ storage: storage });
@@ -166,7 +167,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
         let photo2 = null;
 
         if (req.files.photo1) {
-            const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
+            const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
             await sharp(req.files.photo1[0].path)
                 .resize(800)
                 .jpeg({ quality: 80 })
@@ -176,7 +177,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
         }
 
         if (req.files.photo2) {
-            const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
+            const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
             await sharp(req.files.photo2[0].path)
                 .resize(800)
                 .jpeg({ quality: 80 })
