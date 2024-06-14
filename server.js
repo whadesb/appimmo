@@ -212,7 +212,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
 
 async function generateLandingPage(property) {
   const template = `
-  <!DOCTYPE html>
+    <!DOCTYPE html>
   <html lang="en">
   <head>
       <meta charset="UTF-8">
@@ -220,60 +220,70 @@ async function generateLandingPage(property) {
       <title>Propriété à ${property.city}</title>
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
       <style>
-          body {
-              font-family: Arial, sans-serif;
-              background-color: #f8f9fa;
-              color: #333;
+          body, html {
               margin: 0;
               padding: 0;
+              height: 100%;
+              width: 100%;
               display: flex;
               justify-content: center;
               align-items: center;
-              height: 100vh;
-              background: rgba(0, 0, 0, 0.5);
+              background-color: #f0f2f5;
+              font-family: Arial, sans-serif;
           }
-          .container {
+          .property-container {
+              background-color: white;
+              border-radius: 10px;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
               max-width: 800px;
+              width: 100%;
               padding: 20px;
               text-align: center;
-              background-color: rgba(255, 255, 255, 0.9);
-              border-radius: 10px;
-              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           }
-          .property-info h1 {
+          .property-title {
               font-size: 32px;
               margin-bottom: 20px;
           }
-          .property-info p {
+          .property-details {
               font-size: 18px;
-              margin-bottom: 10px;
+              margin-bottom: 20px;
           }
-          .property-info img {
-              max-width: 100%;
-              height: auto;
-              margin-bottom: 10px;
+          .property-photos {
+              display: flex;
+              justify-content: space-around;
+              gap: 10px;
+          }
+          .property-photos img {
+              width: 48%;
+              border-radius: 8px;
           }
           @media (max-width: 768px) {
-              .container {
+              .property-container {
                   padding: 10px;
               }
-              .property-info h1 {
-                  font-size: 28px;
+              .property-title {
+                  font-size: 24px;
               }
-              .property-info p {
+              .property-details {
                   font-size: 16px;
+              }
+              .property-photos img {
+                  width: 100%;
+                  margin-bottom: 10px;
               }
           }
       </style>
   </head>
   <body>
-      <div class="container">
-          <div class="property-info">
-              <h1>Propriété à ${property.city}</h1>
+      <div class="property-container">
+          <h1 class="property-title">Propriété à ${property.city}</h1>
+          <div class="property-details">
               <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
               <p><strong>Surface:</strong> ${property.surface} m²</p>
               <p><strong>Prix:</strong> ${property.price} €</p>
               <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
+          </div>
+          <div class="property-photos">
               <img src="/uploads/${property.photos[0]}" alt="Photo 1">
               <img src="/uploads/${property.photos[1]}" alt="Photo 2">
           </div>
