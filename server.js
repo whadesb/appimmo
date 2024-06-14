@@ -11,6 +11,8 @@ const User = require('./models/User');
 const Property = require('./models/Property');
 const Order = require('./models/Order');
 const fs = require('fs');
+const multer = require('multer');
+const sharp = require('sharp');
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
@@ -134,6 +136,16 @@ app.post('/register', async (req, res) => {
     res.send('Une erreur est survenue lors de l\'inscription.');
   }
 });
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads');
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ storage: storage });
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
