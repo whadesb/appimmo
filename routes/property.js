@@ -51,7 +51,7 @@ async function generateLandingPage(property) {
               display: flex;
               justify-content: center;
               align-items: center;
-              background: rgba(0, 0, 0, 0.8); /* Fond noir avec opacité */
+              background: rgba(0, 0, 0, 0.6);
               font-family: Arial, sans-serif;
           }
           .property-container {
