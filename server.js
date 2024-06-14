@@ -228,25 +228,28 @@ async function generateLandingPage(property) {
               display: flex;
               justify-content: center;
               align-items: center;
-              background-color: #f0f2f5;
+              background-color: #000; /* Fond noir */
               font-family: Arial, sans-serif;
           }
           .property-container {
-              background-color: white;
+              background-color: rgba(255, 255, 255, 0.8); /* Blanc avec légère transparence */
               border-radius: 10px;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
               max-width: 800px;
               width: 100%;
               padding: 20px;
               text-align: center;
+              color: #fff; /* Texte blanc pour contraster avec le fond noir */
           }
           .property-title {
               font-size: 32px;
               margin-bottom: 20px;
+              color: #ffeb3b; /* Couleur dorée pour un look luxueux */
           }
           .property-details {
               font-size: 18px;
               margin-bottom: 20px;
+              color: #ddd; /* Texte légèrement grisé */
           }
           .property-photos {
               display: flex;
@@ -256,6 +259,7 @@ async function generateLandingPage(property) {
           .property-photos img {
               width: 48%;
               border-radius: 8px;
+              border: 2px solid #ffeb3b; /* Ajout d'une bordure dorée */
           }
           @media (max-width: 768px) {
               .property-container {
@@ -266,6 +270,10 @@ async function generateLandingPage(property) {
               }
               .property-details {
                   font-size: 16px;
+              }
+              .property-photos {
+                  flex-direction: column;
+                  align-items: center;
               }
               .property-photos img {
                   width: 100%;
