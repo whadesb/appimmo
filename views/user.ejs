@@ -49,9 +49,6 @@
             border: none; /* Removing internal borders of cards */
             box-shadow: none; /* Removing shadow if any */
         }
-        .card-text {
-            margin-bottom: 5px; /* Reduce bottom margin */
-        }
         .sidebar {
             background-color: #8b86ff;
             border-radius: 8px;
@@ -85,25 +82,20 @@
             color: #fff; /* White text */
         }
         .btn-custom:hover {
-            margin-top: 10px; 
-            background-color: #333333; 
+            background-color: #444444; 
             color: #fff; 
         }
-        .icon-custom {
+        .card-text {
+            margin-bottom: 5px; /* Reduce the space between card-text elements */
+        }
+        .action-icons i {
+            cursor: pointer;
+            margin-right: 10px;
             font-size: 24px;
-            cursor: pointer;
-            margin-right: 10px; /* Add some space between icons */
+            color: #333;
         }
-        .fa-paste {
-            font-size: 24px; /* Increase the size of the paste icon */
-            color: #000; /* Set color to black */
-            cursor: pointer;
-            margin-right: 10px; /* Add some space between icons */
-        }
-        .fa-credit-card {
-            font-size: 24px; /* Size of the credit card icon */
-            color: #000; /* Color of the credit card icon */
-            cursor: pointer;
+        .action-icons i:hover {
+            color: #555;
         }
         @media (max-width: 767px) {
             .container {
@@ -261,7 +253,7 @@
                                                     <div class="card-body">
                                                         <h5 class="card-title">Publicité 1</h5>
                                                         <p class="card-text">Description de la publicité 1.</p>
-                                                        <i class="fa fa-credit-card btn btn-custom" onclick="buyItem('Publicité 1', 10)"></i>
+                                                        <i class="fas fa-credit-card action-icon" onclick="buyItem('Publicité 1', 10)"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -271,16 +263,16 @@
                                 <div id="created-pages" class="card" style="display: none;">
                                     <div class="card-body">
                                         <h5 class="card-title">Pages créées</h5>
-                                        <table class="table table-striped table-hover table-responsive">
+                                        <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" class="col-1">Pièces</th>
-                                                    <th scope="col" class="col-2">Surface</th>
-                                                    <th scope="col" class="col-2">Prix (€)</th>
-                                                    <th scope="col" class="col-2">Ville</th>
-                                                    <th scope="col" class="col-2">Pays</th>
-                                                    <th scope="col" class="col-3">URL</th>
-                                                    <th scope="col" class="col-2">Actions</th>
+                                                    <th scope="col" style="width: 10%;">Nombre de pièces</th>
+                                                    <th scope="col" style="width: 15%;">Surface (m²)</th>
+                                                    <th scope="col">Prix (€)</th>
+                                                    <th scope="col">Ville</th>
+                                                    <th scope="col">Pays</th>
+                                                    <th scope="col">URL</th>
+                                                    <th scope="col">Actions</th>
                                                 </tr>
                                             </thead>
                                             <tbody id="properties-list">
@@ -373,9 +365,9 @@
                             <td>${property.city}</td>
                             <td>${property.country}</td>
                             <td><a href="${property.url}">${property.url}</a></td>
-                            <td>
+                            <td class="action-icons">
                                 <i class="fa fa-paste" onclick="copyURL('${property.url}')"></i>
-                                <i class="fa fa-credit-card" onclick="testURL('${property._id}')"></i>
+                                <i class="fas fa-credit-card" onclick="testURL('${property._id}')"></i>
                             </td>
                         `;
                         propertiesList.appendChild(row);
