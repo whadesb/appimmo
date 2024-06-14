@@ -200,8 +200,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
 
         const landingPageUrl = await generateLandingPage(property);
 
-        property.url = landingPageUrl;
-        await property.save();
+        await Property.findByIdAndUpdate(property._id, { url: landingPageUrl });
 
         res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
