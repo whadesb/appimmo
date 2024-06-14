@@ -11,12 +11,12 @@ const User = require('./models/User');
 const Property = require('./models/Property');
 const Order = require('./models/Order');
 const fs = require('fs');
-const multer = require('multer');
-const sharp = require('sharp');
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const compression = require('compression');
+const multer = require('multer');
+const sharp = require('sharp');
 
 const app = express();
 
@@ -136,6 +136,12 @@ app.post('/register', async (req, res) => {
     res.send('Une erreur est survenue lors de l\'inscription.');
   }
 });
+app.get('/landing-pages/:id', (req, res) => {
+  const pageId = req.params.id;
+  res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
+});
+
+// Configuration de Multer pour le téléchargement des fichiers
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads');
@@ -144,14 +150,40 @@ const storage = multer.diskStorage({
     cb(null, Date.now() + path.extname(file.originalname));
   }
 });
-
 const upload = multer({ storage: storage });
-app.get('/landing-pages/:id', (req, res) => {
-  const pageId = req.params.id;
-  res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
-});
-app.post('/add-property', isAuthenticated, async (req, res) => {
+
+app.post('/add-property', isAuthenticated, upload.fields([
+  { name: 'photo1', maxCount: 1 },
+  { name: 'photo2', maxCount: 1 }
+]), async (req, res) => {
   const { rooms, surface, price, city, country } = req.body;
+
+  console.log("Received body data:", req.body);  // Pour vérifier les données du formulaire
+  console.log("Received files:", req.files);    // Pour vérifier les fichiers reçus
+
+  let photo1 = null;
+  let photo2 = null;
+
+  if (req.files.photo1) {
+    const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
+    await sharp(req.files.photo1[0].path)
+      .resize(800)
+      .jpeg({ quality: 80 })
+      .toFile(photo1Path);
+    photo1 = path.basename(photo1Path);
+    fs.unlinkSync(req.files.photo1[0].path); // Supprimez le fichier original
+  }
+
+  if (req.files.photo2) {
+    const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
+    await sharp(req.files.photo2[0].path)
+      .resize(800)
+      .jpeg({ quality: 80 })
+      .toFile(photo2Path);
+    photo2 = path.basename(photo2Path);
+    fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original
+  }
+
   try {
     const property = new Property({
       rooms,
@@ -159,82 +191,104 @@ app.post('/add-property', isAuthenticated, async (req, res) => {
       price,
       city,
       country,
-      user: req.user._id
+      createdBy: req.user._id,
+      photos: [photo1, photo2]
     });
+
     await property.save();
+
     const landingPageUrl = await generateLandingPage(property);
+
     property.url = landingPageUrl;
     await property.save();
-    res.status(200).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
+
+    res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
   } catch (error) {
-    console.error('Error adding property', error);
-    res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout du bien immobilier.' });
+    console.error('Erreur lors de l\'ajout de la propriété : ', error);
+    res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
   }
 });
+
 async function generateLandingPage(property) {
   const template = `
   <!DOCTYPE html>
-  <html>
+  <html lang="en">
   <head>
-      <link rel="stylesheet" href="/css/bootstrap.min.css">
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Propriété à ${property.city}</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
       <style>
-        body {
-          font-family: Arial, sans-serif;
-          background-color: #f8f9fa;
-          color: #333;
-          margin: 0;
-          padding: 0;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          height: 100vh;
-        }
-        .container {
-          max-width: 800px;
-          padding: 20px;
-          text-align: center;
-          background-color: #fff;
-          border-radius: 10px;
-          box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .property-info h1 {
-          font-size: 32px;
-          margin-bottom: 20px;
-        }
-        .property-info p {
-          font-size: 18px;
-          margin-bottom: 10px;
-        }
-        @media (max-width: 768px) {
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f8f9fa;
+              color: #333;
+              margin: 0;
+              padding: 0;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              height: 100vh;
+              background: rgba(0, 0, 0, 0.5);
+          }
           .container {
-            padding: 10px;
+              max-width: 800px;
+              padding: 20px;
+              text-align: center;
+              background-color: rgba(255, 255, 255, 0.9);
+              border-radius: 10px;
+              box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
           }
           .property-info h1 {
-            font-size: 28px;
+              font-size: 32px;
+              margin-bottom: 20px;
           }
           .property-info p {
-            font-size: 16px;
+              font-size: 18px;
+              margin-bottom: 10px;
           }
-        }
+          .property-info img {
+              max-width: 100%;
+              height: auto;
+              margin-bottom: 10px;
+          }
+          @media (max-width: 768px) {
+              .container {
+                  padding: 10px;
+              }
+              .property-info h1 {
+                  font-size: 28px;
+              }
+              .property-info p {
+                  font-size: 16px;
+              }
+          }
       </style>
   </head>
   <body>
       <div class="container">
-          <h1>Propriété à ${property.city}</h1>
-          <p>Nombre de pièces: ${property.rooms}</p>
-          <p>Surface: ${property.surface} m²</p>
-          <p>Prix: ${property.price} €</p>
-          <p>Localisation: ${property.city}, ${property.country}</p>
+          <div class="property-info">
+              <h1>Propriété à ${property.city}</h1>
+              <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
+              <p><strong>Surface:</strong> ${property.surface} m²</p>
+              <p><strong>Prix:</strong> ${property.price} €</p>
+              <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
+              <img src="/uploads/${property.photos[0]}" alt="Photo 1">
+              <img src="/uploads/${property.photos[1]}" alt="Photo 2">
+          </div>
       </div>
   </body>
   </html>`;
+
   const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
   fs.writeFileSync(filePath, template);
+
   return `/landing-pages/${property._id}.html`;
 }
+
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
-    const properties = await Property.find({ user: req.user._id });
+    const properties = await Property.find({ createdBy: req.user._id });
     res.json(properties);
   } catch (error) {
     console.error('Error fetching user properties', error);
@@ -244,7 +298,7 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 app.get('/property/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
-    if (property.user.equals(req.user._id)) {
+    if (property.createdBy.equals(req.user._id)) {
       res.render('property', { property });
     } else {
       res.status(403).send('Vous n\'êtes pas autorisé à voir cette propriété.');
@@ -257,7 +311,7 @@ app.get('/property/:id', isAuthenticated, async (req, res) => {
 app.delete('/property/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
-    if (property.user.equals(req.user._id)) {
+    if (property.createdBy.equals(req.user._id)) {
       await property.remove();
       res.status(200).send('Propriété supprimée avec succès.');
     } else {
@@ -270,32 +324,32 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
 });
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
-    const { stripeToken, amount, propertyId } = req.body;
-    const userId = req.user._id;
+  const { stripeToken, amount, propertyId } = req.body;
+  const userId = req.user._id;
 
-    if (isNaN(amount)) {
-        return res.status(400).json({ error: 'Invalid amount' });
-    }
+  if (isNaN(amount)) {
+    return res.status(400).json({ error: 'Invalid amount' });
+  }
 
-    try {
-        const charge = await stripe.charges.create({
-            amount: parseInt(amount, 10), // Convertir le montant en entier
-            currency: 'eur',
-            source: stripeToken,
-            description: `Payment for property ${propertyId}`,
-        });
+  try {
+    const charge = await stripe.charges.create({
+      amount: parseInt(amount, 10), // Convertir le montant en entier
+      currency: 'eur',
+      source: stripeToken,
+      description: `Payment for property ${propertyId}`,
+    });
 
-        const order = new Order({
-            userId,
-            amount: parseInt(amount, 10),
-            status: 'paid'
-        });
-        await order.save();
-        res.status(200).json({ message: 'Payment successful' });
-    } catch (error) {
-        console.error('Error processing payment:', error);
-        res.status(500).json({ error: 'Payment failed' });
-    }
+    const order = new Order({
+      userId,
+      amount: parseInt(amount, 10),
+      status: 'paid'
+    });
+    await order.save();
+    res.status(200).json({ message: 'Payment successful' });
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    res.status(500).json({ error: 'Payment failed' });
+  }
 });
 
 const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
