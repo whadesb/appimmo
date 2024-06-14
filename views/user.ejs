@@ -34,8 +34,8 @@
         .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
             color: #ffffff; /* Set text color */
         }
-        .navbar .navbar-icon.red {
-            color: #ff0000; /* Red color when user is logged in */
+        .navbar .navbar-icon {
+            color: #fff; /* Red color when user is logged in */
         }
         .main-section {
             flex: 1;
@@ -167,7 +167,7 @@
                     <div class="d-none d-lg-block">
                         <% if (user) { %>
                             <form action="/logout" method="POST" class="d-inline">
-                                <button type="submit" class="navbar-icon bi-person-x red" style="background: red; border: none;"></button>
+                                <button type="submit" class="navbar-icon bi-person-x" style="background: black; color: white; border: none;"></button>
                             </form>
                         <% } else { %>
                             <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
