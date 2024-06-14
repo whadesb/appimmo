@@ -24,7 +24,7 @@
             margin: 0;
         }
         h3 {
-            color: #000; /* Change to desired color */
+            color: #ff5733; /* Change to desired color */
             text-align: left; /* Align to the left */
         }
         .navbar {
@@ -82,20 +82,14 @@
             color: #fff; /* White text */
         }
         .btn-custom:hover {
-            background-color: #444444; 
+            margin-top: 10px; 
+            background-color: #333333; 
             color: #fff; 
         }
-        .card-text {
-            margin-bottom: 5px; /* Reduce the space between card-text elements */
-        }
         .action-icons i {
+            font-size: 24px;
             cursor: pointer;
             margin-right: 10px;
-            font-size: 24px;
-            color: #333;
-        }
-        .action-icons i:hover {
-            color: #555;
         }
         @media (max-width: 767px) {
             .container {
@@ -143,7 +137,7 @@
                 <div class="d-lg-none ms-auto me-4">
                     <% if (user) { %>
                         <form action="/logout" method="POST" class="d-inline">
-                            <button type="submit" class="navbar-icon bi-box-arrow-right red" style="background: none; color: black; border: none;"></button>
+                            <button type="submit" class="navbar-icon bi-person-x red" style="background: none; color: black; border: none;"></button>
                         </form>
                     <% } else { %>
                         <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
@@ -173,7 +167,7 @@
                     <div class="d-none d-lg-block">
                         <% if (user) { %>
                             <form action="/logout" method="POST" class="d-inline">
-                                <button type="submit" class="navbar-icon bi-person-squar red" style="background: red; border: none;"></button>
+                                <button type="submit" class="navbar-icon bi-person-x red" style="background: red; border: none;"></button>
                             </form>
                         <% } else { %>
                             <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
@@ -185,7 +179,7 @@
        
         <section class="contact-section section-padding section-bg" id="section_5">
             <div class="container">
-                <h3 class="text-grey">Bienvenue, <%= user.lastName %> <%= user.firstName %></h3>
+                <h3 class="text-white">Bienvenue, <%= user.lastName %> <%= user.firstName %></h3>
                 <div class="container-fluid">
                     <div class="row mt-4">
                         <div class="col-auto p-0">
@@ -253,7 +247,7 @@
                                                     <div class="card-body">
                                                         <h5 class="card-title">Publicité 1</h5>
                                                         <p class="card-text">Description de la publicité 1.</p>
-                                                        <i class="fas fa-credit-card action-icon" onclick="buyItem('Publicité 1', 10)"></i>
+                                                        <i class="bi bi-credit-card btn-custom" onclick="buyItem('Publicité 1', 10)"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -266,8 +260,8 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" style="width: 10%;">Nombre de pièces</th>
-                                                    <th scope="col" style="width: 15%;">Surface (m²)</th>
+                                                    <th scope="col">Nombre de pièces</th>
+                                                    <th scope="col">Surface (m²)</th>
                                                     <th scope="col">Prix (€)</th>
                                                     <th scope="col">Ville</th>
                                                     <th scope="col">Pays</th>
@@ -365,9 +359,11 @@
                             <td>${property.city}</td>
                             <td>${property.country}</td>
                             <td><a href="${property.url}">${property.url}</a></td>
-                            <td class="action-icons">
-                                <i class="fa fa-paste" onclick="copyURL('${property.url}')"></i>
-                                <i class="fas fa-credit-card" onclick="testURL('${property._id}')"></i>
+                            <td>
+                                <div class="action-icons">
+                                    <i class="bi bi-paste btn-custom" onclick="copyURL('${property.url}')"></i>
+                                    <i class="bi bi-credit-card btn-custom" onclick="testURL('${property._id}')"></i>
+                                </div>
                             </td>
                         `;
                         propertiesList.appendChild(row);
