@@ -81,7 +81,7 @@
             background-color: #333333; /* Light black color */
             color: #fff; /* White text */
         }
-  .btn-custom:hover {
+        .btn-custom:hover {
             margin-top: 10px; 
             background-color: #333333; 
             color: #fff; 
@@ -118,6 +118,19 @@
                 font-size: 24px;
                 color: #000; /* Ensure icon color is black */
             }
+        }
+        .table-responsive {
+            margin-top: 20px;
+        }
+        .btn-icon {
+            background-color: transparent;
+            border: none;
+            color: #007bff;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        .btn-icon:hover {
+            color: #0056b3;
         }
     </style>
 </head>
@@ -252,22 +265,24 @@
                                 <div id="created-pages" class="card" style="display: none;">
                                     <div class="card-body">
                                         <h5 class="card-title">Pages créées</h5>
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th scope="col">Nombre de pièces</th>
-                                                    <th scope="col">Surface (m²)</th>
-                                                    <th scope="col">Prix (€)</th>
-                                                    <th scope="col">Ville</th>
-                                                    <th scope="col">Pays</th>
-                                                    <th scope="col">URL</th>
-                                                    <th scope="col">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody id="properties-list">
-                                                <!-- Propriétés de l'utilisateur ici -->
-                                            </tbody>
-                                        </table>
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th scope="col" class="col-2">Nombre de pièces</th>
+                                                        <th scope="col" class="col-2">Surface (m²)</th>
+                                                        <th scope="col" class="col-2">Prix (€)</th>
+                                                        <th scope="col">Ville</th>
+                                                        <th scope="col">Pays</th>
+                                                        <th scope="col">URL</th>
+                                                        <th scope="col">Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="properties-list">
+                                                    <!-- Propriétés de l'utilisateur ici -->
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -355,7 +370,9 @@
                             <td>${property.country}</td>
                             <td><a href="${property.url}">${property.url}</a></td>
                             <td>
-                                <button class="btn btn-primary" onclick="copyURL('${property.url}')">Copier</button>
+                                <button class="btn-icon" onclick="copyURL('${property.url}')">
+                                    <i class="fa fa-paste"></i>
+                                </button>
                                 <button class="btn btn-secondary" onclick="testURL('${property._id}')">Test</button>
                             </td>
                         `;
