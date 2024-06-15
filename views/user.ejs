@@ -25,17 +25,17 @@
         }
         h3 {
             color: #000;
-            text-align: left; /* Align to the left */
+            text-align: left;
         }
         .navbar {
-            background-color: #8781dc; /* Set background color */
+            background-color: #8781dc;
             margin-bottom: 20px;
         }
         .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #ffffff; /* Set text color */
+            color: #ffffff;
         }
         .navbar .navbar-icon {
-            color: #fff; /* Red color when user is logged in */
+            color: #fff;
         }
         .main-section {
             flex: 1;
@@ -43,11 +43,11 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-left: 10px; /* Small margin */
+            margin-left: 10px;
         }
         .main-section .card {
-            border: none; /* Removing internal borders of cards */
-            box-shadow: none; /* Removing shadow if any */
+            border: none;
+            box-shadow: none;
         }
         .sidebar {
             background-color: #c6c3ff;
@@ -77,14 +77,13 @@
             padding: 20px 0;
         }
         .btn-custom {
-            margin-top: 10px; /* Add space above the button */
-            background-color: #333333; /* Light black color */
-            color: #fff; /* White text */
+            margin-top: 10px;
+            background-color: #333333;
+            color: #fff;
         }
         .btn-custom:hover {
-            margin-top: 10px; 
-            background-color: #333333; 
-            color: #fff; 
+            background-color: #333333;
+            color: #fff;
         }
         .action-icons i {
             font-size: 24px;
@@ -111,19 +110,19 @@
                 position: static;
                 margin-bottom: 20px;
                 width: 100%;
-                background-color: #c6c3ff; /* Add background color */
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add box-shadow */
+                background-color: #c6c3ff;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
                 flex-direction: row;
                 justify-content: space-around;
-                padding: 10px; /* Add padding */
+                padding: 10px;
             }
             .sidebar a {
-                flex-grow: 1; /* Make each icon grow to fill available space */
-                text-align: center; /* Center icons horizontally */
-                padding: 10px 0; /* Add vertical padding */
-                margin: 5px; /* Add margin between icons */
+                flex-grow: 1;
+                text-align: center;
+                padding: 10px 0;
+                margin: 5px;
                 font-size: 24px;
-                color: #000; /* Ensure icon color is black */
+                color: #000;
             }
         }
     </style>
@@ -360,10 +359,10 @@
                             <td>${property.price}</td>
                             <td>${property.city}</td>
                             <td>${property.country}</td>
-                            <td><a href="${property.url}">${property.url}</a></td>
+                            <td><a href="${property.url}" target="_blank">${property.url}</a></td>
                             <td>
                                 <div class="action-icons">
-                                    <i class="bi bi-paste btn-custom" onclick="copyURL('${property.url}')"></i>
+                                    <i class="fa fa-copy" onclick="copyURL('${property.url}')"></i>
                                     <i class="bi bi-credit-card btn-custom" onclick="testURL('${property._id}')"></i>
                                 </div>
                             </td>
@@ -392,7 +391,6 @@
             window.location.href = `/payment?propertyId=${propertyId}`;
         }
 
-        // Gestion de la soumission du formulaire
         document.getElementById('add-property-form').addEventListener('submit', async function(event) {
             event.preventDefault();
             const formData = new FormData(this);
