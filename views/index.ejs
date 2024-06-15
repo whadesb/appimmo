@@ -23,6 +23,31 @@
             clip: rect(0, 0, 0, 0);
             border: 0;
         }
+        .custom-hero-section {
+            position: relative;
+            background-color: #000;
+            color: #fff;
+            padding: 100px 0;
+        }
+        .custom-hero-section img {
+            object-fit: cover;
+            width: 100%;
+            height: 100%;
+        }
+        .custom-hero-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+        .custom-hero-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .custom-hero-content p {
+            font-size: 1.2rem;
+        }
     </style>
 </head>
 <body id="top">
@@ -66,14 +91,12 @@
             </div>
         </nav>
 
-        <!-- Empty section for spacing -->
-        <section class="empty-section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12">
-                        <div style="height: 100px;"></div> <!-- Adjust the height as needed -->
-                    </div>
-                </div>
+        <!-- Hero section -->
+        <section class="custom-hero-section">
+            <img src="images/businesswoman-using-tablet-analysis.jpg" alt="Hero Image">
+            <div class="custom-hero-content">
+                <h1>Bienvenue chez UAP Immo</h1>
+                <p>La meilleure plateforme webmarketing immobilière</p>
             </div>
         </section>
 
@@ -86,9 +109,7 @@
                     </div>
                 </div>
             </div>
-        </section>
-
-            <section class="featured-section">
+        </section>            <section class="featured-section">
                 <div class="container">
                     <div class="row justify-content-center">
 
