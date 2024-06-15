@@ -25,17 +25,17 @@
         }
         h3 {
             color: #000;
-            text-align: left;
+            text-align: left; /* Align to the left */
         }
         .navbar {
-            background-color: #8781dc;
+            background-color: #8781dc; /* Set background color */
             margin-bottom: 20px;
         }
         .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #ffffff;
+            color: #ffffff; /* Set text color */
         }
         .navbar .navbar-icon {
-            color: #fff;
+            color: #fff; /* Red color when user is logged in */
         }
         .main-section {
             flex: 1;
@@ -43,11 +43,11 @@
             background-color: #fff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-left: 10px;
+            margin-left: 10px; /* Small margin */
         }
         .main-section .card {
-            border: none;
-            box-shadow: none;
+            border: none; /* Removing internal borders of cards */
+            box-shadow: none; /* Removing shadow if any */
         }
         .sidebar {
             background-color: #c6c3ff;
@@ -77,18 +77,31 @@
             padding: 20px 0;
         }
         .btn-custom {
-            margin-top: 10px;
-            background-color: #333333;
-            color: #fff;
+            margin-top: 10px; /* Add space above the button */
+            background-color: transparent;
+            color: #fff; /* White text */
+            border: none; /* No border */
         }
         .btn-custom:hover {
-            background-color: #333333;
-            color: #fff;
+            background-color: transparent; 
+            color: #fff; 
         }
         .action-icons i {
             font-size: 24px;
             cursor: pointer;
             margin-right: 10px;
+        }
+        .action-icons .fa-copy {
+            color: #007bff; /* Blue color for copy icon */
+        }
+        .action-icons .bi-credit-card {
+            color: #28a745; /* Green color for credit card icon */
+        }
+        .table td, .table th {
+            vertical-align: middle;
+        }
+        .table .short-column {
+            width: 10%;
         }
         @media (max-width: 767px) {
             .container {
@@ -110,19 +123,19 @@
                 position: static;
                 margin-bottom: 20px;
                 width: 100%;
-                background-color: #c6c3ff;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #c6c3ff; /* Add background color */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add box-shadow */
                 flex-direction: row;
                 justify-content: space-around;
-                padding: 10px;
+                padding: 10px; /* Add padding */
             }
             .sidebar a {
-                flex-grow: 1;
-                text-align: center;
-                padding: 10px 0;
-                margin: 5px;
+                flex-grow: 1; /* Make each icon grow to fill available space */
+                text-align: center; /* Center icons horizontally */
+                padding: 10px 0; /* Add vertical padding */
+                margin: 5px; /* Add margin between icons */
                 font-size: 24px;
-                color: #000;
+                color: #000; /* Ensure icon color is black */
             }
         }
     </style>
@@ -208,11 +221,11 @@
                                             <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
                                             <div class="form-group">
                                                 <label for="rooms">Nombre de pièces</label>
-                                                <input type="number" class="form-control" id="rooms" name="rooms" required>
+                                                <input type="number" class="form-control short-column" id="rooms" name="rooms" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="surface">Surface (m²)</label>
-                                                <input type="number" class="form-control" id="surface" name="surface" required>
+                                                <input type="number" class="form-control short-column" id="surface" name="surface" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="price">Prix (€)</label>
@@ -261,8 +274,8 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col">Nombre de pièces</th>
-                                                    <th scope="col">Surface (m²)</th>
+                                                    <th scope="col" class="short-column">Nombre de pièces</th>
+                                                    <th scope="col" class="short-column">Surface (m²)</th>
                                                     <th scope="col">Prix (€)</th>
                                                     <th scope="col">Ville</th>
                                                     <th scope="col">Pays</th>
@@ -359,11 +372,11 @@
                             <td>${property.price}</td>
                             <td>${property.city}</td>
                             <td>${property.country}</td>
-                            <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+                            <td><a href="${property.url}">${property.url}</a></td>
                             <td>
                                 <div class="action-icons">
                                     <i class="fa fa-copy" onclick="copyURL('${property.url}')"></i>
-                                    <i class="bi bi-credit-card btn-custom" onclick="testURL('${property._id}')"></i>
+                                    <i class="bi bi-credit-card" onclick="testURL('${property._id}')"></i>
                                 </div>
                             </td>
                         `;
@@ -391,6 +404,7 @@
             window.location.href = `/payment?propertyId=${propertyId}`;
         }
 
+        // Gestion de la soumission du formulaire
         document.getElementById('add-property-form').addEventListener('submit', async function(event) {
             event.preventDefault();
             const formData = new FormData(this);
