@@ -77,40 +77,32 @@
             padding: 20px 0;
         }
         .btn-custom {
-            margin-top: 10px; /* Add space above the button */
-            background-color: #333333; /* Light black color */
-            color: #fff; /* White text */
+            background: none; /* Remove background */
+            border: none; /* Remove border */
+            cursor: pointer; /* Pointer cursor on hover */
         }
-        .btn-custom:hover {
-            margin-top: 10px; 
-            background-color: #333333; 
-            color: #fff; 
+        .btn-custom i {
+            font-size: 24px; /* Font size for icons */
+        }
+        .tooltip {
+            position: absolute;
+            background-color: #ADD8E6; /* Light blue background */
+            color: #000; /* Black text color */
+            padding: 5px 10px; /* Padding for the tooltip */
+            border-radius: 4px; /* Rounded corners */
+            white-space: nowrap; /* Ensure the text is on a single line */
+            z-index: 1000; /* Make sure it appears above other elements */
+            top: -30px; /* Position above the icon */
+            left: 50%;
+            transform: translateX(-50%);
         }
         .action-icons i {
             font-size: 24px;
             cursor: pointer;
             margin-right: 10px;
         }
-        .action-icons .fa-copy {
-            position: relative;
-        }
-        .tooltip {
-            position: absolute;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: #333;
-            color: #fff;
-            padding: 5px;
-            border-radius: 4px;
-            font-size: 14px;
-            visibility: hidden;
-            opacity: 0;
-            transition: opacity 0.2s;
-        }
-        .tooltip.show {
-            visibility: visible;
-            opacity: 1;
+        .short-column {
+            width: 10%;
         }
         @media (max-width: 767px) {
             .container {
@@ -270,7 +262,7 @@
                                                     <div class="card-body">
                                                         <h5 class="card-title">Publicité 1</h5>
                                                         <p class="card-text">Description de la publicité 1.</p>
-                                                        <i class="fa fa-shopping-cart btn-custom text-dark" onclick="buyItem('Publicité 1', 10)"></i>
+                                                        <i class="fa fa-shopping-cart btn-custom" onclick="buyItem('Publicité 1', 10)" style="color: #333;"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -283,8 +275,8 @@
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th scope="col" class="short-column">Nombre de pièces</th>
-                                                    <th scope="col" class="short-column">Surface (m²)</th>
+                                                    <th scope="col">Nombre de pièces</th>
+                                                    <th scope="col">Surface (m²)</th>
                                                     <th scope="col">Prix (€)</th>
                                                     <th scope="col">Ville</th>
                                                     <th scope="col">Pays</th>
@@ -384,8 +376,8 @@
                             <td><a href="${property.url}">${property.url}</a></td>
                             <td>
                                 <div class="action-icons">
-                                    <i class="fa fa-copy btn-custom text-dark" onclick="copyURL('${property.url}', this)"></i>
-                                    <i class="fa fa-shopping-cart btn-custom text-dark" onclick="testURL('${property._id}')"></i>
+                                    <i class="bi bi-paste btn-custom" onclick="copyURL('${property.url}')"></i>
+                                    <i class="fa fa-shopping-cart btn-custom" onclick="testURL('${property._id}')" style="color: #333;"></i>
                                 </div>
                             </td>
                         `;
@@ -399,16 +391,16 @@
             }
         }
 
-        function copyURL(url, iconElement) {
+        function copyURL(url) {
             navigator.clipboard.writeText(url)
                 .then(() => {
+                    const copyIcon = document.querySelector(`i[onclick="copyURL('${url}')"]`);
                     const tooltip = document.createElement('div');
-                    tooltip.className = 'tooltip show';
+                    tooltip.className = 'tooltip';
                     tooltip.innerText = 'URL copiée avec succès!';
-                    iconElement.appendChild(tooltip);
+                    copyIcon.parentNode.appendChild(tooltip);
                     setTimeout(() => {
-                        tooltip.classList.remove('show');
-                        iconElement.removeChild(tooltip);
+                        tooltip.remove();
                     }, 2000);
                 })
                 .catch(err => {
