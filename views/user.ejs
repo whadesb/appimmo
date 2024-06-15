@@ -78,12 +78,12 @@
         }
         .btn-custom {
             margin-top: 10px; /* Add space above the button */
-            background-color: transparent;
+            background-color: #333333; /* Light black color */
             color: #fff; /* White text */
-            border: none; /* No border */
         }
         .btn-custom:hover {
-            background-color: transparent; 
+            margin-top: 10px; 
+            background-color: #333333; 
             color: #fff; 
         }
         .action-icons i {
@@ -92,16 +92,25 @@
             margin-right: 10px;
         }
         .action-icons .fa-copy {
-            color: #007bff; /* Blue color for copy icon */
+            position: relative;
         }
-        .action-icons .bi-credit-card {
-            color: #28a745; /* Green color for credit card icon */
+        .tooltip {
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 14px;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.2s;
         }
-        .table td, .table th {
-            vertical-align: middle;
-        }
-        .table .short-column {
-            width: 10%;
+        .tooltip.show {
+            visibility: visible;
+            opacity: 1;
         }
         @media (max-width: 767px) {
             .container {
@@ -261,7 +270,7 @@
                                                     <div class="card-body">
                                                         <h5 class="card-title">Publicité 1</h5>
                                                         <p class="card-text">Description de la publicité 1.</p>
-                                                        <i class="bi bi-credit-card btn-custom" onclick="buyItem('Publicité 1', 10)"></i>
+                                                        <i class="fa fa-shopping-cart btn-custom text-dark" onclick="buyItem('Publicité 1', 10)"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -375,8 +384,8 @@
                             <td><a href="${property.url}">${property.url}</a></td>
                             <td>
                                 <div class="action-icons">
-                                    <i class="fa fa-copy" onclick="copyURL('${property.url}')"></i>
-                                    <i class="bi bi-credit-card" onclick="testURL('${property._id}')"></i>
+                                    <i class="fa fa-copy btn-custom text-dark" onclick="copyURL('${property.url}', this)"></i>
+                                    <i class="fa fa-shopping-cart btn-custom text-dark" onclick="testURL('${property._id}')"></i>
                                 </div>
                             </td>
                         `;
@@ -390,10 +399,17 @@
             }
         }
 
-        function copyURL(url) {
+        function copyURL(url, iconElement) {
             navigator.clipboard.writeText(url)
                 .then(() => {
-                    alert('URL copiée avec succès!');
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tooltip show';
+                    tooltip.innerText = 'URL copiée avec succès!';
+                    iconElement.appendChild(tooltip);
+                    setTimeout(() => {
+                        tooltip.classList.remove('show');
+                        iconElement.removeChild(tooltip);
+                    }, 2000);
                 })
                 .catch(err => {
                     console.error('Impossible de copier l\'URL : ', err);
