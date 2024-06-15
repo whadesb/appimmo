@@ -183,7 +183,7 @@ strong {
 .nav-tabs .nav-link:focus, 
 .nav-tabs .nav-link:hover {
   border-bottom-color: var(--primary-color);
-  color: var(--primary-color);
+  color: #000;
 }
 
 
