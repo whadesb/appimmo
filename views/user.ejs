@@ -88,6 +88,7 @@
         .btn-custom i {
             font-size: 24px; /* Font size for icons */
         }
+        
         .tooltip {
             position: absolute;
             background-color: #ADD8E6; /* Light blue background */
@@ -381,8 +382,8 @@
                             <td><a href="${property.url}">${property.url}</a></td>
                             <td>
                                 <div class="action-icons">
-                                    <i class="bi bi-paste btn-custom" onclick="copyURL('${property.url}')"></i>
-                                    <i class="fa fa-shopping-cart btn-custom" onclick="testURL('${property._id}')" style="color: #333;"></i>
+                                    <i class="bi bi-paste" onclick="copyURL('${property.url}')"></i>
+                                    <i class="fa fa-shopping-cart" onclick="testURL('${property._id}')" style="color: #333;"></i>
                                 </div>
                             </td>
                         `;
