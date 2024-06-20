@@ -21,6 +21,8 @@ const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
+const validCodes = ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5'];
+
 app.use(compression());
 
 app.use(cookieParser());
@@ -128,7 +130,13 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 app.post('/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
+  const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
+
+  if (!validCodes.includes(inviteCode)) {
+    req.flash('error', 'Invalid invitation code.');
+    return res.redirect('/register');
+  }
+
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
     res.redirect('/login');
