@@ -974,7 +974,7 @@ blockquote {
 }
 
 .site-footer .dropdown-toggle:hover {
-  background-color: var(--primary-color);
+  background-color: #0d0667;
   border-color: transparent;
 }
 
