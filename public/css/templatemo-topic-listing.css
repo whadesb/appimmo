@@ -989,7 +989,7 @@ blockquote {
 }
 
 .site-footer-link {
-  color: var(--secondary-color);
+  color: #000000;
   font-size: var(--copyright-font-size);
   font-weight: var(--font-weight-medium);
   line-height: normal;
