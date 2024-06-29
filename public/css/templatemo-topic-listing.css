@@ -211,7 +211,7 @@ strong {
 }
 
 .custom-btn:hover {
-  background: var(--custom-btn-bg-hover-color);
+  background: var(--custom-btn-bg-color);
   color: var(--white-color);
 }
 
