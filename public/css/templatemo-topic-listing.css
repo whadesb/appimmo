@@ -321,7 +321,7 @@ strong {
 
 .navbar-nav .nav-link.active, 
 .navbar-nav .nav-link:hover {
-  color: var(--primary-color);
+  color: var(--white-color);
 }
 
 .navbar .dropdown-menu {
