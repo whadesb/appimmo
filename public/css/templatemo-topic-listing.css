@@ -941,7 +941,7 @@ blockquote {
 }
 
 .site-footer-title {
-  color: var(--primary-color); 
+  color: #000000; 
 }
 
 .site-footer .dropdown-menu {
