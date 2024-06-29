@@ -969,7 +969,7 @@ blockquote {
 }
 
 .site-footer .dropdown-toggle {
-  background-color: var(--secondary-color);
+  background-color: #0d0667;
   border-color: var(--white-color);
 }
 
