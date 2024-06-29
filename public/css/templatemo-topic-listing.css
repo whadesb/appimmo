@@ -212,7 +212,7 @@ strong {
 
 .custom-btn:hover {
   background: var(--custom-btn-bg-hover-color);
-  color: var(--black-color);
+  color: var(--white-color);
 }
 
 .custom-border-btn {
@@ -224,7 +224,7 @@ strong {
 .custom-border-btn:hover {
   background: var(--custom-btn-bg-color);
   border-color: transparent;
-  color: var(--white-color);
+  color: var(--grey-color);
 }
 
 .custom-btn-bg-white {
