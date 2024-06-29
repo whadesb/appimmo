@@ -212,7 +212,14 @@ strong {
 
 .custom-btn:hover {
   background: var(--custom-btn-bg-color);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius-large);
   color: var(--white-color);
+  font-size: var(--btn-font-size);
+  font-weight: var(--font-weight-semibold);
+  line-height: normal;
+  transition: all 0.3s;
+  padding: 10px 20px;
 }
 
 .custom-border-btn {
@@ -222,9 +229,9 @@ strong {
 }
 
 .custom-border-btn:hover {
-  background: var(--custom-btn-bg-color);
-  border-color: transparent;
-  color: var(--grey-color);
+  background: transparent;
+  border: 2px solid var(--custom-btn-bg-color);
+  color: var(--custom-btn-bg-color);
 }
 
 .custom-btn-bg-white {
