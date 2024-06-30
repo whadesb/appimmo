@@ -140,6 +140,9 @@
                 display: block !important;
                 margin-top: 10px;
             }
+            .mobile-margin {
+                margin-top: 60px; /* Adjust the margin value as needed */
+            }
         }
         @media (min-width: 768px) {
             .sidebar-mobile-links {
@@ -214,7 +217,7 @@
        
         <section class="contact-section section-padding section-bg" id="section_5">
             <div class="container">
-                <h3 class="text-black">Bienvenue, <%= user.lastName %> <%= user.firstName %></h3>
+                <h3 class="text-black mobile-margin">Bienvenue, <%= user.lastName %> <%= user.firstName %></h3>
                 <div class="container-fluid">
                     <div class="row mt-4">
                         <div class="col-auto p-0">
