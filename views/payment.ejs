@@ -88,6 +88,13 @@
         }
         .order-summary p {
             margin-bottom: 10px;
+            color: #333; /* Text color changed to a darker shade */
+        }
+        .form-control.card-number {
+            font-size: 1.2rem; /* Increase font size for better visibility */
+            padding: 10px;
+            border: 2px solid #8781dc; /* Add border for better visibility */
+            border-radius: 5px;
         }
     </style>    
 </head>
@@ -161,8 +168,8 @@
                                     <input type="text" class="form-control" id="zip" name="zip" required>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="card-element" class="form-label">Informations de la carte</label>
-                                    <div id="card-element">
+                                    <label for="card-element" class="form-label">Numéro de Carte</label>
+                                    <div id="card-element" class="form-control card-number">
                                         <!-- Stripe Element will be inserted here -->
                                     </div>
                                 </div>
