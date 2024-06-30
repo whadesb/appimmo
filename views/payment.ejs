@@ -142,34 +142,34 @@
                     <div class="col-lg-6 col-12">
                         <div class="form-container">
                             <h4>Informations de Paiement</h4>
-                            <form id="payment-form">
+                            <form id="payment-form" autocomplete="off">
                                 <div class="mb-3">
                                     <label for="name" class="form-label">Nom sur la carte</label>
-                                    <input type="text" class="form-control" id="name" name="name" required>
+                                    <input type="text" class="form-control" id="name" name="name" autocomplete="off" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
+                                    <input type="email" class="form-control" id="email" name="email" autocomplete="off" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="address" class="form-label">Adresse</label>
-                                    <input type="text" class="form-control" id="address" name="address" required>
+                                    <input type="text" class="form-control" id="address" name="address" autocomplete="off" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="city" class="form-label">Ville</label>
-                                    <input type="text" class="form-control" id="city" name="city" required>
+                                    <input type="text" class="form-control" id="city" name="city" autocomplete="off" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="country" class="form-label">Pays</label>
-                                    <input type="text" class="form-control" id="country" name="country" required>
+                                    <input type="text" class="form-control" id="country" name="country" autocomplete="off" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="zip" class="form-label">Code Postal</label>
-                                    <input type="text" class="form-control" id="zip" name="zip" required>
+                                    <input type="text" class="form-control" id="zip" name="zip" autocomplete="off" required>
                                 </div>
                                 <div class="mb-3">
                                     <label for="card-element" class="form-label">Numéro de Carte</label>
-                                    <div id="card-element" class="form-control card-number">
+                                    <div id="card-element" class="form-control card-number" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="0">
                                         <!-- Stripe Element will be inserted here -->
                                     </div>
                                 </div>
@@ -254,7 +254,22 @@
             const { publicKey } = await response.json();
             const stripe = Stripe(publicKey);
             const elements = stripe.elements();
-            const cardElement = elements.create('card');
+            const cardElement = elements.create('card', {
+                hidePostalCode: true,
+                style: {
+                    base: {
+                        fontSize: '16px',
+                        color: '#32325d',
+                        '::placeholder': {
+                            color: '#aab7c4',
+                        },
+                    },
+                    invalid: {
+                        color: '#fa755a',
+                        iconColor: '#fa755a',
+                    },
+                },
+            });
             cardElement.mount('#card-element');
 
             const form = document.getElementById('payment-form');
