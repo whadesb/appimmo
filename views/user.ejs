@@ -138,11 +138,13 @@
                 display: none; /* Hide sidebar on mobile */
             }
             .sidebar-mobile-links {
-                display: none;
-            }
-            .navbar-collapse.show .sidebar-mobile-links {
-                display: block;
+                display: block !important;
                 margin-top: 10px;
+            }
+        }
+        @media (min-width: 768px) {
+            .sidebar-mobile-links {
+                display: none !important;
             }
         }
     </style>
@@ -325,76 +327,7 @@
                         <span>UAP Immo</span>
                     </a>
                 </div>
-                <div class="col-lg-3 col-md-4 col-6">
-                    <h6 class="site-footer-title mb-3">Informations</h6>
-                    <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
-                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
-                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
-                    <h6 class="site-footer-title mb3">Accès</h6>
-                    <p class="text-white d-flex mb-1">
-                        <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
-                    </p>
-                    <p class="text-white d-flex">
-                        <a href="mailto:info@company.com" class="site-footer-link">
-                            contact@uap.immo
-                        </a>
-                    </p>
-                </div>
-                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="/?lang=en">English</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/?lang=fr">Français</a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/jquery.sticky.js"></script>
-    <script src="/js/click-scroll.js"></script>
-    <script src="/js/custom.js"></script>
-    <script>
-        function showSection(sectionId) {
-            const sections = ['account', 'landing', 'publicite', 'created-pages'];
-            sections.forEach(id => {
-                document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
-            });
-        }
-
-        document.querySelector('.sidebar a[title="Pages créées"]').addEventListener('click', loadProperties);
-
-        async function loadProperties() {
-            try {
-                const response = await fetch('/user/properties');
-                if (response.ok) {
-                    const properties = await response.json();
-                    const propertiesList = document.getElementById('properties-list');
-                    propertiesList.innerHTML = '';
-
-                    properties.forEach(property => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${property.rooms}</td>
-                            <td>${property.surface}</td>
-                            <td>${property.price}</td>
-                            <td>${property.city}</td>
-                            <td>${property.country}</td>
-                            <td><a href="${property.url}">${property.url}</a></td>
-                            <td>
-                                <div class="action-icons">
+                <div class="col-lg
                                     <i class="bi bi-paste" style="color: #333;" onclick="copyURL('${property.url}')"></i>
                                     <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
                                 </div>
