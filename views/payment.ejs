@@ -28,8 +28,9 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .form-container h2 {
+        .form-container h4 {
             margin-bottom: 20px;
+            color: #8781dc;
         }
         .form-container .form-text {
             margin-bottom: 15px;
@@ -85,100 +86,103 @@
                 border: none;
             }
         }
+        .order-summary p {
+            margin-bottom: 10px;
+        }
     </style>    
 </head>
 <body id="top">
     <main>
-          <nav class="navbar navbar-expand-lg fixed-top">
-                <div class="container">
-                    <a class="navbar-brand" href="/">
-                        <i class="bi-back"></i>
-                        <span>UAP Immo</span>
-                    </a>
-                    <div class="d-lg-none ms-auto me-4">
-                        <a href="#top" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
-                    </div>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_1">Home</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_2">Services</a>
-                            </li>
-   
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
-                            </li>
-
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_4">FAQs</a>
-                            </li>
-   
-                            <li class="nav-item">
-                                <a class="nav-link click-scroll" href="#section_5">Contact</a>
-                            </li>
-                        </ul>
-
-                        <div class="d-none d-lg-block">
-                            <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
-                        </div>
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <i class="bi-back"></i>
+                    <span>UAP Immo</span>
+                </a>
+                <div class="d-lg-none ms-auto me-4">
+                    <a href="#top" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_1">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_2">Services</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_4">FAQs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                        </li>
+                    </ul>
+                    <div class="d-none d-lg-block">
+                        <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
                     </div>
                 </div>
-            </nav>
-        <section class="faq-section section-padding" id="section_4">
+            </div>
+        </nav>
+        <section class="new-section" id="section_4">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 col-12">
-                        <h4>Informations de Paiement</h4>
-                        <div class="card-info">
+                        <div class="form-container">
+                            <h4>Informations de Paiement</h4>
                             <form id="payment-form">
-                                <div class="form-group">
-                                    <label for="name">Nom sur la carte</label>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">Nom sur la carte</label>
                                     <input type="text" class="form-control" id="name" name="name" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="email">Email</label>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
                                     <input type="email" class="form-control" id="email" name="email" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="address">Address</label>
+                                <div class="mb-3">
+                                    <label for="address" class="form-label">Adresse</label>
                                     <input type="text" class="form-control" id="address" name="address" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="city">City</label>
+                                <div class="mb-3">
+                                    <label for="city" class="form-label">Ville</label>
                                     <input type="text" class="form-control" id="city" name="city" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="country">Country</label>
+                                <div class="mb-3">
+                                    <label for="country" class="form-label">Pays</label>
                                     <input type="text" class="form-control" id="country" name="country" required>
                                 </div>
-                                <div class="form-group">
-                                    <label for="zip">ZIP Code</label>
+                                <div class="mb-3">
+                                    <label for="zip" class="form-label">Code Postal</label>
                                     <input type="text" class="form-control" id="zip" name="zip" required>
                                 </div>
-                                <div id="card-element">
-                                    <!-- Stripe Element will be inserted here -->
+                                <div class="mb-3">
+                                    <label for="card-element" class="form-label">Informations de la carte</label>
+                                    <div id="card-element">
+                                        <!-- Stripe Element will be inserted here -->
+                                    </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary btn-block">Payer 300€</button>
                             </form>
                         </div>
                     </div>
                     <div class="col-lg-6 col-12">
-                        <h4>Récapitulatif de la Commande</h4>
-                        <div class="order-summary">
-                            <p><strong>Nombre de pièces:</strong> <%= rooms %></p>
-                            <p><strong>Surface:</strong> <%= surface %> m²</p>
-                            <p><strong>Prix:</strong> <%= price %> €</p>
-                            <p><strong>Ville:</strong> <%= city %></p>
-                            <p><strong>Pays:</strong> <%= country %></p>
-                            <p><strong>URL:</strong> <a href="<%= url %>"><%= url %></a></p>
-                            <hr>
-                            <p><strong>Total:</strong> 300€</p>
+                        <div class="form-container">
+                            <h4>Récapitulatif de la Commande</h4>
+                            <div class="order-summary">
+                                <p><strong>Nombre de pièces:</strong> <%= rooms %></p>
+                                <p><strong>Surface:</strong> <%= surface %> m²</p>
+                                <p><strong>Prix:</strong> <%= price %> €</p>
+                                <p><strong>Ville:</strong> <%= city %></p>
+                                <p><strong>Pays:</strong> <%= country %></p>
+                                <p><strong>URL:</strong> <a href="<%= url %>"><%= url %></a></p>
+                                <hr>
+                                <p><strong>Total:</strong> 300€</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -230,7 +234,6 @@
             </div>
         </div>
     </footer>
-
     <!-- JAVASCRIPT FILES -->
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
@@ -238,53 +241,53 @@
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
-  <script>
-    async function initializeStripe() {
-        const response = await fetch('/config');
-        const { publicKey } = await response.json();
-        const stripe = Stripe(publicKey);
-        const elements = stripe.elements();
-        const cardElement = elements.create('card');
-        cardElement.mount('#card-element');
+    <script>
+        async function initializeStripe() {
+            const response = await fetch('/config');
+            const { publicKey } = await response.json();
+            const stripe = Stripe(publicKey);
+            const elements = stripe.elements();
+            const cardElement = elements.create('card');
+            cardElement.mount('#card-element');
 
-        const form = document.getElementById('payment-form');
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            const { token, error } = await stripe.createToken(cardElement);
-            if (error) {
-                console.error('Error creating payment token:', error);
-                return;
-            }
-            const formData = new FormData(event.target);
-            formData.append('stripeToken', token.id);
-            formData.append('amount', 30000); // Montant en centimes pour 300€
-
-            try {
-                const response = await fetch('/process-payment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(Object.fromEntries(formData.entries())),
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    alert('Payment successful!');
-                    window.location.href = '/user';
-                } else {
-                    const errorData = await response.json();
-                    console.error('Payment error:', errorData.error);
-                    alert('Payment failed. Please try again.');
+            const form = document.getElementById('payment-form');
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const { token, error } = await stripe.createToken(cardElement);
+                if (error) {
+                    console.error('Error creating payment token:', error);
+                    return;
                 }
-            } catch (error) {
-                console.error('Payment processing error:', error);
-                alert('Payment processing failed. Please try again.');
-            }
-        });
-    }
+                const formData = new FormData(event.target);
+                formData.append('stripeToken', token.id);
+                formData.append('amount', 30000); // Montant en centimes pour 300€
 
-    document.addEventListener('DOMContentLoaded', initializeStripe);
-</script>
+                try {
+                    const response = await fetch('/process-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(Object.fromEntries(formData.entries())),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        alert('Payment successful!');
+                        window.location.href = '/user';
+                    } else {
+                        const errorData = await response.json();
+                        console.error('Payment error:', errorData.error);
+                        alert('Payment failed. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Payment processing error:', error);
+                    alert('Payment processing failed. Please try again.');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeStripe);
+    </script>
 </body>
 </html>
