@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
 <head>
- <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -14,89 +13,156 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="theme-color" content="#8781D2"> 
-    <title>UAP Immo | Payment</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <title>UAP Immo | Login</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com">        
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
-    <link href="/css/templatemo-topic-listing.css" rel="stylesheet">
+    <link href="/css/templatemo-topic-listing.css" rel="stylesheet">  
     <style>
-        .order-summary {
-            border: 1px solid #ddd;
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
             padding: 20px;
-            margin-top: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .card-info {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-top: 20px;
+        .form-container h2 {
+            margin-bottom: 20px;
         }
-        .card-info .form-control {
-            background-color: transparent;
-            border: none;
-            border-bottom: 1px solid #ced4da;
-            border-radius: 0;
-            box-shadow: none;
+        .form-container .form-text {
+            margin-bottom: 15px;
         }
-        .card-info .form-control:focus {
-            border-color: #495057;
-            box-shadow: none;
+        .new-section {
+            padding: 60px 0; /* Padding for the new section */
+            background-color: #f8f9fa; /* Light background color */
         }
-        .card-info .btn {
-            margin-top: 20px;
+        .hero-section {
+            padding-top: 100px; /* Ensure content is not hidden behind the fixed navbar */
         }
-    </style>
+        .form-control-icon {
+            position: relative;
+        }
+        .form-control-icon input {
+            padding-right: 2.5rem;
+        }
+        .form-control-icon .icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #8781dc;
+            border-color: #000;
+        }
+        .btn-primary:hover {
+            background-color: #8781dc;
+            border-color: #8140de;
+        }
+        .form-container .form-label {
+            font-weight: bold;
+        }
+        .navbar {
+            background-color: #8781dc; /* Set background color */
+            transition: background-color 0.3s;
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+            color: #ffffff; /* Set text color */
+        }
+        .navbar .navbar-icon {
+            font-size: 1.5rem;
+        }
+        .navbar .navbar-icon.bi-person {
+            color: #000 !important;
+        }
+        @media (max-width: 767px) {
+            .form-container {
+                background: none;
+                box-shadow: none;
+                border: none;
+            }
+        }
+    </style>    
 </head>
 <body id="top">
     <main>
-        <nav class="navbar navbar-expand-lg">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <i class="bi-back"></i>
-                    <span>UAP Immo</span>
-                </a>
-                <div class="d-lg-none ms-auto me-4">
-                    <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_1">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_2">Services</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_4">FAQs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
-                        </li>
-                    </ul>
-                    <div class="d-none d-lg-block">
-                        <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+          <nav class="navbar navbar-expand-lg fixed-top">
+                <div class="container">
+                    <a class="navbar-brand" href="/">
+                        <i class="bi-back"></i>
+                        <span>UAP Immo</span>
+                    </a>
+                    <div class="d-lg-none ms-auto me-4">
+                        <a href="#top" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
+                    </div>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_1">Home</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_2">Services</a>
+                            </li>
+   
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
+                            </li>
+
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_4">FAQs</a>
+                            </li>
+   
+                            <li class="nav-item">
+                                <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                            </li>
+                        </ul>
+
+                        <div class="d-none d-lg-block">
+                            <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </nav>
-        <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-8 col-12 mx-auto">
-                        <h1 class="text-white text-center">UAP Immo</h1>
-                        <h6 class="text-center">Payment</h6>
+            </nav>
+            <!-- New Section Start -->
+            <section class="new-section">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-12 col-lg-8 mx-auto">
+                            <div class="form-container">
+                                <h2 class="text-center">Connexion</h2>
+                                <form action="/login" method="POST">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <div class="form-control-icon">
+                                            <input type="email" class="form-control" id="email" name="email" required>
+                                            <i class="bi bi-envelope-fill icon"></i>
+                                        </div>
+                                        <div id="emailHelp" class="form-text">Vous pouvez utiliser votre email pour vous connecter.</div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">Mot de passe</label>
+                                        <div class="form-control-icon">
+                                            <input type="password" class="form-control" id="password" name="password" required>
+                                            <i class="bi bi-eye-fill icon" id="togglePassword"></i>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary w-100">Connexion</button>
+                                </form>
+                                <div class="mt-3 text-center">
+                                    <span>Pas encore de compte ? <a href="/register">Inscrivez-vous ici</a></span>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
         <section class="faq-section section-padding" id="section_4">
             <div class="container">
                 <div class="row">
