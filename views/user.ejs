@@ -135,22 +135,14 @@
                 box-shadow: none;
             }
             .sidebar {
-                position: static;
-                margin-bottom: 20px;
-                width: 100%;
-                background-color: #c6c3ff; /* Add background color */
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add box-shadow */
-                flex-direction: row;
-                justify-content: space-around;
-                padding: 10px; /* Add padding */
+                display: none; /* Hide sidebar on mobile */
             }
-            .sidebar a {
-                flex-grow: 1; /* Make each icon grow to fill available space */
-                text-align: center; /* Center icons horizontally */
-                padding: 10px 0; /* Add vertical padding */
-                margin: 5px; /* Add margin between icons */
-                font-size: 24px;
-                color: #000; /* Ensure icon color is black */
+            .sidebar-mobile-links {
+                display: none;
+            }
+            .navbar-collapse.show .sidebar-mobile-links {
+                display: block;
+                margin-top: 10px;
             }
         }
     </style>
@@ -191,6 +183,19 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                        </li>
+                        <!-- Sidebar links for mobile -->
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> Mon compte</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> Landing page</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('publicite')"><i class="fa fa-file-invoice"></i> Publicité</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> Pages créées</a>
                         </li>
                     </ul>
                     <div class="d-none d-lg-block">
