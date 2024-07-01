@@ -1,26 +1,15 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-0LN60RQ12K');
-    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="theme-color" content="#8781D2"> 
     <title>UAP Immo | My account</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link href="/css/templatemo-topic-listing.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
+        /* Inline CSS */
         html, body {
             height: 100%;
         }
@@ -380,118 +369,114 @@
             </div>
         </div>
     </footer>
-<div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
+    <div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
 
-<!-- JavaScript -->
-<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-H+K7U5CnX" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5" crossorigin="anonymous"></script>
-<script src="js/jquery.sticky.js"></script>
-<script src="js/click-scroll.js"></script>
-<script src="js/custom.js"></script>
-
-<script>
-    function showSection(sectionId) {
-        const sections = ['account', 'landing', 'publicite', 'created-pages'];
-        sections.forEach(id => {
-            document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
-        });
-    }
-
-    document.querySelector('.sidebar a[title="Pages créées"]').addEventListener('click', loadProperties);
-
-    async function loadProperties() {
-        try {
-            const response = await fetch('/user/properties');
-            if (response.ok) {
-                const properties = await response.json();
-                const propertiesList = document.getElementById('properties-list');
-                propertiesList.innerHTML = '';
-
-                properties.forEach(property => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${property.rooms}</td>
-                        <td>${property.surface}</td>
-                        <td>${property.price}</td>
-                        <td>${property.city}</td>
-                        <td>${property.country}</td>
-                        <td><a href="${property.url}">${property.url}</a></td>
-                        <td>
-                            <div class="action-icons">
-                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                            </div>
-                        </td>
-                    `;
-                    propertiesList.appendChild(row);
-                });
-            } else {
-                console.error('Erreur lors du chargement des propriétés');
-            }
-        } catch (error) {
-            console.error('Erreur lors du chargement des propriétés : ', error);
+    <!-- JavaScript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-KyZXEAg3QhqLMpG8r+Knujsl5/Sk1z8cm0E1bJ3ieO6ib7yD+jKKgCjDq+QHz4B7" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+    <script>
+        function showSection(sectionId) {
+            const sections = ['account', 'landing', 'publicite', 'created-pages'];
+            sections.forEach(id => {
+                document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+            });
         }
-    }
 
-    function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
-        navigator.clipboard.writeText(fullUrl)
-            .then(() => {
-                showCopyMessage();
-            })
-            .catch(err => {
-                console.error('Impossible de copier l\'URL : ', err);
-            });
-    }
+        document.querySelector('.sidebar a[title="Pages créées"]').addEventListener('click', loadProperties);
 
-    function showCopyMessage() {
-        const copyMessage = document.getElementById('copyMessage');
-        copyMessage.style.display = 'block';
-        setTimeout(() => {
-            copyMessage.style.display = 'none';
-        }, 2000);
-    }
+        async function loadProperties() {
+            try {
+                const response = await fetch('/user/properties');
+                if (response.ok) {
+                    const properties = await response.json();
+                    const propertiesList = document.getElementById('properties-list');
+                    propertiesList.innerHTML = '';
 
-    function testURL(propertyId) {
-        window.location.href = `/payment?propertyId=${propertyId}`;
-    }
+                    properties.forEach(property => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${property.rooms}</td>
+                            <td>${property.surface}</td>
+                            <td>${property.price}</td>
+                            <td>${property.city}</td>
+                            <td>${property.country}</td>
+                            <td><a href="${property.url}">${property.url}</a></td>
+                            <td>
+                                <div class="action-icons">
+                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                    <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                </div>
+                            </td>
+                        `;
+                        propertiesList.appendChild(row);
+                    });
+                } else {
+                    console.error('Erreur lors du chargement des propriétés');
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des propriétés : ', error);
+            }
+        }
 
-    // Gestion de la soumission du formulaire
-    document.getElementById('add-property-form').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const formData = new FormData(this);
+        function copyURL(url) {
+            const fullUrl = `https://uap.immo${url}`;
+            navigator.clipboard.writeText(fullUrl)
+                .then(() => {
+                    showCopyMessage();
+                })
+                .catch(err => {
+                    console.error('Impossible de copier l\'URL : ', err);
+                });
+        }
 
-        try {
-            const response = await fetch('/add-property', {
-                method: 'POST',
-                body: formData
-            });
+        function showCopyMessage() {
+            const copyMessage = document.getElementById('copyMessage');
+            copyMessage.style.display = 'block';
+            setTimeout(() => {
+                copyMessage.style.display = 'none';
+            }, 2000);
+        }
 
-            if (response.ok) {
-                const result = await response.json();
-                document.getElementById('generatedLink').innerHTML = `
-                    <div class="alert alert-success">
-                        ${result.message} <br>
-                        <a href="${result.url}" target="_blank">${result.url}</a>
-                    </div>
-                `;
-            } else {
-                const error = await response.json();
+        function testURL(propertyId) {
+            window.location.href = `/payment?propertyId=${propertyId}`;
+        }
+
+        // Gestion de la soumission du formulaire
+        document.getElementById('add-property-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData(this);
+
+            try {
+                const response = await fetch('/add-property', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    document.getElementById('generatedLink').innerHTML = `
+                        <div class="alert alert-success">
+                            ${result.message} <br>
+                            <a href="${result.url}" target="_blank">${result.url}</a>
+                        </div>
+                    `;
+                } else {
+                    const error = await response.json();
+                    document.getElementById('generatedLink').innerHTML = `
+                        <div class="alert alert-danger">
+                            Une erreur est survenue: ${error.error}
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Erreur lors de la soumission du formulaire:', error);
                 document.getElementById('generatedLink').innerHTML = `
                     <div class="alert alert-danger">
-                        Une erreur est survenue: ${error.error}
+                        Une erreur est survenue lors de la soumission du formulaire.
                     </div>
                 `;
             }
-        } catch (error) {
-            console.error('Erreur lors de la soumission du formulaire:', error);
-            document.getElementById('generatedLink').innerHTML = `
-                <div class="alert alert-danger">
-                    Une erreur est survenue lors de la soumission du formulaire.
-                </div>
-            `;
-        }
-    });
-</script>
+        });
+    </script>
 </body>
 </html>
