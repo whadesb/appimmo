@@ -160,6 +160,22 @@
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
+
+            /* Style spécifique pour le formulaire sur mobile */
+            #landing .form-group {
+                width: 100%;
+                padding: 5px;
+            }
+            #landing .form-control {
+                width: 100%;
+                padding: 10px;
+                font-size: 16px;
+            }
+            #landing button.btn-custom {
+                width: 100%;
+                padding: 10px;
+                font-size: 18px;
+            }
         }
     </style>
 </head>
@@ -257,11 +273,11 @@
                                             <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
                                             <div class="form-group">
                                                 <label for="rooms">Nombre de pièces</label>
-                                                <input type="number" class="form-control short-column" id="rooms" name="rooms" required>
+                                                <input type="number" class="form-control" id="rooms" name="rooms" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="surface">Surface (m²)</label>
-                                                <input type="number" class="form-control short-column" id="surface" name="surface" required>
+                                                <input type="number" class="form-control" id="surface" name="surface" required>
                                             </div>
                                             <div class="form-group">
                                                 <label for="price">Prix (€)</label>
