@@ -109,17 +109,6 @@
             left: 50%;
             transform: translateX(-50%);
         }
-        .copy-message {
-            display: none; /* Hide by default */
-            background-color: #d1e7dd; /* Light green background */
-            color: #0f5132; /* Dark green text */
-            padding: 10px;
-            border-radius: 5px;
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-        }
         .action-icons i {
             font-size: 24px;
             cursor: pointer;
@@ -187,25 +176,38 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-lg-5 me-lg-auto">
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/">Home</a>
+                            <a class="nav-link click-scroll" href="#section_1">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
+                            <a class="nav-link click-scroll" href="#section_2">Lorem</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#processus">Processus</a>
+                            <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#faq">FAQs</a>
+                            <a class="nav-link click-scroll" href="#section_4">FAQs</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#contact">Contact</a>
+                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                        </li>
+                        <!-- Sidebar links for mobile -->
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> Mon compte</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> Landing page</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('publicite')"><i class="fa fa-file-invoice"></i> Publicité</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> Pages créées</a>
                         </li>
                     </ul>
                     <div class="d-none d-lg-block">
                         <% if (user) { %>
                             <form action="/logout" method="POST" class="d-inline">
-                                <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
+                                <button type="submit" class="navbar-icon bi-person-x" style="background: black; color: white; border: none;"></button>
                             </form>
                         <% } else { %>
                             <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
@@ -214,6 +216,7 @@
                 </div>
             </div>
         </nav>
+       
         <section class="contact-section section-padding section-bg" id="section_5">
             <div class="container">
                 <h3 class="text-black mobile-margin">Bienvenue, <%= user.lastName %> <%= user.firstName %></h3>
@@ -277,14 +280,14 @@
                                 </div>
                                 <div id="publicite" class="card" style="display: none;">
                                     <div class="card-body">
-                                        <h5 class="card-title">Mes statistiques</h5>
+                                        <h5 class="card-title">Publicité</h5>
                                         <div class="row">
                                             <div class="col-lg-6">
                                                 <div class="card mb-4">
                                                     <div class="card-body">
-                                                        <h5 class="card-title">Statistique de mes pages</h5>
-                                                        <p class="card-text">Prochainement vos statistiques ici</p>
-                                                        
+                                                        <h5 class="card-title">Publicité 1</h5>
+                                                        <p class="card-text">Description de la publicité 1.</p>
+                                                        <i class="fa fa-shopping-cart btn-custom" onclick="buyItem('Publicité 1', 10)" style="color: #333;"></i>
                                                     </div>
                                                 </div>
                                             </div>
@@ -371,7 +374,6 @@
 <script src="js/jquery.sticky.js" defer></script>
 <script src="js/click-scroll.js" defer></script>
 <script src="js/custom.js" defer></script>
-<div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
 </body>
 </html>
     <script src="/js/jquery.min.js"></script>
@@ -408,7 +410,7 @@
                             <td><a href="${property.url}">${property.url}</a></td>
                             <td>
                                 <div class="action-icons">
-                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                    <i class="bi bi-paste" style="color: #333;" onclick="copyURL('${property.url}')"></i>
                                     <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
                                 </div>
                             </td>
@@ -424,22 +426,20 @@
         }
 
         function copyURL(url) {
-            const fullUrl = `https://uap.immo${url}`;
-            navigator.clipboard.writeText(fullUrl)
+            navigator.clipboard.writeText(url)
                 .then(() => {
-                    showCopyMessage();
+                    const copyIcon = document.querySelector(`i[onclick="copyURL('${url}')"]`);
+                    const tooltip = document.createElement('div');
+                    tooltip.className = 'tooltip';
+                    tooltip.innerText = 'URL copiée avec succès!';
+                    copyIcon.parentNode.appendChild(tooltip);
+                    setTimeout(() => {
+                        tooltip.remove();
+                    }, 2000);
                 })
                 .catch(err => {
                     console.error('Impossible de copier l\'URL : ', err);
                 });
-        }
-
-        function showCopyMessage() {
-            const copyMessage = document.getElementById('copyMessage');
-            copyMessage.style.display = 'block';
-            setTimeout(() => {
-                copyMessage.style.display = 'none';
-            }, 2000);
         }
 
         function testURL(propertyId) {
