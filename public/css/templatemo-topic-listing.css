@@ -285,7 +285,7 @@ strong {
 
 .navbar {
   background: transparent;
-  border-bottom: 1px solid #000000;
+  border-bottom: none;
   z-index: 9;
 }
 
