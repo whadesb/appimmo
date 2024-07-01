@@ -109,6 +109,17 @@
             left: 50%;
             transform: translateX(-50%);
         }
+        .copy-message {
+            display: none; /* Hide by default */
+            background-color: #d1e7dd; /* Light green background */
+            color: #0f5132; /* Dark green text */
+            padding: 10px;
+            border-radius: 5px;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
         .action-icons i {
             font-size: 24px;
             cursor: pointer;
@@ -374,6 +385,7 @@
 <script src="js/jquery.sticky.js" defer></script>
 <script src="js/click-scroll.js" defer></script>
 <script src="js/custom.js" defer></script>
+<div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
 </body>
 </html>
     <script src="/js/jquery.min.js"></script>
@@ -410,7 +422,7 @@
                             <td><a href="${property.url}">${property.url}</a></td>
                             <td>
                                 <div class="action-icons">
-                                    <i class="bi bi-paste" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
                                     <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
                                 </div>
                             </td>
@@ -426,20 +438,22 @@
         }
 
         function copyURL(url) {
-            navigator.clipboard.writeText(url)
+            const fullUrl = `https://uap.immo${url}`;
+            navigator.clipboard.writeText(fullUrl)
                 .then(() => {
-                    const copyIcon = document.querySelector(`i[onclick="copyURL('${url}')"]`);
-                    const tooltip = document.createElement('div');
-                    tooltip.className = 'tooltip';
-                    tooltip.innerText = 'URL copiée avec succès!';
-                    copyIcon.parentNode.appendChild(tooltip);
-                    setTimeout(() => {
-                        tooltip.remove();
-                    }, 2000);
+                    showCopyMessage();
                 })
                 .catch(err => {
                     console.error('Impossible de copier l\'URL : ', err);
                 });
+        }
+
+        function showCopyMessage() {
+            const copyMessage = document.getElementById('copyMessage');
+            copyMessage.style.display = 'block';
+            setTimeout(() => {
+                copyMessage.style.display = 'none';
+            }, 2000);
         }
 
         function testURL(propertyId) {
