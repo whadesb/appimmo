@@ -118,13 +118,11 @@
             width: 10%;
         }
         @media (max-width: 767px) {
-            .container, .container-fluid {
-                padding-left: 0;
-                padding-right: 0;
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
             }
             .row {
-                margin-left: 0;
-                margin-right: 0;
                 flex-direction: column;
                 align-items: center;
             }
@@ -136,10 +134,6 @@
                 box-shadow: none;
                 min-height: 300px;
                 overflow-x: auto;
-                padding: 10px; /* Ajoutez un léger padding pour améliorer le design UX */
-            }
-            .main-section .card {
-                padding: 10px; /* Ajoutez un léger padding pour les cartes */
             }
             .sidebar {
                 display: none;
@@ -147,12 +141,24 @@
             .sidebar-mobile-links {
                 display: block !important;
                 margin-top: 10px;
-                width: 100%; /* Assurez que les liens prennent toute la largeur */
             }
-            .sidebar-mobile-links .nav-link {
-                padding: 10px; /* Ajoutez un léger padding pour les liens */
-                text-align: center; /* Centrez le texte pour un meilleur design UX */
+            .mobile-margin {
+                margin-top: 60px;
+            }
+            table {
+                width: 100%;
+                table-layout: auto;
+            }
+            th, td {
+                white-space: nowrap;
+                padding: 8px;
+                text-align: left;
+            }
+            .table-responsive {
                 display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
         }
     </style>
