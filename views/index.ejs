@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <!-- Google tag (gtag.js) -->
-    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
-    <script defer>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
+    <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
@@ -14,13 +14,21 @@
     <meta name="description" content="UAP Immo Plateforme webmarketing immobilière">
     <meta name="author" content="UAP Immo">
     <meta name="theme-color" content="#8781D2"> 
-    <title>UAP Immo | Home</title>    
+    <title>UAP Immo | Home</title>
+    
+    <!-- Preload CSS -->
+    <link rel="preload" href="/css/bootstrap.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/bootstrap.min.css"></noscript>
+    <link rel="preload" href="/css/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/bootstrap-icons.css"></noscript>
+    <link rel="preload" href="/css/templatemo-topic-listing.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/css/templatemo-topic-listing.css"></noscript>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">        
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-icons.css" rel="stylesheet">
-    <link href="/css/templatemo-topic-listing.css" rel="stylesheet">    
+    
     <style>
         .visually-hidden {
             position: absolute;
@@ -256,14 +264,14 @@
         <div class="row">
             <div class="col-lg-6 col-12">
                 <h2 class="mb-4">FAQ</h2>
-            </div>
-            <div class="clearfix"></div>
-            <div class="col-lg-5 col-12">
-                <img src="images/uap immo faq plateforme webmarketing immobiliere.webp" class="custom-block-image img-fluid" alt="Fonctionnement de la plateforme de webmarketing UAP Immo" width="600" height="400">
-            </div>
-            <div class="col-lg-6 col-12 m-auto">
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-lg-5 col-12">
+                        <img src="images/uap immo faq plateforme webmarketing immobiliere.webp" class="custom-block-image img-fluid" alt="Fonctionnement de la plateforme de webmarketing UAP Immo" width="600" height="400">
+                    </div>
+                    <div class="col-lg-6 col-12 m-auto">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
                         <h2 class="accordion-header" id="headingOne">
                             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 Qu'est-ce que la plateforme UAP Immo ?
@@ -399,10 +407,10 @@
             </div>
         </div>
     </footer>
-<script defer src="js/jquery.min.js"></script>
-<script defer src="js/bootstrap.bundle.min.js"></script>
-<script defer src="js/jquery.sticky.js"></script>
-<script defer src="js/click-scroll.js"></script>
-<script defer src="js/custom.js"></script>
+<script src="js/jquery.min.js" defer></script>
+<script src="js/bootstrap.bundle.min.js" defer></script>
+<script src="js/jquery.sticky.js" defer></script>
+<script src="js/click-scroll.js" defer></script>
+<script src="js/custom.js" defer></script>
 </body>
 </html>
