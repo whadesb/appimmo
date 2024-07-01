@@ -86,16 +86,16 @@
             padding: 20px 0;
         }
         .btn-custom {
-            background-color: #000; 
-            color: #fff; 
-            border: none; 
+            background-color: #333; /* Black background */
+            color: #fff; /* White text */
+            border: none; /* Remove border */
         }
         .btn-custom:hover {
-            background-color: #fff; 
-            color: #000; 
+            background-color: #000; /* Darker black on hover */
+            color: #fff; /* White text on hover */
         }
         .btn-custom i {
-            font-size: 24px; 
+            font-size: 24px; /* Font size for icons */
         }
         .tooltip {
             position: absolute;
@@ -185,27 +185,40 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/">Home</a>
+                            <a class="nav-link click-scroll" href="#section_1">Home</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
+                            <a class="nav-link click-scroll" href="#section_2">Lorem</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#processus">Processus</a>
+                            <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#faq">FAQs</a>
+                            <a class="nav-link click-scroll" href="#section_4">FAQs</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#contact">Contact</a>
+                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                        </li>
+                        <!-- Sidebar links for mobile -->
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> Mon compte</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> Landing page</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('publicite')"><i class="fa fa-file-invoice"></i> Publicité</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> Pages créées</a>
                         </li>
                     </ul>
                     <div class="d-none d-lg-block">
                         <% if (user) { %>
                             <form action="/logout" method="POST" class="d-inline">
-                                <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
+                                <button type="submit" class="navbar-icon bi-person-x" style="background: black; color: white; border: none;"></button>
                             </form>
                         <% } else { %>
                             <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
@@ -400,7 +413,7 @@
 
                     properties.forEach(property => {
                         const row = document.createElement('tr');
-                        row.innerHTML = 
+                        row.innerHTML = `
                             <td>${property.rooms}</td>
                             <td>${property.surface}</td>
                             <td>${property.price}</td>
@@ -413,7 +426,7 @@
                                     <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
                                 </div>
                             </td>
-                        ;
+                        `;
                         propertiesList.appendChild(row);
                     });
                 } else {
@@ -425,7 +438,7 @@
         }
 
         function copyURL(url) {
-            const fullUrl = https://uap.immo${url};
+            const fullUrl = `https://uap.immo${url}`;
             navigator.clipboard.writeText(fullUrl)
                 .then(() => {
                     showCopyMessage();
@@ -444,7 +457,7 @@
         }
 
         function testURL(propertyId) {
-            window.location.href = /payment?propertyId=${propertyId};
+            window.location.href = `/payment?propertyId=${propertyId}`;
         }
 
         // Gestion de la soumission du formulaire
@@ -460,27 +473,27 @@
 
                 if (response.ok) {
                     const result = await response.json();
-                    document.getElementById('generatedLink').innerHTML = 
+                    document.getElementById('generatedLink').innerHTML = `
                         <div class="alert alert-success">
                             ${result.message} <br>
                             <a href="${result.url}" target="_blank">${result.url}</a>
                         </div>
-                    ;
+                    `;
                 } else {
                     const error = await response.json();
-                    document.getElementById('generatedLink').innerHTML = 
+                    document.getElementById('generatedLink').innerHTML = `
                         <div class="alert alert-danger">
                             Une erreur est survenue: ${error.error}
                         </div>
-                    ;
+                    `;
                 }
             } catch (error) {
                 console.error('Erreur lors de la soumission du formulaire:', error);
-                document.getElementById('generatedLink').innerHTML = 
+                document.getElementById('generatedLink').innerHTML = `
                     <div class="alert alert-danger">
                         Une erreur est survenue lors de la soumission du formulaire.
                     </div>
-                ;
+                `;
             }
         });
     </script>
