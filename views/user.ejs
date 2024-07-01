@@ -147,18 +147,22 @@
                 margin-top: 60px;
             }
             table {
-                width: 100%; /* S'assure que le tableau prend toute la largeur disponible */
-                table-layout: fixed; /* Les colonnes ont des tailles fixes */
-            }
-            th, td {
-                white-space: nowrap; /* Empêche le débordement du texte */
-            }
+        width: 100%; /* Assure que le tableau prend 100% de la largeur disponible */
+        table-layout: auto; /* Laissez le navigateur déterminer la meilleure taille des colonnes */
+    }
+    th, td {
+        white-space: nowrap; /* Empêche le texte de se déborder */
+        padding: 8px; /* Ajoutez du padding pour éviter la superposition */
+        text-align: left; /* Aligne le texte à gauche pour une meilleure lisibilité */
+    }
+    .table-responsive {
+        display: block;
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
         }
-        @media (min-width: 768px) {
-            .sidebar-mobile-links {
-                display: none !important;
-            }
-        }
+        
     </style>
 </head>
 <body id="top">
