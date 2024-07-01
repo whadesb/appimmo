@@ -109,9 +109,16 @@
             left: 50%;
             transform: translateX(-50%);
         }
-        .action-icons {
-            position: relative; /* Add position relative to make tooltip positioning relative to this element */
-            display: inline-block; /* Make the icons inline block */
+        .copy-message {
+            display: none; /* Hide by default */
+            background-color: #d1e7dd; /* Light green background */
+            color: #0f5132; /* Dark green text */
+            padding: 10px;
+            border-radius: 5px;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
         }
         .action-icons i {
             font-size: 24px;
@@ -121,18 +128,6 @@
         }
         .short-column {
             width: 10%;
-        }
-        .copy-message {
-            display: none;
-            background-color: #d1e7dd;
-            color: #0f5132;
-            padding: 5px 10px;
-            border-radius: 5px;
-            position: absolute;
-            top: -30px;
-            right: 0;
-            z-index: 1000;
-            transform: translateY(-100%);
         }
         @media (max-width: 767px) {
             .container {
@@ -390,6 +385,7 @@
 <script src="js/jquery.sticky.js" defer></script>
 <script src="js/click-scroll.js" defer></script>
 <script src="js/custom.js" defer></script>
+<div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
 </body>
 </html>
     <script src="/js/jquery.min.js"></script>
@@ -426,9 +422,8 @@
                             <td><a href="${property.url}">${property.url}</a></td>
                             <td>
                                 <div class="action-icons">
-                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}', this)"></i>
+                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
                                     <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                    <div class="copy-message">URL copiée avec succès !</div>
                                 </div>
                             </td>
                         `;
@@ -442,19 +437,19 @@
             }
         }
 
-        function copyURL(url, element) {
+        function copyURL(url) {
             const fullUrl = `https://uap.immo${url}`;
             navigator.clipboard.writeText(fullUrl)
                 .then(() => {
-                    showCopyMessage(element);
+                    showCopyMessage();
                 })
                 .catch(err => {
                     console.error('Impossible de copier l\'URL : ', err);
                 });
         }
 
-        function showCopyMessage(element) {
-            const copyMessage = element.nextElementSibling;
+        function showCopyMessage() {
+            const copyMessage = document.getElementById('copyMessage');
             copyMessage.style.display = 'block';
             setTimeout(() => {
                 copyMessage.style.display = 'none';
