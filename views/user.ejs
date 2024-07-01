@@ -134,6 +134,7 @@
                 border-radius: 0;
                 box-shadow: none;
                 min-height: 300px;
+                overflow-x: auto; /* Ajouté pour permettre le défilement horizontal */
             }
             .sidebar {
                 display: none;
@@ -144,6 +145,13 @@
             }
             .mobile-margin {
                 margin-top: 60px;
+            }
+            table {
+                width: 100%; /* S'assure que le tableau prend toute la largeur disponible */
+                table-layout: fixed; /* Les colonnes ont des tailles fixes */
+            }
+            th, td {
+                white-space: nowrap; /* Empêche le débordement du texte */
             }
         }
         @media (min-width: 768px) {
