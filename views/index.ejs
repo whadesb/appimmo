@@ -45,7 +45,11 @@
         }
         .justify-content-center {
         margin-top: 40px;
-        }    
+        }   
+        .custom-block-image {
+            object-fit: contain; 
+            height: auto;
+        }
         @media (max-width: 767px) {
             .section-top-margin {
                 padding-top: 40px;
@@ -62,6 +66,10 @@
         .h2 {
             font-size: 2rem;
             margin-bottom: 60px;
+        }
+        .custom-block-image {
+            object-fit: contain; /* Ajustez selon vos besoins */
+            height: auto;
         }
     </style>
 </head>
@@ -248,14 +256,14 @@
         <div class="row">
             <div class="col-lg-6 col-12">
                 <h2 class="mb-4">FAQ</h2>
-            </div>
-            <div class="clearfix"></div>
-            <div class="col-lg-5 col-12">
-                <img src="images/uap immo faq plateforme webmarketing immobiliere.webp" class="custom-block-image img-fluid" alt="Fonctionnement de la plateforme de webmarketing UAP Immo" width="600" height="400">
-            </div>
-            <div class="col-lg-6 col-12 m-auto">
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="col-lg-5 col-12">
+                        <img src="images/uap immo faq plateforme webmarketing immobiliere.webp" class="custom-block-image img-fluid" alt="Fonctionnement de la plateforme de webmarketing UAP Immo" width="600" height="400">
+                    </div>
+                    <div class="col-lg-6 col-12 m-auto">
+                        <div class="accordion" id="accordionExample">
+                            <div class="accordion-item">
                         <h2 class="accordion-header" id="headingOne">
                             <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                 Qu'est-ce que la plateforme UAP Immo ?
