@@ -86,13 +86,13 @@
             padding: 20px 0;
         }
         .btn-custom {
-            background-color: #fff; /* Black background */
-            color: #000; /* White text */
+            background-color: #fff; /* White background */
+            color: #000; /* Black text */
             border: none; /* Remove border */
         }
         .btn-custom:hover {
-            background-color: #fff; /* Darker black on hover */
-            color: #000; /* White text on hover */
+            background-color: #fff; /* White on hover */
+            color: #000; /* Black text on hover */
         }
         .btn-custom i {
             font-size: 24px; /* Font size for icons */
@@ -218,7 +218,7 @@
                     <div class="d-none d-lg-block">
                         <% if (user) { %>
                             <form action="/logout" method="POST" class="d-inline">
-                                <button type="submit" class="navbar-icon bi-person-x" style="background: black; color: white; border: none;"></button>
+                                <button type="submit" class="navbar-icon bi-person-x" style="background-color: rgba(255, 0, 0, 0.2); color: black; border: none; border-radius: 50%; padding: 5px;"></button>
                             </form>
                         <% } else { %>
                             <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
@@ -413,7 +413,7 @@
 
                     properties.forEach(property => {
                         const row = document.createElement('tr');
-                        row.innerHTML = 
+                        row.innerHTML = `
                             <td>${property.rooms}</td>
                             <td>${property.surface}</td>
                             <td>${property.price}</td>
@@ -426,7 +426,7 @@
                                     <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
                                 </div>
                             </td>
-                        ;
+                        `;
                         propertiesList.appendChild(row);
                     });
                 } else {
@@ -438,7 +438,7 @@
         }
 
         function copyURL(url) {
-            const fullUrl = https://uap.immo${url};
+            const fullUrl = `https://uap.immo${url}`;
             navigator.clipboard.writeText(fullUrl)
                 .then(() => {
                     showCopyMessage();
@@ -457,7 +457,7 @@
         }
 
         function testURL(propertyId) {
-            window.location.href = /payment?propertyId=${propertyId};
+            window.location.href = `/payment?propertyId=${propertyId}`;
         }
 
         // Gestion de la soumission du formulaire
@@ -473,27 +473,27 @@
 
                 if (response.ok) {
                     const result = await response.json();
-                    document.getElementById('generatedLink').innerHTML = 
+                    document.getElementById('generatedLink').innerHTML = `
                         <div class="alert alert-success">
                             ${result.message} <br>
                             <a href="${result.url}" target="_blank">${result.url}</a>
                         </div>
-                    ;
+                    `;
                 } else {
                     const error = await response.json();
-                    document.getElementById('generatedLink').innerHTML = 
+                    document.getElementById('generatedLink').innerHTML = `
                         <div class="alert alert-danger">
                             Une erreur est survenue: ${error.error}
                         </div>
-                    ;
+                    `;
                 }
             } catch (error) {
                 console.error('Erreur lors de la soumission du formulaire:', error);
-                document.getElementById('generatedLink').innerHTML = 
+                document.getElementById('generatedLink').innerHTML = `
                     <div class="alert alert-danger">
                         Une erreur est survenue lors de la soumission du formulaire.
                     </div>
-                ;
+                `;
             }
         });
     </script>
