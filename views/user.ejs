@@ -438,7 +438,8 @@
         }
 
         function copyURL(url) {
-            navigator.clipboard.writeText(url)
+            const fullUrl = `https://uap.immo${url}`;
+            navigator.clipboard.writeText(fullUrl)
                 .then(() => {
                     showCopyMessage();
                 })
