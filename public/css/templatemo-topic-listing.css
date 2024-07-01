@@ -186,6 +186,9 @@ strong {
   color: #000;
 }
 
+section[id] {
+    scroll-margin-top: 77px; 
+}
 
 /*---------------------------------------
   CUSTOM ICON COLOR               
