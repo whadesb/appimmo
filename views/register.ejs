@@ -145,6 +145,11 @@
                     <div class="col-12 col-lg-8 mx-auto">
                         <div class="form-container">
                             <h2 class="text-center">Inscription</h2>
+                            <% if (messages.error) { %>
+                                <div class="alert alert-danger">
+                                    <%= messages.error %>
+                                </div>
+                            <% } %>
                             <form action="/register" method="POST">
                                 <div class="mb-3">
                                     <label for="username" class="form-label">Nom d'utilisateur</label>
@@ -174,6 +179,7 @@
                                             <span class="input-group-text toggle-password" id="togglePassword"><i class="bi bi-eye"></i></span>
                                         </div>
                                     </div>
+                                    <small class="form-text text-muted">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.</small>
                                 </div>
                                 <div class="mb-3">
                                     <label for="confirmPassword" class="form-label">Confirmez le mot de passe</label>
@@ -214,25 +220,25 @@
                 <div class="col-lg-3 col-md-4 col-6">
                     <h6 class="site-footer-title mb-3">Informations</h6>
                     <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
-                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
-                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
+                        <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
+                        <li class="site-footer-link-item"><a href="/user" class="site-footer-link">Mon espace</a></li>
+                        <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
-                    <h6 class="site-footer-title mb3">Accès</h6>
+                    <h6 class="site-footer-title mb-3">Accès</h6>
                     <p class="text-white d-flex mb-1">
-                        <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
+                        <a href="tel:305-240-9671" class="site-footer-link">Contact</a>
                     </p>
                     <p class="text-white d-flex">
-                        <a href="mailto:info@company.com" class="site-footer-link">
-                            contact@uap.immo
-                        </a>
+                        <a href="mailto:contact@uap.immo" class="site-footer-link">contact@uap.immo</a>
                     </p>
                 </div>
                 <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Language
+                        </button>
                         <ul class="dropdown-menu">
                             <li>
                                 <a class="dropdown-item" href="#">English</a>
