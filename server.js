@@ -21,7 +21,7 @@ const { v4: uuidv4 } = require('uuid');
 
 const app = express();
 
-const validCodes = ['CODE1', 'CODE2', 'CODE3', 'CODE4', 'CODE5'];
+const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE4', 'CODE5'];
 
 app.use(compression());
 
