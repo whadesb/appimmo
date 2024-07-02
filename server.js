@@ -18,6 +18,7 @@ const compression = require('compression');
 const multer = require('multer');
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
+const validator = require('validator');
 
 const app = express();
 
@@ -64,7 +65,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 }).catch((err) => {
   console.error('Error connecting to MongoDB', err);
 });
-
 app.post('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -137,6 +137,19 @@ app.post('/register', async (req, res) => {
     return res.redirect('/register');
   }
 
+  // Validate password
+  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+
+  if (!passwordRequirements.test(password)) {
+    req.flash('error', 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
+    return res.redirect('/register');
+  }
+
+  if (password !== confirmPassword) {
+    req.flash('error', 'Passwords do not match.');
+    return res.redirect('/register');
+  }
+
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
     res.redirect('/login');
@@ -149,7 +162,6 @@ app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
 });
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads');
@@ -310,7 +322,6 @@ async function generateLandingPage(property) {
 
   return `/landing-pages/${property._id}.html`;
 }
-
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ createdBy: req.user._id });
