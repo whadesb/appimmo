@@ -195,66 +195,66 @@
 <body id="top">
     <main>
         <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <i class="bi-back"></i>
-                    <span>UAP Immo</span>
-                </a>
-                <div class="d-lg-none ms-auto me-4">
-                    <% if (user) { %>
-                        <form action="/logout" method="POST" class="d-inline">
-                            <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
-                        </form>
-                    <% } else { %>
-                        <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
-                    <% } %>
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_1">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_2">Lorem</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_4">FAQs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_5">Contact</a>
-                        </li>
-                        <!-- Sidebar links for mobile -->
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll keep-open" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> Mon compte</a>
-                        </li>
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll keep-open" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> Landing page</a>
-                        </li>
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll keep-open" href="#" onclick="showSection('statistiques')"><i class="fa fa-file-invoice"></i> Mes Statistiques</a>
-                        </li>
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll keep-open" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> Pages créées</a>
-                        </li>
-                    </ul>
-                    <div class="d-none d-lg-block">
-                        <% if (user) { %>
-                            <form action="/logout" method="POST" class="d-inline">
-                                <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
-                            </form>
-                        <% } else { %>
-                            <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
-                        <% } %>
-                    </div>
-                </div>
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <i class="bi-back"></i>
+            <span>UAP Immo</span>
+        </a>
+        <div class="d-lg-none ms-auto me-4">
+            <% if (user) { %>
+                <form action="/logout" method="POST" class="d-inline">
+                    <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
+                </form>
+            <% } else { %>
+                <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
+            <% } %>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="#section_1">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="#section_2">Lorem</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="#section_3">Fonctionnement</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="#section_4">FAQs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="#section_5">Contact</a>
+                </li>
+                <!-- Sidebar links for mobile -->
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll keep-open" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> Mon compte</a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll keep-open" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> Landing page</a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll keep-open" href="#" onclick="showSection('statistiques')"><i class="fa fa-file-invoice"></i> Mes Statistiques</a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll keep-open" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> Pages créées</a>
+                </li>
+            </ul>
+            <div class="d-none d-lg-block">
+                <% if (user) { %>
+                    <form action="/logout" method="POST" class="d-inline">
+                        <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
+                <% } %>
             </div>
-        </nav>      
+        </div>
+    </div>
+</nav>      
         <section class="contact-section section-padding section-bg" id="section_5">
             <div class="container">
                 <h4 class="text-black mobile-margin">Bienvenue, <%= user.lastName %> <%= user.firstName %></h4>
@@ -436,7 +436,7 @@
 
                     properties.forEach(property => {
                         const row = document.createElement('tr');
-                        row.innerHTML = `
+                        row.innerHTML = 
                             <td>${property.rooms}</td>
                             <td>${property.surface}</td>
                             <td>${property.price}</td>
@@ -449,7 +449,7 @@
                                     <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
                                 </div>
                             </td>
-                        `;
+                        ;
                         propertiesList.appendChild(row);
                     });
                 } else {
@@ -461,7 +461,7 @@
         }
 
         function copyURL(url) {
-            const fullUrl = `https://uap.immo${url}`;
+            const fullUrl = https://uap.immo${url};
             navigator.clipboard.writeText(fullUrl)
                 .then(() => {
                     showCopyMessage();
@@ -480,7 +480,7 @@
         }
 
         function testURL(propertyId) {
-            window.location.href = `/payment?propertyId=${propertyId}`;
+            window.location.href = /payment?propertyId=${propertyId};
         }
 
         // Gestion de la soumission du formulaire
@@ -498,61 +498,62 @@
                 if (response.ok) {
                     const result = await response.json();
                     console.log('Property added successfully:', result);
-                    document.getElementById('generatedLink').innerHTML = `
+                    document.getElementById('generatedLink').innerHTML = 
                         <div class="alert alert-success">
                             ${result.message} <br>
                             <a href="${result.url}" target="_blank">${result.url}</a>
                         </div>
-                    `;
+                    ;
                 } else {
                     const error = await response.json();
                     console.error('Error response:', error);
-                    document.getElementById('generatedLink').innerHTML = `
+                    document.getElementById('generatedLink').innerHTML = 
                         <div class="alert alert-danger">
                             Une erreur est survenue: ${error.error}
                         </div>
-                    `;
+                    ;
                 }
             } catch (error) {
                 console.error('Erreur lors de la soumission du formulaire:', error);
-                document.getElementById('generatedLink').innerHTML = `
+                document.getElementById('generatedLink').innerHTML = 
                     <div class="alert alert-danger">
                         Une erreur est survenue lors de la soumission du formulaire.
                     </div>
-                `;
-            }
-        });
-
-        document.addEventListener('DOMContentLoaded', function () {
-            var navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.keep-open)');
-            var navbarToggler = document.querySelector('.navbar-toggler');
-            var navbarCollapse = document.querySelector('.navbar-collapse');
-
-            navLinks.forEach(function (link) {
-                link.addEventListener('click', function () {
-                    if (window.innerWidth < 768) { // Only on mobile
-                        navbarCollapse.classList.remove('show');
-                    }
-                });
-            });
-
-            navbarToggler.addEventListener('click', function () {
-                setTimeout(function () {
-                    if (navbarCollapse.classList.contains('show')) {
-                        document.addEventListener('click', closeNavbarOnClickOutside);
-                    } else {
-                        document.removeEventListener('click', closeNavbarOnClickOutside);
-                    }
-                }, 200);
-            });
-
-            function closeNavbarOnClickOutside(event) {
-                if (!navbarCollapse.contains(event.target) && !navbarToggler.contains(event.target)) {
-                    navbarCollapse.classList.remove('show');
-                    document.removeEventListener('click', closeNavbarOnClickOutside);
-                }
+                ;
             }
         });
     </script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.keep-open)');
+        var navbarToggler = document.querySelector('.navbar-toggler');
+        var navbarCollapse = document.querySelector('.navbar-collapse');
+
+        navLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                if (window.innerWidth < 768) { // Only on mobile
+                    navbarCollapse.classList.remove('show');
+                }
+            });
+        });
+
+        navbarToggler.addEventListener('click', function () {
+            setTimeout(function () {
+                if (navbarCollapse.classList.contains('show')) {
+                    document.addEventListener('click', closeNavbarOnClickOutside);
+                } else {
+                    document.removeEventListener('click', closeNavbarOnClickOutside);
+                }
+            }, 200);
+        });
+
+        function closeNavbarOnClickOutside(event) {
+            if (!navbarCollapse.contains(event.target) && !navbarToggler.contains(event.target)) {
+                navbarCollapse.classList.remove('show');
+                document.removeEventListener('click', closeNavbarOnClickOutside);
+            }
+        }
+    });
+</script>
 </body>
 </html>
