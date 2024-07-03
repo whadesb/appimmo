@@ -133,6 +133,8 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
 
+  console.log('Invite code received:', inviteCode); // Log pour vérifier la valeur de inviteCode
+
   if (!validCodes.includes(inviteCode)) {
     req.flash('error', 'Invalid invitation code.');
     return res.redirect('/register');
@@ -159,6 +161,7 @@ app.post('/register', async (req, res) => {
     res.send('Une erreur est survenue lors de l\'inscription.');
   }
 });
+
 
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
