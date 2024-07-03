@@ -7,7 +7,7 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
-const User = require('./models/User');
+const User = require('./models/User'); // Correct path to User model
 const Property = require('./models/Property');
 const Order = require('./models/Order');
 const fs = require('fs');
@@ -26,7 +26,6 @@ const app = express();
 const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE044', 'CODE5'];
 
 app.use(compression());
-
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
