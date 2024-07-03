@@ -19,6 +19,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
+const nodemailer = require('nodemailer');
 
 const app = express();
 
@@ -137,7 +138,6 @@ app.post('/register', async (req, res) => {
     return res.redirect('/register');
   }
 
-  // Validate password
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (!passwordRequirements.test(password)) {
@@ -152,12 +152,14 @@ app.post('/register', async (req, res) => {
 
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+    await sendWelcomeEmail(email, firstName); // Envoyer l'email de bienvenue
     res.redirect('/login');
   } catch (error) {
     console.error('Error registering user', error);
     res.send('Une erreur est survenue lors de l\'inscription.');
   }
 });
+
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
@@ -387,6 +389,30 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Payment failed' });
   }
 });
+
+// Configuration de Nodemailer avec Gmail
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER, // Votre email
+    pass: process.env.EMAIL_PASS  // Votre mot de passe ou App Password
+  }
+});
+
+// Fonction pour envoyer un email
+const sendWelcomeEmail = async (email, firstName) => {
+  try {
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: 'Bienvenue sur notre site!',
+      text: `Bonjour ${firstName},\n\nMerci de vous être inscrit sur notre site.\n\nCordialement,\nL'équipe UAP Immo`
+    });
+    console.log('Email envoyé avec succès.');
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de l\'email:', error);
+  }
+};
 
 const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
 
