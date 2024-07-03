@@ -130,7 +130,7 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 app.post('/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
+  const { username, email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
 
   console.log('Received registration data:', req.body);
 
@@ -155,7 +155,7 @@ app.post('/register', async (req, res) => {
   }
 
   try {
-    const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+    const newUser = await User.register(new User({ username, email, firstName, lastName, role }), password);
     console.log('User registered successfully:', newUser);
     res.redirect('/login');
   } catch (error) {
