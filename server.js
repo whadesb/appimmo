@@ -7,7 +7,7 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
-const User = require('./models/User'); // Correct path to User model
+const User = require('./models/User');
 const Property = require('./models/Property');
 const Order = require('./models/Order');
 const fs = require('fs');
@@ -19,13 +19,13 @@ const multer = require('multer');
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
-const nodemailer = require('nodemailer');
 
 const app = express();
 
-const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE044', 'CODE5'];
+const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE44', 'CODE5'];
 
 app.use(compression());
+
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -65,7 +65,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 }).catch((err) => {
   console.error('Error connecting to MongoDB', err);
 });
-
 app.post('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -133,13 +132,12 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
 
-  console.log('Received registration data:', req.body);
-
   if (!validCodes.includes(inviteCode)) {
     req.flash('error', 'Invalid invitation code.');
     return res.redirect('/register');
   }
 
+  // Validate password
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (!passwordRequirements.test(password)) {
@@ -154,16 +152,12 @@ app.post('/register', async (req, res) => {
 
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
-    console.log('User registered successfully:', newUser);
-    await sendWelcomeEmail(email, firstName); // Envoyer l'email de bienvenue
     res.redirect('/login');
   } catch (error) {
-    console.error('Error registering user:', error);
-    req.flash('error', 'Une erreur est survenue lors de l\'inscription.');
-    res.redirect('/register');
+    console.error('Error registering user', error);
+    res.send('Une erreur est survenue lors de l\'inscription.');
   }
 });
-
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
@@ -393,30 +387,6 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Payment failed' });
   }
 });
-
-// Configuration de Nodemailer avec Gmail
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER, // Votre email
-    pass: process.env.EMAIL_PASS  // Votre mot de passe ou App Password
-  }
-});
-
-// Fonction pour envoyer un email
-const sendWelcomeEmail = async (email, firstName) => {
-  try {
-    await transporter.sendMail({
-      from: process.env.EMAIL_USER,
-      to: email,
-      subject: 'Bienvenue sur notre site!',
-      text: `Bonjour ${firstName},\n\nMerci de vous être inscrit sur notre site.\n\nCordialement,\nL'équipe UAP Immo`
-    });
-    console.log('Email envoyé avec succès.');
-  } catch (error) {
-    console.error('Erreur lors de l\'envoi de l\'email:', error);
-  }
-};
 
 const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
 
