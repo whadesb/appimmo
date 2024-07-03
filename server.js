@@ -7,7 +7,7 @@ const MongoStore = require('connect-mongo');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const flash = require('express-flash');
-const User = require('./models/User');
+const User = require('./models/User'); // Assurez-vous que le chemin est correct
 const Property = require('./models/Property');
 const Order = require('./models/Order');
 const fs = require('fs');
@@ -20,22 +20,10 @@ const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 const nodemailer = require('nodemailer');
-const passportLocalMongoose = require('passport-local-mongoose');
 
 const app = express();
 
-const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE', 'CODE5'];
-
-const UserSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  role: { type: String, required: true }
-});
-
-UserSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
-
-module.exports = mongoose.model('User', UserSchema);
+const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE044', 'CODE5'];
 
 app.use(compression());
 
@@ -78,6 +66,7 @@ mongoose.connect(process.env.MONGODB_URI, {
 }).catch((err) => {
   console.error('Error connecting to MongoDB', err);
 });
+
 app.post('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
