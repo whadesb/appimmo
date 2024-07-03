@@ -133,7 +133,7 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
 
-  console.log('Invite code received:', inviteCode); // Log pour vérifier la valeur de inviteCode
+  console.log('Received registration data:', req.body); // Log des données reçues
 
   if (!validCodes.includes(inviteCode)) {
     req.flash('error', 'Invalid invitation code.');
@@ -154,14 +154,15 @@ app.post('/register', async (req, res) => {
 
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+    console.log('User registered successfully:', newUser); // Log du succès de l'enregistrement
     await sendWelcomeEmail(email, firstName); // Envoyer l'email de bienvenue
     res.redirect('/login');
   } catch (error) {
-    console.error('Error registering user', error);
-    res.send('Une erreur est survenue lors de l\'inscription.');
+    console.error('Error registering user:', error);
+    req.flash('error', 'Une erreur est survenue lors de l\'inscription.'); // Flash message pour l'erreur
+    res.redirect('/register');
   }
 });
-
 
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
