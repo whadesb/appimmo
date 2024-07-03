@@ -20,10 +20,22 @@ const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 const nodemailer = require('nodemailer');
+const passportLocalMongoose = require('passport-local-mongoose');
 
 const app = express();
 
 const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE', 'CODE5'];
+
+const UserSchema = new mongoose.Schema({
+  email: { type: String, required: true, unique: true },
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  role: { type: String, required: true }
+});
+
+UserSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
+
+module.exports = mongoose.model('User', UserSchema);
 
 app.use(compression());
 
@@ -133,7 +145,7 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
 
-  console.log('Received registration data:', req.body); // Log des données reçues
+  console.log('Received registration data:', req.body);
 
   if (!validCodes.includes(inviteCode)) {
     req.flash('error', 'Invalid invitation code.');
@@ -154,12 +166,12 @@ app.post('/register', async (req, res) => {
 
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
-    console.log('User registered successfully:', newUser); // Log du succès de l'enregistrement
+    console.log('User registered successfully:', newUser);
     await sendWelcomeEmail(email, firstName); // Envoyer l'email de bienvenue
     res.redirect('/login');
   } catch (error) {
     console.error('Error registering user:', error);
-    req.flash('error', 'Une erreur est survenue lors de l\'inscription.'); // Flash message pour l'erreur
+    req.flash('error', 'Une erreur est survenue lors de l\'inscription.');
     res.redirect('/register');
   }
 });
