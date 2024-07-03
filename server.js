@@ -132,8 +132,11 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
 
+  console.log('Received registration data:', req.body);
+
   if (!validCodes.includes(inviteCode)) {
     req.flash('error', 'Invalid invitation code.');
+    console.log('Invalid invitation code');
     return res.redirect('/register');
   }
 
@@ -141,23 +144,27 @@ app.post('/register', async (req, res) => {
 
   if (!passwordRequirements.test(password)) {
     req.flash('error', 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
+    console.log('Password does not meet requirements');
     return res.redirect('/register');
   }
 
   if (password !== confirmPassword) {
     req.flash('error', 'Passwords do not match.');
+    console.log('Passwords do not match');
     return res.redirect('/register');
   }
 
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+    console.log('User registered successfully:', newUser);
     res.redirect('/login');
   } catch (error) {
-    console.error('Error registering user:', error); // Affichage de l'erreur
+    console.error('Error registering user:', error);
     req.flash('error', 'Une erreur est survenue lors de l\'inscription.');
     res.redirect('/register');
   }
 });
+
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
