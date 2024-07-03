@@ -134,12 +134,21 @@ app.post('/register', async (req, res) => {
 
   console.log('Received registration data:', req.body);
 
+  // Vérifier que tous les champs sont présents
+  if (!username || !email || !firstName || !lastName || !role || !password || !confirmPassword || !inviteCode) {
+    req.flash('error', 'Tous les champs sont requis.');
+    console.log('Validation error: Missing fields');
+    return res.redirect('/register');
+  }
+
+  // Vérification du code d'invitation
   if (!validCodes.includes(inviteCode)) {
     req.flash('error', 'Invalid invitation code.');
     console.log('Invalid invitation code');
     return res.redirect('/register');
   }
 
+  // Vérification du format du mot de passe
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (!passwordRequirements.test(password)) {
@@ -148,6 +157,7 @@ app.post('/register', async (req, res) => {
     return res.redirect('/register');
   }
 
+  // Vérification de la correspondance des mots de passe
   if (password !== confirmPassword) {
     req.flash('error', 'Passwords do not match.');
     console.log('Passwords do not match');
@@ -164,6 +174,7 @@ app.post('/register', async (req, res) => {
     res.redirect('/register');
   }
 });
+
 
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
