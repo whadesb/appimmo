@@ -137,7 +137,6 @@ app.post('/register', async (req, res) => {
     return res.redirect('/register');
   }
 
-  // Validate password
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (!passwordRequirements.test(password)) {
@@ -154,8 +153,9 @@ app.post('/register', async (req, res) => {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
     res.redirect('/login');
   } catch (error) {
-    console.error('Error registering user', error);
-    res.send('Une erreur est survenue lors de l\'inscription.');
+    console.error('Error registering user:', error); // Affichage de l'erreur
+    req.flash('error', 'Une erreur est survenue lors de l\'inscription.');
+    res.redirect('/register');
   }
 });
 app.get('/landing-pages/:id', (req, res) => {
