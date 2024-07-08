@@ -285,7 +285,7 @@
                 }
                 const formData = new FormData(event.target);
                 formData.append('stripeToken', token.id);
-                formData.append('amount', 30000); // Montant en centimes pour 300€
+                formData.append('amount', 50000); // Montant en centimes pour 500€
 
                 try {
                     const response = await fetch('/process-payment', {
