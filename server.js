@@ -22,8 +22,6 @@ const validator = require('validator');
 
 const app = express();
 
-const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5', 'st488ca', 'CODE44', 'crpO09xflr'];
-
 app.use(compression());
 
 app.use(cookieParser());
@@ -130,21 +128,14 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 app.post('/register', async (req, res) => {
-  const { username, email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
+  const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
 
   console.log('Received registration data:', req.body);
 
   // Vérifier que tous les champs sont présents
-  if (!username || !email || !firstName || !lastName || !role || !password || !confirmPassword || !inviteCode) {
+  if (!username || !email || !firstName || !lastName || !role || !password || !confirmPassword) {
     req.flash('error', 'Tous les champs sont requis.');
     console.log('Validation error: Missing fields');
-    return res.redirect('/register');
-  }
-
-  // Vérification du code d'invitation
-  if (!validCodes.includes(inviteCode)) {
-    req.flash('error', 'Invalid invitation code.');
-    console.log('Invalid invitation code');
     return res.redirect('/register');
   }
 
