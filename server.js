@@ -165,7 +165,7 @@ app.post('/register', async (req, res) => {
     res.redirect('/register');
   }
 });
-
+ 
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
