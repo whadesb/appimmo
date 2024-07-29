@@ -1,246 +1,289 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-0LN60RQ12K');
-  </script>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="">
-  <meta name="author" content="">
-  <meta name="theme-color" content="#8781D2"> 
-  <title>UAP Immo | Register</title>    
-  <link rel="preconnect" href="https://fonts.googleapis.com">        
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/css/bootstrap-icons.css" rel="stylesheet">
-  <link rel="preload" href="/css/styles-main.css" as="style">
-  <link rel="stylesheet" href="/css/styles-main.css">
-  <style>
-    .form-container {
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #f9f9f9;
-      border-radius: 8px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-    .form-container h2 {
-      margin-bottom: 20px;
-    }
-    .form-container .form-text {
-      margin-bottom: 15px;
-    }
-    .new-section {
-      padding: 60px 0; /* Padding for the new section */
-      background-color: #f8f9fa; /* Light background color */
-    }
-    .hero-section {
-      padding-top: 100px; /* Ensure content is not hidden behind the fixed navbar */
-    }
-    .form-control-icon {
-      position: relative;
-    }
-    .form-control-icon input {
-      padding-right: 2.5rem;
-    }
-    .form-control-icon .icon {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-    }
-    .btn-primary {
-      background-color: #8781dc;
-      border-color: #000;
-    }
-    .btn-primary:hover {
-      background-color: #8781dc;
-      border-color: #8781dc;
-    }
-    .form-container .form-label {
-      font-weight: bold;
-    }
-    .navbar {
-      background-color: #8781dc; /* Set background color */
-      transition: background-color 0.3s;
-    }
-    .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-      color: #ffffff; /* Set text color */
-    }
-    .navbar .navbar-icon {
-      font-size: 1.5rem;
-    }
-    .navbar .navbar-icon.bi-person {
-      color: #ffffff !important;
-    }
-    .input-group-append {
-      cursor: pointer;
-    }
-    .toggle-password {
-      cursor: pointer;
-    }
-    .navbar .navbar-icon.bi-person {
-      color: #000 !important;
-    }
-    @media (max-width: 767px) {
-      .form-container {
-        background: none;
-        box-shadow: none;
-        border: none;
-      }
-    }
-  </style>    
+ <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0LN60RQ12K');
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="theme-color" content="#8781D2"> 
+    <title>UAP Immo | Register</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preload" href="/css/styles-main.css" as="style">
+    <link rel="stylesheet" href="/css/styles-main.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+        .form-container .form-text {
+            margin-bottom: 15px;
+        }
+        .new-section {
+            padding: 60px 0; /* Padding for the new section */
+            background-color: #f8f9fa; /* Light background color */
+        }
+        .hero-section {
+            padding-top: 100px; /* Ensure content is not hidden behind the fixed navbar */
+        }
+        .form-control-icon {
+            position: relative;
+        }
+        .form-control-icon input {
+            padding-right: 2.5rem;
+        }
+        .form-control-icon .icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #8781dc;
+            border-color: #000;
+        }
+        .btn-primary:hover {
+            background-color: #8781dc;
+            border-color: #8781dc;
+        }
+        .form-container .form-label {
+            font-weight: bold;
+        }
+        .navbar {
+            background-color: #8781dc; /* Set background color */
+            transition: background-color 0.3s;
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+            color: #ffffff; /* Set text color */
+        }
+        .navbar .navbar-icon {
+            font-size: 1.5rem;
+        }
+        .navbar .navbar-icon.bi-person {
+            color: #ffffff !important;
+        }
+        .input-group-append {
+            cursor: pointer;
+        }
+        .toggle-password {
+            cursor: pointer;
+        }
+        .navbar .navbar-icon.bi-person {
+            color: #000 !important;
+        }
+        @media (max-width: 767px) {
+            .form-container {
+                background: none;
+                box-shadow: none;
+                border: none;
+            }
+        }
+    </style>    
 </head>
 <body id="top">
-  <main>
-    <nav class="navbar navbar-expand-lg">
-      <div class="container">
-        <a class="navbar-brand" href="/">
-          <i class="bi-back"></i>
-          <span>UAP Immo</span>
-        </a>
-        <div class="d-lg-none ms-auto me-4">
-          <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
-        </div>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav ms-lg-5 me-lg-auto">
-            <li class="nav-item">
-              <a class="nav-link click-scroll" href="/">Home</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link click-scroll" href="/#processus">Processus</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link click-scroll" href="/#faq">FAQs</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link click-scroll" href="/#contact">Contact</a>
-            </li>
-          </ul>
-          <div class="d-none d-lg-block">
-            <a href="/login" class="navbar-icon bi-person smoothscroll">
-              <span class="visually-hidden">Login</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </nav>     
-    <!-- New Section Start -->
-    <section class="new-section">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 col-lg-8 mx-auto">
-            <div class="form-container">
-              <h2 class="text-center">Inscription</h2>
-              <% if (messages.error && messages.error.length > 0) { %>
-                <div class="alert alert-danger">
-                  <% messages.error.forEach(function(error) { %>
-                    <p><%= error %></p>
-                  <% }); %>
+    <main>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <i class="bi-back"></i>
+                    <span>UAP Immo</span>
+                </a>
+                <div class="d-lg-none ms-auto me-4">
+                    <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
                 </div>
-              <% } %>
-              <form id="registerForm" action="/register" method="POST">
-                <div class="mb-3">
-                  <label for="username" class="form-label">Nom d'utilisateur</label>
-                  <input type="text" class="form-control" id="username" name="username" required>
-                </div>
-                <div class="mb-3">
-                  <label for="email" class="form-label">Email</label>
-                  <input type="email" class="form-control" id="email" name="email" required>
-                </div>
-                <div class="mb-3">
-                  <label for="firstName" class="form-label">Prénom</label>
-                  <input type="text" class="form-control" id="firstName" name="firstName" required>
-                </div>
-                <div class="mb-3">
-                  <label for="lastName" class="form-label">Nom</label>
-                  <input type="text" class="form-control" id="lastName" name="lastName" required>
-                </div>
-                <div class="mb-3">
-                  <label for="role" class="form-label">Rôle</label>
-                  <input type="text" class="form-control" id="role" name="role" required>
-                </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label">Mot de passe</label>
-                  <div class="input-group">
-                    <input type="password" class="form-control" id="password" name="password" required>
-                    <div class="input-group-append">
-                      <span class="input-group-text toggle-password" id="togglePassword"><i class="bi bi-eye"></i></span>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                      <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/#processus">Processus</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/#faq">FAQs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/#contact">Contact</a>
+                        </li>
+                    </ul>
+                    <div class="d-none d-lg-block">
+                        <a href="/login" class="navbar-icon bi-person smoothscroll">
+                            <span class="visually-hidden">Login</span>
+                        </a>
                     </div>
-                  </div>
-                  <small class="form-text text-muted">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.</small>
                 </div>
-                <div class="mb-3">
-                  <label for="confirmPassword" class="form-label">Confirmez le mot de passe</label>
-                  <div class="input-group">
-                    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                    <div class="input-group-append">
-                      <span class="input-group-text toggle-password" id="toggleConfirmPassword"><i class="bi bi-eye"></i></span>
-                    </div>
-                  </div>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Créer un compte</button>
-              </form>
-              <div class="mt-3 text-center">
-                <span>Vous avez déjà un compte ? <a href="/login">Connectez-vous ici</a></span>
-              </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- New Section End -->
-  </main>
-  <footer class="site-footer section-padding">
-    <!-- Footer content here -->
-  </footer>
-  <!-- JAVASCRIPT FILES -->
-  <script src="/js/jquery.min.js"></script>
-  <script src="/js/bootstrap.bundle.min.js"></script>
-  <script src="/js/custom.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', (event) => {
-      const togglePassword = document.querySelector('#togglePassword');
-      const password = document.querySelector('#password');
-      togglePassword.addEventListener('click', function (e) {
-        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-        password.setAttribute('type', type);
-        this.querySelector('i').classList.toggle('bi-eye');
-        this.querySelector('i').classList.toggle('bi-eye-slash');
-      });
-      const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
-      const confirmPassword = document.querySelector('#confirmPassword');
-      toggleConfirmPassword.addEventListener('click', function (e) {
-        const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-        confirmPassword.setAttribute('type', type);
-        this.querySelector('i').classList.toggle('bi-eye');
-        this.querySelector('i').classList.toggle('bi-eye-slash');
-      });
-    });
+        </nav>     
+        <!-- New Section Start -->
+        <section class="new-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12 col-lg-8 mx-auto">
+                        <div class="form-container">
+                            <h2 class="text-center">Inscription</h2>
+                            <% if (messages.error) { %>
+                                <div class="alert alert-danger">
+                                    <%= messages.error %>
+                                </div>
+                            <% } %>
+                            <form action="/register" method="POST">
+                                <div class="mb-3">
+                                    <label for="username" class="form-label">Nom d'utilisateur</label>
+                                    <input type="text" class="form-control" id="username" name="username" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="firstName" class="form-label">Prénom</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lastName" class="form-label">Nom</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="role" class="form-label">Rôle</label>
+                                    <input type="text" class="form-control" id="role" name="role" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="password" class="form-label">Mot de passe</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="password" name="password" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text toggle-password" id="togglePassword"><i class="bi bi-eye"></i></span>
+                                        </div>
+                                    </div>
+                                    <small class="form-text text-muted">Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.</small>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="confirmPassword" class="form-label">Confirmez le mot de passe</label>
+                                    <div class="input-group">
+                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                                        <div class="input-group-append">
+                                            <span class="input-group-text toggle-password" id="toggleConfirmPassword"><i class="bi bi-eye"></i></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="inviteCode" class="form-label">Code d'invitation</label>
+                                    <input type="text" class="form-control" id="inviteCode" name="inviteCode" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Créer un compte</button>
+                            </form>
+                            <div class="mt-3 text-center">
+                                <span>Vous avez déjà un compte ? <a href="/login">Connectez-vous ici</a></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- New Section End -->
 
-    document.getElementById('registerForm').addEventListener('submit', function(e) {
-      e.preventDefault(); // Empêche l'envoi du formulaire pour le loguer
-      const formData = new FormData(this);
-      const data = {};
-      formData.forEach((value, key) => {
-        data[key] = value;
-      });
-      console.log('Form data being sent:', data);
-      this.submit(); // Ensuite, envoie le formulaire
-    });
-  </script>
+    </main>
+
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/">
+                        <i class="bi-back"></i>
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
+                        <li class="site-footer-link-item"><a href="/user" class="site-footer-link">Mon espace</a></li>
+                        <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
+                    <h6 class="site-footer-title mb-3">Accès</h6>
+                    <p class="text-white d-flex mb-1">
+                        <a href="tel:305-240-9671" class="site-footer-link">Contact</a>
+                    </p>
+                    <p class="text-white d-flex">
+                        <a href="mailto:contact@uap.immo" class="site-footer-link">contact@uap.immo</a>
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Language
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="#">English</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Français</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT FILES -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/custom.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const togglePassword = document.querySelector('#togglePassword');
+            const password = document.querySelector('#password');
+            
+            togglePassword.addEventListener('click', function (e) {
+                // toggle the type attribute
+                const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+                password.setAttribute('type', type);
+                // toggle the eye icon
+                this.querySelector('i').classList.toggle('bi-eye');
+                this.querySelector('i').classList.toggle('bi-eye-slash');
+            });
+
+            const toggleConfirmPassword = document.querySelector('#toggleConfirmPassword');
+            const confirmPassword = document.querySelector('#confirmPassword');
+            
+            toggleConfirmPassword.addEventListener('click', function (e) {
+                // toggle the type attribute
+                const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
+                confirmPassword.setAttribute('type', type);
+                // toggle the eye icon
+                this.querySelector('i').classList.toggle('bi-eye');
+                this.querySelector('i').classList.toggle('bi-eye-slash');
+            });
+        });
+    </script>
 </body>
 </html>
