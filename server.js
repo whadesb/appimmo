@@ -129,31 +129,32 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
 
+  // Log the received data for debugging
   console.log('Received registration data:', req.body);
 
-  // Vérifier que tous les champs sont présents
+  // Check if any field is missing
   if (!username || !email || !firstName || !lastName || !role || !password || !confirmPassword) {
     req.flash('error', 'Tous les champs sont requis.');
     console.log('Validation error: Missing fields');
     return res.redirect('/register');
   }
 
-  // Vérification du format du mot de passe
+  // Password validation
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
   if (!passwordRequirements.test(password)) {
     req.flash('error', 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
     console.log('Password does not meet requirements');
     return res.redirect('/register');
   }
 
-  // Vérification de la correspondance des mots de passe
+  // Check if passwords match
   if (password !== confirmPassword) {
     req.flash('error', 'Passwords do not match.');
     console.log('Passwords do not match');
     return res.redirect('/register');
   }
 
+  // Register the new user
   try {
     const newUser = await User.register(new User({ username, email, firstName, lastName, role }), password);
     console.log('User registered successfully:', newUser);
