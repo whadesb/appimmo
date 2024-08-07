@@ -91,7 +91,6 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-// Route pour l'interface utilisateur
 app.get('/user', isAuthenticated, async (req, res) => {
   try {
     // Vérifiez que req.user existe
@@ -107,7 +106,7 @@ app.get('/user', isAuthenticated, async (req, res) => {
     console.log('Propriétés récupérées:', properties);
 
     // Passez les propriétés à la vue user.ejs
-    res.render('user', { user: req.user, properties });
+    res.render('user', { user: req.user, properties });  // Assurez-vous de bien passer properties
   } catch (error) {
     console.error("Erreur lors de la récupération des propriétés de l'utilisateur:", error);
     res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
