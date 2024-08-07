@@ -118,8 +118,17 @@ function isAuthenticated(req, res, next) {
   }
   res.redirect('/login');
 }
-app.get('/user', isAuthenticated, (req, res) => {
-  res.render('user', { user: req.user });
+app.get('/user', isAuthenticated, async (req, res) => {
+  try {
+    // Récupérer les propriétés associées à l'utilisateur connecté
+    const properties = await Property.find({ createdBy: req.user._id });
+
+    // Rendre la vue 'user' en passant les propriétés récupérées
+    res.render('user', { user: req.user, properties });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des propriétés :', error);
+    res.status(500).send('Erreur lors de la récupération des propriétés.');
+  }
 });
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
