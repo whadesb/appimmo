@@ -20,7 +20,7 @@ const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 
-const propertyRoutes = require('./routes/property'); 
+const propertyRoutes = require('./routes/property');
 
 const app = express();
 
@@ -39,6 +39,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
+
 app.use((req, res, next) => {
   if (req.query.lang) {
     res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
@@ -48,6 +49,7 @@ app.use((req, res, next) => {
   }
   next();
 });
+
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -57,6 +59,7 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24 },
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(
@@ -67,8 +70,10 @@ passport.use(
     User.authenticate()
   )
 );
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -83,6 +88,7 @@ mongoose
   .catch((err) => {
     console.error('Error connecting to MongoDB', err);
   });
+
 app.post('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -101,9 +107,11 @@ app.post('/logout', (req, res, next) => {
 app.get('/', (req, res) => {
   res.render('index', { i18n: res });
 });
+
 app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
+
 app.post(
   '/login',
   passport.authenticate('local', {
@@ -112,15 +120,22 @@ app.post(
     failureFlash: true,
   })
 );
+
+// Middleware to check if user is authenticated
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
   res.redirect('/login');
 }
+
 app.get('/user', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ createdBy: req.user._id });
+
+    // Logging properties to check if data is retrieved
+    console.log('Properties retrieved for user:', properties);
+
     res.render('user', { user: req.user, properties });
   } catch (error) {
     console.error('Erreur lors de la récupération des propriétés :', error);
@@ -129,11 +144,13 @@ app.get('/user', isAuthenticated, async (req, res) => {
 });
 
 app.post('/property/update/:id', isAuthenticated, async (req, res) => {
+  // Logic for updating a property goes here
 });
 
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
+
 app.get('/payment', isAuthenticated, async (req, res) => {
   const { propertyId } = req.query;
 
@@ -157,9 +174,11 @@ app.get('/payment', isAuthenticated, async (req, res) => {
     res.status(500).send('Error fetching property');
   }
 });
+
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
+
 app.post('/register', async (req, res) => {
   const {
     email,
@@ -204,10 +223,12 @@ app.post('/register', async (req, res) => {
     res.send("Une erreur est survenue lors de l'inscription.");
   }
 });
+
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
 });
+
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads');
@@ -217,6 +238,7 @@ const storage = multer.diskStorage({
     cb(null, uniqueName);
   },
 });
+
 const upload = multer({ storage: storage });
 
 app.post(
@@ -466,6 +488,7 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
       .send('Une erreur est survenue lors de la récupération des propriétés.');
   }
 });
+
 app.get('/property/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -481,6 +504,7 @@ app.get('/property/:id', isAuthenticated, async (req, res) => {
       .send('Une erreur est survenue lors de la récupération de la propriété.');
   }
 });
+
 app.delete('/property/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -533,8 +557,9 @@ const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
 
 app.get('/config', (req, res) => {
   res.json({ publicKey: stripePublicKey });
+});
 
-app.use('/property', propertyRoutes); 
+app.use('/property', propertyRoutes);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
