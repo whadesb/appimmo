@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modifier la Propriété</title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <h2>Modifier la Propriété</h2>
+        <form id="edit-property-form" action="/property/edit/<%= property._id %>" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="rooms">Nombre de pièces</label>
+                <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
+            </div>
+            <div class="form-group">
+                <label for="surface">Surface (m²)</label>
+                <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
+            </div>
+            <div class="form-group">
+                <label for="price">Prix (€)</label>
+                <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
+            </div>
+            <div class="form-group">
+                <label for="city">Ville</label>
+                <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
+            </div>
+            <div class="form-group">
+                <label for="country">Pays</label>
+                <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
+            </div>
+            <div class="form-group">
+                <label for="photo1">Photo 1 (laissez vide pour conserver l'existante)</label>
+                <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
+                <% if (property.photos[0]) { %>
+                    <img src="/uploads/<%= property.photos[0] %>" alt="Photo 1" style="width:100px;height:auto;margin-top:10px;">
+                <% } %>
+            </div>
+            <div class="form-group">
+                <label for="photo2">Photo 2 (laissez vide pour conserver l'existante)</label>
+                <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
+                <% if (property.photos[1]) { %>
+                    <img src="/uploads/<%= property.photos[1] %>" alt="Photo 2" style="width:100px;height:auto;margin-top:10px;">
+                <% } %>
+            </div>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="isPublished" name="isPublished" value="true" <%= property.isPublished ? 'checked' : '' %>>
+                <label class="form-check-label" for="isPublished">Publier</label>
+            </div>
+            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+        </form>
+    </div>
+</body>
+</html>
