@@ -3,11 +3,28 @@ const router = express.Router();
 const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
+const multer = require('multer');
+const sharp = require('sharp');
 
 // Middleware d'authentification
 const authMiddleware = require('../middleware/auth');
 
-router.post('/add-property', authMiddleware, async (req, res) => {
+// Configuration de multer pour le traitement des fichiers uploadés
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads');
+    },
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + path.extname(file.originalname));
+    }
+});
+
+const upload = multer({ storage: storage });
+
+router.post('/add-property', authMiddleware, upload.fields([
+    { name: 'photo1', maxCount: 1 },
+    { name: 'photo2', maxCount: 1 }
+]), async (req, res) => {
     const { rooms, surface, price, city, country, isPublished } = req.body;
 
     try {
@@ -21,6 +38,27 @@ router.post('/add-property', authMiddleware, async (req, res) => {
             createdBy: req.user._id, // Utilisation de l'utilisateur actuel
             isPublished: isPublished === 'true' // Convertir la valeur de la chaîne en booléen
         });
+
+        // Gérer les fichiers photo
+        if (req.files.photo1) {
+            const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
+            await sharp(req.files.photo1[0].path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(photo1Path);
+            property.photos.push(path.basename(photo1Path));
+            fs.unlinkSync(req.files.photo1[0].path);
+        }
+
+        if (req.files.photo2) {
+            const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
+            await sharp(req.files.photo2[0].path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(photo2Path);
+            property.photos.push(path.basename(photo2Path));
+            fs.unlinkSync(req.files.photo2[0].path);
+        }
 
         // Sauvegardez la propriété dans la base de données
         await property.save();
