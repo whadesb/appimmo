@@ -354,7 +354,7 @@
             </tbody>
         </table>
         <div id="no-properties-message" style="display: none;" class="text-center">
-            <p>Aucun bien immobilier n'a été créé pour le moment. <a href="#" onclick="showSection('landing')">Ajoutez votre premier bien immobilier maintenant !</a></p>
+            <p>Aucun bien immobilier n'a été créé pour le moment. <a href="#" onclick="showSection('landing')">Ajoutez votre premier bien immobilier maintenant !</a></p>
         </div>
     </div>
 </div>
@@ -460,7 +460,7 @@
                                 <div class="action-icons">
                                     <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
                                     <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                    <a href="/property/edit/${property._id}" class="btn btn-sm btn-primary">Modifier</a>
+                                    <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
                                 </div>
                             </td>
                         `;
@@ -500,6 +500,10 @@
 
     function testURL(propertyId) {
         window.location.href = `/payment?propertyId=${propertyId}`;
+    }
+
+    function editProperty(propertyId) {
+        window.location.href = `/property/edit/${propertyId}`;
     }
 
     // Gestion de la soumission du formulaire
