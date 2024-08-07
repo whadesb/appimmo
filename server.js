@@ -142,9 +142,9 @@ app.get('/login', (req, res) => {
 app.post(
   '/login',
   passport.authenticate('local', {
-    successRedirect: '/user',
-    failureRedirect: '/login',
-    failureFlash: true,
+    successRedirect: '/user', // Redirection vers /user en cas de succès
+    failureRedirect: '/login', // Redirection vers /login en cas d'échec
+    failureFlash: true, // Active les messages flash pour les erreurs
   })
 );
 
