@@ -10,8 +10,8 @@ const propertySchema = new Schema({
     url: { type: String, required: false },
     createdAt: { type: Date, default: Date.now },
     views: { type: Number, default: 0 },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    photos: [String] // Ajoutez ce champ pour stocker les chemins des photos
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Association avec l'utilisateur
+    photos: [String] // Photos de la propriété
 });
 
 const Property = mongoose.model('Property', propertySchema);
