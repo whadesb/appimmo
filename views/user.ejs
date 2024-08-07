@@ -335,7 +335,7 @@
                                         </div>
                                     </div>
                                 </div>
-                              <div id="created-pages" class="card" style="display: none;">
+                            <div id="created-pages" class="card" style="display: none;">
     <div class="card-body">
         <h5 class="card-title">Pages créées</h5>
         <table class="table table-striped">
@@ -352,26 +352,32 @@
                 </tr>
             </thead>
             <tbody id="properties-list">
-                <% properties.forEach(function(property) { %>
+                <% if (properties.length === 0) { %>
                     <tr>
-                        <td><%= property.rooms %></td>
-                        <td><%= property.surface %></td>
-                        <td><%= property.price %></td>
-                        <td><%= property.city %></td>
-                        <td><%= property.country %></td>
-                        <td><a href="<%= property.url %>"><%= property.url %></a></td>
-                        <td><%= property.status %></td>
-                        <td>
-                            <div class="action-icons">
-                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('<%= property.url %>')"></i>
-                                <% if (property.status === 'draft') { %>
-                                    <a href="/edit-property/<%= property._id %>" class="fa fa-pencil" style="color: #333;"></a>
-                                <% } %>
-                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('<%= property._id %>')"></i>
-                            </div>
-                        </td>
+                        <td colspan="8" class="text-center">Aucune propriété n'a été créée pour le moment.</td>
                     </tr>
-                <% }) %>
+                <% } else { %>
+                    <% properties.forEach(function(property) { %>
+                        <tr>
+                            <td><%= property.rooms %></td>
+                            <td><%= property.surface %></td>
+                            <td><%= property.price %></td>
+                            <td><%= property.city %></td>
+                            <td><%= property.country %></td>
+                            <td><a href="<%= property.url %>"><%= property.url %></a></td>
+                            <td><%= property.status %></td>
+                            <td>
+                                <div class="action-icons">
+                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('<%= property.url %>')"></i>
+                                    <% if (property.status === 'draft') { %>
+                                        <a href="/edit-property/<%= property._id %>" class="fa fa-pencil" style="color: #333;"></a>
+                                    <% } %>
+                                    <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('<%= property._id %>')"></i>
+                                </div>
+                            </td>
+                        </tr>
+                    <% }) %>
+                <% } %>
             </tbody>
         </table>
     </div>
