@@ -77,7 +77,7 @@ router.post('/add-property', authMiddleware, upload.fields([
 });
 
 // Route GET pour afficher le formulaire de modification
-router.get('/property/edit/:id', authMiddleware, async (req, res) => {
+router.get('/edit/:id', authMiddleware, async (req, res) => {
     try {
         // Récupérez la propriété par son identifiant
         const property = await Property.findById(req.params.id);
@@ -96,7 +96,7 @@ router.get('/property/edit/:id', authMiddleware, async (req, res) => {
 });
 
 // Route POST pour mettre à jour une propriété existante
-router.post('/property/edit/:id', authMiddleware, upload.fields([
+router.post('/edit/:id', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
