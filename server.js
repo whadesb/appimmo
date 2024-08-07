@@ -129,7 +129,6 @@ app.get('/user', isAuthenticated, async (req, res) => {
 });
 
 app.post('/property/update/:id', isAuthenticated, async (req, res) => {
-  // Logic for updating a property
 });
 
 app.get('/faq', (req, res) => {
