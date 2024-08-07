@@ -244,15 +244,16 @@ app.post('/add-property', isAuthenticated, upload.fields([
   }
 });
 
-// Route pour afficher le formulaire d'édition d'une propriété
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
 
+    // Vérification que la propriété appartient à l'utilisateur authentifié
     if (!property || !property.createdBy.equals(req.user._id)) {
       return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
     }
 
+    // Rendu de la vue avec les données de la propriété
     res.render('edit-property', { property });
   } catch (error) {
     console.error('Erreur lors de la récupération de la propriété:', error);
