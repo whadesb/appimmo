@@ -76,18 +76,14 @@ router.post('/add-property', authMiddleware, upload.fields([
     }
 });
 
-// Route GET pour afficher le formulaire de modification
 router.get('/edit/:id', authMiddleware, async (req, res) => {
     try {
-        // Récupérez la propriété par son identifiant
         const property = await Property.findById(req.params.id);
 
-        // Vérifiez si la propriété existe et appartient à l'utilisateur actuel
         if (!property || !property.createdBy.equals(req.user._id)) {
             return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
         }
 
-        // Rendre la vue de modification avec les données de la propriété
         res.render('edit-property', { property });
     } catch (error) {
         console.error('Erreur lors de la récupération de la propriété pour modification:', error);
