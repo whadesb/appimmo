@@ -325,7 +325,7 @@ async function generateLandingPage(property) {
 app.get('/user/properties', isAuthenticated, async (req, res) => {
     try {
         const properties = await Property.find({ createdBy: req.user._id });
-        res.json(properties);
+        res.json(properties); // Will be an empty array [] if no properties exist
     } catch (error) {
         console.error('Error fetching user properties', error);
         res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des propriétés.' });
