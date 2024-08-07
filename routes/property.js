@@ -76,6 +76,84 @@ router.post('/add-property', authMiddleware, upload.fields([
     }
 });
 
+// Route GET pour afficher le formulaire de modification
+router.get('/property/edit/:id', authMiddleware, async (req, res) => {
+    try {
+        // Récupérez la propriété par son identifiant
+        const property = await Property.findById(req.params.id);
+
+        // Vérifiez si la propriété existe et appartient à l'utilisateur actuel
+        if (!property || !property.createdBy.equals(req.user._id)) {
+            return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
+        }
+
+        // Rendre la vue de modification avec les données de la propriété
+        res.render('edit-property', { property });
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la propriété pour modification:', error);
+        res.status(500).send('Erreur lors de la récupération de la propriété.');
+    }
+});
+
+// Route POST pour mettre à jour une propriété existante
+router.post('/property/edit/:id', authMiddleware, upload.fields([
+    { name: 'photo1', maxCount: 1 },
+    { name: 'photo2', maxCount: 1 }
+]), async (req, res) => {
+    const { rooms, surface, price, city, country, isPublished } = req.body;
+
+    try {
+        const property = await Property.findById(req.params.id);
+
+        // Vérifiez si la propriété appartient à l'utilisateur actuel
+        if (!property || !property.createdBy.equals(req.user._id)) {
+            return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
+        }
+
+        // Mettre à jour les champs de la propriété
+        property.rooms = rooms;
+        property.surface = surface;
+        property.price = price;
+        property.city = city;
+        property.country = country;
+        property.isPublished = isPublished === 'true';
+
+        // Mise à jour des photos si de nouvelles photos sont téléchargées
+        if (req.files.photo1) {
+            const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
+            await sharp(req.files.photo1[0].path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(photo1Path);
+            if (property.photos[0]) fs.unlinkSync(`public/uploads/${property.photos[0]}`);
+            property.photos[0] = path.basename(photo1Path);
+            fs.unlinkSync(req.files.photo1[0].path);
+        }
+
+        if (req.files.photo2) {
+            const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
+            await sharp(req.files.photo2[0].path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(photo2Path);
+            if (property.photos[1]) fs.unlinkSync(`public/uploads/${property.photos[1]}`);
+            property.photos[1] = path.basename(photo2Path);
+            fs.unlinkSync(req.files.photo2[0].path);
+        }
+
+        // Sauvegarder les modifications dans la base de données
+        await property.save();
+
+        // Regénérer la page HTML pour la propriété
+        await generateLandingPage(property);
+
+        res.redirect('/user'); // Rediriger l'utilisateur vers sa page d'espace utilisateur
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour de la propriété:', error);
+        res.status(500).send('Une erreur est survenue lors de la mise à jour de la propriété.');
+    }
+});
+
 // Fonction pour générer la page de destination
 async function generateLandingPage(property) {
     const template = `
@@ -101,22 +179,22 @@ async function generateLandingPage(property) {
             .property-container {
                 background-color: white;
                 border-radius: 10px;
-                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
                 max-width: 800px;
                 width: 100%;
                 padding: 20px;
                 text-align: center;
-                color: black; /* Texte noir */
+                color: black;
             }
             .property-title {
                 font-size: 32px;
                 margin-bottom: 20px;
-                color: black; /* Texte noir */
+                color: black;
             }
             .property-details {
                 font-size: 18px;
                 margin-bottom: 20px;
-                color: black; /* Texte noir */
+                color: black;
             }
             .property-photos {
                 display: flex;
@@ -170,49 +248,5 @@ async function generateLandingPage(property) {
 
     return `/landing-pages/${property._id}.html`;
 }
-
-// Route de paiement (exemple existant)
-router.get('/payment', async (req, res) => {
-    const { propertyId } = req.query;
-
-    try {
-        const property = await Property.findById(propertyId);
-        if (!property) {
-            return res.status(404).send('Property not found');
-        }
-
-        res.render('payment', {
-            propertyId: property._id,
-            rooms: property.rooms,
-            surface: property.surface,
-            price: property.price,
-            city: property.city,
-            country: property.country,
-            url: property.url
-        });
-    } catch (error) {
-        console.error('Erreur lors de la récupération de la propriété : ', error);
-        res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de la propriété.' });
-    }
-});
-
-// Route GET pour afficher le formulaire de modification
-router.get('/property/edit/:id', authMiddleware, async (req, res) => {
-    try {
-        // Récupérez la propriété par son identifiant
-        const property = await Property.findById(req.params.id);
-
-        // Vérifiez si la propriété existe et appartient à l'utilisateur actuel
-        if (!property || !property.createdBy.equals(req.user._id)) {
-            return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
-        }
-
-        // Rendre la vue de modification avec les données de la propriété
-        res.render('edit-property', { property });
-    } catch (error) {
-        console.error('Erreur lors de la récupération de la propriété pour modification:', error);
-        res.status(500).send('Erreur lors de la récupération de la propriété.');
-    }
-});
 
 module.exports = router;
