@@ -93,25 +93,27 @@ function isAuthenticated(req, res, next) {
 
 app.get('/user', isAuthenticated, async (req, res) => {
   try {
-    // Vérifiez que req.user existe
     if (!req.user) {
       console.error('Utilisateur non authentifié');
       return res.redirect('/login');
     }
 
-    // Récupérez les propriétés de l'utilisateur connecté
-    const properties = await Property.find({ createdBy: req.user._id }).lean(); // Ajoutez .lean() pour convertir en objets JS simples
+    const properties = await Property.find({ createdBy: req.user._id }).lean();
+    console.log('Propriétés récupérées:', properties); // Ajoutez ce log
 
-    // Vérifiez que les propriétés sont correctement récupérées
-    console.log('Propriétés récupérées:', properties);
+    if (!properties) {
+      console.error('Les propriétés ne sont pas définies.');
+    } else {
+      console.log(`Nombre de propriétés récupérées: ${properties.length}`);
+    }
 
-    // Passez les propriétés à la vue user.ejs
-    res.render('user', { user: req.user, properties });  // Assurez-vous de bien passer properties
+    res.render('user', { user: req.user, properties });
   } catch (error) {
     console.error("Erreur lors de la récupération des propriétés de l'utilisateur:", error);
     res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
   }
 });
+
 
 // Autres routes et configurations
 app.post('/logout', (req, res, next) => {
