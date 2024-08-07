@@ -359,6 +359,21 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
   }
 });
 
+app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
+    try {
+        const property = await Property.findById(req.params.id);
+        if (property.createdBy.equals(req.user._id)) {
+            res.render('edit-property', { property });
+        } else {
+            res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
+        }
+    } catch (error) {
+        console.error('Error fetching property', error);
+        res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
+    }
+});
+
+
 app.post('/process-payment', isAuthenticated, async (req, res) => {
   const { stripeToken, amount, propertyId } = req.body;
   const userId = req.user._id;
