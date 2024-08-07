@@ -134,25 +134,28 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-// Route pour la vue utilisateur
 app.get('/user', isAuthenticated, async (req, res) => {
   try {
-    // Check if req.user is defined and has an _id
-    if (!req.user || !req.user._id) {
-      return res.status(401).send('User not authenticated.');
+    // Vérifiez que req.user est défini
+    if (!req.user) {
+      console.error('Utilisateur non authentifié');
+      return res.redirect('/login');
     }
 
+    // Récupérez les propriétés créées par l'utilisateur connecté
     const properties = await Property.find({ createdBy: req.user._id });
 
-    // Add a log to verify the retrieved properties
-    console.log('Properties retrieved:', properties);
+    // Ajoutez un log pour vérifier les propriétés récupérées
+    console.log('Propriétés récupérées :', properties);
 
-    res.render('user', { user: req.user, properties }); // Pass the properties to the view
+    // Passez les propriétés à la vue
+    res.render('user', { user: req.user, properties });
   } catch (error) {
     console.error('Erreur lors de la récupération des propriétés :', error);
     res.status(500).send('Erreur lors de la récupération des propriétés.');
   }
 });
+
 
 app.post('/property/update/:id', isAuthenticated, async (req, res) => {
   // Logic for updating a property
