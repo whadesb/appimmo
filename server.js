@@ -107,14 +107,24 @@ app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
 
-app.post(
-  '/login',
-  passport.authenticate('local', {
-    successRedirect: '/user',
-    failureRedirect: '/login',
-    failureFlash: true,
-  })
-);
+app.post('/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    if (err) {
+      return next(err);
+    }
+    if (!user) {
+      req.flash('error', 'Nom d\'utilisateur ou mot de passe incorrect.');
+      return res.redirect('/login');
+    }
+    req.logIn(user, (err) => {
+      if (err) {
+        return next(err);
+      }
+      return res.redirect('/user');
+    });
+  })(req, res, next);
+});
+
 
 // Vérifiez l'authentification
 function isAuthenticated(req, res, next) {
