@@ -1,12 +1,59 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier la propriété</title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google tag (gtag.js) -->
+    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
+    <script defer>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0LN60RQ12K');
+    </script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="UAP Immo Plateforme webmarketing immobilière">
+    <meta name="author" content="UAP Immo">
+    <meta name="theme-color" content="#8781D2"> 
+    <title>UAP Immo | Edit Property</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="preload" href="/css/bootstrap.min.css" as="style">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="preload" href="/css/bootstrap-icons.css" as="style">
+    <link rel="stylesheet" href="/css/bootstrap-icons.css">
+    <link rel="preload" href="/css/styles-main.css" as="style">
+    <link rel="stylesheet" href="/css/styles-main.css">
     <style>
-        .form-container {
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+        .navbar {
+            background-color: #8781D2; 
+        }
+        .section {
+            scroll-margin-top: 77px; 
+        }
+        .section-top-margin {
+            margin-top: 70px;
+            padding-top: 60px;
+            padding-bottom: 60px;
+        }
+        .justify-content-center {
+        margin-top: 40px;
+        }   
+        .custom-block-image {
+            object-fit: contain; 
+            height: auto;
+        }
+            .form-container {
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
@@ -14,9 +61,70 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        @media (max-width: 767px) {
+            .section-top-margin {
+                padding-top: 40px;
+                padding-bottom: 40px;
+            }
+            .h1, .h2 {
+                font-size: 1.5rem;
+            }
+        }
+        .h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .h2 {
+            font-size: 2rem;
+            margin-bottom: 60px;
+        }
+        .custom-block-image {
+            object-fit: contain; /* Ajustez selon vos besoins */
+            height: auto;
+        }
     </style>
 </head>
-<body>
+<body id="top">
+    <main>
+        <nav class="navbar navbar-expand-lg">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <i class="bi-back"></i>
+                    <span>UAP Immo</span>
+                </a>
+                <div class="d-lg-none ms-auto me-4">
+                    <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/#processus">Processus</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/#faq">FAQs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/#contact">Contact</a>
+                        </li>
+                    </ul>
+                    <div class="d-none d-lg-block">
+                        <a href="/login" class="navbar-icon bi-person smoothscroll">
+                            <span class="visually-hidden">Login</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav> 
+
     <div class="form-container">
         <h2 class="text-center">Modifier la propriété</h2>
         <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
