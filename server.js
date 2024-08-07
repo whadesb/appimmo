@@ -260,15 +260,17 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
     res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
   }
 });
+ 
 
-// Route pour mettre à jour les données d'une propriété
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
   try {
+    // Récupération de la propriété par ID
     const property = await Property.findById(req.params.id);
 
+    // Vérification de l'autorisation
     if (!property || !property.createdBy.equals(req.user._id)) {
       return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
     }
@@ -290,7 +292,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
         .jpeg({ quality: 80 })
         .toFile(photo1Path);
       property.photos[0] = path.basename(photo1Path);
-      fs.unlinkSync(req.files.photo1[0].path);
+      fs.unlinkSync(req.files.photo1[0].path); // Supprimez le fichier original après traitement
     }
 
     if (req.files.photo2) {
@@ -300,12 +302,12 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
         .jpeg({ quality: 80 })
         .toFile(photo2Path);
       property.photos[1] = path.basename(photo2Path);
-      fs.unlinkSync(req.files.photo2[0].path);
+      fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original après traitement
     }
 
     await property.save();
 
-    // Redirection après mise à jour
+    // Rediriger l'utilisateur vers sa liste de propriétés
     res.redirect('/user');
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la propriété : ', error);
@@ -313,7 +315,6 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
   }
 });
 
-// Route pour supprimer une propriété
 app.delete('/property/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
