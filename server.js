@@ -56,12 +56,13 @@ app.use(session({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
+
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
+
 passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-app.set('view engine', 'ejs');
+passport.deserializeUser(User.deserializeUser());app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
 mongoose.connect(process.env.MONGODB_URI, {
