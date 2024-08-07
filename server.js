@@ -525,8 +525,7 @@ app.get('/config', (req, res) => {
   res.json({ publicKey: stripePublicKey });
 });
 
-// Mount the property router
-app.use('/property', propertyRoutes); // Assurez-vous que cette ligne est présente pour monter le routeur
+app.use('/property', propertyRoutes); 
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
