@@ -351,8 +351,23 @@
                                                 </tr>
                                             </thead>
                                             <tbody id="properties-list">
-                                                <!-- Propriétés de l'utilisateur ici -->
-                                            </tbody>
+    <!-- Propriétés de l'utilisateur ici -->
+    <tr>
+        <td>${property.rooms}</td>
+        <td>${property.surface}</td>
+        <td>${property.price}</td>
+        <td>${property.city}</td>
+        <td>${property.country}</td>
+        <td><a href="${property.url}">${property.url}</a></td>
+        <td>
+            <div class="action-icons">
+                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                <a href="/property/edit/${property._id}" class="btn btn-sm btn-primary">Modifier</a>
+            </div>
+        </td>
+    </tr>
+</tbody>
                                         </table>
                                     </div>
                                 </div>
