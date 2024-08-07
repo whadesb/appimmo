@@ -22,6 +22,7 @@ const validator = require('validator');
 
 const app = express();
 
+// Middleware d'authentification
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -29,15 +30,22 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE44', 'CODE5'];
+const validCodes = [
+  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba',
+  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa',
+  'CODE3',
+  'CODE44',
+  'CODE5',
+];
 
 app.use(compression());
-
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
+
+// Language settings
 app.use((req, res, next) => {
   if (req.query.lang) {
     res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
@@ -47,32 +55,53 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 }
-}));
+
+// Configure session management
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+  })
+);
+
+// Passport initialization
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.use(new LocalStrategy({
-  usernameField: 'email'
-}, User.authenticate()));
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: 'email',
+    },
+    User.authenticate()
+  )
+);
 
 passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());app.set('view engine', 'ejs');
+passport.deserializeUser(User.deserializeUser());
+
+app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('Error connecting to MongoDB', err);
-});
+// Connect to MongoDB
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB', err);
+  });
+
+// Route definitions
+
+// Logout route
 app.post('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -88,43 +117,49 @@ app.post('/logout', (req, res, next) => {
   });
 });
 
+// Home route
 app.get('/', (req, res) => {
   res.render('index', { i18n: res });
 });
+
+// Login routes
 app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/user',
-  failureRedirect: '/login',
-  failureFlash: true
-}));
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
-}
+
+app.post(
+  '/login',
+  passport.authenticate('local', {
+    successRedirect: '/user',
+    failureRedirect: '/login',
+    failureFlash: true,
+  })
+);
+
+// User route
 app.get('/user', isAuthenticated, async (req, res) => {
-    try {
-        console.log('Utilisateur authentifié:', req.user); // Ajoutez ceci pour vérifier l'utilisateur
+  try {
+    console.log('Utilisateur authentifié:', req.user);
 
-        const properties = await Property.find({ createdBy: req.user._id });
+    // Fetch properties created by the authenticated user
+    const properties = await Property.find({ createdBy: req.user._id });
 
-        console.log('Propriétés récupérées:', properties);
+    console.log('Propriétés récupérées:', properties);
 
-        res.render('user', { user: req.user, properties });
-    } catch (error) {
-        console.error('Erreur lors de la récupération des propriétés de l\'utilisateur :', error);
-        res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
-    }
+    // Render the user view with properties
+    res.render('user', { user: req.user, properties });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des propriétés de l'utilisateur :", error);
+    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
+  }
 });
 
-
-
+// FAQ route
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
+
+// Payment route
 app.get('/payment', isAuthenticated, async (req, res) => {
   const { propertyId } = req.query;
 
@@ -141,16 +176,19 @@ app.get('/payment', isAuthenticated, async (req, res) => {
       price: property.price,
       city: property.city,
       country: property.country,
-      url: property.url
+      url: property.url,
     });
   } catch (error) {
     console.error('Error fetching property', error);
     res.status(500).send('Error fetching property');
   }
 });
+
+// Register route
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
+
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
 
@@ -160,10 +198,14 @@ app.post('/register', async (req, res) => {
   }
 
   // Validate password
-  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordRequirements =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (!passwordRequirements.test(password)) {
-    req.flash('error', 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
+    req.flash(
+      'error',
+      'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.'
+    );
     return res.redirect('/register');
   }
 
@@ -177,13 +219,17 @@ app.post('/register', async (req, res) => {
     res.redirect('/login');
   } catch (error) {
     console.error('Error registering user', error);
-    res.send('Une erreur est survenue lors de l\'inscription.');
+    res.send("Une erreur est survenue lors de l'inscription.");
   }
 });
+
+// Serve landing pages
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
-  res.sendFile(path.join(__dirname, 'public', 'landing-pages', ${pageId}.html));
+  res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
 });
+
+// Multer configuration for file uploads
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads');
@@ -191,159 +237,166 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const uniqueName = uuidv4() + path.extname(file.originalname);
     cb(null, uniqueName);
-  }
+  },
 });
+
 const upload = multer({ storage: storage });
 
-app.post('/add-property', isAuthenticated, upload.fields([
-    { name: 'photo1', maxCount: 1 },
-    { name: 'photo2', maxCount: 1 }
-]), async (req, res) => {
+// Add property route
+app.post(
+  '/add-property',
+  isAuthenticated,
+  upload.fields([{ name: 'photo1', maxCount: 1 }, { name: 'photo2', maxCount: 1 }]),
+  async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
 
-    console.log("Received body data:", req.body);  // Pour vérifier les données du formulaire
-    console.log("Received files:", req.files);    // Pour vérifier les fichiers reçus
+    console.log('Received body data:', req.body);
+    console.log('Received files:', req.files);
 
     try {
-        let photo1 = null;
-        let photo2 = null;
+      let photo1 = null;
+      let photo2 = null;
 
-        if (req.files.photo1) {
-            const photo1Path = public/uploads/${uuidv4()}-photo1.jpg;
-            await sharp(req.files.photo1[0].path)
-                .resize(800)
-                .jpeg({ quality: 80 })
-                .toFile(photo1Path);
-            photo1 = path.basename(photo1Path);
-            fs.unlinkSync(req.files.photo1[0].path); // Supprimez le fichier original après traitement
-        }
+      if (req.files.photo1) {
+        const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
+        await sharp(req.files.photo1[0].path)
+          .resize(800)
+          .jpeg({ quality: 80 })
+          .toFile(photo1Path);
+        photo1 = path.basename(photo1Path);
+        fs.unlinkSync(req.files.photo1[0].path); // Delete original file after processing
+      }
 
-        if (req.files.photo2) {
-            const photo2Path = public/uploads/${uuidv4()}-photo2.jpg;
-            await sharp(req.files.photo2[0].path)
-                .resize(800)
-                .jpeg({ quality: 80 })
-                .toFile(photo2Path);
-            photo2 = path.basename(photo2Path);
-            fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original après traitement
-        }
+      if (req.files.photo2) {
+        const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
+        await sharp(req.files.photo2[0].path)
+          .resize(800)
+          .jpeg({ quality: 80 })
+          .toFile(photo2Path);
+        photo2 = path.basename(photo2Path);
+        fs.unlinkSync(req.files.photo2[0].path); // Delete original file after processing
+      }
 
-        const property = new Property({
-            rooms,
-            surface,
-            price,
-            city,
-            country,
-            createdBy: req.user._id,
-            photos: [photo1, photo2]
-        });
+      const property = new Property({
+        rooms,
+        surface,
+        price,
+        city,
+        country,
+        createdBy: req.user._id,
+        photos: [photo1, photo2],
+      });
 
-        await property.save();
+      await property.save();
 
-        const landingPageUrl = await generateLandingPage(property);
+      const landingPageUrl = await generateLandingPage(property);
 
-        property.url = landingPageUrl;
-        await property.save(); // Assurez-vous que l'URL est sauvegardée
+      property.url = landingPageUrl;
+      await property.save(); // Ensure URL is saved
 
-        res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
+      res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
-        console.error('Erreur lors de l\'ajout de la propriété : ', error);
-        res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
+      console.error("Erreur lors de l'ajout de la propriété : ", error);
+      res.status(500).json({ error: "Une erreur est survenue lors de l'ajout de la propriété." });
     }
-});
+  }
+);
 
+// Function to generate landing page
 async function generateLandingPage(property) {
-  const template = 
+  const template = `
     <!DOCTYPE html>
-  <html lang="en">
-  <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Propriété à ${property.city}</title>
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-      <style>
-          body, html {
-              margin: 0;
-              padding: 0;
-              height: 100%;
-              width: 100%;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              background: rgba(0, 0, 0, 0.6);
-              font-family: Arial, sans-serif;
-          }
-          .property-container {
-              background-color: white;
-              border-radius: 10px;
-              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
-              max-width: 800px;
-              width: 100%;
-              padding: 20px;
-              text-align: center;
-              color: black; /* Texte noir */
-          }
-          .property-title {
-              font-size: 32px;
-              margin-bottom: 20px;
-              color: black; /* Texte noir */
-          }
-          .property-details {
-              font-size: 18px;
-              margin-bottom: 20px;
-              color: black; /* Texte noir */
-          }
-          .property-photos {
-              display: flex;
-              justify-content: space-around;
-              gap: 10px;
-          }
-          .property-photos img {
-              width: 48%;
-              border-radius: 8px;
-          }
-          @media (max-width: 768px) {
-              .property-container {
-                  padding: 10px;
-              }
-              .property-title {
-                  font-size: 24px;
-              }
-              .property-details {
-                  font-size: 16px;
-              }
-              .property-photos {
-                  flex-direction: column;
-                  align-items: center;
-              }
-              .property-photos img {
-                  width: 100%;
-                  margin-bottom: 10px;
-              }
-          }
-      </style>
-  </head>
-  <body>
-      <div class="property-container">
-          <h1 class="property-title">Propriété à ${property.city}</h1>
-          <div class="property-details">
-              <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
-              <p><strong>Surface:</strong> ${property.surface} m²</p>
-              <p><strong>Prix:</strong> ${property.price} €</p>
-              <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
-          </div>
-          <div class="property-photos">
-              <img src="/uploads/${property.photos[0]}" alt="Photo 1">
-              <img src="/uploads/${property.photos[1]}" alt="Photo 2">
-          </div>
-      </div>
-  </body>
-  </html>;
-  const filePath = path.join(__dirname, 'public', 'landing-pages', ${property._id}.html);
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Propriété à ${property.city}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <style>
+            body, html {
+                margin: 0;
+                padding: 0;
+                height: 100%;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: rgba(0, 0, 0, 0.6);
+                font-family: Arial, sans-serif;
+            }
+            .property-container {
+                background-color: white;
+                border-radius: 10px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                max-width: 800px;
+                width: 100%;
+                padding: 20px;
+                text-align: center;
+                color: black;
+            }
+            .property-title {
+                font-size: 32px;
+                margin-bottom: 20px;
+                color: black;
+            }
+            .property-details {
+                font-size: 18px;
+                margin-bottom: 20px;
+                color: black;
+            }
+            .property-photos {
+                display: flex;
+                justify-content: space-around;
+                gap: 10px;
+            }
+            .property-photos img {
+                width: 48%;
+                border-radius: 8px;
+            }
+            @media (max-width: 768px) {
+                .property-container {
+                    padding: 10px;
+                }
+                .property-title {
+                    font-size: 24px;
+                }
+                .property-details {
+                    font-size: 16px;
+                }
+                .property-photos {
+                    flex-direction: column;
+                    align-items: center;
+                }
+                .property-photos img {
+                    width: 100%;
+                    margin-bottom: 10px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <div class="property-container">
+            <h1 class="property-title">Propriété à ${property.city}</h1>
+            <div class="property-details">
+                <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
+                <p><strong>Surface:</strong> ${property.surface} m²</p>
+                <p><strong>Prix:</strong> ${property.price} €</p>
+                <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
+            </div>
+            <div class="property-photos">
+                <img src="/uploads/${property.photos[0]}" alt="Photo 1">
+                <img src="/uploads/${property.photos[1]}" alt="Photo 2">
+            </div>
+        </div>
+    </body>
+    </html>`;
+  const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
   fs.writeFileSync(filePath, template);
 
-  return /landing-pages/${property._id}.html;
+  return `/landing-pages/${property._id}.html`;
 }
+
+// Fetch user properties
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ createdBy: req.user._id });
@@ -353,19 +406,23 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
     res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
   }
 });
+
+// Fetch a specific property
 app.get('/property/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
     if (property.createdBy.equals(req.user._id)) {
       res.render('property', { property });
     } else {
-      res.status(403).send('Vous n\'êtes pas autorisé à voir cette propriété.');
+      res.status(403).send("Vous n'êtes pas autorisé à voir cette propriété.");
     }
   } catch (error) {
     console.error('Error fetching property', error);
     res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
   }
 });
+
+// Delete a property
 app.delete('/property/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -373,7 +430,7 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
       await property.remove();
       res.status(200).send('Propriété supprimée avec succès.');
     } else {
-      res.status(403).send('Vous n\'êtes pas autorisé à supprimer cette propriété.');
+      res.status(403).send("Vous n'êtes pas autorisé à supprimer cette propriété.");
     }
   } catch (error) {
     console.error('Error deleting property', error);
@@ -381,6 +438,7 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
   }
 });
 
+// Process payment
 app.post('/process-payment', isAuthenticated, async (req, res) => {
   const { stripeToken, amount, propertyId } = req.body;
   const userId = req.user._id;
@@ -391,16 +449,16 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
 
   try {
     const charge = await stripe.charges.create({
-      amount: parseInt(amount, 10), // Convertir le montant en entier
+      amount: parseInt(amount, 10),
       currency: 'eur',
       source: stripeToken,
-      description: Payment for property ${propertyId},
+      description: `Payment for property ${propertyId}`,
     });
 
     const order = new Order({
       userId,
       amount: parseInt(amount, 10),
-      status: 'paid'
+      status: 'paid',
     });
     await order.save();
     res.status(200).json({ message: 'Payment successful' });
@@ -410,13 +468,16 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
   }
 });
 
+// Stripe public key configuration
 const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
 
 app.get('/config', (req, res) => {
   res.json({ publicKey: stripePublicKey });
 });
 
+// Server configuration
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  console.log(Server is running on port ${port});
+  console.log(`Server is running on port ${port}`);
 });
+
