@@ -3,38 +3,54 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Modifier la Propriété</title>
+    <title>Modifier la propriété</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/styles-main.css" rel="stylesheet">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1>Modifier la Propriété</h1>
-        <form action="/edit-property/<%= property._id %>" method="POST" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="rooms">Nombre de pièces</label>
+    <div class="form-container">
+        <h2 class="text-center">Modifier la propriété</h2>
+        <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="rooms" class="form-label">Nombre de pièces</label>
                 <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
             </div>
-            <div class="form-group">
-                <label for="surface">Surface (m²)</label>
+            <div class="mb-3">
+                <label for="surface" class="form-label">Surface (m²)</label>
                 <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
             </div>
-            <div class="form-group">
-                <label for="price">Prix (€)</label>
+            <div class="mb-3">
+                <label for="price" class="form-label">Prix (€)</label>
                 <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
             </div>
-            <div class="form-group">
-                <label for="city">Ville</label>
+            <div class="mb-3">
+                <label for="city" class="form-label">Ville</label>
                 <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
             </div>
-            <div class="form-group">
-                <label for="country">Pays</label>
+            <div class="mb-3">
+                <label for="country" class="form-label">Pays</label>
                 <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
             </div>
-            <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+            <div class="mb-3">
+                <label for="photo1" class="form-label">Photo 1</label>
+                <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
+            </div>
+            <div class="mb-3">
+                <label for="photo2" class="form-label">Photo 2</label>
+                <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
         </form>
     </div>
-
     <script src="/jquery-3.6.0.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
