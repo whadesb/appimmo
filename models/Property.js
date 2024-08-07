@@ -11,7 +11,8 @@ const propertySchema = new Schema({
     createdAt: { type: Date, default: Date.now },
     views: { type: Number, default: 0 },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    photos: [String] // Ajoutez ce champ pour stocker les chemins des photos
+    photos: [String], // Ajoutez ce champ pour stocker les chemins des photos
+    status: { type: String, enum: ['draft', 'validated'], default: 'draft' } // Nouveau champ pour le statut
 });
 
 const Property = mongoose.model('Property', propertySchema);
