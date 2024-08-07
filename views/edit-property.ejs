@@ -61,13 +61,14 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        .btn {
-            background-color: #8781D2; 
-            color: #ffffff; 
-            border: none;
-          
+        .btn-primary {
+            background-color: #8781dc;
+            border-color: #000;
         }
-        
+        .btn-primary:hover {
+            background-color: #8140de;
+            border-color: #000;
+        }
         @media (max-width: 767px) {
             .section-top-margin {
                 padding-top: 40px;
@@ -163,8 +164,8 @@
                     <label for="photo2" class="form-label">Photo 2 (optionnel)</label>
                     <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
                 </div>
-               
-                <button type="submit">Mettre à jour</button>
+                <!-- Use btn-primary for consistent styling -->
+                <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
             </form>
         </div>
         
