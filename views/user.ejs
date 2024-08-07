@@ -443,40 +443,48 @@
         }
 
         async function loadProperties() {
-            console.log('loadProperties function called');
-            try {
-                const response = await fetch('/user/properties');
-                if (response.ok) {
-                    const properties = await response.json();
-                    console.log('Properties loaded:', properties);
-                    const propertiesList = document.getElementById('properties-list');
-                    propertiesList.innerHTML = '';
+    console.log('loadProperties function called');
+    try {
+        const response = await fetch('/user/properties');
+        if (response.ok) {
+            const properties = await response.json();
+            console.log('Properties loaded:', properties);
+            const propertiesList = document.getElementById('properties-list');
+            propertiesList.innerHTML = '';
 
-                    properties.forEach(property => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${property.rooms}</td>
-                            <td>${property.surface}</td>
-                            <td>${property.price}</td>
-                            <td>${property.city}</td>
-                            <td>${property.country}</td>
-                            <td><a href="${property.url}">${property.url}</a></td>
-                            <td>
-                                <div class="action-icons">
-                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                                    <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                </div>
-                            </td>
-                        `;
-                        propertiesList.appendChild(row);
-                    });
-                } else {
-                    console.error('Erreur lors du chargement des propriétés');
-                }
-            } catch (error) {
-                console.error('Erreur lors du chargement des propriétés : ', error);
+            if (properties.length === 0) {
+                propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Aucun bien immobilier n\'a été créé pour le moment.</td></tr>';
+            } else {
+                properties.forEach(property => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${property.rooms}</td>
+                        <td>${property.surface}</td>
+                        <td>${property.price}</td>
+                        <td>${property.city}</td>
+                        <td>${property.country}</td>
+                        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+                        <td>
+                            <div class="action-icons">
+                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                <a href="/property/edit/${property._id}" class="btn btn-sm btn-primary">Modifier</a>
+                            </div>
+                        </td>
+                    `;
+                    propertiesList.appendChild(row);
+                });
             }
+        } else {
+            console.error('Erreur lors du chargement des propriétés');
+            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
         }
+    } catch (error) {
+        console.error('Erreur lors du chargement des propriétés : ', error);
+        const propertiesList = document.getElementById('properties-list');
+        propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
+    }
+}
 
         function copyURL(url) {
             const fullUrl = `https://uap.immo${url}`;
