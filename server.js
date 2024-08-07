@@ -100,13 +100,20 @@ function isAuthenticated(req, res, next) {
 
 app.get('/user', isAuthenticated, async (req, res) => {
     try {
-        const properties = await Property.find({ createdBy: req.user._id }); // Récupération des propriétés
-        res.render('user', { user: req.user, properties }); // Passez les propriétés à la vue
+        // Assurez-vous de récupérer les propriétés en fonction de l'utilisateur connecté
+        const properties = await Property.find({ createdBy: req.user._id });
+
+        // Vérifiez que les propriétés sont bien récupérées
+        console.log('Propriétés récupérées:', properties);
+
+        // Passez les propriétés à la vue
+        res.render('user', { user: req.user, properties });
     } catch (error) {
-        console.error('Error fetching user properties', error);
+        console.error('Erreur lors de la récupération des propriétés de l\'utilisateur :', error);
         res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
     }
 });
+
 
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
