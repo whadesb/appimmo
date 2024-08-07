@@ -260,7 +260,7 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
     res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
   }
 });
- 
+
 
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
