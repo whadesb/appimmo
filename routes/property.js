@@ -76,7 +76,6 @@ router.post('/add-property', authMiddleware, upload.fields([
     }
 });
 
-// Route GET pour afficher le formulaire de modification
 router.get('/edit/:id', authMiddleware, async (req, res) => {
     try {
         // Récupérez la propriété par son identifiant
@@ -93,7 +92,7 @@ router.get('/edit/:id', authMiddleware, async (req, res) => {
         console.error('Erreur lors de la récupération de la propriété pour modification:', error);
         res.status(500).send('Erreur lors de la récupération de la propriété.');
     }
-});
+})
 
 // Route POST pour mettre à jour une propriété existante
 router.post('/edit/:id', authMiddleware, upload.fields([
