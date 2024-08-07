@@ -21,7 +21,6 @@ const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 
 const propertyRoutes = require('./routes/property'); 
-app.use('/property', propertyRoutes); 
 
 const app = express();
 
@@ -524,7 +523,8 @@ const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
 
 app.get('/config', (req, res) => {
   res.json({ publicKey: stripePublicKey });
-});
+
+app.use('/property', propertyRoutes); 
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
