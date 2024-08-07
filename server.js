@@ -373,6 +373,57 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
     }
 });
 
+app.post('/property/update/:id', isAuthenticated, upload.fields([
+    { name: 'photo1', maxCount: 1 },
+    { name: 'photo2', maxCount: 1 }
+]), async (req, res) => {
+    try {
+        const property = await Property.findById(req.params.id);
+
+        if (!property.createdBy.equals(req.user._id)) {
+            return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
+        }
+
+        const { rooms, surface, price, city, country } = req.body;
+
+        // Mise à jour des informations de la propriété
+        property.rooms = rooms;
+        property.surface = surface;
+        property.price = price;
+        property.city = city;
+        property.country = country;
+
+        // Mise à jour des photos si elles sont fournies
+        if (req.files.photo1) {
+            const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
+            await sharp(req.files.photo1[0].path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(photo1Path);
+            property.photos[0] = path.basename(photo1Path);
+            fs.unlinkSync(req.files.photo1[0].path); // Supprimez le fichier original après traitement
+        }
+
+        if (req.files.photo2) {
+            const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
+            await sharp(req.files.photo2[0].path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(photo2Path);
+            property.photos[1] = path.basename(photo2Path);
+            fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original après traitement
+        }
+
+        await property.save();
+
+        // Rediriger l'utilisateur vers sa liste de propriétés
+        res.redirect('/user');
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour de la propriété : ', error);
+        res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de la propriété.' });
+    }
+});
+
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
   const { stripeToken, amount, propertyId } = req.body;
