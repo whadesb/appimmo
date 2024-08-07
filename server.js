@@ -163,70 +163,65 @@ app.get('/landing-pages/:id', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'landing-pages', ${pageId}.html));
 });
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/uploads');
-  },
-  filename: function (req, file, cb) {
-    const uniqueName = uuidv4() + path.extname(file.originalname);
-    cb(null, uniqueName);
-  }
+    destination: function (req, file, cb) {
+        cb(null, 'public/uploads');
+    },
+    filename: function (req, file, cb) {
+        cb(null, uuidv4() + path.extname(file.originalname));
+    }
 });
 const upload = multer({ storage: storage });
 
-app.post('/add-property', isAuthenticated, upload.fields([
+app.post('/property/update/:id', isAuthenticated, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
-    const { rooms, surface, price, city, country } = req.body;
-
-    console.log("Received body data:", req.body);  // Pour vérifier les données du formulaire
-    console.log("Received files:", req.files);    // Pour vérifier les fichiers reçus
-
     try {
-        let photo1 = null;
-        let photo2 = null;
+        // Récupération de la propriété par ID
+        const property = await Property.findById(req.params.id);
 
+        // Vérification de l'autorisation
+        if (!property || !property.createdBy.equals(req.user._id)) {
+            return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
+        }
+
+        const { rooms, surface, price, city, country } = req.body;
+
+        // Mise à jour des informations de la propriété
+        property.rooms = rooms;
+        property.surface = surface;
+        property.price = price;
+        property.city = city;
+        property.country = country;
+
+        // Mise à jour des photos si elles sont fournies
         if (req.files.photo1) {
-            const photo1Path = public/uploads/${uuidv4()}-photo1.jpg;
+            const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
             await sharp(req.files.photo1[0].path)
                 .resize(800)
                 .jpeg({ quality: 80 })
                 .toFile(photo1Path);
-            photo1 = path.basename(photo1Path);
+            property.photos[0] = path.basename(photo1Path);
             fs.unlinkSync(req.files.photo1[0].path); // Supprimez le fichier original après traitement
         }
 
         if (req.files.photo2) {
-            const photo2Path = public/uploads/${uuidv4()}-photo2.jpg;
+            const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
             await sharp(req.files.photo2[0].path)
                 .resize(800)
                 .jpeg({ quality: 80 })
                 .toFile(photo2Path);
-            photo2 = path.basename(photo2Path);
+            property.photos[1] = path.basename(photo2Path);
             fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original après traitement
         }
 
-        const property = new Property({
-            rooms,
-            surface,
-            price,
-            city,
-            country,
-            createdBy: req.user._id,
-            photos: [photo1, photo2]
-        });
-
         await property.save();
 
-        const landingPageUrl = await generateLandingPage(property);
-
-        property.url = landingPageUrl;
-        await property.save(); // Assurez-vous que l'URL est sauvegardée
-
-        res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
+        // Rediriger l'utilisateur vers sa liste de propriétés
+        res.redirect('/user');
     } catch (error) {
-        console.error('Erreur lors de l\'ajout de la propriété : ', error);
-        res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
+        console.error('Erreur lors de la mise à jour de la propriété : ', error);
+        res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de la propriété.' });
     }
 });
 
