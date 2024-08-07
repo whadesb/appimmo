@@ -466,8 +466,7 @@ async function generateLandingPage(property) {
   return `/landing-pages/${property._id}.html`;
 }
 
-// Démarrage du serveur
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000; // Exemple avec le port 3000
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
