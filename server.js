@@ -127,12 +127,17 @@ function isAuthenticated(req, res, next) {
 // Route pour la vue utilisateur
 app.get('/user', isAuthenticated, async (req, res) => {
   try {
+    // Check if req.user is defined and has an _id
+    if (!req.user || !req.user._id) {
+      return res.status(401).send('User not authenticated.');
+    }
+
     const properties = await Property.find({ createdBy: req.user._id });
 
-    // Ajoutez un log pour vérifier les propriétés récupérées
+    // Add a log to verify the retrieved properties
     console.log('Properties retrieved:', properties);
 
-    res.render('user', { user: req.user, properties }); // Passez les propriétés à la vue
+    res.render('user', { user: req.user, properties }); // Pass the properties to the view
   } catch (error) {
     console.error('Erreur lors de la récupération des propriétés :', error);
     res.status(500).send('Erreur lors de la récupération des propriétés.');
