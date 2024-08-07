@@ -99,19 +99,19 @@ function isAuthenticated(req, res, next) {
 }
 app.get('/user', isAuthenticated, async (req, res) => {
     try {
-        // Récupération des propriétés, initialisation avec un tableau vide si aucune propriété n'existe
-        const properties = await Property.find({ createdBy: req.user._id }) || [];
+        console.log('Utilisateur authentifié:', req.user); // Ajoutez ceci pour vérifier l'utilisateur
 
-        // Ajoutez un log pour vérifier les propriétés récupérées
+        const properties = await Property.find({ createdBy: req.user._id });
+
         console.log('Propriétés récupérées:', properties);
 
-        // Passez les propriétés à la vue, même si elles sont vides
         res.render('user', { user: req.user, properties });
     } catch (error) {
         console.error('Erreur lors de la récupération des propriétés de l\'utilisateur :', error);
         res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
     }
 });
+
 
 
 app.get('/faq', (req, res) => {
