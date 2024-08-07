@@ -246,7 +246,7 @@ const upload = multer({ storage: storage });
 
 app.post(
   '/add-property',
-  isAuthenticated,
+  isAuthenticated, // Assurez-vous que l'utilisateur est authentifié
   upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 },
@@ -281,13 +281,14 @@ app.post(
         fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original après traitement
       }
 
+      // Créer une nouvelle propriété en s'assurant que createdBy est correctement assigné
       const property = new Property({
         rooms,
         surface,
         price,
         city,
         country,
-        createdBy: req.user._id,
+        createdBy: req.user._id, // Assurez-vous que createdBy est assigné à l'utilisateur authentifié
         photos: [photo1, photo2],
       });
 
@@ -298,19 +299,15 @@ app.post(
       property.url = landingPageUrl;
       await property.save(); // Assurez-vous que l'URL est sauvegardée
 
-      res
-        .status(201)
-        .json({
-          message: 'Le bien immobilier a été ajouté avec succès.',
-          url: landingPageUrl,
-        });
+      res.status(201).json({
+        message: 'Le bien immobilier a été ajouté avec succès.',
+        url: landingPageUrl,
+      });
     } catch (error) {
       console.error("Erreur lors de l'ajout de la propriété : ", error);
-      res
-        .status(500)
-        .json({
-          error: "Une erreur est survenue lors de l'ajout de la propriété.",
-        });
+      res.status(500).json({
+        error: "Une erreur est survenue lors de l'ajout de la propriété.",
+      });
     }
   }
 );
