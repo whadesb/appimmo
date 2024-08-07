@@ -9,7 +9,6 @@ const userSchema = new mongoose.Schema({
   role: { type: String, required: true },
 });
 
-// Integrate passport-local-mongoose plugin
-userSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
+userSchema.plugin(passportLocalMongoose, { usernameField: 'email' }); 
 
 module.exports = mongoose.model('User', userSchema);
