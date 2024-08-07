@@ -362,17 +362,19 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
     try {
         const property = await Property.findById(req.params.id);
-        if (property.createdBy.equals(req.user._id)) {
-            res.render('edit-property', { property });
-        } else {
-            res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
+
+        // Vérification que la propriété appartient à l'utilisateur authentifié
+        if (!property || !property.createdBy.equals(req.user._id)) {
+            return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
         }
+
+        // Rendu de la vue avec les données de la propriété
+        res.render('edit-property', { property });
     } catch (error) {
-        console.error('Error fetching property', error);
+        console.error('Erreur lors de la récupération de la propriété:', error);
         res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
     }
 });
-
 app.post('/property/update/:id', isAuthenticated, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 }
