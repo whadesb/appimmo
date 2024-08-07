@@ -323,13 +323,13 @@ async function generateLandingPage(property) {
   return /landing-pages/${property._id}.html;
 }
 app.get('/user/properties', isAuthenticated, async (req, res) => {
-  try {
-    const properties = await Property.find({ createdBy: req.user._id });
-    res.json(properties);
-  } catch (error) {
-    console.error('Error fetching user properties', error);
-    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
-  }
+    try {
+        const properties = await Property.find({ createdBy: req.user._id });
+        res.json(properties);
+    } catch (error) {
+        console.error('Error fetching user properties', error);
+        res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des propriétés.' });
+    }
 });
 app.get('/property/:id', isAuthenticated, async (req, res) => {
   try {
