@@ -22,30 +22,8 @@ const validator = require('validator');
 
 const app = express();
 
-const validCodes = [
-  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba',
-  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa',
-  'CODE3',
-  'CODE44',
-  'CODE5',
-];
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
-}
-
-router.get('/user', isAuthenticated, async (req, res) => {
-  try {
-    // Vérifiez que req.user existe
-    if (!req.user) {
-      console.error('Utilisateur non authentifié');
-      return res.redirect('/login');
-    }
-    
+// Middlewares
 app.use(compression());
-
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -71,9 +49,11 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24 },
   })
 );
+
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Configuration de Passport
 passport.use(
   new LocalStrategy(
     {
@@ -85,9 +65,12 @@ passport.use(
 
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
+
+// Configuration du moteur de vue
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Connexion à MongoDB
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -100,6 +83,38 @@ mongoose
     console.error('Error connecting to MongoDB', err);
   });
 
+// Fonction Middleware pour l'authentification
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
+
+// Route pour l'interface utilisateur
+app.get('/user', isAuthenticated, async (req, res) => {
+  try {
+    // Vérifiez que req.user existe
+    if (!req.user) {
+      console.error('Utilisateur non authentifié');
+      return res.redirect('/login');
+    }
+
+    // Récupérez les propriétés de l'utilisateur connecté
+    const properties = await Property.find({ createdBy: req.user._id }).lean(); // Ajoutez .lean() pour convertir en objets JS simples
+
+    // Vérifiez que les propriétés sont correctement récupérées
+    console.log('Propriétés récupérées:', properties);
+
+    // Passez les propriétés à la vue user.ejs
+    res.render('user', { user: req.user, properties });
+  } catch (error) {
+    console.error("Erreur lors de la récupération des propriétés de l'utilisateur:", error);
+    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
+  }
+});
+
+// Autres routes et configurations
 app.post('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -131,29 +146,6 @@ app.post(
     failureFlash: true,
   })
 );
-
-
-router.get('/user', isAuthenticated, async (req, res) => {
-  try {
-    // Vérifiez que req.user existe
-    if (!req.user) {
-      console.error('Utilisateur non authentifié');
-      return res.redirect('/login');
-    }
-
-    // Récupérez les propriétés de l'utilisateur connecté
-    const properties = await Property.find({ createdBy: req.user._id }).lean(); // Ajoutez .lean() pour convertir en objets JS
-
-    // Vérifiez que les propriétés sont correctement récupérées
-    console.log('Propriétés récupérées:', properties);
-
-    // Passez les propriétés à la vue user.ejs
-    res.render('user', { user: req.user, properties });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des propriétés de l\'utilisateur:', error);
-    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
-  }
-});
 
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
