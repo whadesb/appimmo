@@ -1,8 +1,9 @@
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#8781D2">
+    <meta name="theme-color" content="#8781D2"> 
     <title>UAP Immo | My account</title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
@@ -10,11 +11,9 @@
     <link rel="stylesheet" href="/css/styles-main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        html,
-        body {
+        html, body {
             height: 100%;
         }
-
         body {
             display: flex;
             flex-direction: column;
@@ -22,27 +21,20 @@
             background-color: #f8f9fa;
             margin: 0;
         }
-
         h3 {
             color: #000;
             text-align: left;
         }
-
         .navbar {
             background-color: #8781dc;
             margin-bottom: 20px;
         }
-
-        .navbar .navbar-brand,
-        .navbar .nav-link,
-        .navbar .navbar-icon {
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
             color: #ffffff;
         }
-
         .navbar .navbar-icon {
             color: #fff;
         }
-
         .main-section {
             flex: 1;
             padding: 20px;
@@ -52,12 +44,10 @@
             margin-left: 10px;
             min-height: 500px;
         }
-
         .main-section .card {
             border: none;
             box-shadow: none;
         }
-
         .sidebar {
             background-color: #c6c3ff;
             border-radius: 8px;
@@ -71,39 +61,32 @@
             position: sticky;
             top: 20px;
         }
-
         .sidebar a {
             margin: 10px 0;
             color: #000;
             font-size: 24px;
             text-decoration: none;
         }
-
         .sidebar a:hover {
             color: #000;
         }
-
         .footer {
             background-color: #343a40;
             color: #fff;
             padding: 20px 0;
         }
-
         .btn-custom {
             background-color: #333;
             color: #fff;
             border: none;
         }
-
         .btn-custom:hover {
             background-color: #000;
             color: #fff;
         }
-
         .btn-custom i {
             font-size: 24px;
         }
-
         .tooltip {
             position: absolute;
             background-color: #ADD8E6;
@@ -116,7 +99,6 @@
             left: 50%;
             transform: translateX(-50%);
         }
-
         .copy-message {
             display: none;
             background-color: #d1e7dd;
@@ -128,34 +110,28 @@
             right: 10px;
             z-index: 1000;
         }
-
         .action-icons i {
             font-size: 24px;
             cursor: pointer;
             margin-right: 10px;
             color: #333;
         }
-
         .short-column {
             width: 10%;
         }
-
         @media (max-width: 767px) {
             .container-fluid {
                 padding-left: 0;
                 padding-right: 0;
             }
-
             .container {
                 padding-left: 15px;
                 padding-right: 15px;
             }
-
             .row {
                 flex-direction: column;
                 align-items: center;
             }
-
             .main-section {
                 margin-left: 0;
                 margin-right: 0;
@@ -168,32 +144,25 @@
                 padding-left: 0;
                 padding-right: 0;
             }
-
             .sidebar {
                 display: none;
             }
-
             .sidebar-mobile-links {
                 display: block !important;
                 margin-top: 10px;
             }
-
             .mobile-margin {
                 margin-top: 30px;
             }
-
             table {
                 width: 100%;
                 table-layout: auto;
             }
-
-            th,
-            td {
+            th, td {
                 white-space: nowrap;
                 padding: 8px;
                 text-align: left;
             }
-
             .table-responsive {
                 display: block;
                 width: 100%;
@@ -206,13 +175,11 @@
                 width: 100%;
                 padding: 5px;
             }
-
             #landing .form-control {
                 width: 100%;
                 padding: 10px;
                 font-size: 16px;
             }
-
             #landing button.btn-custom {
                 width: 100%;
                 padding: 10px;
@@ -227,7 +194,6 @@
         }
     </style>
 </head>
-
 <body id="top">
     <main>
         <nav class="navbar navbar-expand-lg fixed-top">
@@ -238,11 +204,11 @@
                 </a>
                 <div class="d-lg-none ms-auto me-4">
                     <% if (user) { %>
-                    <form action="/logout" method="POST" class="d-inline">
-                        <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
-                    </form>
+                        <form action="/logout" method="POST" class="d-inline">
+                            <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
+                        </form>
                     <% } else { %>
-                    <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
+                        <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
                     <% } %>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -281,17 +247,17 @@
                     </ul>
                     <div class="d-none d-lg-block">
                         <% if (user) { %>
-                        <form action="/logout" method="POST" class="d-inline">
-                            <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
-                        </form>
+                            <form action="/logout" method="POST" class="d-inline">
+                                <button type="submit" class="navbar-icon bi-person-x" style="background: white; color: black; border: none;"></button>
+                            </form>
                         <% } else { %>
-                        <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
+                            <a href="/login" class="navbar-icon bi-person smoothscroll" style="color: #ffffff;"></a>
                         <% } %>
                     </div>
                 </div>
             </div>
         </nav>
-
+       
         <section class="contact-section section-padding section-bg" id="section_5">
             <div class="container">
                 <h5 class="text-black mobile-margin">Bienvenue <%= user.lastName %> <%= user.firstName %></h5>
@@ -348,10 +314,6 @@
                                                 <label for="photo2">Photo 2</label>
                                                 <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
                                             </div>
-                                            <div class="form-group form-check">
-                                                <input type="checkbox" class="form-check-input" id="isPublished" name="isPublished" value="true">
-                                                <label class="form-check-label" for="isPublished">Publier maintenant</label>
-                                            </div>
                                             <button type="submit" class="btn btn-custom">Enregistrer</button>
                                         </form>
                                         <div id="generatedLink" class="mt-3"></div>
@@ -366,7 +328,7 @@
                                                     <div class="card-body">
                                                         <h5 class="card-title">Ci-dessous les statistiques de vos annonces</h5>
                                                         <p class="card-text">Lorem</p>
-
+                                                        
                                                     </div>
                                                 </div>
                                             </div>
@@ -388,34 +350,10 @@
                                                     <th scope="col">Actions</th>
                                                 </tr>
                                             </thead>
-<tbody id="properties-list">
-  <% if (properties && properties.length > 0) { %>
-    <% properties.forEach(property => { %>
-      <tr>
-        <td><%= property.rooms %></td>
-        <td><%= property.surface %></td>
-        <td><%= property.price %></td>
-        <td><%= property.city %></td>
-        <td><%= property.country %></td>
-        <td><a href="<%= property.url %>"><%= property.url %></a></td>
-        <td>
-          <div class="action-icons">
-            <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('<%= property.url %>')"></i>
-            <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('<%= property._id %>')"></i>
-            <i class="bi bi-pencil" style="color: #333;" onclick="editProperty('<%= property._id %>')"></i>
-          </div>
-        </td>
-      </tr>
-    <% }) %>
-  <% } else { %>
-    <tr>
-      <td colspan="7">Aucune propriété trouvée.</td>
-    </tr>
-  <% } %>
-</tbody>
-
+                                            <tbody id="properties-list">
+                                                <!-- Propriétés de l'utilisateur ici -->
+                                            </tbody>
                                         </table>
-
                                     </div>
                                 </div>
                             </div>
@@ -456,7 +394,7 @@
                 <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-
+                            
                         </button>
                         <ul class="dropdown-menu">
                             <li>
@@ -468,7 +406,7 @@
                         </ul>
                     </div>
                 </div>
-                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>                  
             </div>
         </div>
     </footer>
@@ -512,7 +450,6 @@
                                 <div class="action-icons">
                                     <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
                                     <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                    <i class="bi bi-pencil" style="color: #333;" onclick="editProperty('${property._id}')"></i>
                                 </div>
                             </td>
                         `;
@@ -548,11 +485,6 @@
         function testURL(propertyId) {
             window.location.href = `/payment?propertyId=${propertyId}`;
         }
-
-     function editProperty(propertyId) {
-    // Rediriger l'utilisateur vers la page de modification
-    window.location.href = `/property/edit/${propertyId}`;
-}
 
         // Gestion de la soumission du formulaire
         document.getElementById('add-property-form').addEventListener('submit', async function(event) {
@@ -595,5 +527,4 @@
         });
     </script>
 </body>
-
 </html>
