@@ -4,10 +4,10 @@
     <!-- Google tag (gtag.js) -->
     <script defer src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
     <script defer>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0LN60RQ12K');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-0LN60RQ12K');
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -47,19 +47,28 @@
             padding-bottom: 60px;
         }
         .justify-content-center {
-        margin-top: 40px;
+            margin-top: 40px;
         }   
         .custom-block-image {
             object-fit: contain; 
             height: auto;
         }
-            .form-container {
+        .form-container {
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
             background: #f9f9f9;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .custom-btn {
+            background-color: #FF5733; /* Changer la couleur de fond ici */
+            color: #ffffff; /* Changer la couleur du texte ici */
+            border: none;
+            transition: background-color 0.3s ease; /* Animation pour un effet de survol */
+        }
+        .custom-btn:hover {
+            background-color: #CC462A; /* Couleur de fond au survol */
         }
         @media (max-width: 767px) {
             .section-top-margin {
@@ -125,41 +134,43 @@
             </div>
         </nav> 
 
-    <div class="form-container">
-        <h2 class="text-center">Modifier la propriété</h2>
-        <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
-            <div class="mb-3">
-                <label for="rooms" class="form-label">Nombre de pièces</label>
-                <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
-            </div>
-            <div class="mb-3">
-                <label for="surface" class="form-label">Surface (m²)</label>
-                <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
-            </div>
-            <div class="mb-3">
-                <label for="price" class="form-label">Prix (€)</label>
-                <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
-            </div>
-            <div class="mb-3">
-                <label for="city" class="form-label">Ville</label>
-                <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
-            </div>
-            <div class="mb-3">
-                <label for="country" class="form-label">Pays</label>
-                <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
-            </div>
-            <div class="mb-3">
-                <label for="photo1" class="form-label">Photo 1 (optionnel)</label>
-                <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
-            </div>
-            <div class="mb-3">
-                <label for="photo2" class="form-label">Photo 2 (optionnel)</label>
-                <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
-            </div>
-            <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
-        </form>
-    </div>
-     <footer class="site-footer section-padding">
+        <div class="form-container">
+            <h2 class="text-center">Modifier la propriété</h2>
+            <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="rooms" class="form-label">Nombre de pièces</label>
+                    <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="surface" class="form-label">Surface (m²)</label>
+                    <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="price" class="form-label">Prix (€)</label>
+                    <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="city" class="form-label">Ville</label>
+                    <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="country" class="form-label">Pays</label>
+                    <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
+                </div>
+                <div class="mb-3">
+                    <label for="photo1" class="form-label">Photo 1 (optionnel)</label>
+                    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
+                </div>
+                <div class="mb-3">
+                    <label for="photo2" class="form-label">Photo 2 (optionnel)</label>
+                    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
+                </div>
+                <!-- Utilisation de la classe custom-btn pour le bouton -->
+                <button type="submit" class="btn custom-btn w-100">Mettre à jour</button>
+            </form>
+        </div>
+        
+        <footer class="site-footer section-padding">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3 col-12 mb-4 pb-2">
@@ -204,6 +215,8 @@
                 </div>
             </div>
         </footer>
+    </main>
+
     <script src="/jquery-3.6.0.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
