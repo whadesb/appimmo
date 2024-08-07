@@ -22,7 +22,13 @@ const validator = require('validator');
 
 const app = express();
 
-const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE44', 'CODE5'];
+const validCodes = [
+  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba',
+  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa',
+  'CODE3',
+  'CODE44',
+  'CODE5',
+];
 
 app.use(compression());
 
@@ -40,31 +46,41 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 24 }
-}));
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+    cookie: { maxAge: 1000 * 60 * 60 * 24 },
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy({
-  usernameField: 'email'
-}, User.authenticate()));
+passport.use(
+  new LocalStrategy(
+    {
+      usernameField: 'email',
+    },
+    User.authenticate()
+  )
+);
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
-mongoose.connect(process.env.MONGODB_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('Error connecting to MongoDB', err);
-});
+mongoose
+  .connect(process.env.MONGODB_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => {
+    console.log('Connected to MongoDB');
+  })
+  .catch((err) => {
+    console.error('Error connecting to MongoDB', err);
+  });
 app.post('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -86,11 +102,14 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
   res.render('login', { title: 'Login' });
 });
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/user',
-  failureRedirect: '/login',
-  failureFlash: true
-}));
+app.post(
+  '/login',
+  passport.authenticate('local', {
+    successRedirect: '/user',
+    failureRedirect: '/login',
+    failureFlash: true,
+  })
+);
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -119,7 +138,7 @@ app.get('/payment', isAuthenticated, async (req, res) => {
       price: property.price,
       city: property.city,
       country: property.country,
-      url: property.url
+      url: property.url,
     });
   } catch (error) {
     console.error('Error fetching property', error);
@@ -130,7 +149,15 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 app.post('/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
+  const {
+    email,
+    firstName,
+    lastName,
+    role,
+    password,
+    confirmPassword,
+    inviteCode,
+  } = req.body;
 
   if (!validCodes.includes(inviteCode)) {
     req.flash('error', 'Invalid invitation code.');
@@ -138,10 +165,14 @@ app.post('/register', async (req, res) => {
   }
 
   // Validate password
-  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const passwordRequirements =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (!passwordRequirements.test(password)) {
-    req.flash('error', 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
+    req.flash(
+      'error',
+      'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.'
+    );
     return res.redirect('/register');
   }
 
@@ -151,16 +182,19 @@ app.post('/register', async (req, res) => {
   }
 
   try {
-    const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+    const newUser = await User.register(
+      new User({ email, firstName, lastName, role }),
+      password
+    );
     res.redirect('/login');
   } catch (error) {
     console.error('Error registering user', error);
-    res.send('Une erreur est survenue lors de l\'inscription.');
+    res.send("Une erreur est survenue lors de l'inscription.");
   }
 });
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
-  res.sendFile(path.join(__dirname, 'public', 'landing-pages', ${pageId}.html));
+  res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
 });
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -169,69 +203,150 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     const uniqueName = uuidv4() + path.extname(file.originalname);
     cb(null, uniqueName);
-  }
+  },
 });
 const upload = multer({ storage: storage });
 
-app.post('/add-property', isAuthenticated, upload.fields([
+app.post(
+  '/add-property',
+  isAuthenticated,
+  upload.fields([
     { name: 'photo1', maxCount: 1 },
-    { name: 'photo2', maxCount: 1 }
-]), async (req, res) => {
+    { name: 'photo2', maxCount: 1 },
+  ]),
+  async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
 
-    console.log("Received body data:", req.body);  // Pour vérifier les données du formulaire
-    console.log("Received files:", req.files);    // Pour vérifier les fichiers reçus
+    console.log('Received body data:', req.body); // Pour vérifier les données du formulaire
+    console.log('Received files:', req.files); // Pour vérifier les fichiers reçus
 
     try {
-        let photo1 = null;
-        let photo2 = null;
+      let photo1 = null;
+      let photo2 = null;
 
-        if (req.files.photo1) {
-            const photo1Path = public/uploads/${uuidv4()}-photo1.jpg;
-            await sharp(req.files.photo1[0].path)
-                .resize(800)
-                .jpeg({ quality: 80 })
-                .toFile(photo1Path);
-            photo1 = path.basename(photo1Path);
-            fs.unlinkSync(req.files.photo1[0].path); // Supprimez le fichier original après traitement
-        }
+      if (req.files.photo1) {
+        const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
+        await sharp(req.files.photo1[0].path)
+          .resize(800)
+          .jpeg({ quality: 80 })
+          .toFile(photo1Path);
+        photo1 = path.basename(photo1Path);
+        fs.unlinkSync(req.files.photo1[0].path); // Supprimez le fichier original après traitement
+      }
 
-        if (req.files.photo2) {
-            const photo2Path = public/uploads/${uuidv4()}-photo2.jpg;
-            await sharp(req.files.photo2[0].path)
-                .resize(800)
-                .jpeg({ quality: 80 })
-                .toFile(photo2Path);
-            photo2 = path.basename(photo2Path);
-            fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original après traitement
-        }
+      if (req.files.photo2) {
+        const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
+        await sharp(req.files.photo2[0].path)
+          .resize(800)
+          .jpeg({ quality: 80 })
+          .toFile(photo2Path);
+        photo2 = path.basename(photo2Path);
+        fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original après traitement
+      }
 
-        const property = new Property({
-            rooms,
-            surface,
-            price,
-            city,
-            country,
-            createdBy: req.user._id,
-            photos: [photo1, photo2]
+      const property = new Property({
+        rooms,
+        surface,
+        price,
+        city,
+        country,
+        createdBy: req.user._id,
+        photos: [photo1, photo2],
+      });
+
+      await property.save();
+
+      const landingPageUrl = await generateLandingPage(property);
+
+      property.url = landingPageUrl;
+      await property.save(); // Assurez-vous que l'URL est sauvegardée
+
+      res
+        .status(201)
+        .json({
+          message: 'Le bien immobilier a été ajouté avec succès.',
+          url: landingPageUrl,
         });
-
-        await property.save();
-
-        const landingPageUrl = await generateLandingPage(property);
-
-        property.url = landingPageUrl;
-        await property.save(); // Assurez-vous que l'URL est sauvegardée
-
-        res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
     } catch (error) {
-        console.error('Erreur lors de l\'ajout de la propriété : ', error);
-        res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
+      console.error("Erreur lors de l'ajout de la propriété : ", error);
+      res
+        .status(500)
+        .json({ error: "Une erreur est survenue lors de l'ajout de la propriété." });
     }
-});
+  }
+);
+
+// Update Property Route
+app.post(
+  '/property/update/:id',
+  isAuthenticated,
+  upload.fields([
+    { name: 'photo1', maxCount: 1 },
+    { name: 'photo2', maxCount: 1 },
+  ]),
+  async (req, res) => {
+    const { id } = req.params;
+    const { rooms, surface, price, city, country } = req.body;
+
+    try {
+      const property = await Property.findById(id);
+
+      if (!property) {
+        return res.status(404).json({ error: 'Property not found' });
+      }
+
+      if (!property.createdBy.equals(req.user._id)) {
+        return res.status(403).json({ error: "Unauthorized to update this property" });
+      }
+
+      property.rooms = rooms;
+      property.surface = surface;
+      property.price = price;
+      property.city = city;
+      property.country = country;
+
+      if (req.files.photo1) {
+        const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
+        await sharp(req.files.photo1[0].path)
+          .resize(800)
+          .jpeg({ quality: 80 })
+          .toFile(photo1Path);
+        fs.unlinkSync(req.files.photo1[0].path);
+        if (property.photos[0]) {
+          fs.unlinkSync(`public/uploads/${property.photos[0]}`);
+        }
+        property.photos[0] = path.basename(photo1Path);
+      }
+
+      if (req.files.photo2) {
+        const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
+        await sharp(req.files.photo2[0].path)
+          .resize(800)
+          .jpeg({ quality: 80 })
+          .toFile(photo2Path);
+        fs.unlinkSync(req.files.photo2[0].path);
+        if (property.photos[1]) {
+          fs.unlinkSync(`public/uploads/${property.photos[1]}`);
+        }
+        property.photos[1] = path.basename(photo2Path);
+      }
+
+      await property.save();
+
+      const landingPageUrl = await generateLandingPage(property);
+      property.url = landingPageUrl;
+      await property.save();
+
+      res.json({ message: 'Property updated successfully', url: landingPageUrl });
+    } catch (error) {
+      console.error('Error updating property:', error);
+      res.status(500).json({ error: 'An error occurred while updating the property' });
+    }
+  }
+);
 
 async function generateLandingPage(property) {
-  const template = 
+  const template = `
     <!DOCTYPE html>
   <html lang="en">
   <head>
@@ -316,19 +431,27 @@ async function generateLandingPage(property) {
           </div>
       </div>
   </body>
-  </html>;
-  const filePath = path.join(__dirname, 'public', 'landing-pages', ${property._id}.html);
+  </html>`;
+  const filePath = path.join(
+    __dirname,
+    'public',
+    'landing-pages',
+    `${property._id}.html`
+  );
   fs.writeFileSync(filePath, template);
 
-  return /landing-pages/${property._id}.html;
+  return `/landing-pages/${property._id}.html`;
 }
+
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ createdBy: req.user._id });
     res.json(properties);
   } catch (error) {
     console.error('Error fetching user properties', error);
-    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
+    res
+      .status(500)
+      .send('Une erreur est survenue lors de la récupération des propriétés.');
   }
 });
 app.get('/property/:id', isAuthenticated, async (req, res) => {
@@ -337,11 +460,13 @@ app.get('/property/:id', isAuthenticated, async (req, res) => {
     if (property.createdBy.equals(req.user._id)) {
       res.render('property', { property });
     } else {
-      res.status(403).send('Vous n\'êtes pas autorisé à voir cette propriété.');
+      res.status(403).send("Vous n'êtes pas autorisé à voir cette propriété.");
     }
   } catch (error) {
     console.error('Error fetching property', error);
-    res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
+    res
+      .status(500)
+      .send('Une erreur est survenue lors de la récupération de la propriété.');
   }
 });
 app.delete('/property/:id', isAuthenticated, async (req, res) => {
@@ -351,11 +476,15 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
       await property.remove();
       res.status(200).send('Propriété supprimée avec succès.');
     } else {
-      res.status(403).send('Vous n\'êtes pas autorisé à supprimer cette propriété.');
+      res
+        .status(403)
+        .send("Vous n'êtes pas autorisé à supprimer cette propriété.");
     }
   } catch (error) {
     console.error('Error deleting property', error);
-    res.status(500).send('Une erreur est survenue lors de la suppression de la propriété.');
+    res
+      .status(500)
+      .send('Une erreur est survenue lors de la suppression de la propriété.');
   }
 });
 
@@ -372,13 +501,13 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
       amount: parseInt(amount, 10), // Convertir le montant en entier
       currency: 'eur',
       source: stripeToken,
-      description: Payment for property ${propertyId},
+      description: `Payment for property ${propertyId}`,
     });
 
     const order = new Order({
       userId,
       amount: parseInt(amount, 10),
-      status: 'paid'
+      status: 'paid',
     });
     await order.save();
     res.status(200).json({ message: 'Payment successful' });
@@ -396,5 +525,5 @@ app.get('/config', (req, res) => {
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
-  console.log(Server is running on port ${port});
+  console.log(`Server is running on port ${port}`);
 });
