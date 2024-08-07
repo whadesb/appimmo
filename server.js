@@ -19,7 +19,8 @@ const multer = require('multer');
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
-const propertyRoutes = require('./routes/property'); // Importation des routes pour les propriétés
+
+const propertyRoutes = require('./routes/property'); // Assurez-vous que le routeur de propriétés est correctement importé
 
 const app = express();
 
@@ -70,9 +71,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/property', propertyRoutes);
 
-// Connexion à MongoDB
 mongoose
   .connect(process.env.MONGODB_URI, {
     useNewUrlParser: true,
@@ -84,8 +83,6 @@ mongoose
   .catch((err) => {
     console.error('Error connecting to MongoDB', err);
   });
-
-// Route pour la déconnexion
 app.post('/logout', (req, res, next) => {
   req.logout((err) => {
     if (err) {
@@ -101,7 +98,6 @@ app.post('/logout', (req, res, next) => {
   });
 });
 
-// Routes pour les pages principales
 app.get('/', (req, res) => {
   res.render('index', { i18n: res });
 });
@@ -116,23 +112,18 @@ app.post(
     failureFlash: true,
   })
 );
-
-// Middleware pour vérifier si l'utilisateur est authentifié
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   }
   res.redirect('/login');
 }
-
 app.get('/user', isAuthenticated, (req, res) => {
   res.render('user', { user: req.user });
 });
-
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
-
 app.get('/payment', isAuthenticated, async (req, res) => {
   const { propertyId } = req.query;
 
@@ -156,11 +147,9 @@ app.get('/payment', isAuthenticated, async (req, res) => {
     res.status(500).send('Error fetching property');
   }
 });
-
 app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
-
 app.post('/register', async (req, res) => {
   const {
     email,
@@ -177,7 +166,7 @@ app.post('/register', async (req, res) => {
     return res.redirect('/register');
   }
 
-  // Validation du mot de passe
+  // Validate password
   const passwordRequirements =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -205,15 +194,10 @@ app.post('/register', async (req, res) => {
     res.send("Une erreur est survenue lors de l'inscription.");
   }
 });
-
 app.get('/landing-pages/:id', (req, res) => {
   const pageId = req.params.id;
-  res.sendFile(
-    path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`)
-  );
+  res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
 });
-
-// Configuration de Multer pour le téléchargement des fichiers
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, 'public/uploads');
@@ -225,7 +209,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Route POST pour ajouter une propriété
 app.post(
   '/add-property',
   isAuthenticated,
@@ -280,20 +263,22 @@ app.post(
       property.url = landingPageUrl;
       await property.save(); // Assurez-vous que l'URL est sauvegardée
 
-      res.status(201).json({
-        message: 'Le bien immobilier a été ajouté avec succès.',
-        url: landingPageUrl,
-      });
+      res
+        .status(201)
+        .json({
+          message: 'Le bien immobilier a été ajouté avec succès.',
+          url: landingPageUrl,
+        });
     } catch (error) {
       console.error("Erreur lors de l'ajout de la propriété : ", error);
-      res.status(500).json({
-        error: "Une erreur est survenue lors de l'ajout de la propriété.",
-      });
+      res
+        .status(500)
+        .json({ error: "Une erreur est survenue lors de l'ajout de la propriété." });
     }
   }
 );
 
-// Route POST pour mettre à jour une propriété
+// Update Property Route
 app.post(
   '/property/update/:id',
   isAuthenticated,
@@ -313,9 +298,7 @@ app.post(
       }
 
       if (!property.createdBy.equals(req.user._id)) {
-        return res.status(403).json({
-          error: "Unauthorized to update this property",
-        });
+        return res.status(403).json({ error: "Unauthorized to update this property" });
       }
 
       property.rooms = rooms;
@@ -359,14 +342,11 @@ app.post(
       res.json({ message: 'Property updated successfully', url: landingPageUrl });
     } catch (error) {
       console.error('Error updating property:', error);
-      res.status(500).json({
-        error: 'An error occurred while updating the property',
-      });
+      res.status(500).json({ error: 'An error occurred while updating the property' });
     }
   }
 );
 
-// Fonction pour générer la page de destination
 async function generateLandingPage(property) {
   const template = `
     <!DOCTYPE html>
@@ -465,17 +445,17 @@ async function generateLandingPage(property) {
   return `/landing-pages/${property._id}.html`;
 }
 
-// Routes pour récupérer et manipuler les propriétés
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ createdBy: req.user._id });
     res.json(properties);
   } catch (error) {
     console.error('Error fetching user properties', error);
-    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
+    res
+      .status(500)
+      .send('Une erreur est survenue lors de la récupération des propriétés.');
   }
 });
-
 app.get('/property/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -486,30 +466,30 @@ app.get('/property/:id', isAuthenticated, async (req, res) => {
     }
   } catch (error) {
     console.error('Error fetching property', error);
-    res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
+    res
+      .status(500)
+      .send('Une erreur est survenue lors de la récupération de la propriété.');
   }
 });
-
 app.delete('/property/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
     if (property.createdBy.equals(req.user._id)) {
-      // Supprimer les fichiers de photos existants
-      property.photos.forEach(photo => {
-        fs.unlinkSync(`public/uploads/${photo}`);
-      });
       await property.remove();
       res.status(200).send('Propriété supprimée avec succès.');
     } else {
-      res.status(403).send("Vous n'êtes pas autorisé à supprimer cette propriété.");
+      res
+        .status(403)
+        .send("Vous n'êtes pas autorisé à supprimer cette propriété.");
     }
   } catch (error) {
     console.error('Error deleting property', error);
-    res.status(500).send('Une erreur est survenue lors de la suppression de la propriété.');
+    res
+      .status(500)
+      .send('Une erreur est survenue lors de la suppression de la propriété.');
   }
 });
 
-// Route pour le traitement des paiements
 app.post('/process-payment', isAuthenticated, async (req, res) => {
   const { stripeToken, amount, propertyId } = req.body;
   const userId = req.user._id;
@@ -539,17 +519,15 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
   }
 });
 
-// Configuration de la clé publique de Stripe
 const stripePublicKey = process.env.STRIPE_PUBLIC_KEY;
 
 app.get('/config', (req, res) => {
   res.json({ publicKey: stripePublicKey });
 });
 
-// Montre le routeur pour les propriétés
-app.use('/property', propertyRoutes); // Correction pour inclure le routeur de propriété
+// Mount the property router
+app.use('/property', propertyRoutes); // Assurez-vous que cette ligne est présente pour monter le routeur
 
-// Démarrer le serveur
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
