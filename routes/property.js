@@ -1,13 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const Property = require('../models/Property');
-const fs = require('fs');
-const path = require('path');
+const authMiddleware = require('../middleware/auth');
 const multer = require('multer');
 const sharp = require('sharp');
-
-// Middleware d'authentification
-const authMiddleware = require('../middleware/auth');
+const fs = require('fs');
+const path = require('path');
 
 // Configuration de multer pour le traitement des fichiers uploadés
 const storage = multer.diskStorage({
@@ -21,6 +19,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Route POST pour ajouter une propriété
 router.post('/add-property', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 }
@@ -194,6 +193,25 @@ router.get('/payment', async (req, res) => {
     } catch (error) {
         console.error('Erreur lors de la récupération de la propriété : ', error);
         res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de la propriété.' });
+    }
+});
+
+// Route GET pour afficher le formulaire de modification
+router.get('/property/edit/:id', authMiddleware, async (req, res) => {
+    try {
+        // Récupérez la propriété par son identifiant
+        const property = await Property.findById(req.params.id);
+
+        // Vérifiez si la propriété existe et appartient à l'utilisateur actuel
+        if (!property || !property.createdBy.equals(req.user._id)) {
+            return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
+        }
+
+        // Rendre la vue de modification avec les données de la propriété
+        res.render('edit-property', { property });
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la propriété pour modification:', error);
+        res.status(500).send('Erreur lors de la récupération de la propriété.');
     }
 });
 
