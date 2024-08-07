@@ -29,7 +29,21 @@ const validCodes = [
   'CODE44',
   'CODE5',
 ];
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
+router.get('/user', isAuthenticated, async (req, res) => {
+  try {
+    // Vérifiez que req.user existe
+    if (!req.user) {
+      console.error('Utilisateur non authentifié');
+      return res.redirect('/login');
+    }
+    
 app.use(compression());
 
 app.use(cookieParser());
@@ -118,33 +132,26 @@ app.post(
   })
 );
 
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
-}
 
-app.get('/user', isAuthenticated, async (req, res) => {
+router.get('/user', isAuthenticated, async (req, res) => {
   try {
-    console.log('Utilisateur authentifié:', req.user); // Ajoutez ceci pour vérifier l'utilisateur
+    // Vérifiez que req.user existe
+    if (!req.user) {
+      console.error('Utilisateur non authentifié');
+      return res.redirect('/login');
+    }
 
-    const properties = await Property.find({ createdBy: req.user._id });
+    // Récupérez les propriétés de l'utilisateur connecté
+    const properties = await Property.find({ createdBy: req.user._id }).lean(); // Ajoutez .lean() pour convertir en objets JS
 
+    // Vérifiez que les propriétés sont correctement récupérées
     console.log('Propriétés récupérées:', properties);
 
-    // Ensure properties are passed to EJS
-    res.render('user', { user: req.user, properties: properties || [] });
+    // Passez les propriétés à la vue user.ejs
+    res.render('user', { user: req.user, properties });
   } catch (error) {
-    console.error(
-      "Erreur lors de la récupération des propriétés de l'utilisateur :",
-      error
-    );
-    res
-      .status(500)
-      .send(
-        "Une erreur est survenue lors de la récupération des propriétés."
-      );
+    console.error('Erreur lors de la récupération des propriétés de l\'utilisateur:', error);
+    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
   }
 });
 
