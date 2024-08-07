@@ -39,7 +39,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
-
 app.use((req, res, next) => {
   if (req.query.lang) {
     res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
@@ -49,7 +48,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -59,7 +57,6 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24 },
   })
 );
-
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(
@@ -70,10 +67,8 @@ passport.use(
     User.authenticate()
   )
 );
-
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
-
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -121,7 +116,7 @@ app.post(
   })
 );
 
-// Middleware to check if user is authenticated
+// Vérifiez l'authentification
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
     return next();
@@ -129,14 +124,15 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
+// Route pour la vue utilisateur
 app.get('/user', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ createdBy: req.user._id });
 
-    // Logging properties to check if data is retrieved
-    console.log('Properties retrieved for user:', properties);
+    // Ajoutez un log pour vérifier les propriétés récupérées
+    console.log('Properties retrieved:', properties);
 
-    res.render('user', { user: req.user, properties });
+    res.render('user', { user: req.user, properties }); // Passez les propriétés à la vue
   } catch (error) {
     console.error('Erreur lors de la récupération des propriétés :', error);
     res.status(500).send('Erreur lors de la récupération des propriétés.');
@@ -144,7 +140,7 @@ app.get('/user', isAuthenticated, async (req, res) => {
 });
 
 app.post('/property/update/:id', isAuthenticated, async (req, res) => {
-  // Logic for updating a property goes here
+  // Logic for updating a property
 });
 
 app.get('/faq', (req, res) => {
@@ -295,17 +291,13 @@ app.post(
       property.url = landingPageUrl;
       await property.save(); // Assurez-vous que l'URL est sauvegardée
 
-      res
-        .status(201)
-        .json({
-          message: 'Le bien immobilier a été ajouté avec succès.',
-          url: landingPageUrl,
-        });
+      res.status(201).json({
+        message: 'Le bien immobilier a été ajouté avec succès.',
+        url: landingPageUrl,
+      });
     } catch (error) {
-      console.error("Erreur lors de l'ajout de la propriété : ", error);
-      res
-        .status(500)
-        .json({ error: "Une erreur est survenue lors de l'ajout de la propriété." });
+      console.error('Erreur lors de l\'ajout de la propriété : ', error);
+      res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
     }
   }
 );
@@ -483,9 +475,7 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
     res.json(properties);
   } catch (error) {
     console.error('Error fetching user properties', error);
-    res
-      .status(500)
-      .send('Une erreur est survenue lors de la récupération des propriétés.');
+    res.status(500).send('Une erreur est survenue lors de la récupération des propriétés.');
   }
 });
 
@@ -499,9 +489,7 @@ app.get('/property/:id', isAuthenticated, async (req, res) => {
     }
   } catch (error) {
     console.error('Error fetching property', error);
-    res
-      .status(500)
-      .send('Une erreur est survenue lors de la récupération de la propriété.');
+    res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
   }
 });
 
@@ -512,15 +500,11 @@ app.delete('/property/:id', isAuthenticated, async (req, res) => {
       await property.remove();
       res.status(200).send('Propriété supprimée avec succès.');
     } else {
-      res
-        .status(403)
-        .send("Vous n'êtes pas autorisé à supprimer cette propriété.");
+      res.status(403).send("Vous n'êtes pas autorisé à supprimer cette propriété.");
     }
   } catch (error) {
     console.error('Error deleting property', error);
-    res
-      .status(500)
-      .send('Une erreur est survenue lors de la suppression de la propriété.');
+    res.status(500).send('Une erreur est survenue lors de la suppression de la propriété.');
   }
 });
 
