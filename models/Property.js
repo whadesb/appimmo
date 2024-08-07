@@ -10,8 +10,9 @@ const propertySchema = new Schema({
     url: { type: String, required: false },
     createdAt: { type: Date, default: Date.now },
     views: { type: Number, default: 0 },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    photos: [String] // Ajoutez ce champ pour stocker les chemins des photos
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+    photos: [String], // Ajoutez ce champ pour stocker les chemins des photos
+    isPublished: { type: Boolean, default: false } // Nouveau champ pour l'état de publication
 });
 
 const Property = mongoose.model('Property', propertySchema);
