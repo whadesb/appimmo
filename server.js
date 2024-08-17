@@ -303,29 +303,18 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
 
     await property.save();
 
-    // Appeler la fonction pour régénérer la landing page avec les nouvelles données
+    // Étape 2 : Appeler la fonction pour régénérer la landing page avec les nouvelles données
     const landingPageUrl = await generateLandingPage(property);
+
+    // Étape 3 : Mettez à jour l'URL de la landing page dans la base de données
+    property.url = landingPageUrl;
+    await property.save();
 
     // Rediriger l'utilisateur vers sa liste de propriétés
     res.redirect('/user');
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la propriété : ', error);
     res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de la propriété.' });
-  }
-});
-
-app.delete('/property/:id', isAuthenticated, async (req, res) => {
-  try {
-    const property = await Property.findById(req.params.id);
-    if (property.createdBy.equals(req.user._id)) {
-      await property.remove();
-      res.status(200).send('Propriété supprimée avec succès.');
-    } else {
-      res.status(403).send('Vous n\'êtes pas autorisé à supprimer cette propriété.');
-    }
-  } catch (error) {
-    console.error('Error deleting property', error);
-    res.status(500).send('Une erreur est survenue lors de la suppression de la propriété.');
   }
 });
 
