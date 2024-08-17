@@ -303,6 +303,9 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
 
     await property.save();
 
+    // Appeler la fonction pour régénérer la landing page avec les nouvelles données
+    const landingPageUrl = await generateLandingPage(property);
+
     // Rediriger l'utilisateur vers sa liste de propriétés
     res.redirect('/user');
   } catch (error) {
