@@ -85,7 +85,7 @@ const upload = multer({ storage: storage });
 
 // Routes
 app.get('/', (req, res) => {
-  res.render('index', { i18n: res });
+  res.render('index', { i18n: res, user: req.user });
 });
 
 app.get('/login', (req, res) => {
