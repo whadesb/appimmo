@@ -289,7 +289,7 @@ section[id] {
 }
 
 .sticky-wrapper.is-sticky .navbar {
-  background-color: var(--secondary-color);
+  background-color: #000;
 }
 
 .navbar {
@@ -334,7 +334,7 @@ section[id] {
 }
 
 .navbar .dropdown-menu {
-  background: var(--white-color);
+  background: #000;
   box-shadow: 0 1rem 3rem rgba(0,0,0,.175);
   border: 0;
   display: inherit;
@@ -360,7 +360,7 @@ section[id] {
 
 .navbar .dropdown-item {
   display: inline-block;
-  color: var(--p-bg-color);
+  color: #000;
   font-family: var(--title-font-family); 
   font-size: var(--menu-font-size);
   font-weight: var(--font-weight-medium);
@@ -374,7 +374,7 @@ section[id] {
 .navbar .dropdown-item:focus, 
 .navbar .dropdown-item:hover {
   background: transparent;
-  color: var(--primary-color);
+  color: #000;
 }
 
 .navbar .dropdown-toggle::after {
@@ -456,7 +456,7 @@ section[id] {
 }
 
 .navbar-toggler .navbar-toggler-icon {
-  background: var(--white-color);
+  background: #000;
   transition: background 10ms 300ms ease;
   display: block;
   width: 30px;
@@ -472,7 +472,7 @@ section[id] {
   position: absolute;
   right: 0;
   left: 0;
-  background: var(--white-color);
+  background: #000;
   width: 30px;
   height: 2px;
   content: '';
