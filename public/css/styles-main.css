@@ -98,7 +98,7 @@ p {
 ul li {
   color: #000;
   font-size: var(--p-font-size);
-  font-weight: var(--font-weight-normal);
+  font-weight: 400;
 }
 
 a, 
