@@ -291,19 +291,19 @@
                 <div class="col">
                     <div class="main-section">
                         <div id="account" class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Mon Profil</h5>
-                                <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
-                                <p class="card-text">Nom: <%= user.firstName %></p>
-                                <p class="card-text">Prénom: <%= user.lastName %></p>
-                                <p class="card-text">Email: <%= user.email %></p>
-                            </div>
-                        </div>
-                        <div id="landing" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title">Landing Page</h5>
-                                <p class="card-text">Créez facilement et rapidement votre propre page d'annonce immobilière. Remplissez le formulaire ci-dessous avec les détails de votre bien, et notre outil se chargera de générer une landing page professionnelle prête à être partagée avec vos prospects.</p>
-                                 <h5 class="card-title">Ajouter un bien immobilier</h5>
+    <div class="card-body">
+        <h5 class="card-title">Mon Profil</h5>
+        <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
+        <p class="card-text">Nom: <%= user.firstName %></p>
+        <p class="card-text">Prénom: <%= user.lastName %></p>
+        <p class="card-text">Email: <%= user.email %></p>
+    </div>
+</div>
+                       <div id="landing" class="card" style="display: none;">
+    <div class="card-body">
+        <h5 class="card-title">Landing Page</h5>
+        <p class="card-text">Créez facilement et rapidement votre propre page d'annonce immobilière. Remplissez le formulaire ci-dessous avec les détails de votre bien, et notre outil se chargera de générer une landing page professionnelle prête à être partagée avec vos prospects.</p>
+        <h5 class="card-title">Ajouter un bien immobilier</h5>
                                 <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
                                     <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
                                     <div class="form-group">
@@ -343,14 +343,12 @@
     <div class="card-body">
         <h5 class="card-title">Statistiques de Diffusion des Annonces</h5>
         <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google. Ces données vous offrent une vue d'ensemble sur l'efficacité de vos campagnes et vous aident à optimiser votre stratégie de diffusion pour maximiser l'impact de vos annonces.</p>
-
-                                
-                            </div>
-                        </div>
+    </div>
+</div>
                         <div id="created-pages" class="card" style="display: none;">
-                            <div class="card-body">
-                            <h5 class="card-title">Gestion des Annonces Immobilières</h5>
-                            <p class="card-text">Dans cet espace, vous trouverez toutes vos annonces immobilières générées avec leur URL unique et description. Utilisez les actions disponibles pour modifier vos annonces, copier le lien pour le partager gratuitement, ou opter pour une diffusion payante de votre annonce au prix de 500 €. Assurez-vous que vos annonces sont toujours à jour pour maximiser leur impact.</p>
+    <div class="card-body">
+        <h5 class="card-title">Gestion des Annonces Immobilières</h5>
+        <p class="card-text">Dans cet espace, vous trouverez toutes vos annonces immobilières générées avec leur URL unique et description. Utilisez les actions disponibles pour modifier vos annonces, copier le lien pour le partager gratuitement, ou opter pour une diffusion payante de votre annonce au prix de 500 €. Assurez-vous que vos annonces sont toujours à jour pour maximiser leur impact.</p>
                             <table class="table table-striped">
                             <thead>
                             <tr>
