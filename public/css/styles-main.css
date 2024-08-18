@@ -289,7 +289,7 @@ section[id] {
 }
 
 .sticky-wrapper.is-sticky .navbar {
-  background-color: #000;
+  background-color: transparent;
 }
 
 .navbar {
