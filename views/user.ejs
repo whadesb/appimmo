@@ -274,7 +274,8 @@
                     <div class="main-section">
                         <div id="account" class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Mes Informations :</h5>
+                                <h5 class="card-title">Mon Profil :</h5>
+                                <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
                                 <p class="card-text">Nom: <%= user.firstName %></p>
                                 <p class="card-text">Prénom: <%= user.lastName %></p>
                                 <p class="card-text">Email: <%= user.email %></p>
@@ -282,7 +283,9 @@
                         </div>
                         <div id="landing" class="card" style="display: none;">
                             <div class="card-body">
-                                <h5 class="card-title">Ajouter un bien immobilier</h5>
+                                <h5 class="card-title">Landing Page :</h5>
+                                <p class="card-text">Créez facilement et rapidement votre propre page d'annonce immobilière. Remplissez le formulaire ci-dessous avec les détails de votre bien, et notre outil se chargera de générer une landing page professionnelle prête à être partagée avec vos prospects.</p>
+                                 <h5 class="card-title">Ajouter un bien immobilier</h5>
                                 <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
                                     <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
                                     <div class="form-group">
