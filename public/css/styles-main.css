@@ -910,7 +910,7 @@ blockquote {
 }
 
 .custom-form button[type="submit"] {
-  background: #1511933;
+  background: #151193;
   border: none;
   border-radius: var(--border-radius-large);
   color: var(--white-color);
