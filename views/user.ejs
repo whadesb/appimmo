@@ -185,11 +185,29 @@
                 padding: 10px;
                 font-size: 18px;
             }
+            .card-title {
+                font-weight: 500; /* Moins gras */
+                font-size: 1.25rem; /* Taille du texte modérée */
+                color: #333; /* Couleur sombre pour un style pro */
+                margin-bottom: 0.5rem; /* Espacement sous le titre */
+}
+            .card-text {
+                font-size: 0.875rem; /* Taille du texte réduite pour un aspect fin */
+                color: #666; /* Couleur gris foncé pour une apparence sobre */
+                line-height: 1.5; /* Amélioration de la lisibilité */
+                margin-bottom: 1rem; /* Espacement sous la description */
+}
         }
 
         @media (min-width: 768px) {
             .sidebar-links {
                 display: none;
+            }
+            .card-title {
+                font-size: 1.125rem; /* Réduction de la taille du titre sur mobile */
+            }
+            .card-text {
+                font-size: 0.8125rem; /* Taille de texte légèrement réduite sur mobile */
             }
         }
     </style>
