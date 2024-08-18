@@ -1,87 +1,106 @@
 <!doctype html>
 <html lang="en">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0LN60RQ12K');
+    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
     <meta name="theme-color" content="#8781D2"> 
     <title>UAP Immo | Edit Property</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link rel="preload" href="/css/styles-main.css" as="style">
-    <link rel="stylesheet" href="/css/styles-main.css">
+    <link rel="stylesheet" href="/css/styles-main.css">  
     <style>
-        html, body {
-            height: 100%;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Arial', sans-serif;
-            background-color: #fefefefe;
-            margin: 0;
-        }
-        .navbar {
-            background-color: #8781D2; 
-            margin-bottom: 20px;
-        }
-        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #ffffff;
-        }
-        .main-section {
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 2px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            margin-left: 10px;
-            min-height: 500px;
-        }
         .form-container {
-            max-width: 600px; /* Réduction de la largeur maximale du formulaire */
-            margin: 0 auto; /* Centrage du formulaire */
+            max-width: 600px;
+            margin: 50px auto;
             padding: 20px;
-            background: #fcfbfb;
-            border-radius: 2px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            margin-top: 20px; /* Marge entre la description et le formulaire */
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h4 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .form-container .form-text {
+            margin-bottom: 15px;
+        }
+        .new-section {
+            padding: 60px 0; 
+            background-color: #f8f9fa; 
+        }
+        .hero-section {
+            padding-top: 100px; 
+        }
+        .form-control-icon {
+            position: relative;
+        }
+        .form-control-icon input {
+            padding-right: 2.5rem;
+        }
+        .form-control-icon .icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
         }
         .btn-primary {
             background-color: #8781dc;
             border-color: #000;
         }
         .btn-primary:hover {
-            background-color: #8140de;
-            border-color: #000;
+            background-color: #8781dc;
+            border-color: #8140de;
         }
-        .h1 {
-            font-size: 2rem; /* Réduction de la taille du titre */
-            margin-bottom: 10px;
+        .form-container .form-label {
+            font-weight: bold;
         }
-        .description-text {
-            font-size: 1.2rem; /* Taille de la description */
-            margin-bottom: 20px; /* Marge sous la description */
+        .navbar {
+            background-color: #8781dc; /* Set background color */
+            transition: background-color 0.3s;
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+            color: #ffffff; /* Set text color */
+        }
+        .navbar .navbar-icon {
+            font-size: 1.5rem;
+        }
+        .navbar .navbar-icon.bi-person {
+            color: #000 !important;
         }
         @media (max-width: 767px) {
-            .main-section {
-                margin-left: 0;
-                margin-right: 0;
-                margin-top: 0;
-                width: 100%;
-                border-radius: 0;
-                box-shadow: none;
-                min-height: 300px;
-                overflow-x: auto;
-                padding-left: 0;
-                padding-right: 0;
-            }
             .form-container {
-                padding: 15px;
-                max-width: 100%; /* Largeur maximale du formulaire en mobile */
+                background: none;
+                box-shadow: none;
+                border: none;
             }
         }
-    </style>
+        .form-summary p {
+            margin-bottom: 10px;
+            color: #333; /* Text color changed to a darker shade */
+        }
+        .form-control.card-number {
+            font-size: 1.2rem; /* Increase font size for better visibility */
+            padding: 10px;
+            border: 2px solid #8781dc; /* Add border for better visibility */
+            border-radius: 5px;
+        }
+    </style>    
 </head>
 <body id="top">
-    <main>
+   <main>
         <nav class="navbar navbar-expand-lg">
             <div class="container">
                 <a class="navbar-brand" href="/">
@@ -95,7 +114,7 @@
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                 <ul class="navbar-nav ms-lg-5 me-lg-auto">
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="/">Home</a>
                         </li>
@@ -105,7 +124,7 @@
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="/#processus">Processus</a>
                         </li>
-                        <li class="nav-item">
+                       <li class="nav-item">
                             <a class="nav-link click-scroll" href="/#faq">FAQs</a>
                         </li>
                         <li class="nav-item">
@@ -119,15 +138,54 @@
                     </div>
                 </div>
             </div>
-        </nav> 
-
-        <section class="contact-section section-padding section-bg" id="section_5">
-            <div class="container">
-                <h2 class="h1">Modifier Votre Annonce Immobilière</h2>
-                <p class="description-text">Apportez les modifications nécessaires à votre annonce immobilière. Les informations actuelles de votre bien sont déjà préremplies dans le formulaire ci-dessous. Assurez-vous que tous les détails sont exacts et à jour pour maximiser l'impact de votre annonce. Une fois les modifications enregistrées, votre landing page sera instantanément mise à jour.</p>
-            
+        </nav>     
+       <section class="new-section" id="section_4">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-12">
                 <div class="form-container">
-                    <h3 class="h3 text-center">Formulaire de Modification</h3>
+                    <h4>Modifier Votre Annonce Immobilière</h4>
+                    <p class="form-text">Apportez les modifications nécessaires à votre annonce immobilière. Les informations actuelles de votre bien sont déjà préremplies dans le formulaire ci-dessous. Assurez-vous que tous les détails sont exacts et à jour pour maximiser l'impact de votre annonce. Une fois les modifications enregistrées, votre landing page sera instantanément mise à jour.</p>
+                    <p class="form-text">Cette offre vous garantit une exposition ciblée, atteignant des milliers de prospects qualifiés. En choisissant notre service, vous maximisez vos chances de vendre rapidement en bénéficiant de l'impact combiné de ces réseaux puissants. Le paiement est entièrement sécurisé par carte bancaire, vous permettant de diffuser votre annonce en toute confiance.</p>
+                    
+                    <form id="payment-form" autocomplete="off">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nom sur la carte</label>
+                            <input type="text" class="form-control" id="name" name="name" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="address" class="form-label">Adresse</label>
+                            <input type="text" class="form-control" id="address" name="address" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="city" class="form-label">Ville</label>
+                            <input type="text" class="form-control" id="city" name="city" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="country" class="form-label">Pays</label>
+                            <input type="text" class="form-control" id="country" name="country" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="zip" class="form-label">Code Postal</label>
+                            <input type="text" class="form-control" id="zip" name="zip" autocomplete="off" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="card-element" class="form-label">Numéro de Carte</label>
+                            <div id="card-element" class="form-control card-number" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="0">
+                                <!-- Stripe Element will be inserted here -->
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Payer</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col-lg-6 col-12">
+                <div class="form-container">
+                    <h4>Récapitulatif de la Commande</h4>
                     <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="rooms" class="form-label">Nombre de pièces</label>
@@ -161,56 +219,124 @@
                     </form>
                 </div>
             </div>
-        </section>
-
-        <footer class="site-footer section-padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-12 mb-4 pb-2">
-                        <a class="navbar-brand mb-2" href="/">
-                            <i class="bi-back"></i>
-                            <span>UAP Immo</span>
+        </div>
+    </div>
+</section>
+    </main>
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/">
+                        <i class="bi-back"></i>
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
+                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
+                        <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
+                    <h6 class="site-footer-title mb-3">Accès</h6>
+                    <p class="text-white d-flex mb-1">
+                        <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
+                    </p>
+                    <p class="text-white d-flex">
+                        <a href="mailto:info@company.com" class="site-footer-link">
+                            contact@uap.immo
                         </a>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Informations</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Home</a></li>
-                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Mon espace</a></li>
-                            <li class="site-footer-link-item"><a href="#" class="site-footer-link">Créer un compte</a></li>
+                    </p>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="#">English</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Français</a>
+                            </li>
                         </ul>
                     </div>
-                    <div class="col-lg-3 col-md-4 col-6 mb-4 mb-lg-0">
-                        <h6 class="site-footer-title mb3">Accès</h6>
-                        <p class="text-white d-flex mb-1">
-                            <a href="tel: 305-240-9671" class="site-footer-link">Contact</a>
-                        </p>
-                        <p class="text-white d-flex">
-                            <a href="mailto:info@company.com" class="site-footer-link">
-                                contact@uap.immo
-                            </a>
-                        </p>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="#">English</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">Français</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
                 </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
             </div>
-        </footer>
-    </main>
-
-    <script src="/jquery-3.6.0.min.js"></script>
+        </div>
+    </footer>
+    <!-- JAVASCRIPT FILES -->
+    <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/jquery.sticky.js"></script>
+    <script src="/js/click-scroll.js"></script>
+    <script src="/js/custom.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+        async function initializeStripe() {
+            const response = await fetch('/config');
+            const { publicKey } = await response.json();
+            const stripe = Stripe(publicKey);
+            const elements = stripe.elements();
+            const cardElement = elements.create('card', {
+                hidePostalCode: true,
+                style: {
+                    base: {
+                        fontSize: '16px',
+                        color: '#32325d',
+                        '::placeholder': {
+                            color: '#aab7c4',
+                        },
+                    },
+                    invalid: {
+                        color: '#fa755a',
+                        iconColor: '#fa755a',
+                    },
+                },
+            });
+            cardElement.mount('#card-element');
+
+            const form = document.getElementById('payment-form');
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const { token, error } = await stripe.createToken(cardElement);
+                if (error) {
+                    console.error('Error creating payment token:', error);
+                    return;
+                }
+                const formData = new FormData(event.target);
+                formData.append('stripeToken', token.id);
+                formData.append('amount', 50000); // Montant en centimes pour 500€
+
+                try {
+                    const response = await fetch('/process-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(Object.fromEntries(formData.entries())),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        alert('Payment successful!');
+                        window.location.href = '/user';
+                    } else {
+                        const errorData = await response.json();
+                        console.error('Payment error:', errorData.error);
+                        alert('Payment failed. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Payment processing error:', error);
+                    alert('Payment processing failed. Please try again.');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeStripe);
+    </script>
 </body>
 </html>
