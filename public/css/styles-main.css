@@ -289,11 +289,11 @@ section[id] {
 }
 
 .sticky-wrapper.is-sticky .navbar {
-  background-color: #8781dc;
+  background-color: #C4B990;
 }
 
 .navbar {
-  background: #8781dc;
+  background: #C4B990;
   border-bottom: none;
   z-index: 9;
 }
