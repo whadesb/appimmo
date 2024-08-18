@@ -146,46 +146,12 @@
                 <div class="form-container">
                     <h4>Modifier Votre Annonce Immobilière</h4>
                     <p class="form-text">Apportez les modifications nécessaires à votre annonce immobilière. Les informations actuelles de votre bien sont déjà préremplies dans le formulaire ci-dessous. Assurez-vous que tous les détails sont exacts et à jour pour maximiser l'impact de votre annonce. Une fois les modifications enregistrées, votre landing page sera instantanément mise à jour.</p>
-                    <p class="form-text">Cette offre vous garantit une exposition ciblée, atteignant des milliers de prospects qualifiés. En choisissant notre service, vous maximisez vos chances de vendre rapidement en bénéficiant de l'impact combiné de ces réseaux puissants. Le paiement est entièrement sécurisé par carte bancaire, vous permettant de diffuser votre annonce en toute confiance.</p>
-                    
-                    <form id="payment-form" autocomplete="off">
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Nom sur la carte</label>
-                            <input type="text" class="form-control" id="name" name="name" autocomplete="off" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" autocomplete="off" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="address" class="form-label">Adresse</label>
-                            <input type="text" class="form-control" id="address" name="address" autocomplete="off" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="city" class="form-label">Ville</label>
-                            <input type="text" class="form-control" id="city" name="city" autocomplete="off" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="country" class="form-label">Pays</label>
-                            <input type="text" class="form-control" id="country" name="country" autocomplete="off" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="zip" class="form-label">Code Postal</label>
-                            <input type="text" class="form-control" id="zip" name="zip" autocomplete="off" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="card-element" class="form-label">Numéro de Carte</label>
-                            <div id="card-element" class="form-control card-number" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="0">
-                                <!-- Stripe Element will be inserted here -->
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block">Payer</button>
-                    </form>
+                    <p class="form-text">Lorem</p>
                 </div>
             </div>
             <div class="col-lg-6 col-12">
                 <div class="form-container">
-                    <h4>Récapitulatif de la Commande</h4>
+                    <h4>Modifier</h4>
                     <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="rooms" class="form-label">Nombre de pièces</label>
