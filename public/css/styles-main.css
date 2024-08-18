@@ -317,7 +317,7 @@ section[id] {
 
 .navbar-nav .nav-link {
   display: inline-block;
-  color: var(--white-color);
+  color: #000000;
   font-family: var(--title-font-family); 
   font-size: var(--menu-font-size);
   font-weight: var(--font-weight-medium);
