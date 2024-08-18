@@ -35,8 +35,8 @@
             min-height: 500px;
         }
         .form-container {
-            max-width: 100%;
-            margin: 0 auto;
+            max-width: 600px; /* Réduction de la largeur maximale du formulaire */
+            margin: 0 auto; /* Centrage du formulaire */
             padding: 20px;
             background: #f9f9f9;
             border-radius: 8px;
@@ -49,6 +49,17 @@
         .btn-primary:hover {
             background-color: #8140de;
             border-color: #000;
+        }
+        .h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .h2 {
+            font-size: 2rem;
+            margin-bottom: 20px; /* Ajout de marge sous le titre */
+        }
+        .card-text {
+            margin-bottom: 20px; /* Ajout de marge sous la description */
         }
         @media (max-width: 767px) {
             .main-section {
@@ -65,19 +76,8 @@
             }
             .form-container {
                 padding: 15px;
+                max-width: 100%; /* Largeur maximale du formulaire en mobile */
             }
-        }
-        .h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        .h2 {
-            font-size: 2rem;
-            margin-bottom: 10px;
-        }
-        .custom-block-image {
-            object-fit: contain;
-            height: auto;
         }
     </style>
 </head>
@@ -127,37 +127,40 @@
                 <h2 class="h2">Modifier Votre Annonce Immobilière</h2>
                 <p class="card-text">Apportez les modifications nécessaires à votre annonce immobilière. Les informations actuelles de votre bien sont déjà préremplies dans le formulaire ci-dessous. Assurez-vous que tous les détails sont exacts et à jour pour maximiser l'impact de votre annonce. Une fois les modifications enregistrées, votre landing page sera instantanément mise à jour.</p>
             
-                <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
-                    <div class="mb-3">
-                        <label for="rooms" class="form-label">Nombre de pièces</label>
-                        <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="surface" class="form-label">Surface (m²)</label>
-                        <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="price" class="form-label">Prix (€)</label>
-                        <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="city" class="form-label">Ville</label>
-                        <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="country" class="form-label">Pays</label>
-                        <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="photo1" class="form-label">Photo 1 (optionnel)</label>
-                        <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
-                    </div>
-                    <div class="mb-3">
-                        <label for="photo2" class="form-label">Photo 2 (optionnel)</label>
-                        <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
-                </form>
+                <div class="form-container">
+                    <h3 class="h3 text-center">Formulaire de Modification</h3>
+                    <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
+                        <div class="mb-3">
+                            <label for="rooms" class="form-label">Nombre de pièces</label>
+                            <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="surface" class="form-label">Surface (m²)</label>
+                            <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="price" class="form-label">Prix (€)</label>
+                            <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="city" class="form-label">Ville</label>
+                            <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="country" class="form-label">Pays</label>
+                            <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="photo1" class="form-label">Photo 1 (optionnel)</label>
+                            <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
+                        </div>
+                        <div class="mb-3">
+                            <label for="photo2" class="form-label">Photo 2 (optionnel)</label>
+                            <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
+                    </form>
+                </div>
             </div>
         </section>
 
