@@ -132,6 +132,11 @@
     margin-bottom: 1rem; /* Espacement sous la description */
     letter-spacing: 0.5px; /* Léger espacement entre les lettres */
 }
+.card-body .user-info {
+    color: #333; /* Couleur plus foncée pour le texte des informations utilisateur */
+    margin-bottom: 0.5rem; /* Réduction de l'espace entre chaque élément */
+    line-height: 1.5rem; /* Espacement des lignes réduit */
+}
         @media (max-width: 767px) {
             .container-fluid {
                 padding-left: 0;
@@ -183,7 +188,7 @@
                 -webkit-overflow-scrolling: touch;
             }
 
-            /* Style spécifique pour le formulaire sur mobile */
+        
             #landing .form-group {
                 width: 100%;
                 padding: 5px;
@@ -210,6 +215,11 @@
     color: #666; /* Couleur gris foncé pour une apparence sobre */
     margin-bottom: 1rem; /* Espacement sous la description */
     letter-spacing: 0.5px; /* Léger espacement entre les lettres */
+}
+.card-body .user-info {
+    color: #333; /* Couleur plus foncée pour le texte des informations utilisateur */
+    margin-bottom: 0.5rem; /* Réduction de l'espace entre chaque élément */
+    line-height: 1.5rem; /* Espacement des lignes réduit */
 }
         }
 
@@ -312,9 +322,9 @@
     <div class="card-body">
         <h5 class="card-title">Mon Profil</h5>
         <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
-        <p class="card-text">Nom: <%= user.firstName %></p>
-        <p class="card-text">Prénom: <%= user.lastName %></p>
-        <p class="card-text">Email: <%= user.email %></p>
+          <p class="card-text user-info">Nom: <%= user.firstName %></p>
+    <p class="card-text user-info">Prénom: <%= user.lastName %></p>
+    <p class="card-text user-info">Email: <%= user.email %></p>
     </div>
 </div>
                        <div id="landing" class="card" style="display: none;">
