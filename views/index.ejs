@@ -135,22 +135,23 @@
                             <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> Pages créées</a>
                         </li>
                     </ul>
-                    <div class="d-none d-lg-block">
-                        <% if (user) { %>
-                            <form action="/logout" method="POST" class="d-inline">
-                                <button type="submit" style="background: none; border: none; position: relative;">
-                                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                                    <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
-                                    <span class="visually-hidden">Logout</span>
-                                </button>
-                            </form>
-                        <% } else { %>
-                            <a href="/login" style="position: relative;">
-                                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                                <span class="visually-hidden">Login</span>
-                            </a>
-                        <% } %>
-                    </div>
+                    <div class="d-lg-none ms-auto me-4">
+    <% if (user) { %>
+        <form action="/logout" method="POST" class="d-inline">
+            <button type="submit" style="background: none; border: none; position: relative;">
+                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
+                <span class="visually-hidden">Logout</span>
+            </button>
+        </form>
+    <% } else { %>
+        <a href="/login" style="position: relative;">
+            <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+            <span class="visually-hidden">Login</span>
+        </a>
+    <% } %>
+</div>
+
                 </div>
             </div>
         </nav>
