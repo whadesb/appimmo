@@ -89,15 +89,28 @@
     </style>    
 </head>
 <body id="top">
-   <main>
-        <nav class="navbar navbar-expand-lg">
+  <main>
+        <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
                     <i class="bi-back"></i>
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto me-4">
-                    <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+                    <% if (user) { %>
+                        <form action="/logout" method="POST" class="d-inline">
+                            <button type="submit" style="background: none; border: none; position: relative;">
+                                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                                <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
+                                <span class="visually-hidden">Logout</span>
+                            </button>
+                        </form>
+                    <% } else { %>
+                        <a href="/login" style="position: relative;">
+                            <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                            <span class="visually-hidden">Login</span>
+                        </a>
+                    <% } %>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -119,17 +132,39 @@
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="/#contact">Contact</a>
                         </li>
+                        <!-- Sidebar links for mobile -->
+                        <li class="nav-item sidebar-mobile-links sidebar-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> Mon compte</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links sidebar-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> Landing page</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links sidebar-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('publicite')"><i class="fa-solid fa-chart-line"></i> Données</a>
+                        </li>
+                        <li class="nav-item sidebar-mobile-links sidebar-links">
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> Pages créées</a>
+                        </li>
                     </ul>
                     <div class="d-none d-lg-block">
-
-                        <a href="/login" style="display: inline-block; text-decoration: none;">
-                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                    <span class="visually-hidden">Login</span>
-                        </a>
+                        <% if (user) { %>
+                            <form action="/logout" method="POST" class="d-inline">
+                                <button type="submit" style="background: none; border: none; position: relative;">
+                                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                                    <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
+                                    <span class="visually-hidden">Logout</span>
+                                </button>
+                            </form>
+                        <% } else { %>
+                            <a href="/login" style="position: relative;">
+                                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                                <span class="visually-hidden">Login</span>
+                            </a>
+                        <% } %>
                     </div>
                 </div>
             </div>
-        </nav>     
+        </nav>
             <!-- New Section Start -->
             <section class="new-section">
                 <div class="container">
