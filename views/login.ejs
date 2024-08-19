@@ -132,18 +132,17 @@
                 </div>
             </div>
         </nav>
-            <!-- New Section Start -->
-            <section class="new-section">
+              <section class="new-section">
                 <div class="container">
                     <div class="row">
                         <div class="col-12 col-lg-8 mx-auto">
                             <div class="form-container">
                                 <h2 class="text-center">Connexion</h2>
-                                <form action="/login" method="POST">
+                                <form action="/login" method="POST" autocomplete="off">
                                     <div class="mb-3">
                                         <label for="email" class="form-label">Email</label>
                                         <div class="form-control-icon">
-                                            <input type="email" class="form-control" id="email" name="email" required>
+                                            <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
                                             <i class="bi bi-envelope-fill icon"></i>
                                         </div>
                                         <div id="emailHelp" class="form-text">Vous pouvez utiliser votre email pour vous connecter.</div>
@@ -151,7 +150,7 @@
                                     <div class="mb-3">
                                         <label for="password" class="form-label">Mot de passe</label>
                                         <div class="form-control-icon">
-                                            <input type="password" class="form-control" id="password" name="password" required>
+                                            <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
                                             <i class="bi bi-eye-fill icon" id="togglePassword"></i>
                                         </div>
                                     </div>
@@ -165,9 +164,6 @@
                     </div>
                 </div>
             </section>
-            <!-- New Section End -->
-
-        
         </main>
 
         <footer class="site-footer section-padding">
