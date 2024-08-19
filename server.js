@@ -23,7 +23,11 @@ const validator = require('validator');
 const app = express();
 
 // Configuration des codes valides pour l'inscription
-const validCodes = ['d86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba', 'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa', 'CODE3', 'CODE44', 'CODE5'];
+const validCodes = [
+  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba',
+  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa',
+  'CODE3', 'CODE44', 'CODE5'
+];
 
 // Middleware
 app.use(compression());
@@ -32,6 +36,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
+
 app.use((req, res, next) => {
   if (req.query.lang) {
     res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
@@ -41,6 +46,7 @@ app.use((req, res, next) => {
   }
   next();
 });
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -63,6 +69,26 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.log('Connected to MongoDB');
 }).catch((err) => {
   console.error('Error connecting to MongoDB', err);
+});
+
+// Middleware de déconnexion automatique après expiration de la session
+app.use((req, res, next) => {
+  if (req.session && req.session.cookie.expires < new Date()) {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      req.session.destroy((err) => {
+        if (err) {
+          return next(err);
+        }
+        res.clearCookie('connect.sid');
+        res.redirect('/login');
+      });
+    });
+  } else {
+    next();
+  }
 });
 
 // Middleware d'authentification
