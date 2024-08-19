@@ -599,5 +599,27 @@
         }
     });
 </script>
+<script>
+    // Temps en millisecondes (5 minutes)
+    const inactivityTime = 5 * 60 * 1000;
+
+    let timeout;
+
+    function resetTimer() {
+        clearTimeout(timeout);
+        timeout = setTimeout(logout, inactivityTime);
+    }
+
+    function logout() {
+        window.location.href = '/logout'; // Redirige vers la route de déconnexion
+    }
+
+    // Réinitialiser le timer sur les actions de l'utilisateur
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+    document.onclick = resetTimer;
+    document.onscroll = resetTimer;
+</script>
 </body>
 </html>
