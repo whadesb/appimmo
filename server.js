@@ -192,18 +192,33 @@ app.post('/register', async (req, res) => {
 });
 
 app.post('/logout', (req, res, next) => {
-  req.logout((err) => {
-    if (err) {
-      return next(err);
-    }
-    req.session.destroy((err) => {
-      if (err) {
-        return next(err);
-      }
-      res.clearCookie('connect.sid');
-      res.redirect('/');
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        req.session.destroy((err) => {
+            if (err) {
+                return next(err);
+            }
+            res.clearCookie('connect.sid');
+            res.redirect('/login');
+        });
     });
-  });
+});
+
+app.get('/logout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        req.session.destroy((err) => {
+            if (err) {
+                return next(err);
+            }
+            res.clearCookie('connect.sid');
+            res.redirect('/login');
+        });
+    });
 });
 
 // Route pour afficher une page de destination générée
