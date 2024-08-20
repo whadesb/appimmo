@@ -25,7 +25,7 @@ const app = express();
 // Configuration des codes valides pour l'inscription
 const validCodes = [
   'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba',
-  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa',
+  'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaba',
   'CODE3', 'CODE44', 'CODE18', 'CODE5'
 ];
 
