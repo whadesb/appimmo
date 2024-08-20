@@ -173,37 +173,32 @@
             <div class="col-lg-6 col-12">
                 <div class="form-container">
                     <h4>Modifier</h4>
-                    <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="rooms" class="form-label">Nombre de pièces</label>
-                            <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="surface" class="form-label">Surface (m²)</label>
-                            <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="price" class="form-label">Prix (€)</label>
-                            <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="city" class="form-label">Ville</label>
-                            <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="country" class="form-label">Pays</label>
-                            <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="photo1" class="form-label">Photo 1 (optionnel)</label>
-                            <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
-                        </div>
-                        <div class="mb-3">
-                            <label for="photo2" class="form-label">Photo 2 (optionnel)</label>
-                            <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
-                    </form>
+                    <form action="/send-contact" method="POST">
+                                <div class="mb-3">
+                                    <label for="firstName" class="form-label">Prénom</label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lastName" class="form-label">Nom</label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Message</label>
+                                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="type" class="form-label">Vous êtes</label>
+                                    <select class="form-control" id="type" name="type" required>
+                                        <option value="particulier">Particulier</option>
+                                        <option value="professionnel">Professionnel</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+                            </form>
                 </div>
             </div>
         </div>
