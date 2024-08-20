@@ -169,7 +169,7 @@ app.post('/register', async (req, res) => {
     return res.redirect('/register');
   }
 
-  // Validate password
+// Validate password
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (!passwordRequirements.test(password)) {
@@ -184,6 +184,10 @@ app.post('/register', async (req, res) => {
 
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+
+    // Envoyer l'email de confirmation
+    sendAccountCreationEmail(newUser.email);
+
     res.redirect('/login');
   } catch (error) {
     console.error('Error registering user', error);
