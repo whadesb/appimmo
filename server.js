@@ -499,6 +499,37 @@ async function generateLandingPage(property) {
 
   return `/landing-pages/${property._id}.html`;
 }
+const nodemailer = require('nodemailer');
+
+// Configuration de nodemailer
+const transporter = nodemailer.createTransport({
+  host: 'smtp.ionos.fr', // Utilisez le serveur SMTP de Ionos
+  port: 587, // Port pour TLS
+  secure: false, // true pour le port 465, false pour les autres ports
+  auth: {
+    user: 'info@uap.immo', // Votre adresse email
+    pass: 'Xpa28-12$e' // Le mot de passe de votre adresse email
+  }
+});
+
+// Fonction pour envoyer l'email de confirmation
+function sendAccountCreationEmail(userEmail) {
+  const mailOptions = {
+    from: '"UAP Immo" <info@uap.immo>',
+    to: userEmail,
+    subject: 'Confirmation de création de compte',
+    text: 'Votre compte a été créé avec succès sur UAP Immo. Bienvenue!',
+    html: '<b>Votre compte a été créé avec succès sur UAP Immo. Bienvenue!</b>'
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      return console.log(error);
+    }
+    console.log('Message sent: %s', info.messageId);
+  });
+}
+
 
 const port = process.env.PORT || 3000; // Exemple avec le port 3000
 app.listen(port, () => {
