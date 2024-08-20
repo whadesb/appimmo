@@ -26,7 +26,7 @@ const app = express();
 const validCodes = [
   'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48eba',
   'd86d5959548ddb49577cfe76109dc7fdceace9e8f33f14c672b81a78c8c48ebaaa',
-  'CODE3', 'CODE44', 'CODE5'
+  'CODE3', 'CODE44', 'CODE18', 'CODE5'
 ];
 
 // Middleware
