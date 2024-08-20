@@ -184,6 +184,10 @@ app.post('/register', async (req, res) => {
   }
 });
 
+app.get('/contact', (req, res) => {
+    res.render('contact', { title: 'Contact' });
+});
+
 app.post('/logout', (req, res, next) => {
     req.logout((err) => {
         if (err) {
