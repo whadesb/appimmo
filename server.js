@@ -507,12 +507,12 @@ const nodemailer = require('nodemailer');
 
 // Configuration de nodemailer
 const transporter = nodemailer.createTransport({
-  host: 'smtp.ionos.fr', // Utilisez le serveur SMTP de Ionos
-  port: 587, // Port pour TLS
+  host: 'smtp.ionos.fr',
+  port: 587,
   secure: false, // true pour le port 465, false pour les autres ports
   auth: {
-    user: 'info@uap.immo', // Votre adresse email
-    pass: 'Xpa28-12$e' // Le mot de passe de votre adresse email
+    user: process.env.EMAIL_USER, // Utilisation de la variable d'environnement pour l'adresse email
+    pass: process.env.EMAIL_PASS  // Utilisation de la variable d'environnement pour le mot de passe
   }
 });
 
