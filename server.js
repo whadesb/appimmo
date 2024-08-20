@@ -162,22 +162,18 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword, inviteCode } = req.body;
+  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
 
-  if (!validCodes.includes(inviteCode)) {
-    req.flash('error', 'Invalid invitation code.');
-    return res.redirect('/register');
-  }
-
+  // Validation du mot de passe
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
   if (!passwordRequirements.test(password)) {
-    req.flash('error', 'Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one special character.');
+    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
     return res.redirect('/register');
   }
 
   if (password !== confirmPassword) {
-    req.flash('error', 'Passwords do not match.');
+    req.flash('error', 'Les mots de passe ne correspondent pas.');
     return res.redirect('/register');
   }
 
@@ -189,12 +185,11 @@ app.post('/register', async (req, res) => {
 
     res.redirect('/login');
   } catch (error) {
-    console.error('Error registering user:', error); // Affichez l'erreur dans la console
+    console.error('Erreur lors de l\'inscription :', error);
     req.flash('error', 'Une erreur est survenue lors de l\'inscription.');
     res.redirect('/register');
   }
 });
-
 
 app.post('/logout', (req, res, next) => {
     req.logout((err) => {
