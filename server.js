@@ -505,23 +505,29 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-// Fonction pour envoyer l'email de confirmation
-function sendAccountCreationEmail(userEmail) {
-  const mailOptions = {
-    from: '"UAP Immo" <info@uap.immo>',
-    to: userEmail,
-    subject: 'Confirmation de création de compte',
-    text: 'Votre compte a été créé avec succès sur UAP Immo. Bienvenue!',
-    html: '<b>Votre compte a été créé avec succès sur UAP Immo. Bienvenue!</b>'
-  };
+app.post('/send-contact', async (req, res) => {
+    const { firstName, lastName, email, message, type } = req.body;
 
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      return console.log(error);
+    const mailOptions = {
+        from: '"UAP Immo" <info@uap.immo>',
+        to: process.env.CONTACT_EMAIL,  // Remplacez par l'email de destination
+        subject: 'Nouveau message de contact',
+        html: `
+            <p><b>Nom :</b> ${firstName} ${lastName}</p>
+            <p><b>Email :</b> ${email}</p>
+            <p><b>Type :</b> ${type}</p>
+            <p><b>Message :</b><br>${message}</p>
+        `
+    };
+
+    try {
+        await transporter.sendMail(mailOptions);
+        res.redirect('/?messageEnvoye=true');  // Rediriger vers une page de confirmation
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi de l\'email :', error);
+        res.status(500).send('Erreur lors de l\'envoi de l\'email.');
     }
-    console.log('Message sent: %s', info.messageId);
-  });
-}
+});
 
 
 const port = process.env.PORT || 3000; // Exemple avec le port 3000
