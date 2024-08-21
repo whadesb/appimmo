@@ -126,6 +126,10 @@ app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
 
+app.get('/contact', (req, res) => {
+    res.render('contact', { title: 'Contact' });
+});
+
 app.get('/payment', isAuthenticated, async (req, res) => {
   const { propertyId } = req.query;
 
@@ -182,10 +186,6 @@ app.post('/register', async (req, res) => {
     req.flash('error', 'Une erreur est survenue lors de l\'inscription.');
     res.redirect('/register');
   }
-});
-
-app.get('/contact', (req, res) => {
-    res.render('contact', { title: 'Contact' });
 });
 
 app.post('/logout', (req, res, next) => {
