@@ -217,6 +217,21 @@
                 margin-bottom: 0.2rem;
                 line-height: 1.2rem;
             }
+            .custom-button {
+            border: 2px solid black; /* Bordure noire */
+            background-color: transparent; /* Couleur de fond transparente */
+            color: black; /* Couleur du texte en noir */
+            padding: 10px 20px; /* Espacement interne du bouton */
+            border-radius: 5px; /* Légères bordures arrondies */
+            font-size: 16px; /* Taille de la police */
+            cursor: pointer; /* Curseur en forme de main */
+            transition: background-color 0.3s, color 0.3s; /* Transition douce pour les changements de couleur */
+  }
+
+  .custom-button:hover {
+    background-color: black; /* Fond noir au survol */
+    color: white; /* Texte blanc au survol */
+  }
         }
         @media (min-width: 768px) {
             .sidebar-links {
@@ -347,7 +362,7 @@
                                 <label for="email">Adresse Email</label>
                                 <input type="email" class="form-control" id="email" name="email" required>
                                 </div>
-                                    <button type="submit" class="btn btn-custom">Envoyer le lien de réinitialisation</button>
+                                    <button type="submit" class="custom-button">Envoyer le lien de réinitialisation</button>
                                         </form>
 
                                 <div id="resetPasswordMessage" class="mt-3"></div>
