@@ -127,8 +127,8 @@ app.get('/faq', (req, res) => {
 });
 
 app.get('/contact', (req, res) => {
-    console.log("Accès à la route /contact");
-    res.render('contact', { title: 'Contact' });
+    const messageEnvoye = req.query.messageEnvoye === 'true';
+    res.render('contact', { title: 'Contact', messageEnvoye });
 });
 
 app.get('/payment', isAuthenticated, async (req, res) => {
