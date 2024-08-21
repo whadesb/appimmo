@@ -514,8 +514,8 @@ app.post('/send-contact', async (req, res) => {
     const { firstName, lastName, email, message, type } = req.body;
 
     const mailOptions = {
-        from: '"UAP Immo" <info@uap.immo>',
-        to: process.env.CONTACT_EMAIL,  // Remplacez par l'email de destination
+        from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+        to: process.env.CONTACT_EMAIL,
         subject: 'Nouveau message de contact',
         html: `
             <p><b>Nom :</b> ${firstName} ${lastName}</p>
@@ -527,13 +527,12 @@ app.post('/send-contact', async (req, res) => {
 
     try {
         await transporter.sendMail(mailOptions);
-        res.redirect('/?messageEnvoye=true');  // Rediriger vers une page de confirmation
+        res.redirect('/contact?messageEnvoye=true');
     } catch (error) {
         console.error('Erreur lors de l\'envoi de l\'email :', error);
         res.status(500).send('Erreur lors de l\'envoi de l\'email.');
     }
 });
-
 
 const port = process.env.PORT || 3000; // Exemple avec le port 3000
 app.listen(port, () => {
