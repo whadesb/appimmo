@@ -25,7 +25,6 @@
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
-       
         }
         .text-container h4 {
             margin-bottom: 20px;
@@ -119,7 +118,6 @@
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                 
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto me-4">
@@ -163,41 +161,46 @@
         <div class="row">
             <div class="col-lg-6 col-12">
                 <div class="text-container">
-                    <h4>Modifier votre Annonce Immobilière</h4>
-                    <p class="form-text">Apportez les modifications nécessaires à votre annonce immobilière.</p>
-                    <p class="form-text">Les informations actuelles de votre bien sont déjà préremplies dans le formulaire ci-dessous.</p>
-                    <p class="form-text">Assurez-vous que tous les détails sont exacts et à jour pour maximiser l'impact de votre annonce. Une fois les modifications enregistrées, votre landing page sera instantanément mise à jour.</p>
+                    <h4>Contactez-nous</h4>
+                    <p class="form-text">Veuillez remplir le formulaire ci-dessous pour nous contacter.</p>
                 </div>
             </div>
             <div class="col-lg-6 col-12">
                 <div class="form-container">
-                    <h4>Modifier</h4>
+                    <h4>Formulaire de contact</h4>
+                    
+                    <% if (typeof messageEnvoye !== 'undefined' && messageEnvoye) { %>
+                        <div class="alert alert-success" role="alert">
+                            Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.
+                        </div>
+                    <% } %>
+                    
                     <form action="/send-contact" method="POST">
-                                <div class="mb-3">
-                                    <label for="firstName" class="form-label">Prénom</label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lastName" class="form-label">Nom</label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label">Email</label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="message" class="form-label">Message</label>
-                                    <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="type" class="form-label">Vous êtes</label>
-                                    <select class="form-control" id="type" name="type" required>
-                                        <option value="particulier">Particulier</option>
-                                        <option value="professionnel">Professionnel</option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100">Envoyer</button>
-                            </form>
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="message" class="form-label">Message</label>
+                            <textarea class="form-control" id="message" name="message" rows="4" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="type" class="form-label">Vous êtes</label>
+                            <select class="form-control" id="type" name="type" required>
+                                <option value="particulier">Particulier</option>
+                                <option value="professionnel">Professionnel</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Envoyer</button>
+                    </form>
                 </div>
             </div>
         </div>
@@ -209,7 +212,6 @@
             <div class="row">
                 <div class="col-lg-3 col-12 mb-4 pb-2">
                     <a class="navbar-brand mb-2" href="/">
-                       
                         <span>UAP Immo</span>
                     </a>
                 </div>
@@ -254,6 +256,5 @@
     <script src="/js/jquery.sticky.js"></script>
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
-    
 </body>
 </html>
