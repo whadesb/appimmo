@@ -117,24 +117,24 @@
         .short-column {
             width: 10%;
         }
-            .card-title {
-         font-weight: 400; /* Moins gras */
-    font-size: 1.6rem; /* Taille du texte plus grande pour le titre */
-    color: #000; /* Couleur sombre pour un style pro */
-    margin-bottom: 0.5rem; /* Espacement sous le titre */
-}
-            .card-text {
-                font-size: 1.1rem; /* Taille de texte définie à 1.1rem */
-    line-height: 1.8rem; /* Espacement entre les lignes défini à 1.8rem */
-    color: #666; /* Couleur gris foncé pour une apparence sobre */
-    margin-bottom: 1rem; /* Espacement sous la description */
-    letter-spacing: 0.5px; /* Léger espacement entre les lettres */
-}
-.card-body .user-info {
-    color: #333; /* Couleur plus foncée pour le texte des informations utilisateur */
-    margin-bottom: 0.2rem; /* Réduction de l'espace entre chaque élément */
-    line-height: 1.6rem; /* Espacement des lignes réduit */
-}
+        .card-title {
+            font-weight: 400;
+            font-size: 1.6rem;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+        .card-text {
+            font-size: 1.1rem;
+            line-height: 1.8rem;
+            color: #666;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+        .card-body .user-info {
+            color: #333;
+            margin-bottom: 0.2rem;
+            line-height: 1.6rem;
+        }
         @media (max-width: 767px) {
             .container-fluid {
                 padding-left: 0;
@@ -185,8 +185,6 @@
                 overflow-x: auto;
                 -webkit-overflow-scrolling: touch;
             }
-
-        
             #landing .form-group {
                 width: 100%;
                 padding: 5px;
@@ -202,40 +200,38 @@
                 font-size: 18px;
             }
             .card-title {
-         font-weight: 400; /* Moins gras */
-    font-size: 1.4rem; /* Taille du texte plus grande pour le titre */
-    color: #000; /* Couleur sombre pour un style pro */
-    margin-bottom: 0.5rem; /* Espacement sous le titre */
-}
+                font-weight: 400;
+                font-size: 1.4rem;
+                color: #000;
+                margin-bottom: 0.5rem;
+            }
             .card-text {
-                font-size: 1.1rem; /* Taille de texte définie à 1.1rem */
-    line-height: 1.8rem; /* Espacement entre les lignes défini à 1.8rem */
-    color: #666; /* Couleur gris foncé pour une apparence sobre */
-    margin-bottom: 1rem; /* Espacement sous la description */
-    letter-spacing: 0.5px; /* Léger espacement entre les lettres */
-}
-.card-body .user-info {
-    color: #333; /* Couleur plus foncée pour le texte des informations utilisateur */
-    margin-bottom: 0.2rem; /* Réduction de l'espace entre chaque élément */
-    line-height: 1.2rem; /* Espacement des lignes réduit */
-}
+                font-size: 1.1rem;
+                line-height: 1.8rem;
+                color: #666;
+                margin-bottom: 1rem;
+                letter-spacing: 0.5px;
+            }
+            .card-body .user-info {
+                color: #333;
+                margin-bottom: 0.2rem;
+                line-height: 1.2rem;
+            }
         }
-
         @media (min-width: 768px) {
             .sidebar-links {
                 display: none;
             }
             .card-title {
-        font-size: 1.475rem;
-        font-weight: 400;
-        color: #000;
-    }
-        .card-text {
-        font-size: 1rem; /* Taille de texte légèrement réduite pour mobile */
-        line-height: 1.6rem; /* Ajustement de l'espacement pour mobile */
-        letter-spacing: 0.4px; /* Ajustement de l'espacement pour mobile */
-    }
-    
+                font-size: 1.475rem;
+                font-weight: 400;
+                color: #000;
+            }
+            .card-text {
+                font-size: 1rem;
+                line-height: 1.6rem;
+                letter-spacing: 0.4px;
+            }
         }
     </style>
 </head>
@@ -244,7 +240,6 @@
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                  
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto me-4">
@@ -332,42 +327,37 @@
                 <div class="col">
                     <div class="main-section">
                         <div id="account" class="card">
-    <div id="account" class="card">
-    <div class="card-body">
-        <h5 class="card-title">Mon Profil</h5>
-        <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
-        <p class="card-text user-info">Nom: <%= user.firstName %></p>
-        <p class="card-text user-info">Prénom: <%= user.lastName %></p>
-        <p class="card-text user-info">Email: <%= user.email %></p>
-        <hr>
-        <a href="#" onclick="showSection('reset-password')" class="btn btn-warning">Réinitialiser le mot de passe</a>
-    </div>
-</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Mon Profil</h5>
+                                <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
+                                <p class="card-text user-info">Nom: <%= user.firstName %></p>
+                                <p class="card-text user-info">Prénom: <%= user.lastName %></p>
+                                <p class="card-text user-info">Email: <%= user.email %></p>
+                                <hr>
+                                <a href="#" onclick="showSection('reset-password')" class="btn btn-warning">Réinitialiser le mot de passe</a>
+                            </div>
+                        </div>
 
-<div id="reset-password" class="card" style="display: none;">
-    <div class="card-body">
-        <h5 class="card-title">Réinitialiser le mot de passe</h5>
-        <p class="card-text">Si vous souhaitez réinitialiser votre mot de passe, veuillez entrer votre adresse email ci-dessous. Vous recevrez un lien pour réinitialiser votre mot de passe.</p>
-        <form id="reset-password-form" action="/user/reset-password" method="POST">
-            <div class="form-group">
-                <label for="email">Adresse Email</label>
-                <input type="email" class="form-control" id="email" name="email" required>
-            </div>
-            <button type="submit" class="btn btn-custom">Envoyer le lien de réinitialisation</button>
-        </form>
-        <div id="resetPasswordMessage" class="mt-3"></div>
-    </div>
-</div>
+                        <div id="reset-password" class="card" style="display: none;">
+                            <div class="card-body">
+                                <h5 class="card-title">Réinitialiser le mot de passe</h5>
+                                <p class="card-text">Si vous souhaitez réinitialiser votre mot de passe, veuillez entrer votre adresse email ci-dessous. Vous recevrez un lien pour réinitialiser votre mot de passe.</p>
+                                <form id="reset-password-form" action="/user/reset-password" method="POST">
+                                    <div class="form-group">
+                                        <label for="email">Adresse Email</label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-custom">Envoyer le lien de réinitialisation</button>
+                                </form>
+                                <div id="resetPasswordMessage" class="mt-3"></div>
+                            </div>
+                        </div>
 
-</div>
-
-    </div>
-</div>
-                       <div id="landing" class="card" style="display: none;">
-    <div class="card-body">
-        <h5 class="card-title">Landing Page</h5>
-        <p class="card-text">Créez facilement et rapidement votre propre page d'annonce immobilière. Remplissez le formulaire ci-dessous avec les détails de votre bien, et notre outil se chargera de générer une landing page professionnelle prête à être partagée avec vos prospects.</p>
-        <h5 class="card-title">Ajouter un bien immobilier</h5>
+                        <div id="landing" class="card" style="display: none;">
+                            <div class="card-body">
+                                <h5 class="card-title">Landing Page</h5>
+                                <p class="card-text">Créez facilement et rapidement votre propre page d'annonce immobilière. Remplissez le formulaire ci-dessous avec les détails de votre bien, et notre outil se chargera de générer une landing page professionnelle prête à être partagée avec vos prospects.</p>
+                                <h5 class="card-title">Ajouter un bien immobilier</h5>
                                 <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
                                     <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
                                     <div class="form-group">
@@ -403,37 +393,39 @@
                                 <div id="generatedLink" class="mt-3"></div>
                             </div>
                         </div>
+
                         <div id="donnees" class="card" style="display: none;">
-    <div class="card-body">
-        <h5 class="card-title">Statistiques de Diffusion des Annonces</h5>
-        <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google. Ces données vous offrent une vue d'ensemble sur l'efficacité de vos campagnes et vous aident à optimiser votre stratégie de diffusion pour maximiser l'impact de vos annonces.</p>
-    </div>
-</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Statistiques de Diffusion des Annonces</h5>
+                                <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google. Ces données vous offrent une vue d'ensemble sur l'efficacité de vos campagnes et vous aident à optimiser votre stratégie de diffusion pour maximiser l'impact de vos annonces.</p>
+                            </div>
+                        </div>
+
                         <div id="created-pages" class="card" style="display: none;">
-    <div class="card-body">
-        <h5 class="card-title">Gestion des Annonces Immobilières</h5>
-        <p class="card-text">Dans cet espace, vous trouverez toutes vos annonces immobilières générées avec leur URL unique et description. Utilisez les actions disponibles pour modifier vos annonces, copier le lien pour le partager gratuitement, ou opter pour une diffusion payante de votre annonce au prix de 500 €. Assurez-vous que vos annonces sont toujours à jour pour maximiser leur impact.</p>
-                            <table class="table table-striped">
-                            <thead>
-                            <tr>
-                    <th scope="col">Nombre de pièces</th>
-                    <th scope="col">Surface (m²)</th>
-                    <th scope="col">Prix (€)</th>
-                    <th scope="col">Ville</th>
-                    <th scope="col">Pays</th>
-                    <th scope="col">URL</th>
-                    <th scope="col">Actions</th>
-                </tr>
-            </thead>
-            <tbody id="properties-list">
-                <!-- Propriétés de l'utilisateur ici -->
-            </tbody>
-        </table>
-        <div id="no-properties-message" style="display: none;" class="text-center">
-            <p>Aucun bien immobilier n'a été créé pour le moment. <a href="#" onclick="showSection('landing')">Ajoutez votre premier bien immobilier maintenant !</a></p>
-        </div>
-    </div>
-</div>
+                            <div class="card-body">
+                                <h5 class="card-title">Gestion des Annonces Immobilières</h5>
+                                <p class="card-text">Dans cet espace, vous trouverez toutes vos annonces immobilières générées avec leur URL unique et description. Utilisez les actions disponibles pour modifier vos annonces, copier le lien pour le partager gratuitement, ou opter pour une diffusion payante de votre annonce au prix de 500 €. Assurez-vous que vos annonces sont toujours à jour pour maximiser leur impact.</p>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th scope="col">Nombre de pièces</th>
+                                            <th scope="col">Surface (m²)</th>
+                                            <th scope="col">Prix (€)</th>
+                                            <th scope="col">Ville</th>
+                                            <th scope="col">Pays</th>
+                                            <th scope="col">URL</th>
+                                            <th scope="col">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="properties-list">
+                                        <!-- Propriétés de l'utilisateur ici -->
+                                    </tbody>
+                                </table>
+                                <div id="no-properties-message" style="display: none;" class="text-center">
+                                    <p>Aucun bien immobilier n'a été créé pour le moment. <a href="#" onclick="showSection('landing')">Ajoutez votre premier bien immobilier maintenant !</a></p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -441,45 +433,43 @@
     </div>
 </section>
 </main>
-   <footer class="site-footer section-padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-12 mb-4 pb-2">
-                        <a class="navbar-brand mb-2" href="/">
-                            
-                            <span>UAP Immo</span>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Informations</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
-                            <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Accès</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                            
-                        </ul>
-                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="#">English</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">Français</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+<footer class="site-footer section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-3 col-12 mb-4 pb-2">
+                <a class="navbar-brand mb-2" href="/">
+                    <span>UAP Immo</span>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <h6 class="site-footer-title mb-3">Informations</h6>
+                <ul class="site-footer-links">
+                    <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
+                    <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
+                </ul>
+            </div>
+            <div class="col-lg-3 col-md-4 col-6">
+                <h6 class="site-footer-title mb-3">Accès</h6>
+                <ul class="site-footer-links">
+                    <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
+                </ul>
+            <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="#">English</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="#">Français</a>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </footer>
+            <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
 <div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
 
 <!-- JavaScript -->
@@ -487,7 +477,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
     function showSection(sectionId) {
-        const sections = ['account', 'landing', 'donnees', 'created-pages'];
+        const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
         sections.forEach(id => {
             document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
         });
@@ -524,14 +514,13 @@
                             <td>${property.city}</td>
                             <td>${property.country}</td>
                             <td><a href="${property.url}" target="_blank">${property.url}</a></td>
-                                <td>
-    <div class="action-icons">
-        <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-        <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-        <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
-    </div>
-</td>
-
+                            <td>
+                                <div class="action-icons">
+                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                    <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                    <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
+                                </div>
+                            </td>
                         `;
                         propertiesList.appendChild(row);
                     });
@@ -571,9 +560,9 @@
         window.location.href = `/payment?propertyId=${propertyId}`;
     }
 
- function editProperty(propertyId) {
-    window.location.href = `/property/edit/${propertyId}`;
-}
+    function editProperty(propertyId) {
+        window.location.href = `/property/edit/${propertyId}`;
+    }
 
     // Gestion de la soumission du formulaire
     document.getElementById('add-property-form').addEventListener('submit', async function(event) {
@@ -614,8 +603,7 @@
             `;
         }
     });
-</script>
-<script>
+
     // Temps en millisecondes (5 minutes)
     const inactivityTime = 5 * 60 * 1000;
 
