@@ -327,27 +327,31 @@
                 <div class="col">
                     <div class="main-section">
                         <div id="account" class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Mon Profil</h5>
-                                <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
-                                <p class="card-text user-info">Nom: <%= user.firstName %></p>
-                                <p class="card-text user-info">Prénom: <%= user.lastName %></p>
-                                <p class="card-text user-info">Email: <%= user.email %></p>
-                                <button type="submit" class="btn btn-outline-dark">Réinitialiser le mot de passe</button>
-                            </div>
-                        </div>
+    <div class="card-body">
+        <h5 class="card-title">Mon Profil</h5>
+        <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
+        <p class="card-text user-info">Nom: <%= user.firstName %></p>
+        <p class="card-text user-info">Prénom: <%= user.lastName %></p>
+        <p class="card-text user-info">Email: <%= user.email %></p>
 
-                        <div id="reset-password" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title">Réinitialiser le mot de passe</h5>
-                                <p class="card-text">Si vous souhaitez réinitialiser votre mot de passe, veuillez entrer votre adresse email ci-dessous. Vous recevrez un lien pour réinitialiser votre mot de passe.</p>
-                                <form id="reset-password-form" action="/user/reset-password" method="POST">
-                                <div class="form-group">
-                                <label for="email">Adresse Email</label>
-                                <input type="email" class="form-control" id="email" name="email" required>
-                                </div>
-                                    <button type="submit" class="btn btn-outline-dark">Envoyer le lien de réinitialisation</button>
-                                        </form>
+        <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
+        <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')">Réinitialiser le mot de passe</button>
+    </div>
+</div>
+
+<div id="reset-password" class="card" style="display: none;">
+    <div class="card-body">
+        <h5 class="card-title">Réinitialiser le mot de passe</h5>
+        <p class="card-text">Si vous souhaitez réinitialiser votre mot de passe, veuillez entrer votre adresse email ci-dessous. Vous recevrez un lien pour réinitialiser votre mot de passe.</p>
+        <form id="reset-password-form" action="/user/reset-password" method="POST">
+            <div class="form-group">
+                <label for="email">Adresse Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <button type="submit" class="btn btn-outline-dark">Envoyer le lien de réinitialisation</button>
+        </form>
+    </div>
+</div>
 
                                 <div id="resetPasswordMessage" class="mt-3"></div>
                             </div>
