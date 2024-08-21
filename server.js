@@ -281,8 +281,8 @@ app.post('/register', async (req, res) => {
 
     res.redirect('/login');
   } catch (error) {
-    console.error('Erreur lors de l\'inscription :', error);
-    req.flash('error', 'Une erreur est survenue lors de l\'inscription.');
+    console.error('Erreur lors de l\'inscription :', error.message); // Ajout de l'erreur précise
+    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
     res.redirect('/register');
   }
 });
