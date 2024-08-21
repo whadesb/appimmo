@@ -118,6 +118,104 @@ app.post('/login', passport.authenticate('local', {
   failureFlash: true
 }));
 
+const crypto = require('crypto');
+
+app.post('/user/reset-password', async (req, res) => {
+    const { email } = req.body;
+    
+    try {
+        const user = await User.findOne({ email });
+        if (!user) {
+            req.flash('error', 'Aucun compte trouvé avec cette adresse email.');
+            return res.redirect('/user');
+        }
+
+        // Générer un token unique
+        const token = crypto.randomBytes(32).toString('hex');
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
+        await user.save();
+
+        // Envoyer l'email de réinitialisation
+        const resetUrl = `http://${req.headers.host}/user/reset-password/${token}`;
+        const mailOptions = {
+            to: user.email,
+            from: process.env.EMAIL_USER,
+            subject: 'Réinitialisation du mot de passe',
+            html: `<p>Vous avez demandé une réinitialisation du mot de passe.</p>
+                   <p>Veuillez cliquer sur le lien suivant pour créer un nouveau mot de passe :</p>
+                   <a href="${resetUrl}">${resetUrl}</a>`
+        };
+        await transporter.sendMail(mailOptions);
+
+        req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé à votre adresse email.');
+        res.redirect('/user');
+    } catch (error) {
+        console.error('Erreur lors de la réinitialisation du mot de passe :', error);
+        req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
+        res.redirect('/user');
+    }
+});
+app.get('/user/reset-password/:token', async (req, res) => {
+    try {
+        const user = await User.findOne({ 
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() } // Vérifie si le token n'a pas expiré
+        });
+
+        if (!user) {
+            req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
+            return res.redirect('/user');
+        }
+
+        res.render('reset-password', { token: req.params.token });
+    } catch (error) {
+        console.error('Erreur lors de la vérification du token :', error);
+        req.flash('error', 'Une erreur est survenue lors de la vérification du token.');
+        res.redirect('/user');
+    }
+});
+app.post('/user/reset-password/:token', async (req, res) => {
+    const { password, confirmPassword } = req.body;
+
+    if (password !== confirmPassword) {
+        req.flash('error', 'Les mots de passe ne correspondent pas.');
+        return res.redirect('back');
+    }
+
+    try {
+        const user = await User.findOne({
+            resetPasswordToken: req.params.token,
+            resetPasswordExpires: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
+            return res.redirect('/user');
+        }
+
+        // Mettre à jour le mot de passe et effacer le token
+        user.setPassword(password, async (err) => {
+            if (err) {
+                req.flash('error', 'Erreur lors de la réinitialisation du mot de passe.');
+                return res.redirect('back');
+            }
+
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+            await user.save();
+
+            req.flash('success', 'Votre mot de passe a été mis à jour avec succès.');
+            res.redirect('/login');
+        });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour du mot de passe :', error);
+        req.flash('error', 'Une erreur est survenue lors de la mise à jour du mot de passe.');
+        res.redirect('/user');
+    }
+});
+
+
 app.get('/user', isAuthenticated, (req, res) => {
   res.render('user', { user: req.user });
 });
