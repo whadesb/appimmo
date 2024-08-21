@@ -127,6 +127,7 @@ app.get('/faq', (req, res) => {
 });
 
 app.get('/contact', (req, res) => {
+    console.log("Accès à la route /contact");
     res.render('contact', { title: 'Contact' });
 });
 
