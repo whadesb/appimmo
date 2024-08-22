@@ -10,6 +10,7 @@ const UserSchema = new mongoose.Schema({
   resetPasswordExpires: Date
 });
 
+// Configurer passportLocalMongoose pour utiliser l'email comme nom d'utilisateur
 UserSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
 
 module.exports = mongoose.model('User', UserSchema);
