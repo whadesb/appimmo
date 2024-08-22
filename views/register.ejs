@@ -151,10 +151,11 @@
                         <div class="form-container">
                             <h2 class="text-center">Inscription</h2>
                             <% if (messages.error) { %>
-                                <div class="alert alert-danger">
-                                    <%= messages.error %>
-                                </div>
-                            <% } %>
+  <div class="alert alert-danger">
+    <%= messages.error %>
+  </div>
+<% } %>
+
                          <form action="/register" method="POST" autocomplete="off">
   <div class="mb-3">
     <label for="username" class="form-label">Nom d'utilisateur</label>
