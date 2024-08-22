@@ -27,6 +27,25 @@
             line-height: 1.6;
             margin-bottom: 30px;
         }
+        .cookie-settings-container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .cookie-settings-container h2 {
+            margin-bottom: 20px;
+        }
+        .btn-primary {
+            background-color: #52566f;
+            border-color: #000;
+        }
+        .btn-primary:hover {
+            background-color: #52566f;
+            border-color: #52566f;
+        }
     </style>
 </head>
 <body id="top">
@@ -67,7 +86,26 @@
                 <div class="text-content">
                     <p>Cette page vous permet de gérer vos préférences concernant les cookies sur notre site. Vous pouvez choisir d'accepter ou de refuser les cookies non essentiels à tout moment. Vous pouvez également définir la durée pendant laquelle vos préférences seront conservées.</p>
                     <p>Veuillez noter que certains cookies sont nécessaires au bon fonctionnement du site et ne peuvent être désactivés.</p>
-                    <!-- Ajouter ici les options de gestion des cookies -->
+                </div>
+                <div class="cookie-settings-container">
+                    <h2>Choisir la durée du consentement</h2>
+                    <form id="cookie-settings-form">
+                        <div class="mb-3">
+                            <label for="duration" class="form-label">Durée du consentement :</label>
+                            <select id="duration" name="duration" class="form-select">
+                                <option value="3mois">3 mois</option>
+                                <option value="6mois">6 mois</option>
+                                <option value="1an" selected>1 an</option>
+                                <option value="2ans">2 ans</option>
+                                <option value="3ans">3 ans</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    </form>
+                    <div class="mt-3">
+                        <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> | 
+                        <a href="#">Gérer mes choix</a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -114,5 +152,25 @@
 
     <script defer src="/js/jquery.min.js"></script>
     <script defer src="/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('cookie-settings-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const duration = document.getElementById('duration').value;
+
+            fetch('/set-cookie-consent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ duration: duration })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = '/';
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
 </body>
 </html>
