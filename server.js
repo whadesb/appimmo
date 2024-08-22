@@ -354,7 +354,7 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 
-app.post('/register', async (req, res) => {
+app.post('/register', async (req, res) => {  // Assurez-vous que 'async' est bien présent ici
   const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
 
   // Validation des champs
@@ -402,33 +402,6 @@ app.post('/register', async (req, res) => {
   }
 });
 
-
-
-  // Validation du mot de passe
-  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  if (!passwordRequirements.test(password)) {
-    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
-    return res.redirect('/register');
-  }
-
-  if (password !== confirmPassword) {
-    req.flash('error', 'Les mots de passe ne correspondent pas.');
-    return res.redirect('/register');
-  }
-
-  try {
-    const newUser = await User.register(new User({ username, email, firstName, lastName, role }), password);
-
-    // Envoyer l'email de confirmation
-    sendAccountCreationEmail(newUser.email);
-
-    res.redirect('/login');
-  } catch (error) {
-    console.error('Erreur lors de l\'inscription :', error.message); 
-    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
-    res.redirect('/register');
-  }
-});
 
 app.post('/logout', (req, res, next) => {
     req.logout((err) => {
