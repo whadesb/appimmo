@@ -19,6 +19,8 @@ const multer = require('multer');
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const app = express();
 
@@ -130,43 +132,63 @@ app.post('/forgot-password', async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
     await user.save();
 
-    const resetUrl = `http://${req.headers.host}/reset-password/${token}`; 
-const mailOptions = {
-    to: user.email,
-    from: process.env.EMAIL_USER,
-    subject: 'Réinitialisation du mot de passe',
-    html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2 style="color: #52566f;">Réinitialisation de votre mot de passe</h2>
-        <p>Bonjour,</p>
-        <p>Nous avons reçu une demande de réinitialisation du mot de passe associé à votre compte UAP Immo.</p>
-        
-        <p style="font-size: 16px; color: #52566f;">Que devez-vous faire ?</p>
-        <p>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :</p>
-        <p><a href="${resetUrl}" style="color: #52566f; text-decoration: underline;">Réinitialiser mon mot de passe</a></p>
-  
-        <p>Ce lien est valide pendant 1 heure. Si vous n'avez pas fait cette demande, vous pouvez ignorer cet email en toute sécurité.</p>
-  
-        <p style="font-size: 16px; color: #52566f;">Besoin d'aide ?</p>
-        <p>Si vous avez des questions ou avez besoin d'aide, n'hésitez pas à nous contacter à <a href="mailto:support@uap.company" style="color: #52566f; text-decoration: underline;">support@uap.company</a>.</p>
-  
-        <p>Cordialement,</p>
-        <p>L'équipe UAP Immo</p>
-        
-        <hr>
-        <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company" style="color: #52566f; text-decoration: underline;">support@uap.company</a>.</p>
-      </div>
-    `
-  };
-  await sendEmail(mailOptions);
+    const resetUrl = `http://${req.headers.host}/reset-password/${token}`;
+    const mailOptions = {
+      to: user.email,
+      from: process.env.EMAIL_USER,
+      subject: 'Réinitialisation du mot de passe',
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+          <h2 style="color: #52566f;">Réinitialisation de votre mot de passe</h2>
+          <p>Bonjour,</p>
+          <p>Nous avons reçu une demande de réinitialisation du mot de passe associé à votre compte UAP Immo.</p>
+          
+          <p style="font-size: 16px; color: #52566f;">Que devez-vous faire ?</p>
+          <p>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :</p>
+          <p><a href="${resetUrl}" style="color: #52566f; text-decoration: underline;">Réinitialiser mon mot de passe</a></p>
+    
+          <p>Ce lien est valide pendant 1 heure. Si vous n'avez pas fait cette demande, vous pouvez ignorer cet email en toute sécurité.</p>
+    
+          <p style="font-size: 16px; color: #52566f;">Besoin d'aide ?</p>
+          <p>Si vous avez des questions ou avez besoin d'aide, n'hésitez pas à nous contacter à <a href="mailto:support@uap.company" style="color: #52566f; text-decoration: underline;">support@uap.company</a>.</p>
+    
+          <p>Cordialement,</p>
+          <p>L'équipe UAP Immo</p>
+          
+          <hr>
+          <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company" style="color: #52566f; text-decoration: underline;">support@uap.company</a>.</p>
+        </div>
+      `
+    };
+    await sendEmail(mailOptions);
 
-  req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.');
-  res.redirect('/login');
-} catch (error) {
-  console.error('Erreur lors de la réinitialisation du mot de passe :', error);
-  req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
-  res.redirect('/forgot-password');
-}
+    req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.');
+    res.redirect('/login');
+  } catch (error) {
+    console.error('Erreur lors de la réinitialisation du mot de passe :', error);
+    req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
+    res.redirect('/forgot-password');
+  }
+});
+
+app.get('/reset-password/:token', async (req, res) => {
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: req.params.token,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
+      return res.redirect('/forgot-password');
+    }
+
+    res.render('reset-password', { token: req.params.token });
+  } catch (error) {
+    console.error('Erreur lors de la vérification du token :', error);
+    req.flash('error', 'Une erreur est survenue lors de la vérification du token.');
+    res.redirect('/forgot-password');
+  }
 });
 
 app.post('/reset-password/:token', async (req, res) => {
@@ -208,110 +230,41 @@ app.post('/reset-password/:token', async (req, res) => {
   }
 });
 
-
 app.post('/login', passport.authenticate('local', {
   successRedirect: '/user',
   failureRedirect: '/login',
   failureFlash: true
 }));
 
-const crypto = require('crypto');
-
-app.post('/user/reset-password', async (req, res) => {
-    const { email } = req.body;
-    
-    try {
-        const user = await User.findOne({ email });
-        if (!user) {
-            req.flash('error', 'Aucun compte trouvé avec cette adresse email.');
-            return res.redirect('/user');
+app.post('/logout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
         }
-
-        // Générer un token unique
-        const token = crypto.randomBytes(32).toString('hex');
-        user.resetPasswordToken = token;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
-        await user.save();
-
-        // Envoyer l'email de réinitialisation
-        const resetUrl = `http://${req.headers.host}/user/reset-password/${token}`;
-        const mailOptions = {
-            to: user.email,
-            from: process.env.EMAIL_USER,
-            subject: 'Réinitialisation du mot de passe',
-            html: `<p>Vous avez demandé une réinitialisation du mot de passe.</p>
-                   <p>Veuillez cliquer sur le lien suivant pour créer un nouveau mot de passe :</p>
-                   <a href="${resetUrl}">${resetUrl}</a>`
-        };
-        await transporter.sendMail(mailOptions);
-
-        req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé à votre adresse email.');
-        res.redirect('/user');
-    } catch (error) {
-        console.error('Erreur lors de la réinitialisation du mot de passe :', error);
-        req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
-        res.redirect('/user');
-    }
-});
-app.get('/user/reset-password/:token', async (req, res) => {
-    try {
-        const user = await User.findOne({ 
-            resetPasswordToken: req.params.token,
-            resetPasswordExpires: { $gt: Date.now() } // Vérifie si le token n'a pas expiré
-        });
-
-        if (!user) {
-            req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
-            return res.redirect('/user');
-        }
-
-        res.render('reset-password', { token: req.params.token });
-    } catch (error) {
-        console.error('Erreur lors de la vérification du token :', error);
-        req.flash('error', 'Une erreur est survenue lors de la vérification du token.');
-        res.redirect('/user');
-    }
-});
-app.post('/user/reset-password/:token', async (req, res) => {
-    const { password, confirmPassword } = req.body;
-
-    if (password !== confirmPassword) {
-        req.flash('error', 'Les mots de passe ne correspondent pas.');
-        return res.redirect('back');
-    }
-
-    try {
-        const user = await User.findOne({
-            resetPasswordToken: req.params.token,
-            resetPasswordExpires: { $gt: Date.now() }
-        });
-
-        if (!user) {
-            req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
-            return res.redirect('/user');
-        }
-
-        // Mettre à jour le mot de passe et effacer le token
-        user.setPassword(password, async (err) => {
+        req.session.destroy((err) => {
             if (err) {
-                req.flash('error', 'Erreur lors de la réinitialisation du mot de passe.');
-                return res.redirect('back');
+                return next(err);
             }
-
-            user.resetPasswordToken = undefined;
-            user.resetPasswordExpires = undefined;
-            await user.save();
-
-            req.flash('success', 'Votre mot de passe a été mis à jour avec succès.');
+            res.clearCookie('connect.sid');
             res.redirect('/login');
         });
-    } catch (error) {
-        console.error('Erreur lors de la mise à jour du mot de passe :', error);
-        req.flash('error', 'Une erreur est survenue lors de la mise à jour du mot de passe.');
-        res.redirect('/user');
-    }
+    });
 });
 
+app.get('/logout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        req.session.destroy((err) => {
+            if (err) {
+                return next(err);
+            }
+            res.clearCookie('connect.sid');
+            res.redirect('/login');
+        });
+    });
+});
 
 app.get('/user', isAuthenticated, (req, res) => {
   res.render('user', { user: req.user });
@@ -384,45 +337,6 @@ app.post('/register', async (req, res) => {
   }
 });
 
-
-
-app.post('/logout', (req, res, next) => {
-    req.logout((err) => {
-        if (err) {
-            return next(err);
-        }
-        req.session.destroy((err) => {
-            if (err) {
-                return next(err);
-            }
-            res.clearCookie('connect.sid');
-            res.redirect('/login');
-        });
-    });
-});
-
-app.get('/logout', (req, res, next) => {
-    req.logout((err) => {
-        if (err) {
-            return next(err);
-        }
-        req.session.destroy((err) => {
-            if (err) {
-                return next(err);
-            }
-            res.clearCookie('connect.sid');
-            res.redirect('/login');
-        });
-    });
-});
-
-// Route pour afficher une page de destination générée
-app.get('/landing-pages/:id', (req, res) => {
-  const pageId = req.params.id;
-  res.sendFile(path.join(__dirname, 'public', 'landing-pages', `${pageId}.html`));
-});
-
-// Route pour l'ajout d'une propriété
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
@@ -481,12 +395,10 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
 
-    // Vérification que la propriété appartient à l'utilisateur authentifié
     if (!property || !property.createdBy.equals(req.user._id)) {
       return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
     }
 
-    // Rendu de la vue avec les données de la propriété
     res.render('edit-property', { property });
   } catch (error) {
     console.error('Erreur lors de la récupération de la propriété:', error);
@@ -494,30 +406,25 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    // Récupération de la propriété par ID
     const property = await Property.findById(req.params.id);
 
-    // Vérification de l'autorisation
     if (!property || !property.createdBy.equals(req.user._id)) {
       return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
     }
 
     const { rooms, surface, price, city, country } = req.body;
 
-    // Mise à jour des informations de la propriété
     property.rooms = rooms;
     property.surface = surface;
     property.price = price;
     property.city = city;
     property.country = country;
 
-    // Mise à jour des photos si elles sont fournies
     if (req.files.photo1) {
       const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
       await sharp(req.files.photo1[0].path)
@@ -525,7 +432,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
         .jpeg({ quality: 80 })
         .toFile(photo1Path);
       property.photos[0] = path.basename(photo1Path);
-      fs.unlinkSync(req.files.photo1[0].path); // Supprimez le fichier original après traitement
+      fs.unlinkSync(req.files.photo1[0].path);
     }
 
     if (req.files.photo2) {
@@ -535,19 +442,16 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
         .jpeg({ quality: 80 })
         .toFile(photo2Path);
       property.photos[1] = path.basename(photo2Path);
-      fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original après traitement
+      fs.unlinkSync(req.files.photo2[0].path);
     }
 
     await property.save();
 
-    // Étape 2 : Appeler la fonction pour régénérer la landing page avec les nouvelles données
     const landingPageUrl = await generateLandingPage(property);
 
-    // Étape 3 : Mettez à jour l'URL de la landing page dans la base de données
     property.url = landingPageUrl;
     await property.save();
 
-    // Rediriger l'utilisateur vers sa liste de propriétés
     res.redirect('/user');
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la propriété : ', error);
@@ -555,7 +459,6 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
   }
 });
 
-// Route pour récupérer les propriétés de l'utilisateur
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ createdBy: req.user._id });
@@ -566,7 +469,6 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
   }
 });
 
-// Route pour le processus de paiement
 app.post('/process-payment', isAuthenticated, async (req, res) => {
   const { stripeToken, amount, propertyId } = req.body;
   const userId = req.user._id;
@@ -577,7 +479,7 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
 
   try {
     const charge = await stripe.charges.create({
-      amount: parseInt(amount, 10), // Convertir le montant en entier
+      amount: parseInt(amount, 10),
       currency: 'eur',
       source: stripeToken,
       description: `Payment for property ${propertyId}`,
@@ -600,7 +502,6 @@ app.get('/config', (req, res) => {
   res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
 });
 
-// Génération de la page de destination
 async function generateLandingPage(property) {
   const template = `
     <!DOCTYPE html>
@@ -694,20 +595,17 @@ async function generateLandingPage(property) {
 
   return `/landing-pages/${property._id}.html`;
 }
-const nodemailer = require('nodemailer');
 
-// Configuration de nodemailer
 const transporter = nodemailer.createTransport({
   host: 'smtp.ionos.fr',
   port: 587,
-  secure: false, // true pour le port 465, false pour les autres ports
+  secure: false,
   auth: {
-    user: process.env.EMAIL_USER, // Utilisation de la variable d'environnement pour l'adresse email
-    pass: process.env.EMAIL_PASS  // Utilisation de la variable d'environnement pour le mot de passe
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
 
-// Fonction générique pour envoyer un email
 async function sendEmail(mailOptions) {
   try {
     await transporter.sendMail(mailOptions);
@@ -716,30 +614,6 @@ async function sendEmail(mailOptions) {
     console.error('Erreur lors de l\'envoi de l\'email :', error);
   }
 }
-
-// Utilisation dans le formulaire de contact
-app.post('/send-contact', async (req, res) => {
-  const { firstName, lastName, email, message, type } = req.body;
-
-  const mailOptions = {
-    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-    to: process.env.CONTACT_EMAIL,
-    subject: 'Nouveau message de contact',
-    html: `
-      <p><b>Nom :</b> ${firstName} ${lastName}</p>
-      <p><b>Email :</b> ${email}</p>
-      <p><b>Type :</b> ${type}</p>
-      <p><b>Message :</b><br>${message}</p>
-    `
-  };
-
-  try {
-    await sendEmail(mailOptions);
-    res.redirect('/contact?messageEnvoye=true');
-  } catch (error) {
-    res.status(500).send('Erreur lors de l\'envoi de l\'email.');
-  }
-});
 
 async function sendAccountCreationEmail(email) {
   const mailOptions = {
@@ -769,52 +643,31 @@ async function sendAccountCreationEmail(email) {
   await sendEmail(mailOptions);
 }
 
-// Route d'inscription
-app.post('/register', async (req, res) => {
-  const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
+app.post('/send-contact', async (req, res) => {
+  const { firstName, lastName, email, message, type } = req.body;
 
-  // Validation et enregistrement de l'utilisateur
-  // ...
+  const mailOptions = {
+    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+    to: process.env.CONTACT_EMAIL,
+    subject: 'Nouveau message de contact',
+    html: `
+      <p><b>Nom :</b> ${firstName} ${lastName}</p>
+      <p><b>Email :</b> ${email}</p>
+      <p><b>Type :</b> ${type}</p>
+      <p><b>Message :</b><br>${message}</p>
+    `
+  };
 
   try {
-    const newUser = await User.register(new User({ username, email, firstName, lastName, role }), password);
-
-    // Envoyer l'email de confirmation
-    await sendAccountCreationEmail(newUser.email);
-
-    res.redirect('/login');
+    await sendEmail(mailOptions);
+    res.redirect('/contact?messageEnvoye=true');
   } catch (error) {
-    console.error('Erreur lors de l\'inscription :', error.message);
-    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
-    res.redirect('/register');
+    console.error('Erreur lors de l\'envoi de l\'email :', error);
+    res.status(500).send('Erreur lors de l\'envoi de l\'email.');
   }
 });
 
-app.post('/send-contact', async (req, res) => {
-    const { firstName, lastName, email, message, type } = req.body;
-
-    const mailOptions = {
-        from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-        to: process.env.CONTACT_EMAIL,
-        subject: 'Nouveau message de contact',
-        html: `
-            <p><b>Nom :</b> ${firstName} ${lastName}</p>
-            <p><b>Email :</b> ${email}</p>
-            <p><b>Type :</b> ${type}</p>
-            <p><b>Message :</b><br>${message}</p>
-        `
-    };
-
-    try {
-        await transporter.sendMail(mailOptions);
-        res.redirect('/contact?messageEnvoye=true');
-    } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'email :', error);
-        res.status(500).send('Erreur lors de l\'envoi de l\'email.');
-    }
-});
-
-const port = process.env.PORT || 3000; // Exemple avec le port 3000
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
