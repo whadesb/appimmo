@@ -257,8 +257,6 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 
-const validator = require('validator'); // Assurez-vous d'avoir installé ce package
-
 app.post('/register', async (req, res) => {
   console.log('Received data:', req.body);
   const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
