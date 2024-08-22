@@ -118,6 +118,16 @@ app.get('/forgot-password', (req, res) => {
   res.render('forgot-password', { title: 'Réinitialisation du mot de passe' });
 });
 
+// Route pour la politique de confidentialité
+app.get('/politique-confidentialite', (req, res) => {
+  res.render('politique-confidentialite', { title: 'Politique de confidentialité' });
+});
+
+// Route pour gérer les cookies
+app.get('/gerer-cookies', (req, res) => {
+  res.render('gerer-cookies', { title: 'Gérer les cookies' });
+});
+
 app.post('/forgot-password', async (req, res) => {
   const { email } = req.body;
   try {
