@@ -130,7 +130,7 @@ app.post('/forgot-password', async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
     await user.save();
 
-    const resetUrl = `http://${req.headers.host}/reset-password/${token}`;
+    const resetUrl = `http://${req.headers.host}/reset-password/${token}`; 
 const mailOptions = {
     to: user.email,
     from: process.env.EMAIL_USER,
