@@ -354,24 +354,11 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 
-app.post('/register', async (req, res) => {  // Assurez-vous que 'async' est bien présent ici
-  const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
-
-  // Validation des champs
-  if (!username || validator.isEmpty(username)) {
-    req.flash('error', 'Le nom d\'utilisateur est requis.');
-    return res.redirect('/register');
-  }
+app.post('/register', async (req, res) => {
+  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
 
   if (!validator.isEmail(email)) {
     req.flash('error', 'L\'adresse email n\'est pas valide.');
-    return res.redirect('/register');
-  }
-
-  // Validation du mot de passe
-  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  if (!passwordRequirements.test(password)) {
-    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
     return res.redirect('/register');
   }
 
@@ -380,20 +367,15 @@ app.post('/register', async (req, res) => {  // Assurez-vous que 'async' est bie
     return res.redirect('/register');
   }
 
+  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRequirements.test(password)) {
+    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
+    return res.redirect('/register');
+  }
+
   try {
-    // Vérification de l'unicité du username
-    const existingUser = await User.findOne({ username });
-    if (existingUser) {
-      req.flash('error', 'Le nom d\'utilisateur est déjà pris.');
-      return res.redirect('/register');
-    }
-
-    // Enregistrement du nouvel utilisateur
-    const newUser = await User.register(new User({ username, email, firstName, lastName, role }), password);
-
-    // Envoyer l'email de confirmation
+    const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
     await sendAccountCreationEmail(newUser.email);
-
     res.redirect('/login');
   } catch (error) {
     console.error('Erreur lors de l\'inscription :', error.message);
@@ -401,6 +383,7 @@ app.post('/register', async (req, res) => {  // Assurez-vous que 'async' est bie
     res.redirect('/register');
   }
 });
+
 
 
 app.post('/logout', (req, res, next) => {
