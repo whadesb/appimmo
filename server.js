@@ -261,6 +261,39 @@ app.post('/logout', (req, res, next) => {
     });
 });
 
+// server.js
+
+// Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
+app.post('/set-cookie-consent', (req, res) => {
+    const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
+
+    // Définir la durée en jours
+    let maxAge;
+    switch(duration) {
+        case '3mois':
+            maxAge = 90 * 24 * 60 * 60 * 1000; // 3 mois
+            break;
+        case '6mois':
+            maxAge = 180 * 24 * 60 * 60 * 1000; // 6 mois
+            break;
+        case '2ans':
+            maxAge = 2 * 365 * 24 * 60 * 60 * 1000; // 2 ans
+            break;
+        case '3ans':
+            maxAge = 3 * 365 * 24 * 60 * 60 * 1000; // 3 ans
+            break;
+        case '1an':
+        default:
+            maxAge = 365 * 24 * 60 * 60 * 1000; // 1 an par défaut
+            break;
+    }
+
+    // Enregistrement du cookie pour la durée choisie
+    res.cookie('cookie_consent', 'accepted', { maxAge: maxAge, httpOnly: true });
+    res.json({ message: 'Consentement enregistré', maxAge: maxAge });
+});
+
+
 app.get('/logout', (req, res, next) => {
     req.logout((err) => {
         if (err) {
