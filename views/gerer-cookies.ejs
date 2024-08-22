@@ -10,8 +10,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="preload" href="/css/bootstrap.min.css" as="style">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="preload" href="/css/bootstrap-icons.css" as="style">
     <link rel="stylesheet" href="/css/bootstrap-icons.css">
+    <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
         .section {
@@ -75,6 +78,12 @@
                         <a class="nav-link" href="/contact">Contact</a>
                     </li>
                 </ul>
+                <div class="d-none d-lg-block">
+                    <a href="/login" style="position: relative;">
+                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                        <span class="visually-hidden">Login</span>
+                    </a>
+                </div>
             </div>
         </div>
     </nav>
@@ -88,10 +97,11 @@
                     <p>Veuillez noter que certains cookies sont nécessaires au bon fonctionnement du site et ne peuvent être désactivés.</p>
                 </div>
                 <div class="cookie-settings-container">
-                    <h2>Choisir la durée du consentement</h2>
+                    <h2>Google Analytics</h2>
+                    <p>Mesure d'audience</p>
                     <form id="cookie-settings-form">
                         <div class="mb-3">
-                            <label for="duration" class="form-label">Durée du consentement :</label>
+                            <label for="duration" class="form-label">Demander à nouveau dans :</label>
                             <select id="duration" name="duration" class="form-select">
                                 <option value="3mois">3 mois</option>
                                 <option value="6mois">6 mois</option>
