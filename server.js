@@ -257,13 +257,32 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 
+const validator = require('validator'); // Assurez-vous d'avoir installé ce package
+
 app.post('/register', async (req, res) => {
   console.log('Received data:', req.body);
-  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
+  const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
+
+  // Validation de l'email
+  if (!validator.isEmail(email)) {
+    req.flash('error', 'L\'adresse email n\'est pas valide.');
+    return res.redirect('/register');
+  }
+
+  // Validation du champ username
+  if (validator.isEmpty(username)) {
+    req.flash('error', 'Le nom d\'utilisateur est requis.');
+    return res.redirect('/register');
+  }
+
+  // Validation du rôle
+  if (validator.isEmpty(role)) {
+    req.flash('error', 'Le rôle est requis.');
+    return res.redirect('/register');
+  }
 
   // Validation du mot de passe
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
   if (!passwordRequirements.test(password)) {
     req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
     return res.redirect('/register');
@@ -275,14 +294,14 @@ app.post('/register', async (req, res) => {
   }
 
   try {
-    const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+    const newUser = await User.register(new User({ username, email, firstName, lastName, role }), password);
 
     // Envoyer l'email de confirmation
     sendAccountCreationEmail(newUser.email);
 
     res.redirect('/login');
   } catch (error) {
-    console.error('Erreur lors de l\'inscription :', error.message); // Ajout de l'erreur précise
+    console.error('Erreur lors de l\'inscription :', error.message); 
     req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
     res.redirect('/register');
   }
