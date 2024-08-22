@@ -131,43 +131,42 @@ app.post('/forgot-password', async (req, res) => {
     await user.save();
 
     const resetUrl = `http://${req.headers.host}/reset-password/${token}`;
-    const mailOptions = {
-      to: user.email,
-      from: process.env.EMAIL_USER,
-      subject: 'Réinitialisation du mot de passe',
-      html: `<p>Vous avez demandé une réinitialisation du mot de passe.</p>
-             <p>Veuillez cliquer sur le lien suivant pour créer un nouveau mot de passe :</p>
-             <a href="${resetUrl}">${resetUrl}</a>`
-    };
-    await sendEmail(mailOptions);
+const mailOptions = {
+    to: user.email,
+    from: process.env.EMAIL_USER,
+    subject: 'Réinitialisation du mot de passe',
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2 style="color: #52566f;">Réinitialisation de votre mot de passe</h2>
+        <p>Bonjour,</p>
+        <p>Nous avons reçu une demande de réinitialisation du mot de passe associé à votre compte UAP Immo.</p>
+        
+        <p style="font-size: 16px; color: #52566f;">Que devez-vous faire ?</p>
+        <p>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :</p>
+        <p><a href="${resetUrl}" style="color: #52566f; text-decoration: underline;">Réinitialiser mon mot de passe</a></p>
+  
+        <p>Ce lien est valide pendant 1 heure. Si vous n'avez pas fait cette demande, vous pouvez ignorer cet email en toute sécurité.</p>
+  
+        <p style="font-size: 16px; color: #52566f;">Besoin d'aide ?</p>
+        <p>Si vous avez des questions ou avez besoin d'aide, n'hésitez pas à nous contacter à <a href="mailto:support@uap.company" style="color: #52566f; text-decoration: underline;">support@uap.company</a>.</p>
+  
+        <p>Cordialement,</p>
+        <p>L'équipe UAP Immo</p>
+        
+        <hr>
+        <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company" style="color: #52566f; text-decoration: underline;">support@uap.company</a>.</p>
+      </div>
+    `
+  };
+  await sendEmail(mailOptions);
 
-    req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.');
-    res.redirect('/login');
-  } catch (error) {
-    console.error('Erreur lors de la réinitialisation du mot de passe :', error);
-    req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
-    res.redirect('/forgot-password');
-  }
-});
-
-app.get('/reset-password/:token', async (req, res) => {
-  try {
-    const user = await User.findOne({ 
-      resetPasswordToken: req.params.token,
-      resetPasswordExpires: { $gt: Date.now() }
-    });
-
-    if (!user) {
-      req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
-      return res.redirect('/forgot-password');
-    }
-
-    res.render('reset-password', { title: 'Réinitialisation du mot de passe', token: req.params.token });
-  } catch (error) {
-    console.error('Erreur lors de la vérification du token :', error);
-    req.flash('error', 'Une erreur est survenue lors de la vérification du token.');
-    res.redirect('/forgot-password');
-  }
+  req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.');
+  res.redirect('/login');
+} catch (error) {
+  console.error('Erreur lors de la réinitialisation du mot de passe :', error);
+  req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
+  res.redirect('/forgot-password');
+}
 });
 
 app.post('/reset-password/:token', async (req, res) => {
