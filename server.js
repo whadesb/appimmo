@@ -626,6 +626,74 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+// Fonction générique pour envoyer un email
+async function sendEmail(mailOptions) {
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Email envoyé avec succès à :', mailOptions.to);
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de l\'email :', error);
+  }
+}
+
+// Utilisation dans le formulaire de contact
+app.post('/send-contact', async (req, res) => {
+  const { firstName, lastName, email, message, type } = req.body;
+
+  const mailOptions = {
+    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+    to: process.env.CONTACT_EMAIL,
+    subject: 'Nouveau message de contact',
+    html: `
+      <p><b>Nom :</b> ${firstName} ${lastName}</p>
+      <p><b>Email :</b> ${email}</p>
+      <p><b>Type :</b> ${type}</p>
+      <p><b>Message :</b><br>${message}</p>
+    `
+  };
+
+  try {
+    await sendEmail(mailOptions);
+    res.redirect('/contact?messageEnvoye=true');
+  } catch (error) {
+    res.status(500).send('Erreur lors de l\'envoi de l\'email.');
+  }
+});
+
+// Utilisation dans l'inscription
+async function sendAccountCreationEmail(email) {
+  const mailOptions = {
+    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: 'Bienvenue chez UAP Immo',
+    text: 'Votre compte a été créé avec succès!',
+    html: '<b>Votre compte a été créé avec succès!</b>'
+  };
+
+  await sendEmail(mailOptions);
+}
+
+// Route d'inscription
+app.post('/register', async (req, res) => {
+  const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
+
+  // Validation et enregistrement de l'utilisateur
+  // ...
+
+  try {
+    const newUser = await User.register(new User({ username, email, firstName, lastName, role }), password);
+
+    // Envoyer l'email de confirmation
+    await sendAccountCreationEmail(newUser.email);
+
+    res.redirect('/login');
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription :', error.message);
+    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
+    res.redirect('/register');
+  }
+});
+
 app.post('/send-contact', async (req, res) => {
     const { firstName, lastName, email, message, type } = req.body;
 
