@@ -354,7 +354,7 @@ app.get('/register', (req, res) => {
   res.render('register', { title: 'Register' });
 });
 
-app.post('/register', async (req, res) => {  // Assurez-vous que 'async' est bien présent ici
+app.post('/register', async (req, res) => {
   const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
 
   // Validation des champs
@@ -401,6 +401,7 @@ app.post('/register', async (req, res) => {  // Assurez-vous que 'async' est bie
     res.redirect('/register');
   }
 });
+
 
 
   // Validation du mot de passe
