@@ -355,26 +355,52 @@ app.get('/register', (req, res) => {
 });
 
 app.post('/register', async (req, res) => {
-  console.log('Received data:', req.body);
   const { username, email, firstName, lastName, role, password, confirmPassword } = req.body;
 
-  // Validation de l'email
+  // Validation des champs
+  if (!username || validator.isEmpty(username)) {
+    req.flash('error', 'Le nom d\'utilisateur est requis.');
+    return res.redirect('/register');
+  }
+
   if (!validator.isEmail(email)) {
     req.flash('error', 'L\'adresse email n\'est pas valide.');
     return res.redirect('/register');
   }
 
-  // Validation du champ username
-  if (validator.isEmpty(username)) {
-    req.flash('error', 'Le nom d\'utilisateur est requis.');
+  // Validation du mot de passe
+  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRequirements.test(password)) {
+    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
     return res.redirect('/register');
   }
 
-  // Validation du rôle
-  if (validator.isEmpty(role)) {
-    req.flash('error', 'Le rôle est requis.');
+  if (password !== confirmPassword) {
+    req.flash('error', 'Les mots de passe ne correspondent pas.');
     return res.redirect('/register');
   }
+
+  try {
+    // Vérification de l'unicité du username
+    const existingUser = await User.findOne({ username });
+    if (existingUser) {
+      req.flash('error', 'Le nom d\'utilisateur est déjà pris.');
+      return res.redirect('/register');
+    }
+
+    // Enregistrement du nouvel utilisateur
+    const newUser = await User.register(new User({ username, email, firstName, lastName, role }), password);
+
+    // Envoyer l'email de confirmation
+    await sendAccountCreationEmail(newUser.email);
+
+    res.redirect('/login');
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription :', error.message);
+    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
+    res.redirect('/register');
+  }
+});
 
   // Validation du mot de passe
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
