@@ -1,192 +1,132 @@
 <!doctype html>
 <html lang="en">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
-    <script defer>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0LN60RQ12K');
-    </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="UAP Immo Plateforme webmarketing immobilière">
+    <meta name="description" content="Gérer les cookies sur UAP Immo">
     <meta name="author" content="UAP Immo">
-    <meta name="theme-color" content="#C4B990"> 
-    <title>UAP Immo | Home</title>    
-    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <meta name="theme-color" content="#C4B990">
+    <title>UAP Immo | Gérer les cookies</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
-    <link rel="preload" href="/css/bootstrap.min.css" as="style">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="preload" href="/css/bootstrap-icons.css" as="style">
     <link rel="stylesheet" href="/css/bootstrap-icons.css">
-    <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            margin: -1px;
-            padding: 0;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
-        .navbar {
-            background-color: #C4B990; 
-        }
         .section {
-            scroll-margin-top: 77px; 
-        }
-        .section-top-margin {
             margin-top: 70px;
             padding-top: 60px;
             padding-bottom: 60px;
-        }
-        .justify-content-center {
-            margin-top: 40px;
-        }   
-        .custom-block-image {
-            object-fit: contain; 
-            height: auto;
-        }
-        @media (max-width: 767px) {
-            .section-top-margin {
-                padding-top: 40px;
-                padding-bottom: 40px;
-            }
-            .h1, .h2 {
-                font-size: 1.5rem;
-            }
-        }
-        .h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
         }
         .h2 {
             font-size: 2rem;
             margin-bottom: 60px;
         }
-        .custom-block-image {
-            object-fit: contain; /* Ajustez selon vos besoins */
-            height: auto;
+        .text-content {
+            line-height: 1.6;
+            margin-bottom: 30px;
         }
-        /* RGPD Cookie Popup */
-        .cookie-consent-popup {
+        /* Style pour le bandeau de cookies */
+        #cookie-banner {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: white;
-            padding: 20px;
-            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
-            border-radius: 10px;
-            z-index: 9999;
-            width: 90%;
-            max-width: 500px;
-            text-align: center;
-        }
-
-        .cookie-consent-popup h4 {
-            margin-bottom: 15px;
-            font-size: 1.25rem;
-            color: #52566f;
-        }
-
-        .cookie-consent-popup p {
-            font-size: 14px;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .cookie-consent-popup .btn-accept {
+            bottom: 0;
+            left: 0;
+            width: 100%;
             background-color: #52566f;
             color: white;
+            padding: 20px 15px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: justify;
+            font-family: 'Montserrat', sans-serif;
+        }
+        #cookie-banner p {
+            margin-bottom: 15px;
+            max-width: 800px;
+            text-align: justify;
+        }
+        #cookie-banner .cookie-links {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        #cookie-banner .cookie-links a {
+            color: #c4b990;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+        #cookie-banner button {
+            background-color: #c4b990;
+            color: #000;
             border: none;
             padding: 10px 20px;
-            font-size: 14px;
+            font-size: 16px;
+            cursor: pointer;
             border-radius: 5px;
-            cursor: pointer;
-            float: right;
+            font-weight: 600;
         }
-
-        .cookie-consent-popup a {
-            color: #007bff;
+        #cookie-banner button:hover {
+            background-color: #e0cc99;
+        }
+        #cookie-banner .dismiss-link {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #c4b990;
             text-decoration: underline;
+            font-weight: 600;
             cursor: pointer;
         }
-
-        .cookie-consent-popup .link-group {
-            margin-top: 20px;
-        }
-
-        .cookie-consent-popup .link-group a {
-            margin: 0 5px;
-        }
-
-        @media (max-width: 768px) {
-            .cookie-consent-popup {
+        @media (max-width: 767px) {
+            #cookie-banner {
                 padding: 15px;
             }
-
-            .cookie-consent-popup p {
-                font-size: 12px;
+            #cookie-banner p {
+                font-size: 14px;
             }
-
-            .cookie-consent-popup .btn-accept {
-                width: 100%;
-                margin-top: 10px;
+            #cookie-banner .cookie-links {
+                flex-direction: column;
+                text-align: center;
             }
         }
     </style>
 </head>
 <body id="top">
-    <main>
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <span>UAP Immo</span>
-                </a>
-                <div class="d-lg-none ms-auto me-4">
-                    <a href="/login" style="position: relative;">
-                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                        <span class="visually-hidden">Login</span>
-                    </a>
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#processus">Processus</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#faq">FAQs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/contact">Contact</a>
-                        </li>
-                    </ul>
-                    <div class="d-none d-lg-block">
-                        <a href="/login" style="position: relative;">
-                            <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                            <span class="visually-hidden">Login</span>
-                        </a>
-                    </div>
-                </div>
+    <nav class="navbar navbar-expand-lg fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <span>UAP Immo</span>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#fonctionnement">Fonctionnement</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#processus">Processus</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/#faq">FAQs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/contact">Contact</a>
+                    </li>
+                </ul>
             </div>
-        </nav>
-
+        </div>
+    </nav>
         <section class="section-top-margin">
             <div class="container">
                 <h1 class="text-center">Plateforme de Webmarketing Immobilier</h1>
@@ -377,90 +317,82 @@
         </div>
     </div>
 </section>
-         <div id="cookie-consent-popup" class="cookie-consent-popup">
-            <h4>Gestion des Cookies</h4>
-            <p>UAP Immo et ses partenaires utilisent des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages.<br>Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés.<br>Les cookies non techniques nécessitent votre consentement.</p>
-            <a id="continue-without-consent" class="btn">Continuer sans accepter</a>
-            <button id="accept-cookies-btn" class="btn-accept">Tout accepter et fermer</button>
-            <div class="link-group">
-                <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> | <a href="/gerer-cookies">Gérer mes choix</a>
-            </div>
-        </div>
-
-    </main>
-  <footer class="site-footer section-padding">
+         <main>
+        <section class="section">
             <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-12 mb-4 pb-2">
-                        <a class="navbar-brand mb-2" href="/">
-                            <span>UAP Immo</span>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Informations</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
-                            <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Accès</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                        </ul>
-                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="#">English</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">Français</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+                <h2 class="text-center">Gérer mes choix concernant les cookies</h2>
+                <div class="text-content">
+                    <p>Cette page vous permet de gérer vos préférences concernant les cookies sur notre site. Vous pouvez choisir d'accepter ou de refuser les cookies non essentiels à tout moment. Vous pouvez également définir la durée pendant laquelle vos préférences seront conservées.</p>
+                    <p>Veuillez noter que certains cookies sont nécessaires au bon fonctionnement du site et ne peuvent être désactivés.</p>
+                    <!-- Ajouter ici les options de gestion des cookies -->
                 </div>
             </div>
-        </footer>
+        </section>
+    </main>
 
-<script defer src="js/jquery.min.js"></script>
-<script defer src="js/bootstrap.bundle.min.js"></script>
-<script defer src="js/jquery.sticky.js"></script>
-<script defer src="js/click-scroll.js"></script>
-<script defer src="js/custom.js"></script>
-<script defer>
-    document.addEventListener('DOMContentLoaded', function () {
-        const popup = document.getElementById('cookie-consent-popup');
-        const acceptBtn = document.getElementById('accept-cookies-btn');
-        const continueWithoutConsent = document.getElementById('continue-without-consent');
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/">
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
+                        <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Accès</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="#">English</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Français</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 
-        // Vérifiez si l'utilisateur a déjà accepté ou refusé les cookies
-        if (!localStorage.getItem('cookiesAccepted') && !localStorage.getItem('cookiesDeclined')) {
-            popup.classList.add('visible');
-        }
+    <!-- Bandeau de cookies -->
+    <div id="cookie-banner">
+        <div class="dismiss-link">Continuer sans accepter</div>
+        <p>UAP Immo et ses partenaires utilisent des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages. Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés. Les cookies non techniques nécessitent votre consentement. Vous pourrez retirer ou donner votre consentement via le lien « paramétrer les cookies » présent en bas de page.</p>
+        <div class="cookie-links">
+            <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> | 
+            <a href="/gerer-mes-choix">Gérer mes choix</a>
+        </div>
+        <button id="accept-cookies">Tout accepter et fermer</button>
+    </div>
 
-        acceptBtn.addEventListener('click', function () {
-            localStorage.setItem('cookiesAccepted', 'true');
-            popup.classList.remove('visible');
-
-            // Initialisez Google Analytics ici après acceptation des cookies
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
-            ga('create', 'UA-XXXXX-Y', 'auto');
-            ga('send', 'pageview');
+    <script>
+        document.getElementById('accept-cookies').addEventListener('click', function() {
+            document.getElementById('cookie-banner').style.display = 'none';
+            // Logique pour enregistrer le consentement des cookies, par exemple via localStorage ou un cookie
         });
 
-        continueWithoutConsent.addEventListener('click', function () {
-            localStorage.setItem('cookiesDeclined', 'true');
-            popup.classList.remove('visible');
+        document.querySelector('.dismiss-link').addEventListener('click', function() {
+            document.getElementById('cookie-banner').style.display = 'none';
+            // Logique pour continuer sans accepter les cookies, par exemple enregistrer un choix spécifique
         });
-    });
-</script>
+    </script>
+
+    <script defer src="/js/jquery.min.js"></script>
+    <script defer src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
