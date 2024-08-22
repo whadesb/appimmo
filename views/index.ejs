@@ -74,54 +74,70 @@
             object-fit: contain; /* Ajustez selon vos besoins */
             height: auto;
         }
-        /* RGPD Cookie Banner */
-        .cookie-consent-banner {
+        /* RGPD Cookie Popup */
+        .cookie-consent-popup {
             position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
             z-index: 9999;
-            transform: translateY(100%);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .cookie-consent-banner.visible {
-            transform: translateY(0);
-        }
-
-        .cookie-consent-content {
-            max-width: 960px;
-            width: 100%;
+            width: 90%;
+            max-width: 500px;
             text-align: center;
+            display: none;
         }
 
-        .cookie-consent-content p {
-            margin: 0;
-            padding: 0;
+        .cookie-consent-popup.visible {
+            display: block;
+        }
+
+        .cookie-consent-popup h4 {
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+            color: #52566f;
+        }
+
+        .cookie-consent-popup p {
             font-size: 14px;
+            color: #333;
+            margin-bottom: 20px;
         }
 
-        .cookie-consent-content .btn {
-            margin-left: 15px;
+        .cookie-consent-popup .btn {
+            margin: 0 5px;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
+        .cookie-consent-popup .btn-accept {
             background-color: #4CAF50;
             color: white;
+            border: none;
+        }
+
+        .cookie-consent-popup .btn-decline {
+            background-color: #f44336;
+            color: white;
+            border: none;
         }
 
         @media (max-width: 768px) {
-            .cookie-consent-banner {
-                flex-direction: column;
-                padding: 20px;
+            .cookie-consent-popup {
+                padding: 15px;
             }
-            
-            .cookie-consent-content .btn {
-                margin-top: 10px;
-                margin-left: 0;
+
+            .cookie-consent-popup p {
+                font-size: 12px;
+            }
+
+            .cookie-consent-popup .btn {
+                width: 100%;
+                margin-bottom: 10px;
             }
         }
     </style>
@@ -360,11 +376,12 @@
         </div>
     </div>
 </section>
-<div id="cookie-consent-banner" class="cookie-consent-banner">
-            <div class="cookie-consent-content">
-                <p>La CLCV et ses partenaires utilisent des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages.<br>Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés.<br>Les cookies non techniques nécessitent votre consentement. Vous pourrez retirer ou donner votre consentement via le lien « paramétrer les cookies » présent en bas de page.</p>
-                <button id="accept-cookies-btn" class="btn btn-primary">Accepter</button>
-            </div>
+        <!-- Popup RGPD -->
+        <div id="cookie-consent-popup" class="cookie-consent-popup">
+            <h4>Gestion des Cookies</h4>
+            <p>La CLCV et ses partenaires utilisent des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages.<br>Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés.<br>Les cookies non techniques nécessitent votre consentement.</p>
+            <button id="accept-cookies-btn" class="btn btn-accept">Accepter</button>
+            <button id="decline-cookies-btn" class="btn btn-decline">Refuser</button>
         </div>
 
     </main>
@@ -392,8 +409,12 @@
                         <div class="dropdown">
                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                             <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="#">English</a></li>
-                                <li><a class="dropdown-item" href="#">Français</a></li>
+                                <li>
+                                    <a class="dropdown-item" href="#">English</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Français</a>
+                                </li>
                             </ul>
                         </div>
                     </div>
@@ -401,7 +422,6 @@
                 </div>
             </div>
         </footer>
-
 <script defer src="js/jquery.min.js"></script>
 <script defer src="js/bootstrap.bundle.min.js"></script>
 <script defer src="js/jquery.sticky.js"></script>
@@ -409,17 +429,18 @@
 <script defer src="js/custom.js"></script>
 <script defer>
     document.addEventListener('DOMContentLoaded', function () {
-        const banner = document.getElementById('cookie-consent-banner');
+        const popup = document.getElementById('cookie-consent-popup');
         const acceptBtn = document.getElementById('accept-cookies-btn');
+        const declineBtn = document.getElementById('decline-cookies-btn');
 
-        // Vérifiez si l'utilisateur a déjà accepté les cookies
-        if (!localStorage.getItem('cookiesAccepted')) {
-            banner.classList.add('visible');
+        // Vérifiez si l'utilisateur a déjà accepté ou refusé les cookies
+        if (!localStorage.getItem('cookiesAccepted') && !localStorage.getItem('cookiesDeclined')) {
+            popup.classList.add('visible');
         }
 
         acceptBtn.addEventListener('click', function () {
             localStorage.setItem('cookiesAccepted', 'true');
-            banner.classList.remove('visible');
+            popup.classList.remove('visible');
 
             // Initialisez Google Analytics ici après acceptation des cookies
             (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -429,6 +450,11 @@
 
             ga('create', 'UA-XXXXX-Y', 'auto');
             ga('send', 'pageview');
+        });
+
+        declineBtn.addEventListener('click', function () {
+            localStorage.setItem('cookiesDeclined', 'true');
+            popup.classList.remove('visible');
         });
     });
 </script>
