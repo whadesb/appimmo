@@ -47,7 +47,7 @@
             padding-bottom: 60px;
         }
         .justify-content-center {
-        margin-top: 40px;
+            margin-top: 40px;
         }   
         .custom-block-image {
             object-fit: contain; 
@@ -74,6 +74,56 @@
             object-fit: contain; /* Ajustez selon vos besoins */
             height: auto;
         }
+        /* RGPD Cookie Banner */
+        .cookie-consent-banner {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transform: translateY(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .cookie-consent-banner.visible {
+            transform: translateY(0);
+        }
+
+        .cookie-consent-content {
+            max-width: 960px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .cookie-consent-content p {
+            margin: 0;
+            padding: 0;
+            font-size: 14px;
+        }
+
+        .cookie-consent-content .btn {
+            margin-left: 15px;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .cookie-consent-banner {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            .cookie-consent-content .btn {
+                margin-top: 10px;
+                margin-left: 0;
+            }
+        }
     </style>
 </head>
 <body id="top">
@@ -81,7 +131,6 @@
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                    
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto me-4">
@@ -120,6 +169,7 @@
                 </div>
             </div>
         </nav>
+
         <section class="section-top-margin">
             <div class="container">
                 <h1 class="text-center">Plateforme de Webmarketing Immobilier</h1>
@@ -310,13 +360,19 @@
         </div>
     </div>
 </section>
+   <div id="cookie-consent-banner" class="cookie-consent-banner">
+            <div class="cookie-consent-content">
+                <p>Nous utilisons des cookies pour améliorer votre expérience sur notre site. En poursuivant votre navigation, vous acceptez l'utilisation de ces cookies, notamment pour Google Analytics.</p>
+                <button id="accept-cookies-btn" class="btn btn-primary">Accepter</button>
+            </div>
+        </div>
+
     </main>
   <footer class="site-footer section-padding">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3 col-12 mb-4 pb-2">
                         <a class="navbar-brand mb-2" href="/">
-                            
                             <span>UAP Immo</span>
                         </a>
                     </div>
@@ -331,18 +387,13 @@
                         <h6 class="site-footer-title mb-3">Accès</h6>
                         <ul class="site-footer-links">
                             <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                            
                         </ul>
                     <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
                         <div class="dropdown">
                             <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                             <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="#">English</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">Français</a>
-                                </li>
+                                <li><a class="dropdown-item" href="#">English</a></li>
+                                <li><a class="dropdown-item" href="#">Français</a></li>
                             </ul>
                         </div>
                     </div>
@@ -350,10 +401,36 @@
                 </div>
             </div>
         </footer>
+
 <script defer src="js/jquery.min.js"></script>
 <script defer src="js/bootstrap.bundle.min.js"></script>
 <script defer src="js/jquery.sticky.js"></script>
 <script defer src="js/click-scroll.js"></script>
 <script defer src="js/custom.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const banner = document.getElementById('cookie-consent-banner');
+        const acceptBtn = document.getElementById('accept-cookies-btn');
+
+        // Vérifiez si l'utilisateur a déjà accepté les cookies
+        if (!localStorage.getItem('cookiesAccepted')) {
+            banner.classList.add('visible');
+        }
+
+        acceptBtn.addEventListener('click', function () {
+            localStorage.setItem('cookiesAccepted', 'true');
+            banner.classList.remove('visible');
+
+            // Initialisez Google Analytics ici après acceptation des cookies
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+            ga('create', 'UA-XXXXX-Y', 'auto');
+            ga('send', 'pageview');
+        });
+    });
+</script>
 </body>
 </html>
