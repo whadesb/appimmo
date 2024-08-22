@@ -667,14 +667,14 @@ async function sendAccountCreationEmail(email) {
     subject: 'Bienvenue chez UAP Immo',
     html: `
       <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2 style="color: #4CAF50;">Bienvenue chez UAP Immo!</h2>
+        <h2 style="color: #52566f;">Bienvenue chez UAP Immo!</h2>
         <p>Bonjour,</p>
         <p>Nous sommes ravis de vous compter parmi nos nouveaux utilisateurs. Votre compte a été créé avec succès !</p>
         <p>Vous avez reçu cet email parce que vous vous êtes inscrit sur notre plateforme. Vous pouvez dès maintenant vous connecter en utilisant l'adresse email et le mot de passe que vous avez choisis lors de l'inscription.</p>
         <p style="font-size: 16px;">Voici un récapitulatif :</p>
         <ul style="font-size: 16px;">
           <li><strong>Email :</strong> ${email}</li>
-          <li><strong>Plateforme :</strong> <a href="https://votre-domaine.com/login" style="color: #4CAF50;">Se connecter à UAP Immo</a></li>
+          <li><strong>Plateforme :</strong> <a href="https://uap.immo/login" style="color: #52566f;">Se connecter à votre espace UAP Immo</a></li>
         </ul>
         <p>Si vous avez des questions ou besoin d'aide, n'hésitez pas à nous contacter à tout moment.</p>
         <p>Cordialement,</p>
