@@ -163,11 +163,11 @@ app.post('/forgot-password', async (req, res) => {
     await sendEmail(mailOptions);
 
     req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.');
-    res.redirect('/login');
+    return res.redirect('/forgot-password?emailSent=true');
   } catch (error) {
     console.error('Erreur lors de la réinitialisation du mot de passe :', error);
     req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
-    res.redirect('/forgot-password');
+    return res.redirect('/forgot-password');
   }
 });
 
