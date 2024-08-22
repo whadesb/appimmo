@@ -88,11 +88,6 @@
             width: 90%;
             max-width: 500px;
             text-align: center;
-            display: none;
-        }
-
-        .cookie-consent-popup.visible {
-            display: block;
         }
 
         .cookie-consent-popup h4 {
@@ -107,23 +102,29 @@
             margin-bottom: 20px;
         }
 
-        .cookie-consent-popup .btn {
-            margin: 0 5px;
-            padding: 10px 20px;
-            font-size: 14px;
-            border-radius: 5px;
-        }
-
         .cookie-consent-popup .btn-accept {
             background-color: #4CAF50;
             color: white;
             border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
         }
 
-        .cookie-consent-popup .btn-decline {
-            background-color: #f44336;
-            color: white;
-            border: none;
+        .cookie-consent-popup a {
+            color: #007bff;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .cookie-consent-popup .link-group {
+            margin-top: 20px;
+        }
+
+        .cookie-consent-popup .link-group a {
+            margin: 0 5px;
         }
 
         @media (max-width: 768px) {
@@ -135,9 +136,9 @@
                 font-size: 12px;
             }
 
-            .cookie-consent-popup .btn {
+            .cookie-consent-popup .btn-accept {
                 width: 100%;
-                margin-bottom: 10px;
+                margin-top: 10px;
             }
         }
     </style>
@@ -376,12 +377,14 @@
         </div>
     </div>
 </section>
-        <!-- Popup RGPD -->
-        <div id="cookie-consent-popup" class="cookie-consent-popup">
+         <div id="cookie-consent-popup" class="cookie-consent-popup">
             <h4>Gestion des Cookies</h4>
-            <p>La CLCV et ses partenaires utilisent des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages.<br>Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés.<br>Les cookies non techniques nécessitent votre consentement.</p>
-            <button id="accept-cookies-btn" class="btn btn-accept">Accepter</button>
-            <button id="decline-cookies-btn" class="btn btn-decline">Refuser</button>
+            <p>UAP Immo et ses partenaires utilisent des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages.<br>Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés.<br>Les cookies non techniques nécessitent votre consentement.</p>
+            <a id="continue-without-consent" class="btn">Continuer sans accepter</a>
+            <button id="accept-cookies-btn" class="btn-accept">Tout accepter et fermer</button>
+            <div class="link-group">
+                <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> | <a href="/gerer-cookies">Gérer mes choix</a>
+            </div>
         </div>
 
     </main>
@@ -422,6 +425,7 @@
                 </div>
             </div>
         </footer>
+
 <script defer src="js/jquery.min.js"></script>
 <script defer src="js/bootstrap.bundle.min.js"></script>
 <script defer src="js/jquery.sticky.js"></script>
@@ -431,7 +435,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const popup = document.getElementById('cookie-consent-popup');
         const acceptBtn = document.getElementById('accept-cookies-btn');
-        const declineBtn = document.getElementById('decline-cookies-btn');
+        const continueWithoutConsent = document.getElementById('continue-without-consent');
 
         // Vérifiez si l'utilisateur a déjà accepté ou refusé les cookies
         if (!localStorage.getItem('cookiesAccepted') && !localStorage.getItem('cookiesDeclined')) {
@@ -452,7 +456,7 @@
             ga('send', 'pageview');
         });
 
-        declineBtn.addEventListener('click', function () {
+        continueWithoutConsent.addEventListener('click', function () {
             localStorage.setItem('cookiesDeclined', 'true');
             popup.classList.remove('visible');
         });
