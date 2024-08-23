@@ -135,6 +135,20 @@
             margin-top: 10px;
         }
 
+        .cookie-consent-popup .link-group {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cookie-consent-popup .link-group div {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
         @media (max-width: 768px) {
             .cookie-consent-popup {
                 padding: 20px;
@@ -151,24 +165,9 @@
                 float: none;
             }
 
-            .cookie-consent-popup .btn-accept {
-                margin-top: 10px;
-            }
-        }
-
-        /* New styles for aligned links on desktop */
-        @media (min-width: 769px) {
-            .cookie-consent-popup .link-group {
-                display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                margin-top: 20px;
-                text-align: center;
-            }
-
-            .cookie-consent-popup .link-group a {
-                margin-bottom: 10px;
-                flex: 1;
+            .cookie-consent-popup .link-group div {
+                flex-direction: column;
+                gap: 5px;
             }
         }
     </style>
@@ -412,8 +411,11 @@
     <a href="#" class="continue-link">Continuer sans accepter</a>
     <button id="accept-cookies-btn" class="btn-accept">Accepter et fermer</button>
     <div class="link-group">
-        <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> 
-        <a href="/gerer-cookies">Gérer mes choix</a>
+        <div>
+            <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> 
+            <span>|</span> 
+            <a href="/gerer-cookies">Gérer mes choix</a>
+        </div>
     </div>
 </div>
 
