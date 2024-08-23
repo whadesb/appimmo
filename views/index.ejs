@@ -150,6 +150,26 @@
                 text-align: center;
                 float: none;
             }
+
+            .cookie-consent-popup .btn-accept {
+                margin-top: 10px;
+            }
+        }
+
+        /* New styles for aligned links on desktop */
+        @media (min-width: 769px) {
+            .cookie-consent-popup .link-group {
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                margin-top: 20px;
+                text-align: center;
+            }
+
+            .cookie-consent-popup .link-group a {
+                margin-bottom: 10px;
+                flex: 1;
+            }
         }
     </style>
 </head>
@@ -391,8 +411,8 @@
     <p>UAP Immo utilise des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages. Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés. Les cookies non techniques nécessitent votre consentement.</p>
     <a href="#" class="continue-link">Continuer sans accepter</a>
     <button id="accept-cookies-btn" class="btn-accept">Accepter et fermer</button>
-    <div style="margin-top: 20px; text-align: center;">
-        <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> | 
+    <div class="link-group">
+        <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> 
         <a href="/gerer-cookies">Gérer mes choix</a>
     </div>
 </div>
