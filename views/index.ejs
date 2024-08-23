@@ -368,29 +368,6 @@
         </div>
     </footer>
 
-    <!-- Bandeau de cookies -->
-    <div id="cookie-banner">
-        <div class="dismiss-link">Continuer sans accepter</div>
-        <p>UAP Immo et ses partenaires utilisent des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages. Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés. Les cookies non techniques nécessitent votre consentement. Vous pourrez retirer ou donner votre consentement via le lien « paramétrer les cookies » présent en bas de page.</p>
-        <div class="cookie-links">
-            <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> | 
-            <a href="/gerer-mes-choix">Gérer mes choix</a>
-        </div>
-        <button id="accept-cookies">Tout accepter et fermer</button>
-    </div>
-
-    <script>
-        document.getElementById('accept-cookies').addEventListener('click', function() {
-            document.getElementById('cookie-banner').style.display = 'none';
-            // Logique pour enregistrer le consentement des cookies, par exemple via localStorage ou un cookie
-        });
-
-        document.querySelector('.dismiss-link').addEventListener('click', function() {
-            document.getElementById('cookie-banner').style.display = 'none';
-            // Logique pour continuer sans accepter les cookies, par exemple enregistrer un choix spécifique
-        });
-    </script>
-
     <script defer src="/js/jquery.min.js"></script>
     <script defer src="/js/bootstrap.bundle.min.js"></script>
 </body>
