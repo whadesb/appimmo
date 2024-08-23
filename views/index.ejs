@@ -82,12 +82,12 @@
             left: 50%;
             transform: translate(-50%, -50%);
             background-color: #f9f9f9;
-            padding: 20px;
-            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.9);
-            border-radius: 4px;
+            padding: 30px;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
             z-index: 9999;
-            width: 90%;
-            max-width: 500px;
+            width: 95%;
+            max-width: 550px;
             text-align: justify;
             display: none;
         }
@@ -97,9 +97,10 @@
         }
 
         .cookie-consent-popup h4 {
-            margin-bottom: 15px;
-            font-size: 1.25rem;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
             color: #52566f;
+            text-align: center;
         }
 
         .cookie-consent-popup p {
@@ -109,7 +110,7 @@
         }
 
         .cookie-consent-popup a {
-            color: #007bff;
+            color: #000;
             text-decoration: underline;
             cursor: pointer;
         }
@@ -122,27 +123,32 @@
             font-size: 14px;
             border-radius: 5px;
             margin-top: 10px;
+            float: right;
         }
 
         .cookie-consent-popup .continue-link {
-            display: block;
-            margin-bottom: 20px;
-            color: #007bff;
+            color: #000;
             text-decoration: underline;
             cursor: pointer;
+            margin-right: 15px;
+            float: left;
+            margin-top: 10px;
         }
 
         @media (max-width: 768px) {
             .cookie-consent-popup {
-                padding: 15px;
+                padding: 20px;
             }
 
             .cookie-consent-popup p {
                 font-size: 12px;
             }
 
-            .cookie-consent-popup .btn-accept {
+            .cookie-consent-popup .btn-accept,
+            .cookie-consent-popup .continue-link {
                 width: 100%;
+                text-align: center;
+                float: none;
             }
         }
     </style>
@@ -381,15 +387,15 @@
     </div>
 </section>
 <div id="cookie-consent-popup" class="cookie-consent-popup">
-            <h4>Gestion des Cookies</h4>
-            <p>UAP Immo et ses partenaires utilisent des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages. Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés. Les cookies non techniques nécessitent votre consentement.</p>
-            <a href="#" class="continue-link">Continuer sans accepter</a>
-            <button id="accept-cookies-btn" class="btn-accept">Tout accepter et fermer</button>
-            <div style="margin-top: 20px;">
-                <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> | 
-                <a href="/gerer-cookies">Gérer mes choix</a>
-            </div>
-        </div>
+    <h4>Gestion des Cookies</h4>
+    <p>UAP Immo et ses partenaires utilisent des cookies pour mesurer l’audience, la performance, personnaliser les contenus et les partages. Les cookies techniques sont nécessaires au fonctionnement de notre site et ne peuvent pas être désactivés. Les cookies non techniques nécessitent votre consentement.</p>
+    <a href="#" class="continue-link">Continuer sans accepter</a>
+    <button id="accept-cookies-btn" class="btn-accept">Tout accepter et fermer</button>
+    <div style="margin-top: 20px; text-align: center;">
+        <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a> | 
+        <a href="/gerer-cookies">Gérer mes choix</a>
+    </div>
+</div>
 
     </main>
   <footer class="site-footer section-padding">
@@ -411,7 +417,6 @@
                         <h6 class="site-footer-title mb-3">Accès</h6>
                         <ul class="site-footer-links">
                             <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                            
                         </ul>
                     <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
                         <div class="dropdown">
