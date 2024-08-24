@@ -4,10 +4,10 @@
     <!-- Google tag (gtag.js) -->
     <script defer src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
     <script defer>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0LN60RQ12K');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-0LN60RQ12K');
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -227,7 +227,6 @@
             const acceptBtn = document.getElementById('accept-cookies-btn');
             const continueLink = document.querySelector('.continue-link');
 
-            // Vérifiez si l'utilisateur a déjà accepté ou refusé les cookies
             if (!localStorage.getItem('cookiesAccepted') && !localStorage.getItem('cookiesDeclined')) {
                 popup.classList.add('visible');
             }
@@ -235,13 +234,10 @@
             acceptBtn.addEventListener('click', function () {
                 localStorage.setItem('cookiesAccepted', 'true');
                 popup.classList.remove('visible');
-
-                // Initialisez Google Analytics ici après acceptation des cookies
                 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
                 })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-
                 ga('create', 'UA-XXXXX-Y', 'auto');
                 ga('send', 'pageview');
             });
@@ -298,40 +294,39 @@
         </nav>
 
        <section class="section-top-margin">
-    <div class="container">
-        <h1 class="text-center">Révolutionnez Votre Marketing Immobilier avec UAP Immo</h1>
-        <h2 class="text-center"></h2>
-        <div class="row justify-content-center">
-            <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                <div class="background-color: transparent;">
-                    <div class="d-flex">
-                        <div>
-                            <h5 class="mb-2">Créez et diffusez vos annonces immobilières en un clic</h5>
-                            <p class="mb-0">Avec UAP Immo, générez automatiquement des landing pages professionnelles et diffusez-les sur les canaux les plus efficaces. Maximisez vos conversions et atteignez vos objectifs immobiliers facilement et rapidement. Inscrivez-vous maintenant pour booster vos ventes.</p>
-                            <a href="/register" class="btn btn-primary mt-3">Commencez maintenant</a>
+            <div class="container">
+                <h1 class="text-center">Révolutionnez Votre Marketing Immobilier avec UAP Immo</h1>
+                <h2 class="text-center"></h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-4 col-12 mb-4 mb-lg-0">
+                        <div class="background-color: transparent;">
+                            <div class="d-flex">
+                                <div>
+                                    <h5 class="mb-2">Créez et diffusez vos annonces immobilières en un clic</h5>
+                                    <p class="mb-0">Avec UAP Immo, générez automatiquement des landing pages professionnelles et diffusez-les sur les canaux les plus efficaces. Maximisez vos conversions et atteignez vos objectifs immobiliers facilement et rapidement. Inscrivez-vous maintenant pour booster vos ventes.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="/register" class="btn btn-primary mt-3">Commencez maintenant</a>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                        <div class="custom-block custom-block-overlay">
+                            <div class="d-flex flex-column h-100">
+                                <img src="images/fonctionnement-de-la-plateforme-webmarketing-uap-immo-small.webp" 
+                                     srcset="images/fonctionnement-de-la-plateforme-webmarketing-uap-immo-small.webp 600w,
+                                             images/fonctionnement-de-la-plateforme-webmarketing-uap-immo.webp 800w"
+                                     sizes="(max-width: 600px) 600px, 800px"
+                                     class="custom-block-image img-fluid" 
+                                     alt="Fonctionnement de la plateforme de webmarketing UAP Immo" 
+                                     width="800" height="600" loading="lazy">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-12">
-                <div class="custom-block custom-block-overlay">
-                    <div class="d-flex flex-column h-100">
-                        <img src="images/fonctionnement-de-la-plateforme-webmarketing-uap-immo-small.webp"
-                             srcset="images/fonctionnement-de-la-plateforme-webmarketing-uap-immo-small.webp 600w, images/fonctionnement-de-la-plateforme-webmarketing-uap-immo-medium.webp 800w, images/fonctionnement-de-la-plateforme-webmarketing-uap-immo-large.webp 1200w"
-                             sizes="(max-width: 600px) 600px, (max-width: 1200px) 800px, 1200px"
-                             class="custom-block-image img-fluid"
-                             alt="Fonctionnement de la plateforme de webmarketing UAP Immo"
-                             width="800"
-                             height="600"
-                             loading="lazy">
-                        <div class="section-overlay"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</section>
-<section class="key-points-section py-5">
+        </section>
+
+        <section class="key-points-section py-5">
             <div class="container">
                 <div class="row text-center">
                     <div class="col-lg-4">
@@ -358,7 +353,7 @@
                 </div>
             </div>
         </section>
-    
+
         <section class="timeline-section section-padding" id="processus">
             <div class="section-overlay"></div>
             <div class="container">
@@ -405,7 +400,7 @@
                 </div>
             </div>
         </section>
-    
+
         <section class="faq-section section-padding" id="faq">
             <div class="container">
                 <div class="row">
@@ -415,13 +410,12 @@
                     <div class="clearfix"></div>
                     <div class="col-lg-5 col-12">
                         <img src="images/uap-immo-faq-plateforme-webmarketing-immobiliere-small.webp"
-                             srcset="images/uap-immo-faq-plateforme-webmarketing-immobiliere-small.webp 600w, images/uap-immo-faq-plateforme-webmarketing-immobiliere-medium.webp 800w, images/uap-immo-faq-plateforme-webmarketing-immobiliere-large.webp 1200w"
-                             sizes="(max-width: 600px) 600px, (max-width: 1200px) 800px, 1200px"
-                             class="custom-block-image img-fluid"
-                             alt="Fonctionnement de la plateforme de webmarketing UAP Immo"
-                             width="600"
-                             height="400"
-                             loading="lazy">
+                             srcset="images/uap-immo-faq-plateforme-webmarketing-immobiliere-small.webp 600w, 
+                                     images/uap-immo-faq-plateforme-webmarketing-immobiliere.webp 800w"
+                             sizes="(max-width: 600px) 600px, 800px"
+                             class="custom-block-image img-fluid" 
+                             alt="Fonctionnement de la plateforme de webmarketing UAP Immo" 
+                             width="600" height="400" loading="lazy">
                     </div>
                     <div class="col-lg-6 col-12 m-auto">
                         <div class="accordion" id="accordionExample">
@@ -466,7 +460,7 @@
                 </div>
             </div>
         </section>
-    
+
     </main>
     <footer class="site-footer section-padding">
         <div class="container">
