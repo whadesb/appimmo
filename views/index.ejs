@@ -25,26 +25,19 @@
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
-        .custom-block.bg-white.shadow-lg {
-            background-image: none; /* Supprime l'image de fond */
-            border: none; /* Supprime la bordure */
-            box-shadow: none; /* Supprime l'ombre */
-            background-color: transparent; /* Supprime le fond blanc */
-        }
-
         .cookie-consent-popup {
             position: fixed;
-            bottom: 20px;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
             background-color: #f9f9f9;
             padding: 20px;
             box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
             border-radius: 8px;
             z-index: 9999;
             width: 90%;
-            max-width: 400px;
-            text-align: center;
+            max-width: 500px;
+            text-align: justify;
             display: none;
         }
 
@@ -59,26 +52,29 @@
         }
 
         .cookie-consent-popup p {
-            font-size: 0.9rem;
+            font-size: 14px;
             color: #333;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
         }
 
-        .cookie-consent-popup .btn-accept {
-            background-color: #232430;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            font-size: 0.9rem;
-            border-radius: 5px;
+        .cookie-consent-popup a {
+            color: #007bff;
+            text-decoration: underline;
             cursor: pointer;
         }
 
+        .cookie-consent-popup .btn-accept {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+
         .cookie-consent-popup .continue-link {
-            display: block;
-            margin-top: 10px;
-            font-size: 0.9rem;
-            color: #232430;
+            margin-right: 20px;
+            color: #007bff;
             text-decoration: underline;
             cursor: pointer;
         }
@@ -86,129 +82,18 @@
         @media (max-width: 768px) {
             .cookie-consent-popup {
                 padding: 15px;
-                width: 95%;
-            }
-
-            .cookie-consent-popup h4 {
-                font-size: 1.1rem;
             }
 
             .cookie-consent-popup p {
-                font-size: 0.85rem;
+                font-size: 12px;
             }
 
-            .cookie-consent-popup .btn-accept {
-                font-size: 0.85rem;
-            }
-        }
-
-        @media (max-width: 767px) {
-            .faq-title {
-                font-size: 1.5rem;
-            }
-
-            .faq-description {
-                font-size: 0.95rem;
-            }
-
-            .accordion-button {
-                font-size: 1rem;
-                padding: 12px 15px;
-            }
-
-            .accordion-body {
-                font-size: 0.9rem;
-                padding: 15px;
-            }
-
-            .row {
-                flex-direction: column;
-            }
-
-            .faq-section .col-lg-4,
-            .faq-section .col-lg-8 {
-                max-width: 100%;
-                padding: 0;
-            }
-        }
-
-        .visually-hidden {
-            position: absolute;
-            width: 1px;
-            height: 1px;
-            margin: -1px;
-            padding: 0;
-            overflow: hidden;
-            clip: rect(0, 0, 0, 0);
-            border: 0;
-        }
-        .navbar {
-            background-color: #C4B990; 
-        }
-        .section {
-            scroll-margin-top: 77px; 
-        }
-        .section-top-margin {
-            margin-top: 120px;
-            padding-top: 60px;
-            padding-bottom: 60px;
-        }
-        .justify-content-center {
-            margin-top: 40px;
-        }   
-        .custom-block-image {
-            object-fit: contain; 
-            height: auto;
-        }
-        @media (max-width: 767px) {
-            .section-top-margin {
-                padding-top: 30px;
-                padding-bottom: 30px;
-            }
-            .h1, .h2 {
-                font-size: 1.5rem;
-            }
-        }
-        .h1 {
-            font-size: 2.5rem;
-            margin-bottom: 60px; /* Ajoute plus de marge en dessous du titre */
-        }
-        .h2 {
-            font-size: 2rem;
-            margin-bottom: 60px;
-        }
-        .custom-block-image {
-            object-fit: contain;
-            height: auto;
-        }
-
-        .section-title {
-            font-size: 2rem;
-            font-weight: 600;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        
-        .section-top-margin .text-secondary {
-            color: #333; /* Noir pour les sous-titres */
-            font-size: 1.2rem; /* Légèrement plus petit */
-            font-weight: 600;
-        }
-
-        .section-top-margin p {
-            font-size: 1rem; /* Texte plus petit */
-            line-height: 1.6rem;
-        }
-
-        .section-top-margin img {
-            object-fit: cover;
-            border-radius: 0;
-        }
-
-        @media (max-width: 767px) {
-            .section-top-margin img {
+            .cookie-consent-popup .btn-accept,
+            .cookie-consent-popup .continue-link {
                 width: 100%;
-                height: auto;
+                text-align: center;
+                float: none;
+                margin-bottom: 10px;
             }
         }
     </style>
@@ -217,8 +102,10 @@
     <div id="cookie-consent-popup" class="cookie-consent-popup">
         <h4>Gestion des Cookies</h4>
         <p>Nous utilisons des cookies pour améliorer votre expérience sur notre site. Vous pouvez accepter ou refuser les cookies non essentiels.</p>
-        <button id="accept-cookies-btn" class="btn-accept">Accepter</button>
-        <a href="#" class="continue-link">Continuer sans accepter</a>
+        <div>
+            <a href="#" class="continue-link">Continuer sans accepter</a>
+            <button id="accept-cookies-btn" class="btn-accept">Accepter</button>
+        </div>
     </div>
 
     <script>
@@ -415,7 +302,7 @@
             </div>
         </section>
     
-    </main>
+  </main>
     <footer class="site-footer section-padding">
         <div class="container">
             <div class="row">
