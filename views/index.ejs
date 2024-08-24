@@ -4,10 +4,10 @@
     <!-- Google tag (gtag.js) -->
     <script defer src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
     <script defer>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-0LN60RQ12K');
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0LN60RQ12K');
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -148,18 +148,29 @@
         .section {
             scroll-margin-top: 77px; 
         }
+
         .section-top-margin {
-            margin-top: 70px;
+            margin-top: 120px; /* Ajout de marge entre le titre et la navbar */
             padding-top: 60px;
             padding-bottom: 60px;
         }
+
+        @media (min-width: 992px) {
+            h1 {
+                margin-top: 40px; /* Ajout de marge entre le titre et la section */
+                margin-bottom: 40px;
+            }
+        }
+
         .justify-content-center {
             margin-top: 40px;
         }   
+
         .custom-block-image {
             object-fit: contain; 
             height: auto;
         }
+
         @media (max-width: 767px) {
             .section-top-margin {
                 padding-top: 30px;
@@ -169,14 +180,17 @@
                 font-size: 1.5rem;
             }
         }
+
         .h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
         }
+
         .h2 {
             font-size: 2rem;
             margin-bottom: 60px;
         }
+
         .custom-block-image {
             object-fit: contain;
             height: auto;
@@ -227,6 +241,7 @@
             const acceptBtn = document.getElementById('accept-cookies-btn');
             const continueLink = document.querySelector('.continue-link');
 
+            // Vérifiez si l'utilisateur a déjà accepté ou refusé les cookies
             if (!localStorage.getItem('cookiesAccepted') && !localStorage.getItem('cookiesDeclined')) {
                 popup.classList.add('visible');
             }
@@ -235,6 +250,7 @@
                 localStorage.setItem('cookiesAccepted', 'true');
                 popup.classList.remove('visible');
 
+                // Initialisez Google Analytics ici après acceptation des cookies
                 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
                 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
                 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
