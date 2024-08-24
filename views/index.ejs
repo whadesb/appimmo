@@ -25,33 +25,52 @@
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
-        .accordion-button {
+        .faq-section .section-title {
+        font-size: 1.75rem;
         font-weight: 600;
-        font-size: 1.2rem;
+        color: #333;
+        margin-bottom: 20px;
+    }
+
+    .accordion-button {
+        font-weight: 600;
+        font-size: 1.1rem;
         background-color: #f9f9f9;
         border: none;
         color: #333;
         transition: background-color 0.3s ease;
+        padding: 15px 20px;
+        border-radius: 5px;
     }
+
     .accordion-button:not(.collapsed) {
         background-color: #C4B990;
         color: #fff;
+        border-radius: 5px 5px 0 0;
     }
+
     .accordion-button:focus {
         box-shadow: none;
     }
+
     .accordion-item {
         border: none;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
+
     .accordion-body {
         background-color: #fff;
         border: 1px solid #e7e7e7;
         border-top: none;
         padding: 20px;
-        font-size: 1rem;
+        font-size: 0.95rem;
         color: #555;
+        border-radius: 0 0 5px 5px;
     }
+
         .visually-hidden {
             position: absolute;
             width: 1px;
@@ -302,9 +321,9 @@
         <div class="row">
             <div class="col-12 text-center mb-5">
                 <h2 class="section-title">FAQ Interactif</h2>
-                <p>Voici les réponses aux questions les plus fréquemment posées.</p>
+                <p>Réponses aux questions les plus fréquemment posées.</p>
             </div>
-            <div class="col-lg-8 col-md-10 mx-auto">
+            <div class="col-lg-6 col-md-8 col-12 mx-auto">
                 <div class="accordion" id="faqAccordion">
                     <!-- Question 1 (ouverte par défaut) -->
                     <div class="accordion-item">
