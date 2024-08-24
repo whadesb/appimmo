@@ -25,11 +25,21 @@
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
-        .faq-section .section-title {
+       faq-section {
+        padding: 60px 0;
+    }
+
+    .faq-title {
         font-size: 1.75rem;
-        font-weight: 600;
+        font-weight: 700;
         color: #333;
         margin-bottom: 20px;
+    }
+
+    .faq-description {
+        font-size: 1rem;
+        color: #555;
+        line-height: 1.6rem;
     }
 
     .accordion-button {
@@ -100,7 +110,15 @@
             height: auto;
         }
         @media (max-width: 767px) 
-            .accordion-button {
+            .faq-title {
+            font-size: 1.5rem;
+        }
+
+        .faq-description {
+            font-size: 0.95rem;
+        }
+
+        .accordion-button {
             font-size: 1rem;
             padding: 12px 15px;
         }
@@ -110,8 +128,14 @@
             padding: 15px;
         }
 
-        .faq-section .section-title {
-            font-size: 1.5rem;
+        .row {
+            flex-direction: column;
+        }
+
+        .faq-section .col-lg-4,
+        .faq-section .col-lg-8 {
+            max-width: 100%;
+            padding: 0;
         }
             {
             .section-top-margin {
@@ -333,11 +357,14 @@
 <section class="faq-section section-padding" id="faq">
     <div class="container">
         <div class="row">
-            <div class="col-12 text-center mb-5">
-                <h2 class="section-title">FAQ Interactif</h2>
-                <p>Réponses aux questions les plus fréquemment posées.</p>
+            <!-- Colonne gauche : Titre et texte d'introduction -->
+            <div class="col-lg-4 col-md-5 mb-4 mb-md-0">
+                <h4 class="faq-title">FAQ</h4>
+                <p class="faq-description">Nous répondons aux questions fréquemment posées pour vous aider à mieux comprendre nos services et à maximiser votre expérience avec UAP Immo.</p>
             </div>
-            <div class="col-lg-6 col-md-8 col-12 mx-auto">
+
+            <!-- Colonne droite : FAQ Interactive -->
+            <div class="col-lg-8 col-md-7">
                 <div class="accordion" id="faqAccordion">
                     <!-- Question 1 (ouverte par défaut) -->
                     <div class="accordion-item">
@@ -396,6 +423,7 @@
         </div>
     </div>
 </section>
+
 
         <!-- Titre de la première section -->
         <section class="section-top-margin">
