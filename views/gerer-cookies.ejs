@@ -77,12 +77,29 @@
         }
 
         .new-section {
-            padding: 120px 0 60px; /* Ajout de padding-top pour s'ajuster au menu */
+            padding: 120px 0 60px;
             background-color: #f8f9fa;
         }
 
-        .hero-section {
-            padding-top: 100px;
+        /* Ajouter un espace supplémentaire avant le footer pour les grands écrans */
+        @media (min-width: 992px) {
+            .new-section {
+                padding-bottom: 120px; /* Augmente l'espace avant le footer */
+            }
+        }
+
+        /* Réduire l'espace entre la navbar et la première section sur les mobiles */
+        @media (max-width: 767px) {
+            .new-section {
+                padding-top: 80px; /* Réduit l'espace sous la navbar */
+            }
+        }
+
+        /* Réduire l'espace entre la dernière section et le footer sur les mobiles */
+        @media (max-width: 767px) {
+            .new-section {
+                padding-bottom: 20px; /* Réduit l'espace avant le footer */
+            }
         }
 
         .form-control-icon {
