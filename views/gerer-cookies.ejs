@@ -1,39 +1,62 @@
 <!doctype html>
 <html lang="en">
+
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0LN60RQ12K');
+        window.dataLayer = window.dataLayer || [];
+
+        function gtag() {
+            dataLayer.push(arguments);
+        }
+        gtag('js', new Date());
+        gtag('config', 'G-0LN60RQ12K');
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="Gérer les cookies sur UAP Immo">
     <meta name="author" content="UAP Immo">
-    <meta name="theme-color" content="#C4B990"> 
-    <title>UAP Immo | Gérer les cookies</title>    
-    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <meta name="theme-color" content="#C4B990">
+    <title>UAP Immo | Gérer les cookies</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link rel="preload" href="/css/styles-main.css" as="style">
-    <link rel="stylesheet" href="/css/styles-main.css"> 
+    <link rel="stylesheet" href="/css/styles-main.css">
     <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+        }
+
+        main {
+            flex: 1;
+        }
+
         .text-container {
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
         }
+
         .text-container h4 {
             margin-bottom: 20px;
             color: #000;
         }
+
         .text-container .form-text {
             margin-bottom: 15px;
             font-size: 1.01rem;
         }
+
         .form-container {
             max-width: 600px;
             margin: 50px auto;
@@ -42,27 +65,34 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         .form-container h4 {
             margin-bottom: 20px;
             color: #000;
         }
+
         .form-container .form-text {
             margin-bottom: 15px;
             font-size: 1.01rem;
         }
+
         .new-section {
-            padding: 60px 0; 
-            background-color: #f8f9fa; 
+            padding: 120px 0 60px; /* Ajout de padding-top pour s'ajuster au menu */
+            background-color: #f8f9fa;
         }
+
         .hero-section {
-            padding-top: 100px; 
+            padding-top: 100px;
         }
+
         .form-control-icon {
             position: relative;
         }
+
         .form-control-icon input {
             padding-right: 2.5rem;
         }
+
         .form-control-icon .icon {
             position: absolute;
             right: 10px;
@@ -70,29 +100,39 @@
             transform: translateY(-50%);
             cursor: pointer;
         }
+
         .btn-primary {
             background-color: #52566f;
             border-color: #52566f;
         }
+
         .btn-primary:hover {
             background-color: #52566f;
             border-color: #52566f;
         }
+
         .form-container .form-label {
             font-weight: bold;
         }
+
         .navbar {
-            background-color: #C4B990; 
+            background-color: #C4B990;
         }
-        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #000; 
+
+        .navbar .navbar-brand,
+        .navbar .nav-link,
+        .navbar .navbar-icon {
+            color: #000;
         }
+
         .navbar .navbar-icon {
             font-size: 1.5rem;
         }
+
         .navbar .navbar-icon.bi-person {
             color: #000 !important;
         }
+
         @media (max-width: 767px) {
             .form-container {
                 background: none;
@@ -100,14 +140,14 @@
                 border: none;
             }
         }
-    </style>    
+    </style>
 </head>
+
 <body id="top">
-  <main>
+    <main>
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
-                   
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto me-4">
@@ -146,101 +186,102 @@
                 </div>
             </div>
         </nav>
-       <section class="new-section" id="section_4">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-12">
-                <div class="text-container">
-                    <h4>Gérer mes choix concernant les cookies</h4>
-                    <p class="form-text">Cette page vous permet de gérer vos préférences concernant les cookies sur notre site. Vous pouvez choisir d'accepter ou de refuser les cookies non essentiels à tout moment. Vous pouvez également définir la durée pendant laquelle vos préférences seront conservées.</p>
-                    <p class="form-text">Veuillez noter que certains cookies sont nécessaires au bon fonctionnement du site et ne peuvent être désactivés.</p>
-                </div>
-            </div>
-            <div class="col-lg-6 col-12">
-                <div class="form-container">
-                    <h4>Google Analytics</h4>
-                    <p>Mesure d'audience</p>
-                    <form id="cookie-settings-form">
-                        <div class="mb-3">
-                            <label for="duration" class="form-label">Demander à nouveau dans :</label>
-                            <select id="duration" name="duration" class="form-select">
-                                <option value="3mois">3 mois</option>
-                                <option value="6mois">6 mois</option>
-                                <option value="1an" selected>1 an</option>
-                                <option value="2ans">2 ans</option>
-                                <option value="3ans">3 ans</option>
-                            </select>
+        <section class="new-section" id="section_4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        <div class="text-container">
+                            <h4>Gérer mes choix concernant les cookies</h4>
+                            <p class="form-text">Cette page vous permet de gérer vos préférences concernant les cookies sur notre site. Vous pouvez choisir d'accepter ou de refuser les cookies non essentiels à tout moment. Vous pouvez également définir la durée pendant laquelle vos préférences seront conservées.</p>
+                            <p class="form-text">Veuillez noter que certains cookies sont nécessaires au bon fonctionnement du site et ne peuvent être désactivés.</p>
                         </div>
-                        <button type="submit" class="btn btn-primary">Enregistrer</button>
-                    </form>
-                    <div class="mt-3">
-                        <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                        <div class="form-container">
+                            <h4>Google Analytics</h4>
+                            <p>Mesure d'audience</p>
+                            <form id="cookie-settings-form">
+                                <div class="mb-3">
+                                    <label for="duration" class="form-label">Demander à nouveau dans :</label>
+                                    <select id="duration" name="duration" class="form-select">
+                                        <option value="3mois">3 mois</option>
+                                        <option value="6mois">6 mois</option>
+                                        <option value="1an" selected>1 an</option>
+                                        <option value="2ans">2 ans</option>
+                                        <option value="3ans">3 ans</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary">Enregistrer</button>
+                            </form>
+                            <div class="mt-3">
+                                <a href="/politique-confidentialite">Consulter notre politique de confidentialité</a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
+        </section>
     </main>
-<footer class="site-footer section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-12 mb-4 pb-2">
-                <a class="navbar-brand mb-2" href="/">
-                    <span>UAP Immo</span>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <h6 class="site-footer-title mb-3">Informations</h6>
-                <ul class="site-footer-links">
-                    <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
-                    <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <h6 class="site-footer-title mb-3">Accès</h6>
-                <ul class="site-footer-links">
-                    <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                </ul>
-            </div> <!-- Correction: Ajout de la fermeture de la balise <div> ici -->
-            <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="#">English</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Français</a>
-                        </li>
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/">
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
+                        <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
                     </ul>
                 </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Accès</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="#">English</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Français</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
             </div>
-            <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
         </div>
-    </div>
-</footer>
-        <script defer src="/js/jquery.min.js"></script>
-        <script defer src="/js/bootstrap.bundle.min.js"></script>
-        <script>
-            document.getElementById('cookie-settings-form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                const duration = document.getElementById('duration').value;
-    
-                fetch('/set-cookie-consent', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ duration: duration })
-                })
-                .then(response => response.json())
-                .then(data => {
-                    alert(data.message);
-                    window.location.href = '/';
-                })
-                .catch(error => console.error('Error:', error));
-            });
-        </script>
+    </footer>
+    <script defer src="/js/jquery.min.js"></script>
+    <script defer src="/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('cookie-settings-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const duration = document.getElementById('duration').value;
+
+            fetch('/set-cookie-consent', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ duration: duration })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.message);
+                window.location.href = '/';
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
 </body>
+
 </html>
