@@ -1,24 +1,31 @@
 <!doctype html>
-<html lang="en">
+<html lang="fr">
 
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script defer src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
-    <script defer>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-        gtag('config', 'G-0LN60RQ12K');
-    </script>
+    <!-- Balises Meta SEO -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="UAP Immo Plateforme webmarketing immobilière">
+    <meta name="description" content="UAP Immo - Plateforme de webmarketing immobilier innovante permettant de créer et diffuser des annonces immobilières optimisées pour maximiser les conversions.">
     <meta name="author" content="UAP Immo">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="webmarketing immobilier, annonces immobilières, landing pages, promotion immobilière, UAP Immo">
     <meta name="theme-color" content="#C4B990">
-    <title>UAP Immo | Home</title>
+    <title>UAP Immo | Webmarketing Immobilier - Créez et Diffusez Vos Annonces Facilement</title>
+
+    <!-- Balises Open Graph pour le partage social -->
+    <meta property="og:title" content="UAP Immo - Plateforme de Webmarketing Immobilier">
+    <meta property="og:description" content="Créez et diffusez des annonces immobilières optimisées avec UAP Immo.">
+    <meta property="og:image" content="/images/uap-immo-plateforme-webmarketing-immobilier.png">
+    <meta property="og:url" content="https://www.uapimmo.com">
+    <meta property="og:type" content="website">
+
+    <!-- Balises Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UAP Immo - Plateforme de Webmarketing Immobilier">
+    <meta name="twitter:description" content="Créez et diffusez des annonces immobilières optimisées avec UAP Immo.">
+    <meta name="twitter:image" content="/images/uap-immo-plateforme-webmarketing-immobilier.png">
+
+    <!-- Liens CSS et préchargement -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
@@ -28,6 +35,7 @@
     <link rel="stylesheet" href="/css/bootstrap-icons.css">
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
+
     <style>
         .custom-block.bg-white.shadow-lg {
             background-image: none;
@@ -124,7 +132,7 @@
         }
 
         .section-top-margin {
-            padding-top: 120px; /* Correction ici */
+            padding-top: 120px;
             padding-bottom: 60px;
         }
 
@@ -185,12 +193,11 @@
         }
 
         .hero-image img {
-            width: 100%; /* Ajustez ce pourcentage selon vos besoins */
-    
-            height: auto;
-            max-height: 80vh;
-            object-fit: contain;
-           
+            width: 50%;
+            max-width: 300px;
+            border: 1px solid #ddd;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 4px;
         }
 
         /* Animation Keyframes */
@@ -203,32 +210,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        @keyframes fadeInDelay {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade-in {
-            opacity: 0;
-            animation: fadeIn 1s ease-in-out forwards;
-        }
-
-        .animate-fade-in-delay {
-            opacity: 0;
-            animation: fadeIn 1.5s ease-in-out forwards;
-        }
-
-        .animate-fade-in-delay-2 {
-            opacity: 0;
-            animation: fadeIn 2s ease-in-out forwards;
         }
 
         /* Key Points Section */
@@ -299,7 +280,6 @@
             const acceptBtn = document.getElementById('accept-cookies-btn');
             const declineBtn = document.getElementById('decline-cookies-btn');
 
-            // Vérifiez si l'utilisateur a déjà accepté ou refusé les cookies
             if (!localStorage.getItem('cookiesAccepted') && !localStorage.getItem('cookiesDeclined')) {
                 popup.classList.add('visible');
                 overlay.classList.add('visible');
@@ -310,7 +290,6 @@
                 popup.classList.remove('visible');
                 overlay.classList.remove('visible');
 
-                // Initialisez Google Analytics ici après acceptation des cookies
                 (function (i, s, o, g, r, a, m) {
                     i['GoogleAnalyticsObject'] = r;
                     i[r] = i[r] || function () {
@@ -342,19 +321,18 @@
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto me-4">
-                    <a href="/login" style="position: relative;">
+                    <a href="/login">
                         <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
                         <span class="visually-hidden">Login</span>
                     </a>
                 </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-lg-5 me-lg-auto">
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/">Home</a>
+                            <a class="nav-link click-scroll" href="/">Accueil</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
@@ -370,7 +348,7 @@
                         </li>
                     </ul>
                     <div class="d-none d-lg-block">
-                        <a href="/login" style="position: relative;">
+                        <a href="/login">
                             <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
                             <span class="visually-hidden">Login</span>
                         </a>
@@ -389,7 +367,7 @@
                     <a href="/register" class="btn btn-primary btn-hero">Inscrivez-vous maintenant</a>
                 </div>
                 <div class="hero-image">
-                    <img src="/images/uapimmovisuel.png" alt="UAP Immo Plateforme Webmarketing Immobilier" class="img-fluid">
+                    <img src="/images/uap-immo-plateforme-webmarketing-immobilier.png" alt="UAP Immo Plateforme Webmarketing Immobilier" class="img-fluid">
                 </div>
             </div>
         </section>
@@ -475,8 +453,8 @@
                     <div class="clearfix"></div>
                     <div class="col-lg-5 col-12">
                         <picture>
-                            <source srcset="images/uap-immo-faq-small.webp" media="(max-width: 600px)">
-                            <img src="images/uap-immo-faq.webp" alt="FAQ UAP Immo" class="custom-block-image img-fluid" width="600" height="400" loading="lazy">
+                            <source srcset="/images/uap-immo-faq-small.webp" media="(max-width: 600px)">
+                            <img src="/images/uap-immo-faq.webp" alt="FAQ UAP Immo" class="custom-block-image img-fluid" width="600" height="400" loading="lazy">
                         </picture>
                     </div>
                     <div class="col-lg-6 col-12 m-auto">
@@ -535,7 +513,7 @@
                 <div class="col-lg-3 col-md-4 col-6">
                     <h6 class="site-footer-title mb-3">Informations</h6>
                     <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
+                        <li class="site-footer-link-item"><a href="/" class="site-footer-link">Accueil</a></li>
                         <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
                     </ul>
                 </div>
@@ -562,11 +540,11 @@
             </div>
         </div>
     </footer>
-    <script defer src="js/jquery.min.js"></script>
-    <script defer src="js/bootstrap.bundle.min.js"></script>
-    <script defer src="js/jquery.sticky.js"></script>
-    <script defer src="js/click-scroll.js"></script>
-    <script defer src="js/custom.js"></script>
+    <script defer src="/js/jquery.min.js"></script>
+    <script defer src="/js/bootstrap.bundle.min.js"></script>
+    <script defer src="/js/jquery.sticky.js"></script>
+    <script defer src="/js/click-scroll.js"></script>
+    <script defer src="/js/custom.js"></script>
 </body>
 
 </html>
