@@ -110,6 +110,17 @@
         .overlay.visible {
             display: block;
         }
+.faq-image {
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    max-width: 100%;
+    max-height: 400px; /* Ajuste la hauteur maximale selon tes besoins */
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+}
+
 
         @media (max-width: 768px) {
             .cookie-consent-popup h4 {
@@ -443,64 +454,62 @@
             </div>
         </section>
 
-        <!-- Section FAQ Améliorée -->
         <section class="faq-section section-padding" id="faq">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-12">
-                        <h2 class="mb-4">FAQ</h2>
-                    </div>
-                    <div class="clearfix"></div>
-                    <div class="col-lg-5 col-12">
-                        <picture>
-    <source srcset="/images/fqa.png" media="(max-width: 600px)">
-    <img src="/images/fqa.png" alt="FAQ UAP Immo" class="custom-block-image img-fluid" width="600" height="400" loading="lazy">
-</picture>
-
-                    </div>
-                    <div class="col-lg-6 col-12 m-auto">
-                        <div class="accordion" id="accordionExample">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button animate-slide-up" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                        Qu'est-ce que la plateforme UAP Immo ?
-                                    </button>
-                                </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        UAP Immo est une plateforme de webmarketing immobilier haut de gamme qui simplifie votre marketing en vous permettant de <strong>générer des landing pages</strong> en quelques clics pour maximiser vos conversions à travers des publicités ciblées.
-                                    </div>
-                                </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-12">
+                <h2 class="mb-4">FAQ</h2>
+            </div>
+            <div class="clearfix"></div>
+            <div class="col-lg-5 col-12">
+                <picture>
+                    <img src="/images/fqa.png" alt="FAQ UAP Immo" class="faq-image img-fluid" loading="lazy">
+                </picture>
+            </div>
+            <div class="col-lg-6 col-12 m-auto">
+                <div class="accordion" id="accordionExample">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button animate-slide-up" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                Qu'est-ce que la plateforme UAP Immo ?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                UAP Immo est une plateforme de webmarketing immobilier haut de gamme qui simplifie votre marketing en vous permettant de <strong>générer des landing pages</strong> en quelques clics pour maximiser vos conversions à travers des publicités ciblées.
                             </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingTwo">
-                                    <button class="accordion-button collapsed animate-slide-up-delay" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                        Comment fonctionne la plateforme ?
-                                    </button>
-                                </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        Notre plateforme UAP Immo simplifie la <strong>création de landing pages professionnelles</strong> pour vos biens immobiliers. Il vous suffit de remplir les détails de votre bien et de télécharger les photos, puis notre système génère automatiquement une page accessible via une URL personnalisée, prête pour votre campagne publicitaire ciblée.
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed animate-slide-up-delay" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                Comment fonctionne la plateforme ?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Notre plateforme UAP Immo simplifie la <strong>création de landing pages professionnelles</strong> pour vos biens immobiliers. Il vous suffit de remplir les détails de votre bien et de télécharger les photos, puis notre système génère automatiquement une page accessible via une URL personnalisée, prête pour votre campagne publicitaire ciblée.
                             </div>
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-button collapsed animate-slide-up-delay-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                        Quels moyens de paiement sont acceptés ?
-                                    </button>
-                                </h2>
-                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        Actuellement, nous acceptons les paiements par cartes bancaires et prévoyons d'intégrer prochainement les paiements en cryptomonnaies pour offrir plus de flexibilité à nos utilisateurs.
-                                    </div>
-                                </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed animate-slide-up-delay-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                Quels moyens de paiement sont acceptés ?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                            <div class="accordion-body">
+                                Actuellement, nous acceptons les paiements par cartes bancaires et prévoyons d'intégrer prochainement les paiements en cryptomonnaies pour offrir plus de flexibilité à nos utilisateurs.
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
+</section>
+
     </main>
 
     <footer class="site-footer section-padding">
