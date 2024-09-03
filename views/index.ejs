@@ -127,6 +127,128 @@
             padding-top: 120px; /* Correction ici */
             padding-bottom: 60px;
         }
+
+        /* Section Héro */
+        .hero-section {
+            position: relative;
+            height: 100vh;
+            background: url('images/hero-background.jpg') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+        }
+
+        .hero-section .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-top: 20px;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .btn-hero {
+            margin-top: 30px;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+
+        /* Animation Keyframes */
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDelay {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
+        .animate-fade-in-delay {
+            opacity: 0;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .animate-fade-in-delay-2 {
+            opacity: 0;
+            animation: fadeIn 2s ease-in-out forwards;
+        }
+
+        /* Key Points Section */
+        .key-point-card {
+            border: none;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .key-point-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .animate-slide-up {
+            opacity: 0;
+            animation: slideUp 1s ease-in-out forwards;
+        }
+
+        .animate-slide-up-delay {
+            opacity: 0;
+            animation: slideUp 1.2s ease-in-out forwards;
+        }
+
+        .animate-slide-up-delay-2 {
+            opacity: 0;
+            animation: slideUp 1.4s ease-in-out forwards;
+        }
+
+        @keyframes slideUp {
+            0% {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* FAQ Section */
+        .accordion-button {
+            transition: background-color 0.3s ease;
+        }
+
+        .accordion-button:hover {
+            background-color: #f7f7f7;
+        }
     </style>
 </head>
 
@@ -230,68 +352,88 @@
             </div>
         </nav>
 
-        <section class="section-top-margin">
+        <!-- Section Héro -->
+        <section class="hero-section d-flex align-items-center justify-content-center text-center">
+            <div class="overlay"></div>
             <div class="container">
-                <h1 class="text-center">Révolutionnez Votre Marketing Immobilier avec UAP Immo</h1>
-                <h2 class="text-center"></h2>
-                <div class="row justify-content-center">
-                    <div class="col-lg-4 col-12 mb-4 mb-lg-0">
-                        <div style="background-color: transparent;">
-                            <div class="d-flex">
-                                <div>
-                                    <h5 class="mb-2">Créez et diffusez vos annonces immobilières en un clic</h5>
-                                    <p class="mb-0">Avec UAP Immo, générez automatiquement des landing pages professionnelles et diffusez-les sur les canaux les plus efficaces. Maximisez vos conversions et atteignez vos objectifs immobiliers facilement et rapidement. Inscrivez-vous maintenant pour booster vos ventes.</p>
-                                    <a href="/register" class="btn btn-primary mt-3">Inscrivez-vous maintenant</a>
-                                </div>
-                            </div>
+                <h1 class="hero-title animate-fade-in">Révolutionnez Votre Marketing Immobilier</h1>
+                <p class="hero-subtitle animate-fade-in-delay">Avec UAP Immo, générez automatiquement des landing pages professionnelles et maximisez vos conversions.</p>
+                <a href="/register" class="btn btn-primary btn-hero animate-fade-in-delay-2">Inscrivez-vous maintenant</a>
+            </div>
+        </section>
+
+        <!-- Nouvelle Section Fonctionnement de la Plateforme -->
+        <section id="fonctionnement" class="bg-light py-5">
+            <div class="container">
+                <h2 class="text-center mb-5">Comment fonctionne UAP Immo ?</h2>
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="icon mb-3">
+                            <i class="bi bi-person-plus-fill" style="font-size: 2.5rem;"></i>
                         </div>
+                        <h3 class="h5">Inscription facile</h3>
+                        <p>Créez un compte en quelques minutes.</p>
                     </div>
-                    <div class="col-lg-6 col-12">
-                        <div class="custom-block custom-block-overlay">
-                            <div class="d-flex flex-column h-100">
-                                <picture>
-                                    <source srcset="images/fonctionnement de la plateforme webmarketing uap immo-small.webp"
-                                        media="(max-width: 600px)">
-                                    <img src="images/fonctionnement de la plateforme webmarketing uap immo.webp"
-                                        alt="Fonctionnement de la plateforme de webmarketing UAP Immo"
-                                        class="custom-block-image img-fluid" width="800" height="600" loading="lazy">
-                                </picture>
-                                <div class="section-overlay"></div>
-                            </div>
+                    <div class="col-md-4">
+                        <div class="icon mb-3">
+                            <i class="bi bi-file-earmark-text-fill" style="font-size: 2.5rem;"></i>
                         </div>
+                        <h3 class="h5">Générez vos annonces</h3>
+                        <p>Complétez les informations de votre bien et laissez la magie opérer.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon mb-3">
+                            <i class="bi bi-share-fill" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="h5">Diffusez largement</h3>
+                        <p>Diffusez votre annonce sur des canaux variés pour maximiser la visibilité.</p>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- Section Points Clés Améliorée -->
         <section class="key-points-section py-5">
             <div class="container">
                 <div class="row text-center">
                     <div class="col-lg-4">
-                        <div class="icon mb-3">
-                            <i class="bi bi-pencil-square" style="font-size: 2rem;"></i>
+                        <div class="card key-point-card animate-slide-up">
+                            <div class="card-body">
+                                <div class="icon mb-3">
+                                    <i class="bi bi-pencil-square" style="font-size: 2.5rem;"></i>
+                                </div>
+                                <h3 class="h5">Création simplifiée</h3>
+                                <p>Générez des landing pages en quelques minutes, sans compétences techniques.</p>
+                            </div>
                         </div>
-                        <h3 class="h5">Création simplifiée</h3>
-                        <p>Générez des landing pages en quelques minutes, sans compétences techniques.</p>
                     </div>
                     <div class="col-lg-4">
-                        <div class="icon mb-3">
-                            <i class="bi bi-graph-up" style="font-size: 2rem;"></i>
+                        <div class="card key-point-card animate-slide-up-delay">
+                            <div class="card-body">
+                                <div class="icon mb-3">
+                                    <i class="bi bi-graph-up" style="font-size: 2.5rem;"></i>
+                                </div>
+                                <h3 class="h5">Optimisé pour les conversions</h3>
+                                <p>Atteignez une audience ciblée et maximisez vos taux de conversion.</p>
+                            </div>
                         </div>
-                        <h3 class="h5">Optimisé pour les conversions</h3>
-                        <p>Atteignez une audience ciblée et maximisez vos taux de conversion.</p>
                     </div>
                     <div class="col-lg-4">
-                        <div class="icon mb-3">
-                            <i class="bi bi-shield-lock" style="font-size: 2rem;"></i>
+                        <div class="card key-point-card animate-slide-up-delay-2">
+                            <div class="card-body">
+                                <div class="icon mb-3">
+                                    <i class="bi bi-shield-lock" style="font-size: 2.5rem;"></i>
+                                </div>
+                                <h3 class="h5">Sécurité et Fiabilité</h3>
+                                <p>Vos données et vos paiements sont protégés avec les dernières technologies.</p>
+                            </div>
                         </div>
-                        <h3 class="h5">Sécurité et Fiabilité</h3>
-                        <p>Vos données et vos paiements sont protégés avec les dernières technologies.</p>
                     </div>
                 </div>
             </div>
         </section>
 
+        <!-- Section FAQ Améliorée -->
         <section class="faq-section section-padding" id="faq">
             <div class="container">
                 <div class="row">
@@ -301,24 +443,19 @@
                     <div class="clearfix"></div>
                     <div class="col-lg-5 col-12">
                         <picture>
-                            <source srcset="images/uap immo faq plateforme webmarketing immobiliere-small.webp"
-                                media="(max-width: 600px)">
-                            <img src="images/uap immo faq plateforme webmarketing immobiliere.webp"
-                                alt="Fonctionnement de la plateforme de webmarketing UAP Immo"
-                                class="custom-block-image img-fluid" width="600" height="400" loading="lazy">
+                            <source srcset="images/uap-immo-faq-small.webp" media="(max-width: 600px)">
+                            <img src="images/uap-immo-faq.webp" alt="FAQ UAP Immo" class="custom-block-image img-fluid" width="600" height="400" loading="lazy">
                         </picture>
                     </div>
                     <div class="col-lg-6 col-12 m-auto">
                         <div class="accordion" id="accordionExample">
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingOne">
-                                    <button class="accordion-button" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                    <button class="accordion-button animate-slide-up" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                                         Qu'est-ce que la plateforme UAP Immo ?
                                     </button>
                                 </h2>
-                                <div id="collapseOne" class="accordion-collapse collapse show"
-                                    aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                                <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
                                         UAP Immo est une plateforme de webmarketing immobilier haut de gamme qui simplifie votre marketing en vous permettant de <strong>générer des landing pages</strong> en quelques clics pour maximiser vos conversions à travers des publicités ciblées.
                                     </div>
@@ -326,27 +463,23 @@
                             </div>
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingTwo">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                    <button class="accordion-button collapsed animate-slide-up-delay" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
                                         Comment fonctionne la plateforme ?
                                     </button>
                                 </h2>
-                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo"
-                                    data-bs-parent="#accordionExample">
+                                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
-                                        Notre plateforme UAP Immo simplifie la <strong>création de landing pages professionnelles </strong>pour vos biens immobiliers. Il vous suffit de remplir les détails de votre bien et télécharger les photos, puis notre système génère automatiquement une page accessible via une URL personnalisée, prête pour votre campagne publicitaire ciblée.
+                                        Notre plateforme UAP Immo simplifie la <strong>création de landing pages professionnelles</strong> pour vos biens immobiliers. Il vous suffit de remplir les détails de votre bien et de télécharger les photos, puis notre système génère automatiquement une page accessible via une URL personnalisée, prête pour votre campagne publicitaire ciblée.
                                     </div>
                                 </div>
                             </div>
                             <div class="accordion-item">
                                 <h2 class="accordion-header" id="headingThree">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                    <button class="accordion-button collapsed animate-slide-up-delay-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
                                         Quels moyens de paiement sont acceptés ?
                                     </button>
                                 </h2>
-                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree"
-                                    data-bs-parent="#accordionExample">
+                                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
                                     <div class="accordion-body">
                                         Actuellement, nous acceptons les paiements par cartes bancaires et prévoyons d'intégrer prochainement les paiements en cryptomonnaies pour offrir plus de flexibilité à nos utilisateurs.
                                     </div>
@@ -382,8 +515,7 @@
                 </div>
                 <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
                     <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
-                            aria-expanded="false"></button>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                         <ul class="dropdown-menu">
                             <li>
                                 <a class="dropdown-item" href="#">English</a>
