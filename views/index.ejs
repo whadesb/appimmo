@@ -134,7 +134,7 @@
             height: 100vh;
             background: url('images/hero-background.jpg') no-repeat center center/cover;
             color: white;
-            text-align: center;
+            text-align: left;
         }
 
         .hero-section .overlay {
@@ -146,24 +146,46 @@
             background-color: rgba(0, 0, 0, 0.5);
         }
 
+        .hero-content {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .hero-text {
+            flex: 1;
+            padding-right: 2rem;
+            animation: fadeIn 1s ease-in-out forwards;
+        }
+
         .hero-title {
             font-size: 3rem;
             font-weight: 700;
-            animation: fadeIn 1s ease-in-out forwards;
         }
 
         .hero-subtitle {
             font-size: 1.5rem;
             font-weight: 400;
             margin-top: 20px;
-            animation: fadeIn 1.5s ease-in-out forwards;
         }
 
         .btn-hero {
             margin-top: 30px;
             padding: 15px 30px;
             font-size: 1.2rem;
-            animation: fadeIn 2s ease-in-out forwards;
+        }
+
+        .hero-image {
+            flex: 1;
+            text-align: center;
+            animation: fadeIn 1.5s ease-in-out forwards;
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            height: auto;
         }
 
         /* Animation Keyframes */
@@ -353,12 +375,17 @@
         </nav>
 
         <!-- Section Héro -->
-        <section class="hero-section d-flex align-items-center justify-content-center text-center">
+        <section class="hero-section">
             <div class="overlay"></div>
-            <div class="container">
-                <h1 class="hero-title animate-fade-in">Révolutionnez Votre Marketing Immobilier</h1>
-                <p class="hero-subtitle animate-fade-in-delay">Avec UAP Immo, générez automatiquement des landing pages professionnelles et maximisez vos conversions.</p>
-                <a href="/register" class="btn btn-primary btn-hero animate-fade-in-delay-2">Inscrivez-vous maintenant</a>
+            <div class="container hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">Révolutionnez Votre Marketing Immobilier</h1>
+                    <p class="hero-subtitle">Avec UAP Immo, générez automatiquement des landing pages professionnelles et maximisez vos conversions.</p>
+                    <a href="/register" class="btn btn-primary btn-hero">Inscrivez-vous maintenant</a>
+                </div>
+                <div class="hero-image">
+                    <img src="images/form-icon.png" alt="Form Icon" class="img-fluid">
+                </div>
             </div>
         </section>
 
