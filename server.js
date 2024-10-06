@@ -314,7 +314,7 @@ app.get('/user', isAuthenticated, async (req, res) => {
     // Récupérer les propriétés créées par l'utilisateur connecté
     const properties = await Property.find({ createdBy: req.user._id });
     
-    // Rendre la vue 'user' en passant les propriétés et l'utilisateur comme variables
+    // Assurez-vous de passer la variable 'properties' à la vue
     res.render('user', { user: req.user, properties });
   } catch (error) {
     console.error('Erreur lors de la récupération des propriétés :', error);
