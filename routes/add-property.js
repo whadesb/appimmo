@@ -7,6 +7,7 @@ const fs = require('fs');
 const path = require('path');
 const authMiddleware = require('../middleware/auth');
 
+// Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'public/uploads');
@@ -18,6 +19,34 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Fonction pour générer la landing page
+async function generateLandingPage(property) {
+    const template = `
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${property.city} - Propriété à vendre</title>
+    </head>
+    <body>
+        <h1>${property.city}</h1>
+        <p>${property.rooms} Chambres</p>
+        <p>${property.bathrooms} Salles de bain</p>
+        <p>${property.surface} m²</p>
+        <p>${property.price} €</p>
+        <img src="/uploads/${property.photos[0]}" alt="Photo 1">
+        <img src="/uploads/${property.photos[1]}" alt="Photo 2">
+    </body>
+    </html>
+    `;
+    const filePath = path.join(__dirname, '..', 'public', 'landing-pages', `${property._id}.html`);
+    fs.writeFileSync(filePath, template);
+
+    return `/landing-pages/${property._id}.html`;
+}
+
+// Route pour ajouter une nouvelle propriété
 router.post('/add-property', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 }
@@ -27,6 +56,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     let photo1 = null;
     let photo2 = null;
 
+    // Gestion des fichiers photo
     if (req.files.photo1) {
         const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
         await sharp(req.files.photo1[0].path)
@@ -50,7 +80,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     try {
         const property = new Property({
             rooms,
-            bathrooms,  // Capture du nombre de salles de bain
+            bathrooms,
             surface,
             price,
             city,
@@ -60,17 +90,20 @@ router.post('/add-property', authMiddleware, upload.fields([
             photos: [photo1, photo2]
         });
 
+        // Sauvegarde de la propriété dans la base de données
         await property.save();
 
+        // Génération de la landing page
         const landingPageUrl = await generateLandingPage(property);
 
         property.url = landingPageUrl;
         await property.save();
 
-        res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
+        // Réponse JSON
+        res.status(201).json({ message: 'Propriété ajoutée avec succès.', url: landingPageUrl });
     } catch (error) {
         console.error('Erreur lors de l\'ajout de la propriété : ', error);
-        res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
+        res.status(500).json({ error: 'Erreur lors de l\'ajout de la propriété.' });
     }
 });
 
