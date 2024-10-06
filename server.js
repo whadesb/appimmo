@@ -323,6 +323,7 @@ app.get('/user', isAuthenticated, async (req, res) => {
 });
 
 
+
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
