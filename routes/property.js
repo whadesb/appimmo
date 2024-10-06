@@ -23,11 +23,11 @@ const upload = multer({ storage: storage });
 async function generateLandingPage(property) {
     const template = `
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="fr">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Propriété à ${property.city}</title>
+        <title>${property.title || "Propriété à vendre"}</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <style>
             body, html {
@@ -93,7 +93,7 @@ async function generateLandingPage(property) {
     </head>
     <body>
         <div class="property-container">
-            <h1 class="property-title">Propriété à ${property.city}</h1>
+            <h1 class="property-title">${property.city}</h1>
             <div class="property-details">
                 <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
                 <p><strong>Surface:</strong> ${property.surface} m²</p>
@@ -213,6 +213,8 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
 
         // Régénérer la landing page après la mise à jour
         const landingPageUrl = await generateLandingPage(property);
+        property.url = landingPageUrl;
+        await property.save();
 
         res.redirect('/user');
     } catch (error) {
@@ -228,7 +230,7 @@ router.get('/payment', async (req, res) => {
     try {
         const property = await Property.findById(propertyId);
         if (!property) {
-            return res.status(404).send('Property not found');
+            return res.status(404).send('Propriété non trouvée');
         }
 
         res.render('payment', {
@@ -241,7 +243,7 @@ router.get('/payment', async (req, res) => {
             url: property.url
         });
     } catch (error) {
-        console.error('Erreur lors de la récupération de la propriété : ', error);
+        console.error('Erreur lors de la récupération de la propriété :', error);
         res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de la propriété.' });
     }
 });
