@@ -24,9 +24,6 @@ router.post('/add-property', authMiddleware, upload.fields([
 ]), async (req, res) => {
     const { rooms, surface, price, city, country } = req.body;
 
-    console.log("Received body data:", req.body);  // Pour vérifier les données du formulaire
-    console.log("Received files:", req.files);    // Pour vérifier les fichiers reçus
-
     let photo1 = null;
     let photo2 = null;
 
@@ -37,7 +34,7 @@ router.post('/add-property', authMiddleware, upload.fields([
             .jpeg({ quality: 80 })
             .toFile(photo1Path);
         photo1 = path.basename(photo1Path);
-        fs.unlinkSync(req.files.photo1[0].path); // Supprimez le fichier original
+        fs.unlinkSync(req.files.photo1[0].path);
     }
 
     if (req.files.photo2) {
@@ -47,7 +44,7 @@ router.post('/add-property', authMiddleware, upload.fields([
             .jpeg({ quality: 80 })
             .toFile(photo2Path);
         photo2 = path.basename(photo2Path);
-        fs.unlinkSync(req.files.photo2[0].path); // Supprimez le fichier original
+        fs.unlinkSync(req.files.photo2[0].path);
     }
 
     try {
