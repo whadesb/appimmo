@@ -308,7 +308,6 @@ app.get('/logout', (req, res, next) => {
         });
     });
 });
-
 app.get('/user', isAuthenticated, async (req, res) => {
   try {
     // Récupérer les propriétés créées par l'utilisateur connecté
@@ -321,9 +320,6 @@ app.get('/user', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la récupération des propriétés.' });
   }
 });
-
-
-
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
