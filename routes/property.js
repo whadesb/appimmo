@@ -96,6 +96,8 @@ async function generateLandingPage(property) {
             <h1 class="property-title">${property.city}</h1>
             <div class="property-details">
                 <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
+                <p><strong>Nombre de salles de bain:</strong> ${property.bathrooms || "N/A"}</p>
+                <p><strong>Garage:</strong> ${property.hasGarage ? 'Oui' : 'Non'}</p>
                 <p><strong>Surface:</strong> ${property.surface} m²</p>
                 <p><strong>Prix:</strong> ${property.price} €</p>
                 <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
