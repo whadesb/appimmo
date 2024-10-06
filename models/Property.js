@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// Définition du schéma PropertySchema
 const PropertySchema = new Schema({
     rooms: Number,
     bathrooms: Number,
@@ -13,6 +14,7 @@ const PropertySchema = new Schema({
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
 });
 
-const Property = mongoose.model('Property', propertySchema);
+// Utilisez PropertySchema pour créer le modèle
+const Property = mongoose.model('Property', PropertySchema);
 
 module.exports = Property;
