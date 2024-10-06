@@ -553,6 +553,8 @@
                             <td>${property.rooms}</td>
                             <td>${property.surface}</td>
                             <td>${property.price}</td>
+                            <td><%= property.bathrooms %></td> <!-- Affichage du nombre de salles de bain -->
+                            <td><%= property.hasGarage ? 'Oui' : 'Non' %></td> <!-- Garage oui/non -->
                             <td>${property.city}</td>
                             <td>${property.country}</td>
                             <td><a href="${property.url}" target="_blank">${property.url}</a></td>
