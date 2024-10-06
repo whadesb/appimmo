@@ -444,6 +444,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
   }
 });
 
+
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
