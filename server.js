@@ -394,7 +394,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
-  const { rooms, surface, price, city, country } = req.body;
+  const { rooms, bathrooms, surface, price, city, country, hasGarage } = req.body;
 
   try {
     let photo1 = null;
@@ -421,14 +421,16 @@ app.post('/add-property', isAuthenticated, upload.fields([
     }
 
     const property = new Property({
-      rooms,
-      surface,
-      price,
-      city,
-      country,
-      createdBy: req.user._id,
-      photos: [photo1, photo2]
-    });
+    rooms,
+    bathrooms, // Ajouter la récupération du nombre de salles de bain
+    surface,
+    price,
+    city,
+    country,
+    hasGarage: hasGarage === 'on', // Ajouter la gestion du champ garage
+    createdBy: req.user._id,
+    photos: [photo1, photo2]
+});
 
     await property.save();
 
