@@ -432,31 +432,25 @@
             <th scope="col">Actions</th>
         </tr>
     </thead>
-  <tbody id="properties-list">
-    <% if (properties && properties.length > 0) { %>
-        <% properties.forEach(function(property) { %>
-            <tr>
-                <td><%= property.rooms %></td>
-                <td><%= property.bathrooms %></td>  <!-- Affichage du nombre de salles de bain -->
-                <td><%= property.surface %></td>
-                <td><%= property.price %></td>
-                <td><%= property.city %></td>
-                <td><%= property.country %></td>
-                <td><%= property.hasGarage ? 'Oui' : 'Non' %></td>  <!-- Garage oui/non -->
-                <td><a href="<%= property.url %>" target="_blank"><%= property.url %></a></td>
-                <td>
-                    <div class="action-icons">
-                        <i class="bi bi-clipboard" onclick="copyURL('<%= property.url %>')"></i>
-                        <i class="fa fa-pencil-alt" onclick="editProperty('<%= property._id %>')"></i>
-                    </div>
-                </td>
-            </tr>
-        <% }) %>
-    <% } else { %>
-        <tr>
-            <td colspan="9">Aucune propriété trouvée</td>
-        </tr>
-    <% } %>
+ <tbody>
+  <% if (properties && properties.length > 0) { %>
+    <% properties.forEach(function(property) { %>
+      <tr>
+        <td><%= property.rooms %></td>
+        <td><%= property.bathrooms %></td>
+        <td><%= property.hasGarage ? 'Oui' : 'Non' %></td>
+        <td><%= property.surface %></td>
+        <td><%= property.price %></td>
+        <td><%= property.city %></td>
+        <td><%= property.country %></td>
+        <td><a href="<%= property.url %>" target="_blank"><%= property.url %></a></td>
+      </tr>
+    <% }) %>
+  <% } else { %>
+    <tr>
+      <td colspan="8">Aucune propriété disponible</td>
+    </tr>
+  <% } %>
 </tbody>
 </table>
 
