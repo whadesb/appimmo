@@ -449,25 +449,28 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/property/update/:id', isAuthenticated, upload.fields([
-  { name: 'photo1', maxCount: 1 },
-  { name: 'photo2', maxCount: 1 }
+app.post('/property/update/:id', isAuthenticated, upload.fields([ 
+  { name: 'photo1', maxCount: 1 }, 
+  { name: 'photo2', maxCount: 1 } 
 ]), async (req, res) => {
   try {
+    // Recherche de la propriété par son ID
     const property = await Property.findById(req.params.id);
 
+    // Vérification de l'autorisation de modification
     if (!property || !property.createdBy.equals(req.user._id)) {
       return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
     }
 
+    // Mise à jour des champs envoyés dans le corps de la requête
     const { rooms, surface, price, city, country } = req.body;
-
     property.rooms = rooms;
     property.surface = surface;
     property.price = price;
     property.city = city;
     property.country = country;
 
+    // Gérer la mise à jour des photos (photo1 et photo2)
     if (req.files.photo1) {
       const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
       await sharp(req.files.photo1[0].path)
@@ -475,7 +478,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
         .jpeg({ quality: 80 })
         .toFile(photo1Path);
       property.photos[0] = path.basename(photo1Path);
-      fs.unlinkSync(req.files.photo1[0].path);
+      fs.unlinkSync(req.files.photo1[0].path); // Supprimer le fichier temporaire
     }
 
     if (req.files.photo2) {
@@ -485,17 +488,18 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
         .jpeg({ quality: 80 })
         .toFile(photo2Path);
       property.photos[1] = path.basename(photo2Path);
-      fs.unlinkSync(req.files.photo2[0].path);
+      fs.unlinkSync(req.files.photo2[0].path); // Supprimer le fichier temporaire
     }
 
-    await property.save();
-
+    // Générer la nouvelle URL de landing page
     const landingPageUrl = await generateLandingPage(property);
-
     property.url = landingPageUrl;
+
+    // Sauvegarder les modifications dans la base de données
     await property.save();
 
-    res.redirect('/user');
+    // Redirection vers la page d'édition pour vérifier les modifications
+    res.redirect(`/property/edit/${property._id}`);
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la propriété : ', error);
     res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de la propriété.' });
