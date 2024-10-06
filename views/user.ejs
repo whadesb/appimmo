@@ -432,13 +432,13 @@
             <th scope="col">Actions</th>
         </tr>
     </thead>
- <tbody>
+<tbody>
   <% if (properties && properties.length > 0) { %>
     <% properties.forEach(function(property) { %>
       <tr>
         <td><%= property.rooms %></td>
         <td><%= property.bathrooms %></td>
-        <td><%= property.hasGarage ? 'Oui' : 'Non' %></td>
+        <td><%= property.hasGarage ? 'Oui' : 'Non' %></td> <!-- Affichage du garage oui/non -->
         <td><%= property.surface %></td>
         <td><%= property.price %></td>
         <td><%= property.city %></td>
