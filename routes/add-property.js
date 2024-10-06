@@ -22,7 +22,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
-    const { rooms, surface, price, city, country } = req.body;
+    const { rooms, bathrooms, surface, price, city, country, hasGarage } = req.body;
 
     let photo1 = null;
     let photo2 = null;
@@ -50,10 +50,12 @@ router.post('/add-property', authMiddleware, upload.fields([
     try {
         const property = new Property({
             rooms,
+            bathrooms,  // Capture du nombre de salles de bain
             surface,
             price,
             city,
             country,
+            hasGarage: hasGarage === 'on',  // Capture de l'information garage
             createdBy: req.user._id,
             photos: [photo1, photo2]
         });
