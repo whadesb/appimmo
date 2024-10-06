@@ -424,7 +424,8 @@
             <th scope="col">Actions</th>
         </tr>
     </thead>
-    <tbody id="properties-list">
+  <tbody id="properties-list">
+    <% if (properties && properties.length > 0) { %>
         <% properties.forEach(function(property) { %>
             <tr>
                 <td><%= property.rooms %></td>
@@ -443,7 +444,12 @@
                 </td>
             </tr>
         <% }) %>
-    </tbody>
+    <% } else { %>
+        <tr>
+            <td colspan="9">Aucune propriété trouvée</td>
+        </tr>
+    <% } %>
+</tbody>
 </table>
 
                                 <div id="no-properties-message" style="display: none;" class="text-center">
