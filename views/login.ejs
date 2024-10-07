@@ -1,26 +1,25 @@
 <!doctype html>
-<html lang="en">
+<html lang="<%= locale %>">
 <head>
- <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0LN60RQ12K');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-0LN60RQ12K');
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="theme-color" content="#C4B990"> 
-    <title>UAP Immo | Login</title>    
-    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <title>UAP Immo | <%= i18n.title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link rel="preload" href="/css/styles-main.css" as="style">
-    <link rel="stylesheet" href="/css/styles-main.css"> 
+    <link rel="stylesheet" href="/css/styles-main.css">
     <style>
         .form-container {
             max-width: 600px;
@@ -133,43 +132,42 @@
             </div>
         </nav>
               <section class="new-section">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-12 col-lg-8 mx-auto">
-                            <div class="form-container">
-                                <h2 class="text-center">Connexion</h2>
-                                <form action="/login" method="POST" autocomplete="off">
-                                    <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <div class="form-control-icon">
-                                            <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
-                                            <i class="bi bi-envelope-fill icon"></i>
-                                        </div>
-                                        <div id="emailHelp" class="form-text">Vous pouvez utiliser votre email pour vous connecter.</div>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="password" class="form-label">Mot de passe</label>
-                                        <div class="form-control-icon">
-                                            <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
-                                            <i class="bi bi-eye-fill icon" id="togglePassword"></i>
-                                        </div>
-                                    </div>
-                                    <button type="submit" class="btn btn-primary w-100">Connexion</button>
-                                </form>
-                                <div class="mt-3 text-center">
-    <a href="/forgot-password">Mot de passe oublié ?</a>
-</div>
-<div class="mt-3 text-center">
-    <span>Pas encore de compte ? <a href="/register">Inscrivez-vous ici</a></span>
-</div>
-
-                              
-                            </div>
-                        </div>
-                    </div>
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 mx-auto">
+            <div class="form-container">
+              <h2 class="text-center"><%= i18n.heading %></h2>
+              <form action="/login" method="POST" autocomplete="off">
+                <div class="mb-3">
+                  <label for="email" class="form-label"><%= i18n.email %></label>
+                  <div class="form-control-icon">
+                    <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
+                    <i class="bi bi-envelope-fill icon"></i>
+                  </div>
+                  <div id="emailHelp" class="form-text"><%= i18n.email_help %></div>
                 </div>
-            </section>
-        </main>
+                <div class="mb-3">
+                  <label for="password" class="form-label"><%= i18n.password %></label>
+                  <div class="form-control-icon">
+                    <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
+                    <i class="bi bi-eye-fill icon" id="togglePassword"></i>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100"><%= i18n.login_button %></button>
+              </form>
+              <div class="mt-3 text-center">
+                <a href="/forgot-password"><%= i18n.forgot_password %></a>
+              </div>
+              <div class="mt-3 text-center">
+                <span><%= i18n.register_prompt %> <a href="/register"><%= i18n.register_link %></a></span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
 
         <footer class="site-footer section-padding">
             <div class="container">
