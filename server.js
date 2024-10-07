@@ -138,9 +138,33 @@ app.get('/login', (req, res) => {
 });
 
 
-app.get('/forgot-password', (req, res) => {
-  res.render('forgot-password', { title: 'Réinitialisation du mot de passe' });
+app.get('/:lang/forgot-password', (req, res) => {
+  const locale = req.params.lang;
+  const passwordResetTranslationsPath = `./locales/${locale}/password-reset.json`;
+
+  let passwordResetTranslations = {};
+
+  try {
+    passwordResetTranslations = JSON.parse(fs.readFileSync(passwordResetTranslationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
+
+  // Rendre la page avec les traductions spécifiques à la langue choisie
+  res.render('forgot-password', {
+    title: passwordResetTranslations.title,
+    locale: locale,  // Langue active
+    i18n: passwordResetTranslations,  // Traductions spécifiques
+    messages: req.flash()
+  });
 });
+
+// Redirection par défaut
+app.get('/forgot-password', (req, res) => {
+  res.redirect('/fr/forgot-password');
+});
+
 
 // Route pour la politique de confidentialité
 app.get('/politique-confidentialite', (req, res) => {
@@ -432,29 +456,31 @@ app.get('/payment', isAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/:locale/register', (req, res) => {
-    const locale = req.params.locale;
-    const registerTranslationsPath = `./locales/${locale}/register.json`;
+app.get('/:lang/register', (req, res) => {
+  const locale = req.params.lang;
+  const registerTranslationsPath = `./locales/${locale}/register.json`;
 
-    let globalTranslations = {};
-    let registerTranslations = {};
+  let registerTranslations = {};
 
-    try {
-        globalTranslations = JSON.parse(fs.readFileSync(`./locales/${locale}/global.json`, 'utf8'));
-        registerTranslations = JSON.parse(fs.readFileSync(registerTranslationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
+  try {
+    registerTranslations = JSON.parse(fs.readFileSync(registerTranslationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
 
-    const i18n = { ...globalTranslations, ...registerTranslations };
+  // Rendre la page avec les traductions spécifiques à la langue choisie
+  res.render('register', {
+    title: registerTranslations.title,
+    locale: locale,  // Langue active
+    i18n: registerTranslations,  // Traductions spécifiques
+    messages: req.flash()
+  });
+});
 
-    res.render('register', {
-        locale: locale,
-        title: i18n.title,
-        i18n: i18n,
-        messages: req.flash()
-    });
+// Redirection par défaut
+app.get('/register', (req, res) => {
+  res.redirect('/fr/register');
 });
 
 
