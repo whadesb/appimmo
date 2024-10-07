@@ -411,6 +411,17 @@ app.get('/:locale/user', (req, res) => {
         i18n: userTranslations
     });
 });
+app.get('/user', isAuthenticated, (req, res) => {
+  if (!req.user) {
+    return res.redirect('/login'); // Redirection si l'utilisateur n'est pas connecté
+  }
+
+  res.render('user', {
+    user: req.user, // Passe l'objet utilisateur à la vue
+    locale: req.cookies.locale || 'fr', // Utilise la langue définie par le cookie ou par défaut
+    i18n: req.i18n // Passe l'objet de traduction à la vue
+  });
+});
 
 app.get('/user', async (req, res) => {
     try {
