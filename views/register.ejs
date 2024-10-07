@@ -20,6 +20,83 @@
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+        .form-container .form-text {
+            margin-bottom: 15px;
+        }
+        .new-section {
+            padding: 60px 0; /* Padding for the new section */
+            background-color: #f8f9fa; /* Light background color */
+        }
+        .hero-section {
+            padding-top: 100px; /* Ensure content is not hidden behind the fixed navbar */
+        }
+        .form-control-icon {
+            position: relative;
+        }
+        .form-control-icon input {
+            padding-right: 2.5rem;
+        }
+        .form-control-icon .icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #52566f;
+            border-color: #52566f;
+        }
+        .btn-primary:hover {
+            background-color: #52566f;
+            border-color: #52566f;
+        }
+        .form-container .form-label {
+            font-weight: bold;
+        }
+        .navbar {
+            background-color: #C4B990;
+            
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+            color: #000000;
+            font-weight: 400;
+        }
+        .navbar .navbar-icon {
+            font-size: 1.5rem;
+        }
+        .navbar .navbar-icon.bi-person {
+            color: #fff !important;
+        }
+        .input-group-append {
+            cursor: pointer;
+        }
+        .toggle-password {
+            cursor: pointer;
+        }
+        .navbar .navbar-icon.bi-person {
+            color: #000 !important;
+        }
+        @media (max-width: 767px) {
+            .form-container {
+                background: none;
+                box-shadow: none;
+                border: none;
+            }
+        }
+    </style>    
 </head>
 <body id="top">
      <main>
