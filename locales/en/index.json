@@ -1,0 +1,40 @@
+{
+  "title": "UAP Immo | Real Estate Web Marketing - Create and Publish Your Ads Easily",
+  "metaDescription": "UAP Immo - An innovative real estate web marketing platform that allows you to create and publish optimized real estate ads to maximize conversions.",
+  "metaAuthor": "UAP Immo",
+  "metaKeywords": "real estate web marketing, real estate ads, landing pages, real estate promotion, UAP Immo",
+  "ogTitle": "UAP Immo - Real Estate Web Marketing Platform",
+  "ogDescription": "Create and publish optimized real estate ads with UAP Immo.",
+  "ogImage": "/images/uap-immo-platform-real-estate-webmarketing.png",
+  "menu": {
+    "home": "Home",
+    "fonctionnement": "How It Works",
+    "processus": "Process",
+    "faq": "FAQs",
+    "contact": "Contact"
+  },
+  "hero": {
+    "title": "Boost Your Real Estate Marketing",
+    "subtitle": "With UAP Immo, generate professional landing pages automatically and maximize your conversions.",
+    "cta": "Sign Up Now",
+    "image": "/images/uapimmovisuel.png",
+    "alt": "UAP Immo Real Estate Web Marketing Platform"
+  },
+  "faq": {
+    "title": "FAQ",
+    "questions": [
+      {
+        "question": "What is the UAP Immo platform?",
+        "answer": "UAP Immo is a premium real estate web marketing platform that simplifies your marketing by allowing you to generate landing pages in a few clicks to maximize your conversions through targeted advertising."
+      },
+      {
+        "question": "How does the platform work?",
+        "answer": "Our UAP Immo platform simplifies the creation of professional landing pages for your real estate properties. Simply fill in your property details and upload photos, and our system automatically generates a page accessible via a custom URL, ready for your targeted ad campaign."
+      },
+      {
+        "question": "What payment methods are accepted?",
+        "answer": "We currently accept credit card payments and plan to integrate cryptocurrency payments soon to offer more flexibility to our users."
+      }
+    ]
+  }
+}
