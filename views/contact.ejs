@@ -13,18 +13,26 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="theme-color" content="#C4B990">
-    <title>UAP Immo | <%= i18n.title %></title>    
-    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <title>UAP Immo | <%= i18n.title %></title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link rel="preload" href="/css/styles-main.css" as="style">
-    <link rel="stylesheet" href="/css/styles-main.css">  
+    <link rel="stylesheet" href="/css/styles-main.css">
     <style>
         .text-container {
             max-width: 600px;
             margin: 50px auto;
             padding: 20px;
+        }
+        .text-container h4 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .text-container .form-text {
+            margin-bottom: 15px;
+            font-size: 1.01rem;
         }
         .form-container {
             max-width: 600px;
@@ -33,6 +41,21 @@
             background: #fefefe;
             border-radius: 2px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h4 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .form-container .form-text {
+            margin-bottom: 15px;
+            font-size: 1.01rem;
+        }
+        .new-section {
+            padding: 60px 0;
+            background-color: #f8f9fa;
+        }
+        .hero-section {
+            padding-top: 100px;
         }
         .form-control-icon {
             position: relative;
@@ -57,6 +80,33 @@
         }
         .navbar {
             background-color: #C4B990; /* Set background color */
+            transition: background-color 0.3s;
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+            color: #000; /* Set text color */
+        }
+        .navbar .navbar-icon {
+            font-size: 1.5rem;
+        }
+        .navbar .navbar-icon.bi-person {
+            color: #000 !important;
+        }
+        @media (max-width: 767px) {
+            .form-container {
+                background: none;
+                box-shadow: none;
+                border: none;
+            }
+        }
+        .form-summary p {
+            margin-bottom: 10px;
+            color: #333; /* Text color changed to a darker shade */
+        }
+        .form-control.card-number {
+            font-size: 1.010rem; /* Increase font size for better visibility */
+            padding: 10px;
+            border: 2px solid #8781dc; /* Add border for better visibility */
+            border-radius: 2px;
         }
     </style>
 </head>
