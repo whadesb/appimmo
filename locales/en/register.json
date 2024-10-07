@@ -1,0 +1,15 @@
+{
+  "title": "Register",
+  "heading": "Register",
+  "email": "Email",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "role": "Role",
+  "password": "Password",
+  "confirm_password": "Confirm Password",
+  "password_help": "The password must contain at least 8 characters, including an uppercase letter, a lowercase letter, a number, and a special character.",
+  "register_button": "Create Account",
+  "already_have_account": "Already have an account?",
+  "login_link": "Log in here",
+  "error_message": "An error occurred. Please try again."
+}
