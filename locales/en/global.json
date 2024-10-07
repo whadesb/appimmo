@@ -1,0 +1,10 @@
+{
+  "menu": {
+    "login": "Login",
+    "home": "Home",
+    "contact": "Contact",
+    "fonctionnement": "How it works",
+    "processus": "Process",
+    "faq": "FAQs"
+  }
+}
