@@ -389,6 +389,28 @@ app.get('/logout', (req, res, next) => {
         });
     });
 });
+app.get('/:locale/user', (req, res) => {
+    const { locale } = req.params;
+    const user = req.user;  // Assurez-vous que l'utilisateur est connecté
+
+    // Chemin des traductions de la page utilisateur pour la langue spécifiée
+    const userTranslationsPath = `./locales/${locale}/user.json`;
+
+    let userTranslations = {};
+    try {
+        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    // Rendre la page utilisateur avec les traductions appropriées
+    res.render('user', {
+        locale: locale,
+        user: user,
+        i18n: userTranslations
+    });
+});
 
 app.get('/user', async (req, res) => {
     try {
