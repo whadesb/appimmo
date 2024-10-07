@@ -1,0 +1,17 @@
+{
+    "title": "Contact",
+    "heading": "Contactez-nous",
+    "intro": "Nous sommes à votre disposition pour répondre à toutes vos questions concernant l'utilisation de notre plateforme.",
+    "details": "N'hésitez pas à nous contacter pour toute autre demande ou pour obtenir des conseils personnalisés.",
+    "form_title": "Formulaire de contact",
+    "first_name": "Prénom",
+    "last_name": "Nom",
+    "email": "Email",
+    "message": "Message",
+    "type": "Vous êtes",
+    "particulier": "Particulier",
+    "professionnel": "Professionnel",
+    "submit_button": "Envoyer",
+    "success_message": "Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais."
+  }
+  
