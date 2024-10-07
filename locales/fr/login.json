@@ -7,5 +7,13 @@
   "forgot_password": "Mot de passe oublié ?",
   "login_button": "Connexion",
   "register_prompt": "Pas encore de compte ?",
-  "register_link": "Inscrivez-vous ici"
+  "register_link": "Inscrivez-vous ici",
+  "menu": {
+    "home": "Accueil",
+    "fonctionnement": "Fonctionnement",
+    "processus": "Processus",
+    "faq": "FAQs",
+    "contact": "Contact",
+    "login": "Connexion"
+  }
 }
