@@ -326,8 +326,6 @@ app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
 
-const fs = require('fs'); // Importer fs pour lire les fichiers JSON
-
 app.get('/contact', (req, res) => {
     const locale = req.getLocale(); // Utiliser la méthode pour récupérer la langue actuelle (en ou fr)
     const messageEnvoye = req.query.messageEnvoye === 'true';
