@@ -327,30 +327,31 @@ app.get('/faq', (req, res) => {
 });
 
 app.get('/contact', (req, res) => {
-    const locale = req.getLocale(); // Récupérer la langue actuelle (ex: 'en', 'fr')
+    const locale = req.getLocale();
     const messageEnvoye = req.query.messageEnvoye === 'true';
 
-    // Charger les traductions spécifiques à la page 'contact' selon la langue
-    let translationsPath = `./locales/${locale}/contact.json`;
+    // Charger les traductions globales et spécifiques à la page
+    const globalTranslationsPath = `./locales/${locale}/global.json`;
+    const contactTranslationsPath = `./locales/${locale}/contact.json`;
 
-    // Fallback en cas de fichier de traduction manquant
-    if (!fs.existsSync(translationsPath)) {
-        translationsPath = `./locales/en/contact.json`; // Langue par défaut: anglais
-    }
-
-    let contactTranslations;
+    let globalTranslations = {};
+    let contactTranslations = {};
 
     try {
-        contactTranslations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+        globalTranslations = JSON.parse(fs.readFileSync(globalTranslationsPath, 'utf8'));
+        contactTranslations = JSON.parse(fs.readFileSync(contactTranslationsPath, 'utf8'));
     } catch (error) {
         console.error(`Erreur lors du chargement des traductions : ${error}`);
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    // Rendre la page contact avec les traductions et l'état du message envoyé
+    // Fusionner les traductions globales et spécifiques
+    const i18n = { ...globalTranslations, ...contactTranslations };
+
+    // Rendre la page contact avec les traductions
     res.render('contact', {
         title: contactTranslations.title,
-        i18n: contactTranslations,
+        i18n: i18n, // Passer les traductions fusionnées
         messageEnvoye: messageEnvoye
     });
 });
