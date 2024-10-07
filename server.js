@@ -308,18 +308,11 @@ app.get('/logout', (req, res, next) => {
         });
     });
 });
-app.get('/user', isAuthenticated, async (req, res) => {
-  try {
-    // Récupérer les propriétés créées par l'utilisateur connecté
-    const properties = await Property.find({ createdBy: req.user._id });
-    
-    // Assurez-vous de passer la variable 'properties' à la vue
-    res.render('user', { user: req.user, properties });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des propriétés :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des propriétés.' });
-  }
+
+app.get('/user', isAuthenticated, (req, res) => {
+  res.render('user', { user: req.user });
 });
+
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
@@ -391,7 +384,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
-  const { rooms, bathrooms, surface, price, city, country, hasGarage } = req.body;
+  const { rooms, surface, price, city, country } = req.body;
 
   try {
     let photo1 = null;
@@ -418,16 +411,14 @@ app.post('/add-property', isAuthenticated, upload.fields([
     }
 
     const property = new Property({
-    rooms,
-    bathrooms, // Ajouter la récupération du nombre de salles de bain
-    surface,
-    price,
-    city,
-    country,
-    hasGarage: hasGarage === 'on', // Ajouter la gestion du champ garage
-    createdBy: req.user._id,
-    photos: [photo1, photo2]
-});
+      rooms,
+      surface,
+      price,
+      city,
+      country,
+      createdBy: req.user._id,
+      photos: [photo1, photo2]
+    });
 
     await property.save();
 
@@ -442,7 +433,6 @@ app.post('/add-property', isAuthenticated, upload.fields([
     res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
   }
 });
-
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
@@ -459,28 +449,25 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/property/update/:id', isAuthenticated, upload.fields([ 
-  { name: 'photo1', maxCount: 1 }, 
-  { name: 'photo2', maxCount: 1 } 
+app.post('/property/update/:id', isAuthenticated, upload.fields([
+  { name: 'photo1', maxCount: 1 },
+  { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    // Recherche de la propriété par son ID
     const property = await Property.findById(req.params.id);
 
-    // Vérification de l'autorisation de modification
     if (!property || !property.createdBy.equals(req.user._id)) {
       return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
     }
 
-    // Mise à jour des champs envoyés dans le corps de la requête
     const { rooms, surface, price, city, country } = req.body;
+
     property.rooms = rooms;
     property.surface = surface;
     property.price = price;
     property.city = city;
     property.country = country;
 
-    // Gérer la mise à jour des photos (photo1 et photo2)
     if (req.files.photo1) {
       const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
       await sharp(req.files.photo1[0].path)
@@ -488,7 +475,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
         .jpeg({ quality: 80 })
         .toFile(photo1Path);
       property.photos[0] = path.basename(photo1Path);
-      fs.unlinkSync(req.files.photo1[0].path); // Supprimer le fichier temporaire
+      fs.unlinkSync(req.files.photo1[0].path);
     }
 
     if (req.files.photo2) {
@@ -498,18 +485,17 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
         .jpeg({ quality: 80 })
         .toFile(photo2Path);
       property.photos[1] = path.basename(photo2Path);
-      fs.unlinkSync(req.files.photo2[0].path); // Supprimer le fichier temporaire
+      fs.unlinkSync(req.files.photo2[0].path);
     }
 
-    // Générer la nouvelle URL de landing page
-    const landingPageUrl = await generateLandingPage(property);
-    property.url = landingPageUrl;
-
-    // Sauvegarder les modifications dans la base de données
     await property.save();
 
-    // Redirection vers la page d'édition pour vérifier les modifications
-    res.redirect(`/property/edit/${property._id}`);
+    const landingPageUrl = await generateLandingPage(property);
+
+    property.url = landingPageUrl;
+    await property.save();
+
+    res.redirect('/user');
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la propriété : ', error);
     res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de la propriété.' });
@@ -562,260 +548,90 @@ app.get('/config', (req, res) => {
 async function generateLandingPage(property) {
   const template = `
     <!DOCTYPE html>
-    <html lang="fr">
+    <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>${property.title || "UAP Immo | Annonce"}</title>
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <style>
-            * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
-            body {
-                font-family: 'Arial', sans-serif;
-                height: 100vh;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                background-color: #f4f4f4;
-                overflow: hidden; /* Pour éviter le scrolling */
-            }
-
-            .landing-container {
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-                width: 100%;
-                height: 100vh;
-                padding: 20px;
-                background-color: white;
-            }
-
-            .property-info {
-                flex: 1;
-                padding: 20px;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                gap: 50px;
-            }
-
-            .property-title {
-                font-size: 3em;
-                font-weight: bold;
-                color: #333;
-            }
-
-            .property-description {
-                font-size: 1.2em;
-                color: #666;
-            }
-
-            .property-details {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 15px;
-                margin-top: 20px;
-            }
-
-            .detail {
-                flex: 0 0 30%;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                padding: 10px;
-            }
-
-            .detail i.icon {
-                font-size: 30px;
-                color: #C4B990;
-                border-radius: 50%;
-                border: 1px solid #000000;
-                padding: 20px;
-                margin-bottom: 10px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                width: 60px;
-                height: 60px;
-            }
-
-            .detail p {
-                font-size: 1em;
-                color: #333;
-                text-align: center;
-            }
-
-            .cta-button {
-                display: inline-block;
-                padding: 15px 30px;
-                background-color: #C4B990;
-                color: rgb(0, 0, 0);
-                font-size: 1.2em;
-                text-decoration: none;
-                border-radius: 50px;
-                transition: background-color 0.3s ease;
-                align-self: flex-start;
-            }
-
-            .cta-button:hover {
-                background-color: #000000;
-                border-radius: 50px;
-                border: 1px solid grey;
-                color: white;
-            }
-
-            .property-images {
-                flex: 1;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .property-images img.main-image {
-                width: 100%;
-                max-width: 500px;
-                height: auto;
-                margin-bottom: 20px;
-                border-radius: 15px;
-                box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
-            }
-
-            @media screen and (max-width: 768px) {
-                body {
-                    height: 100vh;
-                }
-                .landing-container {
-                    flex-direction: column;
-                    text-align: center;
-                    height: 100vh;
-                }
-
-                .property-info {
-                    justify-content: space-around;
-                    height: 100%;
-                }
-
-                .property-images {
-                    flex-grow: 1;
-                    justify-content: space-between;
-                    flex-direction: row;
-                    align-items: center;
-                    height: auto;
-                }
-
-                .property-images img.main-image {
-                    width: 48%;
-                    height: auto;
-                    max-width: 100%;
-                    margin: 0;
-                }
-
-                .cta-button {
-                    display: none;
-                }
-
-                .fixed-cta {
-                    position: fixed;
-                    top: 50vh;
-                    left: calc(100% - 5em);
-                    background-color: #d7c26b;
-                    padding: 1.5em;
-                    border-radius: 4em;
-                    border-radius: 90px 0px 0px 90px;
-                    border: 1px solid grey;
-                    text-decoration: none;
-                    font-weight: 700;
-                    font-size: 14px;
-                    text-transform: uppercase;
-                    color: #142a44;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-
-                .fixed-cta i {
-                    font-size: 2em;
-                    color: #142a44;
-                }
-
-                .fixed-cta i:before {
-                    content: '\\f0e0';
-                }
-
-                .fixed-cta span {
-                    display: none;
-                }
-            }
-
-            @media screen and (min-width: 769px) {
-                .fixed-cta {
-                    display: none;
-                }
-
-                .property-details {
-                    flex-wrap: nowrap;
-                    justify-content: space-between;
-                }
-
-                .detail {
-                    flex: 0 0 18%;
-                }
-            }
-        </style>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Propriété à ${property.city}</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <style>
+        body, html {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: rgba(0, 0, 0, 0.6);
+          font-family: Arial, sans-serif;
+        }
+        .property-container {
+          background-color: white;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+          max-width: 800px;
+          width: 100%;
+          padding: 20px;
+          text-align: center;
+          color: black;
+        }
+        .property-title {
+          font-size: 32px;
+          margin-bottom: 20px;
+          color: black;
+        }
+        .property-details {
+          font-size: 18px;
+          margin-bottom: 20px;
+          color: black;
+        }
+        .property-photos {
+          display: flex;
+          justify-content: space-around;
+          gap: 10px;
+        }
+        .property-photos img {
+          width: 48%;
+          border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+          .property-container {
+            padding: 10px;
+          }
+          .property-title {
+            font-size: 24px;
+          }
+          .property-details {
+            font-size: 16px;
+          }
+          .property-photos {
+            flex-direction: column;
+            align-items: center;
+          }
+          .property-photos img {
+            width: 100%;
+            margin-bottom: 10px;
+          }
+        }
+      </style>
     </head>
     <body>
-        <div class="landing-container">
-            <div class="property-info">
-                <h1 class="property-title">${property.title || "Propriété à vendre"}</h1>
-                <p class="property-description">${property.description || "Description non disponible."}</p>
-
-                <div class="property-details">
-                    <div class="detail">
-                        <i class="fas fa-bed icon"></i>
-                        <p>${property.rooms || "N/A"} Chambres</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-bath icon"></i>
-                        <p>${property.bathrooms || "N/A"} Salles de bain</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-ruler-combined icon"></i>
-                        <p>${property.surface || "N/A"}m²</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-map-marker-alt icon"></i>
-                        <p>${property.city || "Ville non spécifiée"}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fas fa-car icon"></i>
-                        <p>${property.hasGarage ? 'Garage' : 'Pas de garage'}</p>
-                    </div>  
-                </div>
-
-                <a href="#contact" class="cta-button">Visitez ce bien</a>
-            </div>
-            
-            <div class="property-images">
-                <img src="/uploads/${property.photos && property.photos[0] ? property.photos[0] : 'default.jpg'}" alt="${property.title}" class="main-image">
-                <img src="/uploads/${property.photos && property.photos[1] ? property.photos[1] : 'default.jpg'}" alt="${property.title}" class="main-image">
-            </div>
+      <div class="property-container">
+        <h1 class="property-title">Propriété à ${property.city}</h1>
+        <div class="property-details">
+          <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
+          <p><strong>Surface:</strong> ${property.surface} m²</p>
+          <p><strong>Prix:</strong> ${property.price} €</p>
+          <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
         </div>
-
-        <a href="#contact" class="fixed-cta">
-            <i class="fas fa-envelope"></i> 
-            <span>Contactez-nous</span>
-        </a>
+        <div class="property-photos">
+          <img src="/uploads/${property.photos[0]}" alt="Photo 1">
+          <img src="/uploads/${property.photos[1]}" alt="Photo 2">
+        </div>
+      </div>
     </body>
-    </html>
-  `;
+    </html>`;
 
   const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
   fs.writeFileSync(filePath, template);
