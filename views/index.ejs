@@ -130,42 +130,7 @@
     </style>
 </head>
 <body id="top">
-    
-    <div id="cookie-consent-popup" class="cookie-consent-popup">
-        <h4><%= i18n.cookieConsentTitle %></h4>
-        <p><%= i18n.cookieConsentText %></p>
-        <button id="accept-cookies-btn" class="btn-accept"><%= i18n.accept %></button>
-        <button id="decline-cookies-btn" class="btn-decline"><%= i18n.decline %></button>
-        <div>
-            <a href="/politique-confidentialite"><%= i18n.privacyPolicy %></a> |
-            <a href="/gerer-cookies"><%= i18n.manageCookies %></a>
-        </div>
-    </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const popup = document.getElementById('cookie-consent-popup');
-            const overlay = document.getElementById('overlay');
-            const acceptBtn = document.getElementById('accept-cookies-btn');
-            const declineBtn = document.getElementById('decline-cookies-btn');
-
-            if (!localStorage.getItem('cookiesAccepted') && !localStorage.getItem('cookiesDeclined')) {
-                popup.classList.add('visible');
-                overlay.classList.add('visible');
-            }
-
-            acceptBtn.addEventListener('click', function() {
-                localStorage.setItem('cookiesAccepted', 'true');
-                popup.classList.remove('visible');
-                overlay.classList.remove('visible');
-            });
-
-            declineBtn.addEventListener('click', function() {
-                localStorage.setItem('cookiesDeclined', 'true');
-                popup.classList.remove('visible');
-                overlay.classList.remove('visible');
-            });
-        });
-    </script>
+  
      <main>
          <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
