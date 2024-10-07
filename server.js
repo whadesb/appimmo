@@ -326,8 +326,9 @@ app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
 
-app.get('/contact', (req, res) => {
-    const locale = req.getLocale();
+app.get('/:lang/contact', (req, res) => {
+    // Récupérer la langue depuis l'URL
+    const locale = req.params.lang || 'en'; // 'en' par défaut si aucune langue n'est spécifiée
     const messageEnvoye = req.query.messageEnvoye === 'true';
 
     // Charger les traductions globales et spécifiques à la page
@@ -355,6 +356,7 @@ app.get('/contact', (req, res) => {
         messageEnvoye: messageEnvoye
     });
 });
+
 
 app.post('/send-contact', async (req, res) => {
     const { firstName, lastName, email, message, type } = req.body;
