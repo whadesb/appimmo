@@ -1,0 +1,15 @@
+{
+  "title": "Inscription",
+  "heading": "Inscription",
+  "email": "Email",
+  "first_name": "Prénom",
+  "last_name": "Nom",
+  "role": "Rôle",
+  "password": "Mot de passe",
+  "confirm_password": "Confirmez le mot de passe",
+  "password_help": "Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.",
+  "register_button": "Créer un compte",
+  "already_have_account": "Vous avez déjà un compte ?",
+  "login_link": "Connectez-vous ici",
+  "error_message": "Une erreur est survenue. Veuillez réessayer."
+}
