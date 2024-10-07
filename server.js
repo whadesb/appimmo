@@ -432,9 +432,31 @@ app.get('/payment', isAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/register', (req, res) => {
-  res.render('register', { title: 'Register' });
+app.get('/:locale/register', (req, res) => {
+    const locale = req.params.locale;
+    const registerTranslationsPath = `./locales/${locale}/register.json`;
+
+    let globalTranslations = {};
+    let registerTranslations = {};
+
+    try {
+        globalTranslations = JSON.parse(fs.readFileSync(`./locales/${locale}/global.json`, 'utf8'));
+        registerTranslations = JSON.parse(fs.readFileSync(registerTranslationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    const i18n = { ...globalTranslations, ...registerTranslations };
+
+    res.render('register', {
+        locale: locale,
+        title: i18n.title,
+        i18n: i18n,
+        messages: req.flash()
+    });
 });
+
 
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword } = req.body;
