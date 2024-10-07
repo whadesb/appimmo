@@ -1,16 +1,16 @@
 {
-    "title": "Contact",
-    "heading": "Contact Us",
-    "intro": "We are here to answer any questions you may have about using our platform.",
-    "details": "Feel free to reach out for any other inquiries or to get personalized advice.",
-    "form_title": "Contact Form",
-    "first_name": "First Name",
-    "last_name": "Last Name",
-    "email": "Email",
-    "message": "Message",
-    "type": "You are",
-    "particulier": "Individual",
-    "professionnel": "Professional",
-    "submit_button": "Submit",
-    "success_message": "Your message has been successfully sent. We will get back to you shortly."
-  }
+  "title": "Contact",
+  "heading": "Contact Us",
+  "intro": "We are here to answer any questions you may have about using our platform.",
+  "details": "Feel free to reach out for any other inquiries or to get personalized advice.",
+  "form_title": "Contact Form",
+  "first_name": "First Name",
+  "last_name": "Last Name",
+  "email": "Email",
+  "message": "Message",
+  "type": "You are",
+  "particulier": "Individual",
+  "professionnel": "Professional",
+  "submit_button": "Submit",
+  "success_message": "Your message has been successfully sent. We will get back to you shortly."
+}
