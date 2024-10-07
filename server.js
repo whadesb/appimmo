@@ -105,6 +105,19 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
+app.get('/', (req, res) => {
+    const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
+    const defaultLocale = 'fr'; // Langue par défaut
+
+    // Vérifier si l'utilisateur préfère l'anglais
+    if (acceptedLanguages.includes('en')) {
+        res.redirect('/en');
+    } else {
+        res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
+    }
+});
+
+
 app.get('/:locale', (req, res) => {
     const locale = req.params.locale || 'fr'; // Par défaut en français
     const translationsPath = `./locales/${locale}/index.json`; // Chemin vers le fichier de traduction
