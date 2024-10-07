@@ -105,31 +105,27 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-app.get('/:lang', (req, res) => {
-    const locale = req.params.lang; // Récupère la langue depuis l'URL
-    const indexTranslationsPath = `./locales/${locale}/index.json`; // Chemin vers les traductions
-
-    let indexTranslations = {};
-
+app.get('/:locale', (req, res) => {
+    const locale = req.params.locale || 'fr'; // Par défaut en français
+    const translationsPath = `./locales/${locale}/index.json`; // Chemin vers le fichier de traduction
+    
+    let translations = {};
+    
     try {
-        indexTranslations = JSON.parse(fs.readFileSync(indexTranslationsPath, 'utf8'));
+        // Lire le fichier de traduction correspondant à la langue
+        translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
     } catch (error) {
         console.error(`Erreur lors du chargement des traductions : ${error}`);
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
-
-    // Rendre la page avec les traductions de la langue choisie
+    
+    // Rendre la page avec les traductions
     res.render('index', {
-        title: indexTranslations.title,
-        locale: locale,  // Passer la langue active
-        i18n: indexTranslations // Passer les traductions spécifiques à la page
+        locale: locale,
+        i18n: translations // Passer les traductions à la vue
     });
 });
 
-// Redirection par défaut vers la langue française
-app.get('/', (req, res) => {
-    res.redirect('/fr');
-});
 
 
 // Route dynamique pour la page de connexion avec gestion de la langue
