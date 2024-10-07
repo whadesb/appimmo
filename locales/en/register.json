@@ -11,5 +11,18 @@
   "register_button": "Create Account",
   "already_have_account": "Already have an account?",
   "login_link": "Log in here",
-  "error_message": "An error occurred. Please try again."
+  "error_message": "An error occurred. Please try again.",
+  "menu": {
+    "home": "Home",
+    "fonctionnement": "How it works",
+    "processus": "Process",
+    "faq": "FAQs",
+    "contact": "Contact",
+    "login": "Login",
+    "register": "Register"
+  },
+  "footer": {
+    "informations": "Information",
+    "access": "Access"
+  }
 }
