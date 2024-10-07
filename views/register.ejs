@@ -23,47 +23,47 @@
 </head>
 <body id="top">
      <main>
-        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="/<%= locale %>">
-                    <span>UAP Immo</span>
+     <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/<%= locale %>">
+            <span>UAP Immo</span>
+        </a>
+        <div class="d-lg-none ms-auto me-4">
+            <a href="/<%= locale %>/login" style="position: relative;">
+                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                <span class="visually-hidden"><%= i18n.menu.login %></span>
+            </a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>#fonctionnement"><%= i18n.menu.fonctionnement %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>#processus"><%= i18n.menu.processus %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>#faq"><%= i18n.menu.faq %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>#contact"><%= i18n.menu.contact %></a>
+                </li>
+            </ul>
+            <div class="d-none d-lg-block">
+                <a href="/<%= locale %>/login" style="position: relative;">
+                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                    <span class="visually-hidden"><%= i18n.menu.login %></span>
                 </a>
-                <div class="d-lg-none ms-auto me-4">
-                    <a href="/<%= locale %>/login" style="position: relative;">
-                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                        <span class="visually-hidden"><%= i18n.menu.login %></span>
-                    </a>
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/<%= locale %>#fonctionnement"><%= i18n.menu.fonctionnement %></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/<%= locale %>#processus"><%= i18n.menu.processus %></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/<%= locale %>#faq"><%= i18n.menu.faq %></a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/<%= locale %>#contact"><%= i18n.menu.contact %></a>
-                        </li>
-                    </ul>
-                    <div class="d-none d-lg-block">
-                        <a href="/<%= locale %>/login" style="position: relative;">
-                            <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                            <span class="visually-hidden"><%= i18n.menu.login %></span>
-                        </a>
-                    </div>
-                </div>
             </div>
-        </nav>
+        </div>
+    </div>
+</nav>
 
         <!-- Form Section -->
         <section class="new-section">
