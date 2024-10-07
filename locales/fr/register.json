@@ -11,5 +11,18 @@
   "register_button": "Créer un compte",
   "already_have_account": "Vous avez déjà un compte ?",
   "login_link": "Connectez-vous ici",
-  "error_message": "Une erreur est survenue. Veuillez réessayer."
+  "error_message": "Une erreur est survenue. Veuillez réessayer.",
+  "menu": {
+    "home": "Accueil",
+    "fonctionnement": "Fonctionnement",
+    "processus": "Processus",
+    "faq": "FAQs",
+    "contact": "Contact",
+    "login": "Connexion",
+    "register": "Inscription"
+  },
+  "footer": {
+    "informations": "Informations",
+    "access": "Accès"
+  }
 }
