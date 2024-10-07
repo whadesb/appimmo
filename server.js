@@ -326,9 +326,21 @@ app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
 
+const fs = require('fs'); // Importer fs pour lire les fichiers JSON
+
 app.get('/contact', (req, res) => {
+    const locale = req.getLocale(); // Utiliser la méthode pour récupérer la langue actuelle (en ou fr)
     const messageEnvoye = req.query.messageEnvoye === 'true';
-    res.render('contact', { title: 'Contact', messageEnvoye });
+
+    // Charger le fichier JSON spécifique à la page contact selon la langue
+    const contactTranslations = JSON.parse(fs.readFileSync(`./locales/${locale}/contact.json`, 'utf8'));
+
+    // Rendre la page avec les traductions spécifiques et la gestion des messages envoyés
+    res.render('contact', {
+        title: contactTranslations.title,   // Utilisation du titre traduit
+        i18n: contactTranslations,          // Passer les traductions spécifiques à la page
+        messageEnvoye: messageEnvoye        // Indiquer si un message a été envoyé
+    });
 });
 
 app.get('/payment', isAuthenticated, async (req, res) => {
