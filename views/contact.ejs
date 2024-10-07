@@ -1,19 +1,19 @@
 <!doctype html>
-<html lang="en">
+<html lang="<%= locale %>">
 <head>
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
     <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0LN60RQ12K');
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-0LN60RQ12K');
     </script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <meta name="theme-color" content="#C4B990"> 
-    <title>UAP Immo | Contact</title>    
+    <meta name="theme-color" content="#C4B990">
+    <title>UAP Immo | <%= __('contact.title') %></title>    
     <link rel="preconnect" href="https://fonts.googleapis.com">        
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -26,14 +26,6 @@
             margin: 50px auto;
             padding: 20px;
         }
-        .text-container h4 {
-            margin-bottom: 20px;
-            color: #000;
-        }
-        .text-container .form-text {
-            margin-bottom: 15px;
-            font-size: 1.01rem;
-        }
         .form-container {
             max-width: 600px;
             margin: 50px auto;
@@ -41,21 +33,6 @@
             background: #fefefe;
             border-radius: 2px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-        .form-container h4 {
-            margin-bottom: 20px;
-            color: #000;
-        }
-        .form-container .form-text {
-            margin-bottom: 15px;
-            font-size: 1.01rem;
-        }
-        .new-section {
-            padding: 60px 0; 
-            background-color: #f8f9fa; 
-        }
-        .hero-section {
-            padding-top: 100px; 
         }
         .form-control-icon {
             position: relative;
@@ -78,40 +55,10 @@
             background-color: #52566f;
             border-color: #52566f;
         }
-        .form-container .form-label {
-            font-weight: bold;
-        }
         .navbar {
             background-color: #C4B990; /* Set background color */
-            transition: background-color 0.3s;
         }
-        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #000; /* Set text color */
-        }
-        .navbar .navbar-icon {
-            font-size: 1.5rem;
-        }
-        .navbar .navbar-icon.bi-person {
-            color: #000 !important;
-        }
-        @media (max-width: 767px) {
-            .form-container {
-                background: none;
-                box-shadow: none;
-                border: none;
-            }
-        }
-        .form-summary p {
-            margin-bottom: 10px;
-            color: #333; /* Text color changed to a darker shade */
-        }
-        .form-control.card-number {
-            font-size: 1.010rem; /* Increase font size for better visibility */
-            padding: 10px;
-            border: 2px solid #8781dc; /* Add border for better visibility */
-            border-radius: 2px;
-        }
-    </style>    
+    </style>
 </head>
 <body id="top">
     <main>
@@ -123,7 +70,7 @@
                 <div class="d-lg-none ms-auto me-4">
                     <a href="/login" style="position: relative;">
                         <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                        <span class="visually-hidden">Login</span>
+                        <span class="visually-hidden"><%= __('menu.login') %></span>
                     </a>
                 </div>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -132,127 +79,105 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-lg-5 me-lg-auto">
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/">Home</a>
+                            <a class="nav-link click-scroll" href="/"><%= __('menu.home') %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
+                            <a class="nav-link click-scroll" href="/#fonctionnement"><%= __('menu.fonctionnement') %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#processus">Processus</a>
+                            <a class="nav-link click-scroll" href="/#processus"><%= __('menu.processus') %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#faq">FAQs</a>
+                            <a class="nav-link click-scroll" href="/#faq"><%= __('menu.faq') %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#contact">Contact</a>
+                            <a class="nav-link click-scroll" href="/#contact"><%= __('menu.contact') %></a>
                         </li>
                     </ul>
                     <div class="d-none d-lg-block">
                         <a href="/login" style="position: relative;">
                             <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                            <span class="visually-hidden">Login</span>
+                            <span class="visually-hidden"><%= __('menu.login') %></span>
                         </a>
                     </div>
                 </div>
             </div>
         </nav>
-       <section class="new-section" id="section_4">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-12">
-                <div class="text-container">
-                    <h4>Contactez-nous</h4>
-                    <p class="form-text">Nous sommes à votre disposition pour répondre à toutes vos questions concernant l'utilisation de notre plateforme. Que vous ayez besoin d'assistance technique, d'informations supplémentaires sur nos services, ou que vous souhaitiez simplement en savoir plus sur nos offres, notre équipe est là pour vous aider.</p>
-<p class="form-text">N'hésitez pas à nous contacter pour toute autre demande ou pour obtenir des conseils personnalisés. Nous nous engageons à vous répondre dans les plus brefs délais afin de vous offrir l'assistance nécessaire.</p>
-
+        <section class="new-section" id="section_4">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        <div class="text-container">
+                            <h4><%= __('contact.heading') %></h4>
+                            <p class="form-text"><%= __('contact.intro') %></p>
+                            <p class="form-text"><%= __('contact.details') %></p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                        <div class="form-container">
+                            <h4><%= __('contact.form_title') %></h4>
+                            <% if (typeof messageEnvoye !== 'undefined' && messageEnvoye) { %>
+                                <div class="alert alert-success" role="alert">
+                                    <%= __('contact.success_message') %>
+                                </div>
+                            <% } %>
+                            <form action="/send-contact" method="POST">
+                                <div class="mb-3">
+                                    <label for="firstName" class="form-label"><%= __('contact.first_name') %></label>
+                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="lastName" class="form-label"><%= __('contact.last_name') %></label>
+                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="email" class="form-label"><%= __('contact.email') %></label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="message" class="form-label"><%= __('contact.message') %></label>
+                                    <textarea class="form-control" id="message" name="message" rows="4" required style="resize: none;"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="type" class="form-label"><%= __('contact.type') %></label>
+                                    <select class="form-control" id="type" name="type" required>
+                                        <option value="particulier"><%= __('contact.particulier') %></option>
+                                        <option value="professionnel"><%= __('contact.professionnel') %></option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary w-100"><%= __('contact.submit_button') %></button>
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-12">
-                <div class="form-container">
-                    <h4>Formulaire de contact</h4>
-                    
-                    <% if (typeof messageEnvoye !== 'undefined' && messageEnvoye) { %>
-                        <div class="alert alert-success" role="alert">
-                            Votre message a été envoyé avec succès. Nous vous répondrons dans les plus brefs délais.
-                        </div>
-                    <% } %>
-                    
-                    <form action="/send-contact" method="POST">
-                        <div class="mb-3">
-                            <label for="firstName" class="form-label">Prénom</label>
-                            <input type="text" class="form-control" id="firstName" name="firstName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="lastName" class="form-label">Nom</label>
-                            <input type="text" class="form-control" id="lastName" name="lastName" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="message" class="form-label">Message</label>
-                            <textarea class="form-control" id="message" name="message" rows="4" required style="resize: none;"></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="type" class="form-label">Vous êtes</label>
-                            <select class="form-control" id="type" name="type" required>
-                                <option value="particulier">Particulier</option>
-                                <option value="professionnel">Professionnel</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100">Envoyer</button>
-                    </form>
+        </section>
+    </main>
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/">
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3"><%= __('footer.informations') %></h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/" class="site-footer-link"><%= __('menu.home') %></a></li>
+                        <li class="site-footer-link-item"><a href="/register" class="site-footer-link"><%= __('footer.create_account') %></a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3"><%= __('footer.access') %></h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/contact" class="site-footer-link"><%= __('menu.contact') %></a></li>
+                    </ul>
                 </div>
             </div>
         </div>
-    </div>
-</section>
-    </main>
-       <footer class="site-footer section-padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-12 mb-4 pb-2">
-                        <a class="navbar-brand mb-2" href="/">
-                            
-                            <span>UAP Immo</span>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Informations</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
-                            <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Accès</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                            
-                        </ul>
-                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="#">English</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="#">Français</a>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
-                </div>
-            </div>
-        </footer>
-    <!-- JAVASCRIPT FILES -->
+    </footer>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/jquery.sticky.js"></script>
-    <script src="/js/click-scroll.js"></script>
-    <script src="/js/custom.js"></script>
 </body>
 </html>
