@@ -176,13 +176,15 @@ app.get('/gerer-cookies', (req, res) => {
   res.render('gerer-cookies', { title: 'Gérer les cookies' });
 });
 
-app.post('/forgot-password', async (req, res) => {
+app.post('/:lang/forgot-password', async (req, res) => {
   const { email } = req.body;
+  const locale = req.params.lang;
+
   try {
     const user = await User.findOne({ email });
     if (!user) {
       req.flash('error', 'Aucun compte trouvé avec cette adresse email.');
-      return res.redirect('/forgot-password');
+      return res.redirect(`/${locale}/forgot-password`);
     }
 
     const token = crypto.randomBytes(32).toString('hex');
@@ -190,7 +192,7 @@ app.post('/forgot-password', async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
     await user.save();
 
-    const resetUrl = `http://${req.headers.host}/reset-password/${token}`;
+    const resetUrl = `http://${req.headers.host}/${locale}/reset-password/${token}`;
     const mailOptions = {
       to: user.email,
       from: process.env.EMAIL_USER,
@@ -221,11 +223,11 @@ app.post('/forgot-password', async (req, res) => {
     await sendEmail(mailOptions);
 
     req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.');
-    return res.redirect('/forgot-password?emailSent=true');
+    return res.redirect(`/${locale}/forgot-password?emailSent=true`);
   } catch (error) {
     console.error('Erreur lors de la réinitialisation du mot de passe :', error);
     req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
-    return res.redirect('/forgot-password');
+    return res.redirect(`/${locale}/forgot-password`);
   }
 });
 
