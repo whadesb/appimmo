@@ -1,29 +1,20 @@
 <!doctype html>
-<html lang="en">
+<html lang="<%= locale %>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#C4B990"> 
-    <title>UAP Immo | Mon Espace</title>
+    <title>UAP Immo | <%= i18n.title %></title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
-    <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        html, body {
-            height: 100%;
-        }
+        /* Styles personnalisés */
         body {
             display: flex;
             flex-direction: column;
             font-family: 'Arial', sans-serif;
             background-color: #f8f9fa;
-            margin: 0;
-        }
-        h3 {
-            color: #000;
-            text-align: left;
         }
         .navbar {
             background-color: #C4B990;
@@ -32,32 +23,18 @@
         .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
             color: #000;
         }
-        .navbar .navbar-icon {
-            color: #000;
-        }
         .main-section {
-            flex: 1;
             padding: 20px;
             background-color: #fff;
-            margin-left: 10px;
-            min-height: 500px;
-        }
-        .main-section .card {
-            border: none;
-            box-shadow: none;
         }
         .sidebar {
             background-color: #8f97c4;
             border-radius: 60px;
-            box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
             padding: 20px;
             width: 60px;
-            height: auto;
             display: flex;
             flex-direction: column;
             align-items: center;
-            position: sticky;
-            top: 20px;
         }
         .sidebar a {
             margin: 10px 0;
@@ -73,170 +50,26 @@
             color: #fff;
             padding: 20px 0;
         }
-        .btn-custom {
-            background-color: #333;
-            color: #fff;
-            border: none;
-        }
-        .btn-custom:hover {
-            background-color: #000;
-            color: #fff;
-        }
-        .btn-custom i {
-            font-size: 24px;
-        }
-        .tooltip {
-            position: absolute;
-            background-color: #ADD8E6;
-            color: #000;
-            padding: 5px 10px;
-            border-radius: 4px;
-            white-space: nowrap;
-            z-index: 1000;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .copy-message {
-            display: none;
-            background-color: #d1e7dd;
-            color: #0f5132;
-            padding: 10px;
-            border-radius: 5px;
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
-        }
-        .action-icons i {
-            font-size: 24px;
-            cursor: pointer;
-            margin-right: 10px;
-            color: #333;
-        }
-        .short-column {
-            width: 10%;
-        }
-        .card-title {
-            font-weight: 400;
-            font-size: 1.6rem;
-            color: #000;
-            margin-bottom: 0.5rem;
-        }
-        .card-text {
-            font-size: 1.1rem;
-            line-height: 1.8rem;
-            color: #666;
-            margin-bottom: 1rem;
-            letter-spacing: 0.5px;
-        }
-        .card-body .user-info {
-            color: #333;
-            margin-bottom: 0.2rem;
-            line-height: 1.6rem;
-        }
         @media (max-width: 767px) {
             .container-fluid {
                 padding-left: 0;
                 padding-right: 0;
             }
-            .container {
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-            .row {
-                flex-direction: column;
-                align-items: center;
-            }
             .main-section {
                 margin-left: 0;
-                margin-right: 0;
-                margin-top: 0;
                 width: 100%;
-                border-radius: 0;
-                box-shadow: none;
                 min-height: 300px;
                 overflow-x: auto;
-                padding-left: 0;
-                padding-right: 0;
             }
             .sidebar {
                 display: none;
-            }
-            .sidebar-mobile-links {
-                display: block !important;
-                margin-top: 10px;
-            }
-            .mobile-margin {
-                margin-top: 30px;
-            }
-            table {
-                width: 100%;
-                table-layout: auto;
-            }
-            th, td {
-                white-space: nowrap;
-                padding: 8px;
-                text-align: left;
-            }
-            .table-responsive {
-                display: block;
-                width: 100%;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            #landing .form-group {
-                width: 100%;
-                padding: 5px;
-            }
-            #landing .form-control {
-                width: 100%;
-                padding: 10px;
-                font-size: 16px;
-            }
-            #landing button.btn-custom {
-                width: 100%;
-                padding: 10px;
-                font-size: 18px;
-            }
-            .card-title {
-                font-weight: 400;
-                font-size: 1.4rem;
-                color: #000;
-                margin-bottom: 0.5rem;
-            }
-            .card-text {
-                font-size: 1.1rem;
-                line-height: 1.8rem;
-                color: #666;
-                margin-bottom: 1rem;
-                letter-spacing: 0.5px;
-            }
-            .card-body .user-info {
-                color: #333;
-                margin-bottom: 0.2rem;
-                line-height: 1.2rem;
-            }
-        }
-        @media (min-width: 768px) {
-            .sidebar-links {
-                display: none;
-            }
-            .card-title {
-                font-size: 1.475rem;
-                font-weight: 400;
-                color: #000;
-            }
-            .card-text {
-                font-size: 1rem;
-                line-height: 1.6rem;
-                letter-spacing: 0.4px;
             }
         }
     </style>
 </head>
 <body id="top">
     <main>
+        <!-- Navigation -->
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
                 <a class="navbar-brand" href="/">
@@ -264,32 +97,19 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-lg-5 me-lg-auto">
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/">Home</a>
+                            <a class="nav-link click-scroll" href="/"><%= i18n.menu.home %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
+                            <a class="nav-link click-scroll" href="/#fonctionnement"><%= i18n.menu.fonctionnement %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#processus">Processus</a>
+                            <a class="nav-link click-scroll" href="/#processus"><%= i18n.menu.processus %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#faq">FAQs</a>
+                            <a class="nav-link click-scroll" href="/#faq"><%= i18n.menu.faq %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#contact">Contact</a>
-                        </li>
-                        <!-- Sidebar links for mobile -->
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> Mon compte</a>
-                        </li>
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> Landing page</a>
-                        </li>
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> Données</a>
-                        </li>
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> Pages créées</a>
+                            <a class="nav-link click-scroll" href="/#contact"><%= i18n.menu.contact %></a>
                         </li>
                     </ul>
                     <div class="d-none d-lg-block">
@@ -311,327 +131,263 @@
                 </div>
             </div>
         </nav>
-<section class="contact-section section-padding section-bg" id="section_5">
-    <div class="container">
-        <h5 class="text-black mobile-margin">Bienvenue sur votre espace <%= user.lastName %> <%= user.firstName %></h5>
-        <div class="container-fluid">
-            <div class="row mt-4">
-                <div class="col-auto p-0">
-                    <div class="sidebar">
-                        <a href="#" title="Mon compte" onclick="showSection('account')"><i class="fa fa-user"></i></a>
-                        <a href="#" title="Landing page" onclick="showSection('landing')"><i class="fa fa-file-alt"></i></a>
-                        <a href="#" title="Données" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
-                        <a href="#" title="Pages créées" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i></a>
+
+        <!-- Espace utilisateur -->
+        <section class="contact-section section-padding section-bg">
+            <div class="container">
+                <h5 class="text-black mobile-margin"><%= i18n.welcome_message %> <%= user.lastName %> <%= user.firstName %></h5>
+                <div class="container-fluid">
+                    <div class="row mt-4">
+                        <div class="col-auto p-0">
+                            <!-- Sidebar -->
+                            <div class="sidebar">
+                                <a href="#" onclick="showSection('account')" title="<%= i18n.menu.account %>"><i class="fa fa-user"></i></a>
+                                <a href="#" onclick="showSection('landing')" title="<%= i18n.menu.landing_page %>"><i class="fa fa-file-alt"></i></a>
+                                <a href="#" onclick="showSection('donnees')" title="<%= i18n.menu.data %>"><i class="fa fa-chart-line"></i></a>
+                                <a href="#" onclick="showSection('created-pages')" title="<%= i18n.menu.created_pages %>"><i class="fa fa-wallet"></i></a>
+                            </div>
+                        </div>
+
+                        <div class="col">
+                            <div class="main-section">
+                                <!-- Section Profil -->
+                                <div id="account" class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= i18n.profile_section.title %></h5>
+                                        <p class="card-text"><%= i18n.profile_section.description %></p>
+                                        <p class="card-text user-info">Nom: <%= user.firstName %></p>
+                                        <p class="card-text user-info">Prénom: <%= user.lastName %></p>
+                                        <p class="card-text user-info">Email: <%= user.email %></p>
+                                        <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password.title %></button>
+                                    </div>
+                                </div>
+
+                                <!-- Section Réinitialisation du mot de passe -->
+                                <div id="reset-password" class="card" style="display: none;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= i18n.reset_password.title %></h5>
+                                        <p class="card-text"><%= i18n.reset_password.description %></p>
+                                        <form id="reset-password-form" action="/user/reset-password" method="POST">
+                                            <div class="form-group">
+                                                <label for="email">Email</label>
+                                                <input type="email" class="form-control" id="email" name="email" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-outline-dark">Envoyer le lien de réinitialisation</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Section Landing Page -->
+                                <div id="landing" class="card" style="display: none;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= i18n.landing_page_section.title %></h5>
+                                        <p class="card-text"><%= i18n.landing_page_section.description %></p>
+                                        <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+                                            <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
+                                            <div class="form-group">
+                                                <label for="rooms">Nombre de pièces</label>
+                                                <input type="number" class="form-control" id="rooms" name="rooms" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="surface">Surface (m²)</label>
+                                                <input type="number" class="form-control" id="surface" name="surface" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="price">Prix (€)</label>
+                                                <input type="number" class="form-control" id="price" name="price" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="city">Ville</label>
+                                                <input type="text" class="form-control" id="city" name="city" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="country">Pays</label>
+                                                <input type="text" class="form-control" id="country" name="country" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="photo1">Photo 1</label>
+                                                <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="photo2">Photo 2</label>
+                                                <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
+                                            </div>
+                                            <button type="submit" class="btn btn-custom">Enregistrer</button>
+                                        </form>
+                                        <div id="generatedLink" class="mt-3"></div>
+                                    </div>
+                                </div>
+
+                                <!-- Section Données -->
+                                <div id="donnees" class="card" style="display: none;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= i18n.data_section.title %></h5>
+                                        <p class="card-text"><%= i18n.data_section.description %></p>
+                                    </div>
+                                </div>
+
+                                <!-- Section Pages créées -->
+                                <div id="created-pages" class="card" style="display: none;">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><%= i18n.created_pages_section.title %></h5>
+                                        <p class="card-text"><%= i18n.created_pages_section.description %></p>
+                                        <table class="table table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Nombre de pièces</th>
+                                                    <th scope="col">Surface (m²)</th>
+                                                    <th scope="col">Prix (€)</th>
+                                                    <th scope="col">Ville</th>
+                                                    <th scope="col">Pays</th>
+                                                    <th scope="col">URL</th>
+                                                    <th scope="col">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="properties-list">
+                                                <!-- Propriétés de l'utilisateur ici -->
+                                            </tbody>
+                                        </table>
+                                        <div id="no-properties-message" style="display: none;" class="text-center">
+                                            <p>Aucune propriété n'a été créée pour le moment. <a href="#" onclick="showSection('landing')">Ajoutez votre première propriété maintenant !</a></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- Fin de main-section -->
+                        </div>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="main-section">
-                        <!-- Section Account -->
-                        <div id="account" class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Mon Profil</h5>
-                                <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
-                                <p class="card-text user-info">Nom: <%= user.firstName %></p>
-                                <p class="card-text user-info">Prénom: <%= user.lastName %></p>
-                                <p class="card-text user-info">Email: <%= user.email %></p>
+            </div>
+        </section>
+    </main>
 
-                                <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
-                                <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')">Réinitialiser le mot de passe</button>
-                            </div>
-                        </div>
-
-                        <!-- Section Reset Password -->
-                        <div id="reset-password" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title">Réinitialiser le mot de passe</h5>
-                                <p class="card-text">Si vous souhaitez réinitialiser votre mot de passe, veuillez entrer votre adresse email ci-dessous. Vous recevrez un lien pour réinitialiser votre mot de passe.</p>
-                                <form id="reset-password-form" action="/user/reset-password" method="POST">
-                                    <div class="form-group">
-                                        <label for="email">Adresse Email</label>
-                                        <input type="email" class="form-control" id="email" name="email" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-outline-dark">Envoyer le lien de réinitialisation</button>
-                                </form>
-                            </div>
-                        </div>
-
-                        <!-- Section Landing Page -->
-                        <div id="landing" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title">Landing Page</h5>
-                                <p class="card-text">Créez facilement et rapidement votre propre page d'annonce immobilière. Remplissez le formulaire ci-dessous avec les détails de votre bien, et notre outil se chargera de générer une landing page professionnelle prête à être partagée avec vos prospects.</p>
-                                <h5 class="card-title">Ajouter un bien immobilier</h5>
-                                <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
-                                    <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
-                                    <div class="form-group">
-                                        <label for="rooms">Nombre de pièces</label>
-                                        <input type="number" class="form-control" id="rooms" name="rooms" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="surface">Surface (m²)</label>
-                                        <input type="number" class="form-control" id="surface" name="surface" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="price">Prix (€)</label>
-                                        <input type="number" class="form-control" id="price" name="price" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="city">Ville</label>
-                                        <input type="text" class="form-control" id="city" name="city" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="country">Pays</label>
-                                        <input type="text" class="form-control" id="country" name="country" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="photo1">Photo 1</label>
-                                        <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="photo2">Photo 2</label>
-                                        <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-custom">Enregistrer</button>
-                                </form>
-                                <div id="generatedLink" class="mt-3"></div>
-                            </div>
-                        </div>
-
-                        <!-- Section Données -->
-                        <div id="donnees" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title">Statistiques de Diffusion des Annonces</h5>
-                                <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google. Ces données vous offrent une vue d'ensemble sur l'efficacité de vos campagnes et vous aident à optimiser votre stratégie de diffusion pour maximiser l'impact de vos annonces.</p>
-                            </div>
-                        </div>
-
-                        <!-- Section Created Pages -->
-                        <div id="created-pages" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title">Gestion des Annonces Immobilières</h5>
-                                <p class="card-text">Dans cet espace, vous trouverez toutes vos annonces immobilières générées avec leur URL unique et description. Utilisez les actions disponibles pour modifier vos annonces, copier le lien pour le partager gratuitement, ou opter pour une diffusion payante de votre annonce au prix de 500 €. Assurez-vous que vos annonces sont toujours à jour pour maximiser leur impact.</p>
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">Nombre de pièces</th>
-                                            <th scope="col">Surface (m²)</th>
-                                            <th scope="col">Prix (€)</th>
-                                            <th scope="col">Ville</th>
-                                            <th scope="col">Pays</th>
-                                            <th scope="col">URL</th>
-                                            <th scope="col">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="properties-list">
-                                        <!-- Propriétés de l'utilisateur ici -->
-                                    </tbody>
-                                </table>
-                                <div id="no-properties-message" style="display: none;" class="text-center">
-                                    <p>Aucun bien immobilier n'a été créé pour le moment. <a href="#" onclick="showSection('landing')">Ajoutez votre premier bien immobilier maintenant !</a></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div> <!-- Fin de main-section -->
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/">
+                        <span>UAP Immo</span>
+                    </a>
                 </div>
-            </div>
-        </div>
-    </div>
-</section>
-</main>
-<footer class="site-footer section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-12 mb-4 pb-2">
-                <a class="navbar-brand mb-2" href="/">
-                    <span>UAP Immo</span>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <h6 class="site-footer-title mb-3">Informations</h6>
-                <ul class="site-footer-links">
-                    <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
-                    <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <h6 class="site-footer-title mb-3">Accès</h6>
-                <ul class="site-footer-links">
-                    <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                </ul>
-            <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="#">English</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Français</a>
-                        </li>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/" class="site-footer-link"><%= i18n.menu.home %></a></li>
+                        <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
                     </ul>
                 </div>
-            </div>
-            <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
-        </div>
-    </div>
-</footer>
-<div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
-
-<!-- JavaScript -->
-<script src="/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
-<script>
-    function showSection(sectionId) {
-        const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
-        sections.forEach(id => {
-            const sectionElement = document.getElementById(id);
-            if (sectionElement) {
-                sectionElement.style.display = id === sectionId ? 'block' : 'none';
-            }
-        });
-
-        if (sectionId === 'created-pages') {
-            loadProperties();
-        }
-    }
-
-    async function loadProperties() {
-        console.log('loadProperties function called');
-        try {
-            const response = await fetch('/user/properties');
-            if (response.ok) {
-                const properties = await response.json();
-                console.log('Properties loaded:', properties);
-                const propertiesList = document.getElementById('properties-list');
-                propertiesList.innerHTML = ''; // Clear the list before adding new items
-
-                const noPropertiesMessage = document.getElementById('no-properties-message');
-
-                if (properties.length === 0) {
-                    // Display a message if no properties are available
-                    noPropertiesMessage.style.display = 'block';
-                } else {
-                    noPropertiesMessage.style.display = 'none';
-
-                    properties.forEach(property => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${property.rooms}</td>
-                            <td>${property.surface}</td>
-                            <td>${property.price}</td>
-                            <td>${property.city}</td>
-                            <td>${property.country}</td>
-                            <td><a href="${property.url}" target="_blank">${property.url}</a></td>
-                            <td>
-                                <div class="action-icons">
-                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                                    <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                    <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
-                                </div>
-                            </td>
-                        `;
-                        propertiesList.appendChild(row);
-                    });
-                }
-            } else {
-                console.error('Erreur lors du chargement des propriétés');
-                const propertiesList = document.getElementById('properties-list');
-                propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
-            }
-        } catch (error) {
-            console.error('Erreur lors du chargement des propriétés : ', error);
-            const propertiesList = document.getElementById('properties-list');
-            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
-        }
-    }
-
-    function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
-        navigator.clipboard.writeText(fullUrl)
-            .then(() => {
-                showCopyMessage();
-            })
-            .catch(err => {
-                console.error('Impossible de copier l\'URL : ', err);
-            });
-    }
-
-    function showCopyMessage() {
-        const copyMessage = document.getElementById('copyMessage');
-        copyMessage.style.display = 'block';
-        setTimeout(() => {
-            copyMessage.style.display = 'none';
-        }, 2000);
-    }
-
-    function testURL(propertyId) {
-        window.location.href = `/payment?propertyId=${propertyId}`;
-    }
-
-    function editProperty(propertyId) {
-        window.location.href = `/property/edit/${propertyId}`;
-    }
-
-    // Gestion de la soumission du formulaire
-    document.getElementById('add-property-form').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-
-        try {
-            console.log('Submitting form data:', formData);
-            const response = await fetch('/add-property', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (response.ok) {
-                const result = await response.json();
-                console.log('Property added successfully:', result);
-                document.getElementById('generatedLink').innerHTML = `
-                    <div class="alert alert-success">
-                        ${result.message} <br>
-                        <a href="${result.url}" target="_blank">${result.url}</a>
-                    </div>
-                `;
-            } else {
-                const error = await response.json();
-                console.error('Error response:', error);
-                document.getElementById('generatedLink').innerHTML = `
-                    <div class="alert alert-danger">
-                        Une erreur est survenue: ${error.error}
-                    </div>
-                `;
-            }
-        } catch (error) {
-            console.error('Erreur lors de la soumission du formulaire:', error);
-            document.getElementById('generatedLink').innerHTML = `
-                <div class="alert alert-danger">
-                    Une erreur est survenue lors de la soumission du formulaire.
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Accès</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
+                    </ul>
                 </div>
-            `;
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">English</a></li>
+                            <li><a class="dropdown-item" href="#">Français</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function showSection(sectionId) {
+            const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
+            sections.forEach(id => {
+                const sectionElement = document.getElementById(id);
+                if (sectionElement) {
+                    sectionElement.style.display = id === sectionId ? 'block' : 'none';
+                }
+            });
+
+            if (sectionId === 'created-pages') {
+                loadProperties();
+            }
         }
-    });
 
-    // Temps en millisecondes (5 minutes)
-    const inactivityTime = 5 * 60 * 1000;
+        async function loadProperties() {
+            console.log('loadProperties function called');
+            try {
+                const response = await fetch('/user/properties');
+                if (response.ok) {
+                    const properties = await response.json();
+                    console.log('Properties loaded:', properties);
+                    const propertiesList = document.getElementById('properties-list');
+                    propertiesList.innerHTML = '';
 
-    let timeout;
+                    const noPropertiesMessage = document.getElementById('no-properties-message');
 
-    function resetTimer() {
-        clearTimeout(timeout);
-        timeout = setTimeout(logout, inactivityTime);
-    }
+                    if (properties.length === 0) {
+                        noPropertiesMessage.style.display = 'block';
+                    } else {
+                        noPropertiesMessage.style.display = 'none';
 
-    function logout() {
-        window.location.href = '/login'; // Redirige directement vers la page de login
-    }
+                        properties.forEach(property => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${property.rooms}</td>
+                                <td>${property.surface}</td>
+                                <td>${property.price}</td>
+                                <td>${property.city}</td>
+                                <td>${property.country}</td>
+                                <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+                                <td>
+                                    <div class="action-icons">
+                                        <i class="bi bi-clipboard" onclick="copyURL('${property.url}')"></i>
+                                        <i class="fa fa-shopping-cart" onclick="testURL('${property._id}')"></i>
+                                        <i class="fa fa-pencil-alt" onclick="editProperty('${property._id}')"></i>
+                                    </div>
+                                </td>
+                            `;
+                            propertiesList.appendChild(row);
+                        });
+                    }
+                } else {
+                    console.error('Erreur lors du chargement des propriétés');
+                    const propertiesList = document.getElementById('properties-list');
+                    propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des propriétés : ', error);
+                const propertiesList = document.getElementById('properties-list');
+                propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
+            }
+        }
 
-    // Réinitialiser le timer sur les actions de l'utilisateur
-    window.onload = resetTimer;
-    document.onmousemove = resetTimer;
-    document.onkeypress = resetTimer;
-    document.onclick = resetTimer;
-    document.onscroll = resetTimer;
-</script>
+        function copyURL(url) {
+            const fullUrl = `https://uap.immo${url}`;
+            navigator.clipboard.writeText(fullUrl)
+                .then(() => {
+                    showCopyMessage();
+                })
+                .catch(err => {
+                    console.error('Impossible de copier l\'URL : ', err);
+                });
+        }
+
+        function showCopyMessage() {
+            const copyMessage = document.getElementById('copyMessage');
+            copyMessage.style.display = 'block';
+            setTimeout(() => {
+                copyMessage.style.display = 'none';
+            }, 2000);
+        }
+
+        function testURL(propertyId) {
+            window.location.href = `/payment?propertyId=${propertyId}`;
+        }
+
+        function editProperty(propertyId) {
+            window.location.href = `/property/edit/${propertyId}`;
+        }
+    </script>
 </body>
 </html>
