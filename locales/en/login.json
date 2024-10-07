@@ -1,0 +1,11 @@
+{
+  "title": "Login",
+  "heading": "Connexion",
+  "email": "Email",
+  "email_help": "You can use your email to log in.",
+  "password": "Password",
+  "forgot_password": "Forgot Password?",
+  "login_button": "Login",
+  "register_prompt": "Don't have an account yet?",
+  "register_link": "Sign up here"
+}
