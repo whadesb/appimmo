@@ -12,5 +12,20 @@
   "particulier": "Individual",
   "professionnel": "Professional",
   "submit_button": "Submit",
-  "success_message": "Your message has been successfully sent. We will get back to you shortly."
+  "success_message": "Your message has been successfully sent. We will get back to you shortly.",
+  "footer": {
+    "informations": "Information",
+    "create_account": "Create an Account",
+    "access": "Access",
+    "all_rights": "All rights reserved."
+  },
+  "menu": {
+    "home": "Home",
+    "contact": "Contact",
+    "fonctionnement": "How it Works",
+    "processus": "Process",
+    "faq": "FAQs",
+    "login": "Login",
+    "language": "Language"
+  }
 }
