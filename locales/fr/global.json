@@ -1,0 +1,15 @@
+{
+  "menu": {
+    "login": "Connexion",
+    "home": "Accueil",
+    "fonctionnement": "Fonctionnement",
+    "processus": "Processus",
+    "faq": "FAQ",
+    "contact": "Contact"
+  },
+  "footer": {
+    "informations": "Informations",
+    "create_account": "Créer un compte",
+    "access": "Accès"
+  }
+}
