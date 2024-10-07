@@ -132,6 +132,10 @@ app.get('/:lang/login', (req, res) => {
     });
 });
 
+// Redirection vers la langue par défaut (ex: français) si aucune langue n'est spécifiée
+app.get('/login', (req, res) => {
+    res.redirect('/fr/login');  // Rediriger vers la version française par défaut
+});
 
 
 app.get('/forgot-password', (req, res) => {
