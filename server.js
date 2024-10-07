@@ -111,8 +111,24 @@ app.get('/', (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-  res.render('login', { title: 'Login' });
+    const locale = req.getLocale(); // Récupérer la langue actuelle
+    const loginTranslationsPath = `./locales/${locale}/login.json`; // Fichier JSON dédié pour cette page
+
+    let loginTranslations = {};
+
+    try {
+        loginTranslations = JSON.parse(fs.readFileSync(loginTranslationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    res.render('login', {
+        title: loginTranslations.title,
+        i18n: loginTranslations // Passer les traductions spécifiques à la page
+    });
 });
+
 
 app.get('/forgot-password', (req, res) => {
   res.render('forgot-password', { title: 'Réinitialisation du mot de passe' });
