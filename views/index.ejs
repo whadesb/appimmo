@@ -1,29 +1,29 @@
 <!doctype html>
-<html lang="fr">
+<html lang="<%= locale %>">
 
 <head>
     <!-- Balises Meta SEO -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="UAP Immo - Plateforme de webmarketing immobilier innovante permettant de créer et diffuser des annonces immobilières optimisées pour maximiser les conversions.">
-    <meta name="author" content="UAP Immo">
+    <meta name="description" content="<%= i18n.metaDescription %>">
+    <meta name="author" content="<%= i18n.metaAuthor %>">
     <meta name="robots" content="index, follow">
-    <meta name="keywords" content="webmarketing immobilier, annonces immobilières, landing pages, promotion immobilière, UAP Immo">
+    <meta name="keywords" content="<%= i18n.metaKeywords %>">
     <meta name="theme-color" content="#C4B990">
-    <title>UAP Immo | Webmarketing Immobilier - Créez et Diffusez Vos Annonces Facilement</title>
+    <title><%= i18n.title %></title>
 
     <!-- Balises Open Graph pour le partage social -->
-    <meta property="og:title" content="UAP Immo - Plateforme de Webmarketing Immobilier">
-    <meta property="og:description" content="Créez et diffusez des annonces immobilières optimisées avec UAP Immo.">
-    <meta property="og:image" content="/images/uap-immo-plateforme-webmarketing-immobilier.png">
+    <meta property="og:title" content="<%= i18n.ogTitle %>">
+    <meta property="og:description" content="<%= i18n.ogDescription %>">
+    <meta property="og:image" content="<%= i18n.ogImage %>">
     <meta property="og:url" content="https://www.uapimmo.com">
     <meta property="og:type" content="website">
 
     <!-- Balises Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="UAP Immo - Plateforme de Webmarketing Immobilier">
-    <meta name="twitter:description" content="Créez et diffusez des annonces immobilières optimisées avec UAP Immo.">
-    <meta name="twitter:image" content="/images/uap-immo-plateforme-webmarketing-immobilier.png">
+    <meta name="twitter:title" content="<%= i18n.ogTitle %>">
+    <meta name="twitter:description" content="<%= i18n.ogDescription %>">
+    <meta name="twitter:image" content="<%= i18n.ogImage %>">
 
     <!-- Liens CSS et préchargement -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,14 +36,9 @@
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
 
+    <!-- Custom CSS for animations and layout -->
     <style>
-        .custom-block.bg-white.shadow-lg {
-            background-image: none;
-            border: none;
-            box-shadow: none;
-            background-color: transparent;
-        }
-
+        /* Custom styles */
         .cookie-consent-popup {
             position: fixed;
             bottom: 0;
@@ -61,20 +56,8 @@
             display: block;
         }
 
-        .cookie-consent-popup h4 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: white;
-        }
-
-        .cookie-consent-popup p {
-            font-size: 1rem;
-            margin-bottom: 20px;
-            color: white;
-        }
-
-        .cookie-consent-popup .btn-accept,
-        .cookie-consent-popup .btn-decline {
+        .btn-accept,
+        .btn-decline {
             background-color: #C4B990;
             color: #232430;
             border: none;
@@ -85,71 +68,15 @@
             margin: 5px;
         }
 
-        .cookie-consent-popup .btn-accept:hover,
-        .cookie-consent-popup .btn-decline:hover {
+        .btn-accept:hover,
+        .btn-decline:hover {
             background-color: #a4946c;
         }
 
-        .cookie-consent-popup a {
-            color: white;
-            text-decoration: underline;
-            font-size: 1rem;
-        }
-
-        .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 9998;
-            display: none;
-        }
-
-        .overlay.visible {
-            display: block;
-        }
-.faq-image {
-    width: 100%;
-    height: auto;
-    object-fit: contain;
-    max-width: 100%;
-    max-height: 400px; /* Ajuste la hauteur maximale selon tes besoins */
-
-}
-
-
-        @media (max-width: 768px) {
-            .cookie-consent-popup h4 {
-                font-size: 1.2rem;
-            }
-
-            .cookie-consent-popup p {
-                font-size: 0.9rem;
-            }
-
-            .cookie-consent-popup .btn-accept,
-            .cookie-consent-popup .btn-decline {
-                font-size: 0.9rem;
-                padding: 8px 15px;
-            }
-
-            .cookie-consent-popup a {
-                font-size: 0.9rem;
-            }
-        }
-
-        .section-top-margin {
-            padding-top: 120px;
-            padding-bottom: 60px;
-        }
-
-        /* Section Héro */
         .hero-section {
             position: relative;
             height: 100vh;
-            background: url('images/hero-background.jpg') no-repeat center center/cover;
+            background: url('/images/hero-background.jpg') no-repeat center center/cover;
             color: white;
             text-align: left;
         }
@@ -174,7 +101,6 @@
         .hero-text {
             flex: 1;
             padding-right: 2rem;
-            animation: fadeIn 1s ease-in-out forwards;
         }
 
         .hero-title {
@@ -198,71 +124,11 @@
         .hero-image {
             flex: 1;
             text-align: center;
-            animation: fadeIn 1.5s ease-in-out forwards;
         }
 
         .hero-image img {
             width: 100%;
             max-width: 500px;
-        
-        }
-
-        /* Animation Keyframes */
-        @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* Key Points Section */
-        .key-point-card {
-            border: none;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease-in-out;
-        }
-
-        .key-point-card:hover {
-            transform: translateY(-10px);
-        }
-
-        .animate-slide-up {
-            opacity: 0;
-            animation: slideUp 1s ease-in-out forwards;
-        }
-
-        .animate-slide-up-delay {
-            opacity: 0;
-            animation: slideUp 1.2s ease-in-out forwards;
-        }
-
-        .animate-slide-up-delay-2 {
-            opacity: 0;
-            animation: slideUp 1.4s ease-in-out forwards;
-        }
-
-        @keyframes slideUp {
-            0% {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* FAQ Section */
-        .accordion-button {
-            transition: background-color 0.3s ease;
-        }
-
-        .accordion-button:hover {
-            background-color: #f7f7f7;
         }
     </style>
 </head>
@@ -270,18 +136,18 @@
 <body id="top">
     <div id="overlay" class="overlay"></div>
     <div id="cookie-consent-popup" class="cookie-consent-popup">
-        <h4>Gestion des Cookies</h4>
-        <p>Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez accepter ou refuser les cookies non essentiels.</p>
-        <button id="accept-cookies-btn" class="btn-accept">Accepter</button>
-        <button id="decline-cookies-btn" class="btn-decline">Refuser</button>
+        <h4><%= i18n.cookieConsentTitle %></h4>
+        <p><%= i18n.cookieConsentText %></p>
+        <button id="accept-cookies-btn" class="btn-accept"><%= i18n.accept %></button>
+        <button id="decline-cookies-btn" class="btn-decline"><%= i18n.decline %></button>
         <div>
-            <a href="/politique-confidentialite">Politique de confidentialité</a> |
-            <a href="/gerer-cookies">Gérer les cookies</a>
+            <a href="/politique-confidentialite"><%= i18n.privacyPolicy %></a> |
+            <a href="/gerer-cookies"><%= i18n.manageCookies %></a>
         </div>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             const popup = document.getElementById('cookie-consent-popup');
             const overlay = document.getElementById('overlay');
             const acceptBtn = document.getElementById('accept-cookies-btn');
@@ -292,28 +158,13 @@
                 overlay.classList.add('visible');
             }
 
-            acceptBtn.addEventListener('click', function () {
+            acceptBtn.addEventListener('click', function() {
                 localStorage.setItem('cookiesAccepted', 'true');
                 popup.classList.remove('visible');
                 overlay.classList.remove('visible');
-
-                (function (i, s, o, g, r, a, m) {
-                    i['GoogleAnalyticsObject'] = r;
-                    i[r] = i[r] || function () {
-                        (i[r].q = i[r].q || []).push(arguments)
-                    }, i[r].l = 1 * new Date();
-                    a = s.createElement(o),
-                        m = s.getElementsByTagName(o)[0];
-                    a.async = 1;
-                    a.src = g;
-                    m.parentNode.insertBefore(a, m)
-                })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-                ga('create', 'UA-XXXXX-Y', 'auto');
-                ga('send', 'pageview');
             });
 
-            declineBtn.addEventListener('click', function () {
+            declineBtn.addEventListener('click', function() {
                 localStorage.setItem('cookiesDeclined', 'true');
                 popup.classList.remove('visible');
                 overlay.classList.remove('visible');
@@ -324,11 +175,11 @@
     <main>
         <nav class="navbar navbar-expand-lg fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="/">
+                <a class="navbar-brand" href="/<%= locale %>">
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto me-4">
-                    <a href="/login">
+                    <a href="/<%= locale %>/login">
                         <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
                         <span class="visually-hidden">Login</span>
                     </a>
@@ -339,24 +190,23 @@
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-lg-5 me-lg-auto">
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/">Accueil</a>
+                            <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
+                            <a class="nav-link click-scroll" href="/<%= locale %>#fonctionnement"><%= i18n.menu.fonctionnement %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#processus">Processus</a>
+                            <a class="nav-link click-scroll" href="/<%= locale %>#processus"><%= i18n.menu.processus %></a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#faq">FAQs</a>
+                            <a class="nav-link click-scroll" href="/<%= locale %>#faq"><%= i18n.menu.faq %></a>
                         </li>
                         <li class="nav-item">
-    <a class="nav-link click-scroll" href="/fr/contact">contact</a>
-</li>
-
+                            <a class="nav-link click-scroll" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
+                        </li>
                     </ul>
                     <div class="d-none d-lg-block">
-                        <a href="/login">
+                        <a href="/<%= locale %>/login">
                             <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
                             <span class="visually-hidden">Login</span>
                         </a>
@@ -370,168 +220,112 @@
             <div class="overlay"></div>
             <div class="container hero-content">
                 <div class="hero-text">
-                    <h1 class="hero-title">Boostez votre Marketing Immobilier</h1>
-                    <p class="hero-subtitle">Avec UAP Immo, générez automatiquement des landing pages professionnelles et maximisez vos conversions.</p>
-                    <a href="/register" class="btn btn-primary btn-hero">Inscrivez-vous maintenant</a>
+                    <h1 class="hero-title"><%= i18n.hero.title %></h1>
+                    <p class="hero-subtitle"><%= i18n.hero.subtitle %></p>
+                    <a href="/<%= locale %>/register" class="btn btn-primary btn-hero"><%= i18n.hero.cta %></a>
                 </div>
                 <div class="hero-image">
-                    <img src="/images/uapimmovisuel.png" alt="UAP Immo Plateforme Webmarketing Immobilier" class="img-fluid">
+                    <img src="<%= i18n.hero.image %>" alt="<%= i18n.hero.alt %>" class="img-fluid">
                 </div>
             </div>
         </section>
-<!-- Nouvelle Section Fonctionnement de la Plateforme -->
-<section id="fonctionnement" class="bg-light py-5">
-    <div class="container">
-        <h2 class="text-center mb-5">Comment fonctionne UAP Immo ?</h2>
-        <div class="row text-center">
-            <!-- Première ligne d'éléments -->
-            <div class="col-md-4">
-                <div class="icon mb-3">
-                    <i class="bi bi-person-plus-fill" style="font-size: 2.5rem;"></i>
-                </div>
-                <h3 class="h5">Inscription facile</h3>
-                <p>Créez un compte en quelques minutes.</p>
-            </div>
-            <div class="col-md-4">
-                <div class="icon mb-3">
-                    <i class="bi bi-file-earmark-text-fill" style="font-size: 2.5rem;"></i>
-                </div>
-                <h3 class="h5">Générez vos annonces</h3>
-                <p>Complétez les informations de votre bien et laissez la magie opérer.</p>
-            </div>
-            <div class="col-md-4">
-                <div class="icon mb-3">
-                    <i class="bi bi-share-fill" style="font-size: 2.5rem;"></i>
-                </div>
-                <h3 class="h5">Diffusez largement</h3>
-                <p>Diffusez votre annonce sur des canaux variés pour maximiser la visibilité.</p>
-            </div>
-        </div>
-        
-        <!-- Deuxième ligne d'éléments -->
-        <div class="row text-center mt-4">
-            <div class="col-md-4">
-                <div class="icon mb-3">
-                    <i class="bi bi-pencil-square" style="font-size: 2.5rem;"></i>
-                </div>
-                <h3 class="h5">Création simplifiée</h3>
-                <p>Générez des landing pages en quelques minutes, sans compétences techniques.</p>
-            </div>
-            <div class="col-md-4">
-                <div class="icon mb-3">
-                    <i class="bi bi-graph-up" style="font-size: 2.5rem;"></i>
-                </div>
-                <h3 class="h5">Optimisé pour les conversions</h3>
-                <p>Atteignez une audience ciblée et maximisez vos taux de conversion.</p>
-            </div>
-            <div class="col-md-4">
-                <div class="icon mb-3">
-                    <i class="bi bi-shield-lock" style="font-size: 2.5rem;"></i>
-                </div>
-                <h3 class="h5">Sécurité et Fiabilité</h3>
-                <p>Vos données et vos paiements sont protégés avec les dernières technologies.</p>
-            </div>
-        </div>
-    </div>
-</section>
 
+        <!-- Section Fonctionnement -->
+        <section id="fonctionnement" class="bg-light py-5">
+            <div class="container">
+                <h2 class="text-center mb-5">Comment fonctionne UAP Immo ?</h2>
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <div class="icon mb-3">
+                            <i class="bi bi-person-plus-fill" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="h5">Inscription facile</h3>
+                        <p>Créez un compte en quelques minutes.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon mb-3">
+                            <i class="bi bi-file-earmark-text-fill" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="h5">Générez vos annonces</h3>
+                        <p>Complétez les informations de votre bien et laissez la magie opérer.</p>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="icon mb-3">
+                            <i class="bi bi-share-fill" style="font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="h5">Diffusez largement</h3>
+                        <p>Diffusez votre annonce sur des canaux variés pour maximiser la visibilité.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
 
+        <!-- Section FAQ -->
         <section class="faq-section section-padding" id="faq">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-6 col-12">
+            <div class="container">
                 <h2 class="mb-4">FAQ</h2>
-            </div>
-            <div class="clearfix"></div>
-            <div class="col-lg-5 col-12">
-                <picture>
-                    <img src="/images/fqa.png" alt="FAQ UAP Immo" class="faq-image img-fluid" loading="lazy">
-                </picture>
-            </div>
-            <div class="col-lg-6 col-12 m-auto">
-                <div class="accordion" id="accordionExample">
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingOne">
-                            <button class="accordion-button animate-slide-up" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                                Qu'est-ce que la plateforme UAP Immo ?
-                            </button>
-                        </h2>
-                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                UAP Immo est une plateforme de webmarketing immobilier haut de gamme qui simplifie votre marketing en vous permettant de <strong>générer des landing pages</strong> en quelques clics pour maximiser vos conversions à travers des publicités ciblées.
-                            </div>
-                        </div>
+                <div class="row">
+                    <div class="col-lg-5">
+                        <img src="/images/fqa.png" alt="FAQ UAP Immo" class="faq-image img-fluid" loading="lazy">
                     </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingTwo">
-                            <button class="accordion-button collapsed animate-slide-up-delay" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                                Comment fonctionne la plateforme ?
-                            </button>
-                        </h2>
-                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                Notre plateforme UAP Immo simplifie la <strong>création de landing pages professionnelles</strong> pour vos biens immobiliers. Il vous suffit de remplir les détails de votre bien et de télécharger les photos, puis notre système génère automatiquement une page accessible via une URL personnalisée, prête pour votre campagne publicitaire ciblée.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="accordion-item">
-                        <h2 class="accordion-header" id="headingThree">
-                            <button class="accordion-button collapsed animate-slide-up-delay-2" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                                Quels moyens de paiement sont acceptés ?
-                            </button>
-                        </h2>
-                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
-                            <div class="accordion-body">
-                                Actuellement, nous acceptons les paiements par cartes bancaires et prévoyons d'intégrer prochainement les paiements en cryptomonnaies pour offrir plus de flexibilité à nos utilisateurs.
-                            </div>
+                    <div class="col-lg-7 m-auto">
+                        <div class="accordion" id="accordionExample">
+                            <% i18n.faq.questions.forEach(function (item, index) { %>
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="heading<%= index %>">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse<%= index %>" aria-expanded="false" aria-controls="collapse<%= index %>">
+                                            <%= item.question %>
+                                        </button>
+                                    </h2>
+                                    <div id="collapse<%= index %>" class="accordion-collapse collapse" aria-labelledby="heading<%= index %>" data-bs-parent="#accordionExample">
+                                        <div class="accordion-body">
+                                            <%= item.answer %>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }) %>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </div>
-</section>
-
+        </section>
     </main>
 
     <footer class="site-footer section-padding">
         <div class="container">
             <div class="row">
                 <div class="col-lg-3 col-12 mb-4 pb-2">
-                    <a class="navbar-brand mb-2" href="/">
+                    <a class="navbar-brand mb-2" href="/<%= locale %>">
                         <span>UAP Immo</span>
                     </a>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <h6 class="site-footer-title mb-3">Informations</h6>
                     <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="/" class="site-footer-link">Accueil</a></li>
-                        <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
+                        <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
+                        <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 col-6">
                     <h6 class="site-footer-title mb-3">Accès</h6>
                     <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
+                        <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
                     <div class="dropdown">
                         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
                         <ul class="dropdown-menu">
-                            <li>
-                                <a class="dropdown-item" href="#">English</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="#">Français</a>
-                            </li>
+                            <li><a class="dropdown-item" href="/fr">Français</a></li>
+                            <li><a class="dropdown-item" href="/en">English</a></li>
                         </ul>
                     </div>
                 </div>
-                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
             </div>
+            <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
         </div>
     </footer>
+
     <script defer src="/js/jquery.min.js"></script>
     <script defer src="/js/bootstrap.bundle.min.js"></script>
     <script defer src="/js/jquery.sticky.js"></script>
