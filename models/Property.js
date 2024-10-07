@@ -1,20 +1,19 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// Définition du schéma PropertySchema
-const PropertySchema = new Schema({
-    rooms: Number,
-    bathrooms: Number,
-    surface: Number,
-    price: Number,
-    city: String,
-    country: String,
-    hasGarage: Boolean,
-    url: String,
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }
+const propertySchema = new Schema({
+    rooms: { type: Number, required: true },
+    surface: { type: Number, required: true },
+    price: { type: Number, required: true },
+    city: { type: String, required: true },
+    country: { type: String, required: true },
+    url: { type: String, required: false },
+    createdAt: { type: Date, default: Date.now },
+    views: { type: Number, default: 0 },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Association avec l'utilisateur
+    photos: [String] // Photos de la propriété
 });
 
-// Utilisez PropertySchema pour créer le modèle
-const Property = mongoose.model('Property', PropertySchema);
+const Property = mongoose.model('Property', propertySchema);
 
 module.exports = Property;
