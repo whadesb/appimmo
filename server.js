@@ -110,9 +110,10 @@ app.get('/', (req, res) => {
   res.render('index', { i18n: res, user: req.user || null });
 });
 
-app.get('/login', (req, res) => {
-    const locale = req.getLocale(); // Récupérer la langue actuelle
-    const loginTranslationsPath = `./locales/${locale}/login.json`; // Fichier JSON dédié pour cette page
+// Route dynamique pour la page de connexion avec gestion de la langue
+app.get('/:lang/login', (req, res) => {
+    const locale = req.params.lang; // Récupérer la langue depuis l'URL
+    const loginTranslationsPath = `./locales/${locale}/login.json`; // Chemin vers les traductions de cette page
 
     let loginTranslations = {};
 
@@ -123,11 +124,14 @@ app.get('/login', (req, res) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
+    // Rendre la page avec les traductions de la langue choisie
     res.render('login', {
         title: loginTranslations.title,
+        locale: locale,  // Passer la langue active pour les balises HTML
         i18n: loginTranslations // Passer les traductions spécifiques à la page
     });
 });
+
 
 
 app.get('/forgot-password', (req, res) => {
