@@ -1,11 +1,17 @@
+{
+  "metaDescription": "UAP Immo - Plateforme de webmarketing immobilier innovante permettant de créer et diffuser des annonces immobilières optimisées.",
+  "metaAuthor": "UAP Immo",
+  "metaKeywords": "webmarketing immobilier, annonces immobilières, landing pages, promotion immobilière, UAP Immo",
+  "title": "UAP Immo | Webmarketing Immobilier - Créez et Diffusez Vos Annonces",
+  "ogTitle": "UAP Immo - Plateforme de Webmarketing Immobilier",
+  "ogDescription": "Créez et diffusez des annonces immobilières optimisées avec UAP Immo.",
   "ogImage": "/images/uap-immo-plateforme-webmarketing-immobilier.png",
-  "menu": {
-    "home": "Accueil",
-    "fonctionnement": "Fonctionnement",
-    "processus": "Processus",
-    "faq": "FAQs",
-    "contact": "Contact"
-  },
+  "cookieConsentTitle": "Gestion des Cookies",
+  "cookieConsentText": "Nous utilisons des cookies pour améliorer votre expérience. Vous pouvez accepter ou refuser les cookies non essentiels.",
+  "accept": "Accepter",
+  "decline": "Refuser",
+  "privacyPolicy": "Politique de confidentialité",
+  "manageCookies": "Gérer les cookies",
   "hero": {
     "title": "Boostez votre Marketing Immobilier",
     "subtitle": "Avec UAP Immo, générez automatiquement des landing pages professionnelles et maximisez vos conversions.",
@@ -13,20 +19,26 @@
     "image": "/images/uapimmovisuel.png",
     "alt": "UAP Immo Plateforme Webmarketing Immobilier"
   },
+  "menu": {
+    "home": "Accueil",
+    "fonctionnement": "Fonctionnement",
+    "processus": "Processus",
+    "faq": "FAQs",
+    "contact": "Contact"
+  },
   "faq": {
-    "title": "FAQ",
     "questions": [
       {
         "question": "Qu'est-ce que la plateforme UAP Immo ?",
-        "answer": "UAP Immo est une plateforme de webmarketing immobilier haut de gamme qui simplifie votre marketing en vous permettant de générer des landing pages en quelques clics pour maximiser vos conversions à travers des publicités ciblées."
+        "answer": "UAP Immo est une plateforme de webmarketing immobilier haut de gamme qui simplifie votre marketing en vous permettant de générer des landing pages en quelques clics."
       },
       {
         "question": "Comment fonctionne la plateforme ?",
-        "answer": "Notre plateforme UAP Immo simplifie la création de landing pages professionnelles pour vos biens immobiliers. Il vous suffit de remplir les détails de votre bien et de télécharger les photos, puis notre système génère automatiquement une page accessible via une URL personnalisée, prête pour votre campagne publicitaire ciblée."
+        "answer": "Notre plateforme simplifie la création de landing pages pour vos biens immobiliers. Il vous suffit de remplir les détails et de télécharger les photos."
       },
       {
         "question": "Quels moyens de paiement sont acceptés ?",
-        "answer": "Actuellement, nous acceptons les paiements par cartes bancaires et prévoyons d'intégrer prochainement les paiements en cryptomonnaies pour offrir plus de flexibilité à nos utilisateurs."
+        "answer": "Actuellement, nous acceptons les paiements par cartes bancaires."
       }
     ]
   }
