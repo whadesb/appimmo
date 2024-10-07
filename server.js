@@ -327,18 +327,58 @@ app.get('/faq', (req, res) => {
 });
 
 app.get('/contact', (req, res) => {
-    const locale = req.getLocale(); // Utiliser la méthode pour récupérer la langue actuelle (en ou fr)
+    const locale = req.getLocale(); // Récupérer la langue actuelle (ex: 'en', 'fr')
     const messageEnvoye = req.query.messageEnvoye === 'true';
 
-    // Charger le fichier JSON spécifique à la page contact selon la langue
-    const contactTranslations = JSON.parse(fs.readFileSync(`./locales/${locale}/contact.json`, 'utf8'));
+    // Charger les traductions spécifiques à la page 'contact' selon la langue
+    let translationsPath = `./locales/${locale}/contact.json`;
 
-    // Rendre la page avec les traductions spécifiques et la gestion des messages envoyés
+    // Fallback en cas de fichier de traduction manquant
+    if (!fs.existsSync(translationsPath)) {
+        translationsPath = `./locales/en/contact.json`; // Langue par défaut: anglais
+    }
+
+    let contactTranslations;
+
+    try {
+        contactTranslations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    // Rendre la page contact avec les traductions et l'état du message envoyé
     res.render('contact', {
-        title: contactTranslations.title,   // Utilisation du titre traduit
-        i18n: contactTranslations,          // Passer les traductions spécifiques à la page
-        messageEnvoye: messageEnvoye        // Indiquer si un message a été envoyé
+        title: contactTranslations.title,
+        i18n: contactTranslations,
+        messageEnvoye: messageEnvoye
     });
+});
+
+app.post('/send-contact', async (req, res) => {
+    const { firstName, lastName, email, message, type } = req.body;
+
+    // Configurer les options d'email
+    const mailOptions = {
+        from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+        to: process.env.CONTACT_EMAIL,
+        subject: 'Nouveau message de contact',
+        html: `
+            <p><b>Nom :</b> ${firstName} ${lastName}</p>
+            <p><b>Email :</b> ${email}</p>
+            <p><b>Type :</b> ${type}</p>
+            <p><b>Message :</b><br>${message}</p>
+        `
+    };
+
+    try {
+        // Envoyer l'email avec le transporteur
+        await sendEmail(mailOptions);
+        res.redirect('/contact?messageEnvoye=true'); // Redirection après envoi du message
+    } catch (error) {
+        console.error('Erreur lors de l\'envoi de l\'email :', error);
+        res.status(500).send('Erreur lors de l\'envoi de l\'email.');
+    }
 });
 
 app.get('/payment', isAuthenticated, async (req, res) => {
