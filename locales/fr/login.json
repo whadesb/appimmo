@@ -1,0 +1,11 @@
+{
+  "title": "Connexion",
+  "heading": "Connexion",
+  "email": "Email",
+  "email_help": "Vous pouvez utiliser votre email pour vous connecter.",
+  "password": "Mot de passe",
+  "forgot_password": "Mot de passe oublié ?",
+  "login_button": "Connexion",
+  "register_prompt": "Pas encore de compte ?",
+  "register_link": "Inscrivez-vous ici"
+}
