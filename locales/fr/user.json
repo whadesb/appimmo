@@ -22,5 +22,20 @@
   "save": "Enregistrer",
   "stats": "Statistiques",
   "created_pages": "Pages créées",
-  "no_properties_message": "Aucun bien immobilier n'a été créé pour le moment. Ajoutez votre premier bien immobilier maintenant !"
+  "no_properties_message": "Aucun bien immobilier n'a été créé pour le moment. Ajoutez votre premier bien immobilier maintenant !",
+  "menu": {
+    "home": "Accueil",
+    "fonctionnement": "Fonctionnement",
+    "processus": "Processus",
+    "faq": "FAQs",
+    "contact": "Contact",
+    "login": "Connexion",
+    "logout": "Déconnexion"
+  },
+  "footer": {
+    "information_title": "Informations",
+    "access_title": "Accès",
+    "create_account": "Créer un compte"
+  },
+  "copy_success_message": "URL copiée avec succès !"
 }
