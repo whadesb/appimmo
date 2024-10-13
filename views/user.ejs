@@ -444,43 +444,44 @@
     </div>
 </section>
 </main>
-<footer class="site-footer section-padding">
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-12 mb-4 pb-2">
-                <a class="navbar-brand mb-2" href="/">
-                    <span>UAP Immo</span>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <h6 class="site-footer-title mb-3">Informations</h6>
-                <ul class="site-footer-links">
-                    <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
-                    <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <h6 class="site-footer-title mb-3">Accès</h6>
-                <ul class="site-footer-links">
-                    <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                </ul>
-            <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <a class="dropdown-item" href="#">English</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="#">Français</a>
-                        </li>
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/">
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3"><%= i18n.footer.information_title %></h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/" class="site-footer-link"><%= i18n.menu.home %></a></li>
+                        <li class="site-footer-link-item"><a href="/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
                     </ul>
                 </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3"><%= i18n.footer.access_title %></h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/contact" class="site-footer-link"><%= i18n.menu.contact %></a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="/en/user">English</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/fr/user">Français</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
             </div>
-            <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
         </div>
-    </div>
-</footer>
+    </footer>
 <div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
 
 <!-- JavaScript -->
