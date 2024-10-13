@@ -103,7 +103,22 @@ const storage = multer.diskStorage({
     cb(null, uuidv4() + path.extname(file.originalname));
   }
 });
-const upload = multer({ storage: storage });
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // Limite de 5 Mo
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png|gif|webp/;
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = filetypes.test(file.mimetype);
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Seules les images sont autorisées !'));
+    }
+  }
+});
+
 
 app.get('/', (req, res) => {
     const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
