@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="en">
+<html lang="<%= locale %>">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#C4B990">
-    <title>UAP Immo | Mon Espace</title>
+    <title>UAP Immo | <%= i18n.my_profile %></title>
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link rel="preload" href="/css/styles-main.css" as="style">
@@ -280,16 +280,16 @@
                         </li>
                         <!-- Sidebar links for mobile -->
                         <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> Mon compte</a>
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
                         </li>
                         <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> Landing page</a>
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> <%= i18n.add_property %></a>
                         </li>
                         <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> Données</a>
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
                         </li>
                         <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> Pages créées</a>
+                            <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> <%= i18n.created_pages %></a>
                         </li>
                     </ul>
                     <div class="d-none d-lg-block">
@@ -315,19 +315,19 @@
     <div class="container">
         <h5 class="text-black mobile-margin">
             <% if (user) { %>
-                Bienvenue sur votre espace <%= user.lastName %> <%= user.firstName %>
+                <%= i18n.welcome_user.replace('{lastName}', user.lastName).replace('{firstName}', user.firstName) %>
             <% } else { %>
-                Bienvenue invité
+                <%= i18n.welcome_guest %>
             <% } %>
         </h5>
         <div class="container-fluid">
             <div class="row mt-4">
                 <div class="col-auto p-0">
                     <div class="sidebar">
-                        <a href="#" title="Mon compte" onclick="showSection('account')"><i class="fa fa-user"></i></a>
-                        <a href="#" title="Landing page" onclick="showSection('landing')"><i class="fa fa-file-alt"></i></a>
-                        <a href="#" title="Données" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
-                        <a href="#" title="Pages créées" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i></a>
+                        <a href="#" title="<%= i18n.my_profile %>" onclick="showSection('account')"><i class="fa fa-user"></i></a>
+                        <a href="#" title="<%= i18n.add_property %>" onclick="showSection('landing')"><i class="fa fa-file-alt"></i></a>
+                        <a href="#" title="<%= i18n.stats %>" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
+                        <a href="#" title="<%= i18n.created_pages %>" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i></a>
                     </div>
                 </div>
                 <div class="col">
@@ -335,28 +335,28 @@
                         <!-- Section Account -->
                         <div id="account" class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Mon Profil</h5>
-                                <p class="card-text">Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.</p>
-                                <p class="card-text user-info">Nom: <%= user.firstName %></p>
-                                <p class="card-text user-info">Prénom: <%= user.lastName %></p>
-                                <p class="card-text user-info">Email: <%= user.email %></p>
+                                <h5 class="card-title"><%= i18n.my_profile %></h5>
+                                <p class="card-text"><%= i18n.profile_info %></p>
+                                <p class="card-text user-info"><%= i18n.name %>: <%= user.firstName %></p>
+                                <p class="card-text user-info"><%= i18n.first_name %>: <%= user.lastName %></p>
+                                <p class="card-text user-info"><%= i18n.email %>: <%= user.email %></p>
 
                                 <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
-                                <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')">Réinitialiser le mot de passe</button>
+                                <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
                             </div>
                         </div>
 
                         <!-- Section Reset Password -->
                         <div id="reset-password" class="card" style="display: none;">
                             <div class="card-body">
-                                <h5 class="card-title">Réinitialiser le mot de passe</h5>
-                                <p class="card-text">Si vous souhaitez réinitialiser votre mot de passe, veuillez entrer votre adresse email ci-dessous. Vous recevrez un lien pour réinitialiser votre mot de passe.</p>
+                                <h5 class="card-title"><%= i18n.reset_password %></h5>
+                                <p class="card-text"><%= i18n.password_reset_instructions %></p>
                                 <form id="reset-password-form" action="/user/reset-password" method="POST">
                                     <div class="form-group">
-                                        <label for="email">Adresse Email</label>
+                                        <label for="email"><%= i18n.email_label %></label>
                                         <input type="email" class="form-control" id="email" name="email" required>
                                     </div>
-                                    <button type="submit" class="btn btn-outline-dark">Envoyer le lien de réinitialisation</button>
+                                    <button type="submit" class="btn btn-outline-dark"><%= i18n.send_reset_link %></button>
                                 </form>
                             </div>
                         </div>
@@ -364,40 +364,40 @@
                         <!-- Section Landing Page -->
                         <div id="landing" class="card" style="display: none;">
                             <div class="card-body">
-                                <h5 class="card-title">Landing Page</h5>
-                                <p class="card-text">Créez facilement et rapidement votre propre page d'annonce immobilière. Remplissez le formulaire ci-dessous avec les détails de votre bien, et notre outil se chargera de générer une landing page professionnelle prête à être partagée avec vos prospects.</p>
-                                <h5 class="card-title">Ajouter un bien immobilier</h5>
+                                <h5 class="card-title"><%= i18n.add_property %></h5>
+                                <p class="card-text"><%= i18n.property_details %></p>
+                                <h5 class="card-title"><%= i18n.add_property %></h5>
                                 <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
                                     <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
                                     <div class="form-group">
-                                        <label for="rooms">Nombre de pièces</label>
+                                        <label for="rooms"><%= i18n.rooms %></label>
                                         <input type="number" class="form-control" id="rooms" name="rooms" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="surface">Surface (m²)</label>
+                                        <label for="surface"><%= i18n.surface %></label>
                                         <input type="number" class="form-control" id="surface" name="surface" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="price">Prix (€)</label>
+                                        <label for="price"><%= i18n.price %></label>
                                         <input type="number" class="form-control" id="price" name="price" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="city">Ville</label>
+                                        <label for="city"><%= i18n.city %></label>
                                         <input type="text" class="form-control" id="city" name="city" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="country">Pays</label>
+                                        <label for="country"><%= i18n.country %></label>
                                         <input type="text" class="form-control" id="country" name="country" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="photo1">Photo 1</label>
+                                        <label for="photo1"><%= i18n.photo_1 %></label>
                                         <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
                                     </div>
                                     <div class="form-group">
-                                        <label for="photo2">Photo 2</label>
+                                        <label for="photo2"><%= i18n.photo_2 %></label>
                                         <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
                                     </div>
-                                    <button type="submit" class="btn btn-custom">Enregistrer</button>
+                                    <button type="submit" class="btn btn-custom"><%= i18n.save %></button>
                                 </form>
                                 <div id="generatedLink" class="mt-3"></div>
                             </div>
@@ -406,24 +406,24 @@
                         <!-- Section Données -->
                         <div id="donnees" class="card" style="display: none;">
                             <div class="card-body">
-                                <h5 class="card-title">Statistiques de Diffusion des Annonces</h5>
-                                <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google. Ces données vous offrent une vue d'ensemble sur l'efficacité de vos campagnes et vous aident à optimiser votre stratégie de diffusion pour maximiser l'impact de vos annonces.</p>
+                                <h5 class="card-title"><%= i18n.stats %></h5>
+                                <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.</p>
                             </div>
                         </div>
 
                         <!-- Section Created Pages -->
                         <div id="created-pages" class="card" style="display: none;">
                             <div class="card-body">
-                                <h5 class="card-title">Gestion des Annonces Immobilières</h5>
-                                <p class="card-text">Dans cet espace, vous trouverez toutes vos annonces immobilières générées avec leur URL unique et description. Utilisez les actions disponibles pour modifier vos annonces, copier le lien pour le partager gratuitement, ou opter pour une diffusion payante de votre annonce au prix de 500 €. Assurez-vous que vos annonces sont toujours à jour pour maximiser leur impact.</p>
+                                <h5 class="card-title"><%= i18n.created_pages %></h5>
+                                <p class="card-text">Utilisez cet espace pour gérer vos annonces immobilières. Vous pouvez copier, modifier, ou opter pour une diffusion payante.</p>
                                 <table class="table table-striped">
                                     <thead>
                                         <tr>
-                                            <th scope="col">Nombre de pièces</th>
-                                            <th scope="col">Surface (m²)</th>
-                                            <th scope="col">Prix (€)</th>
-                                            <th scope="col">Ville</th>
-                                            <th scope="col">Pays</th>
+                                            <th scope="col"><%= i18n.rooms %></th>
+                                            <th scope="col"><%= i18n.surface %></th>
+                                            <th scope="col"><%= i18n.price %></th>
+                                            <th scope="col"><%= i18n.city %></th>
+                                            <th scope="col"><%= i18n.country %></th>
                                             <th scope="col">URL</th>
                                             <th scope="col">Actions</th>
                                         </tr>
@@ -433,7 +433,7 @@
                                     </tbody>
                                 </table>
                                 <div id="no-properties-message" style="display: none;" class="text-center">
-                                    <p>Aucun bien immobilier n'a été créé pour le moment. <a href="#" onclick="showSection('landing')">Ajoutez votre premier bien immobilier maintenant !</a></p>
+                                    <p><%= i18n.no_properties_message %></p>
                                 </div>
                             </div>
                         </div>
