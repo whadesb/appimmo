@@ -428,22 +428,22 @@
 
                         <!-- Section Created Pages -->
                         <div id="created-pages" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= i18n.created_pages %></h5>
-                                <p class="card-text">Utilisez cet espace pour gérer vos annonces immobilières. Vous pouvez copier, modifier, ou opter pour une diffusion payante.</p>
-                                <table class="table table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col"><%= i18n.rooms %></th>
-                                            <th scope="col"><%= i18n.surface %></th>
-                                            <th scope="col"><%= i18n.price %></th>
-                                            <th scope="col"><%= i18n.city %></th>
-                                            <th scope="col"><%= i18n.country %></th>
-                                            <th scope="col">URL</th>
-                                            <th scope="col">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="properties-list">
+    <div class="card-body">
+        <h5 class="card-title"><%= i18n.created_pages %></h5>
+        <p class="card-text"><%= i18n.created_pages_info %></p>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col"><%= i18n.rooms %></th>
+                    <th scope="col"><%= i18n.surface %></th>
+                    <th scope="col"><%= i18n.price %></th>
+                    <th scope="col"><%= i18n.city %></th>
+                    <th scope="col"><%= i18n.country %></th>
+                    <th scope="col">URL</th>
+                    <th scope="col"><%= i18n.actions %></th>
+                </tr>
+            </thead>
+            <tbody id="properties-list">
                                         <!-- Propriétés de l'utilisateur ici -->
                                     </tbody>
                                 </table>
