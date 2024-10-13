@@ -22,5 +22,20 @@
   "save": "Save",
   "stats": "Statistics",
   "created_pages": "Created Pages",
-  "no_properties_message": "No property has been created yet. Add your first property now!"
+  "no_properties_message": "No property has been created yet. Add your first property now!",
+  "menu": {
+    "home": "Home",
+    "fonctionnement": "How it works",
+    "processus": "Process",
+    "faq": "FAQs",
+    "contact": "Contact",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "footer": {
+    "information_title": "Information",
+    "access_title": "Access",
+    "create_account": "Create an account"
+  },
+  "copy_success_message": "URL copied successfully!"
 }
