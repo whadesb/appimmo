@@ -1,35 +1,26 @@
 {
-  "title": "My Space",
-  "welcome_message": "Welcome to your space",
-  "profile_section": {
-    "title": "My Profile",
-    "description": "Welcome to your personal space. Here, you can view and update your personal information such as your first name, last name, and email address. Make sure your information is always up to date for the best experience on our platform."
-  },
-  "reset_password": {
-    "title": "Reset Password",
-    "description": "If you want to reset your password, please enter your email address below. You will receive a link to reset your password."
-  },
-  "landing_page_section": {
-    "title": "Landing Page",
-    "description": "Easily and quickly create your own property listing page. Fill in the form below with your property's details, and our tool will generate a professional landing page ready to be shared with your prospects."
-  },
-  "data_section": {
-    "title": "Advertisement Performance Data",
-    "description": "This section allows you to track the performance of your real estate listings across different platforms."
-  },
-  "created_pages_section": {
-    "title": "Real Estate Listing Management",
-    "description": "Here you will find all your generated real estate listings with their unique URLs and descriptions."
-  },
-  "menu": {
-    "home": "Home",
-    "fonctionnement": "How it works",
-    "processus": "Process",
-    "faq": "FAQs",
-    "contact": "Contact",
-    "account": "My account",
-    "landing_page": "Landing page",
-    "data": "Data",
-    "created_pages": "Created pages"
-  }
+  "welcome_user": "Welcome to your space {lastName} {firstName}",
+  "welcome_guest": "Welcome guest",
+  "my_profile": "My Profile",
+  "profile_info": "Welcome to your personal space. Here, you can view and update your personal information such as your name, first name, and email address. Make sure your data is always up-to-date for an optimal experience on our platform.",
+  "name": "Name",
+  "first_name": "First Name",
+  "email": "Email",
+  "reset_password": "Reset Password",
+  "password_reset_instructions": "If you want to reset your password, please enter your email address below. You will receive a link to reset your password.",
+  "email_label": "Email Address",
+  "send_reset_link": "Send reset link",
+  "add_property": "Add a Property",
+  "property_details": "Fill in the form below with the details of your property, and our tool will generate a professional landing page ready to be shared with your prospects.",
+  "rooms": "Number of rooms",
+  "surface": "Surface (m²)",
+  "price": "Price (€)",
+  "city": "City",
+  "country": "Country",
+  "photo_1": "Photo 1",
+  "photo_2": "Photo 2",
+  "save": "Save",
+  "stats": "Statistics",
+  "created_pages": "Created Pages",
+  "no_properties_message": "No property has been created yet. Add your first property now!"
 }
