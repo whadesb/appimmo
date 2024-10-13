@@ -1,35 +1,26 @@
 {
-  "title": "Mon Espace",
-  "welcome_message": "Bienvenue sur votre espace",
-  "profile_section": {
-    "title": "Mon Profil",
-    "description": "Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme."
-  },
-  "reset_password": {
-    "title": "Réinitialiser le mot de passe",
-    "description": "Si vous souhaitez réinitialiser votre mot de passe, veuillez entrer votre adresse email ci-dessous. Vous recevrez un lien pour réinitialiser votre mot de passe."
-  },
-  "landing_page_section": {
-    "title": "Landing Page",
-    "description": "Créez facilement et rapidement votre propre page d'annonce immobilière. Remplissez le formulaire ci-dessous avec les détails de votre bien, et notre outil se chargera de générer une landing page professionnelle prête à être partagée avec vos prospects."
-  },
-  "data_section": {
-    "title": "Statistiques de Diffusion des Annonces",
-    "description": "Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion."
-  },
-  "created_pages_section": {
-    "title": "Gestion des Annonces Immobilières",
-    "description": "Ici, vous trouverez toutes vos annonces immobilières générées avec leur URL unique et description."
-  },
-  "menu": {
-    "home": "Accueil",
-    "fonctionnement": "Fonctionnement",
-    "processus": "Processus",
-    "faq": "FAQs",
-    "contact": "Contact",
-    "account": "Mon compte",
-    "landing_page": "Landing page",
-    "data": "Données",
-    "created_pages": "Pages créées"
-  }
+  "welcome_user": "Bienvenue sur votre espace {lastName} {firstName}",
+  "welcome_guest": "Bienvenue invité",
+  "my_profile": "Mon Profil",
+  "profile_info": "Bienvenue dans votre espace personnel. Ici, vous pouvez consulter et mettre à jour vos informations personnelles telles que votre nom, prénom, et adresse e-mail. Assurez-vous que vos données sont toujours à jour pour une expérience optimale sur notre plateforme.",
+  "name": "Nom",
+  "first_name": "Prénom",
+  "email": "Email",
+  "reset_password": "Réinitialiser le mot de passe",
+  "password_reset_instructions": "Si vous souhaitez réinitialiser votre mot de passe, veuillez entrer votre adresse email ci-dessous. Vous recevrez un lien pour réinitialiser votre mot de passe.",
+  "email_label": "Adresse Email",
+  "send_reset_link": "Envoyer le lien de réinitialisation",
+  "add_property": "Ajouter un bien immobilier",
+  "property_details": "Remplissez le formulaire ci-dessous avec les détails de votre bien, et notre outil se chargera de générer une landing page professionnelle prête à être partagée avec vos prospects.",
+  "rooms": "Nombre de pièces",
+  "surface": "Surface (m²)",
+  "price": "Prix (€)",
+  "city": "Ville",
+  "country": "Pays",
+  "photo_1": "Photo 1",
+  "photo_2": "Photo 2",
+  "save": "Enregistrer",
+  "stats": "Statistiques",
+  "created_pages": "Pages créées",
+  "no_properties_message": "Aucun bien immobilier n'a été créé pour le moment. Ajoutez votre premier bien immobilier maintenant !"
 }
