@@ -308,6 +308,21 @@
                     </a>
                 <% } %>
             </div>
+        <div class="dropdown d-none d-lg-block ms-3">
+                <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+                    <%= locale === 'fr' ? 'FR' : 'EN' %>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                    <li>
+                        <a class="dropdown-item" href="/fr/login">FR</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/en/login">EN</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
         </div>
     </div>
 </nav>
