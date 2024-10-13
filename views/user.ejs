@@ -238,79 +238,79 @@
 <body id="top">
     <main>
         <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="/">
-                    <span>UAP Immo</span>
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span>UAP Immo</span>
+        </a>
+        <div class="d-lg-none ms-auto me-4">
+            <% if (user) { %>
+                <form action="/logout" method="POST" class="d-inline">
+                    <button type="submit" style="background: none; border: none; position: relative;">
+                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                        <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
+                        <span class="visually-hidden"><%= i18n.menu.logout %></span>
+                    </button>
+                </form>
+            <% } else { %>
+                <a href="/login" style="position: relative;">
+                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                    <span class="visually-hidden"><%= i18n.menu.login %></span>
                 </a>
-                <div class="d-lg-none ms-auto me-4">
-                    <% if (user) { %>
-                        <form action="/logout" method="POST" class="d-inline">
-                            <button type="submit" style="background: none; border: none; position: relative;">
-                                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                                <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
-                                <span class="visually-hidden">Logout</span>
-                            </button>
-                        </form>
-                    <% } else { %>
-                        <a href="/login" style="position: relative;">
+            <% } %>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/"><%= i18n.menu.home %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#fonctionnement"><%= i18n.menu.fonctionnement %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#processus"><%= i18n.menu.processus %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#faq"><%= i18n.menu.faq %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#contact"><%= i18n.menu.contact %></a>
+                </li>
+                <!-- Sidebar links for mobile -->
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> <%= i18n.add_property %></a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> <%= i18n.created_pages %></a>
+                </li>
+            </ul>
+            <div class="d-none d-lg-block">
+                <% if (user) { %>
+                    <form action="/logout" method="POST" class="d-inline">
+                        <button type="submit" style="background: none; border: none; position: relative;">
                             <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                            <span class="visually-hidden">Login</span>
-                        </a>
-                    <% } %>
-                </div>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#fonctionnement">Fonctionnement</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#processus">Processus</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#faq">FAQs</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="/#contact">Contact</a>
-                        </li>
-                        <!-- Sidebar links for mobile -->
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
-                        </li>
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> <%= i18n.add_property %></a>
-                        </li>
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
-                        </li>
-                        <li class="nav-item sidebar-mobile-links sidebar-links">
-                            <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> <%= i18n.created_pages %></a>
-                        </li>
-                    </ul>
-                    <div class="d-none d-lg-block">
-                        <% if (user) { %>
-                            <form action="/logout" method="POST" class="d-inline">
-                                <button type="submit" style="background: none; border: none; position: relative;">
-                                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                                    <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
-                                    <span class="visually-hidden">Logout</span>
-                                </button>
-                            </form>
-                        <% } else { %>
-                            <a href="/login" style="position: relative;">
-                                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                                <span class="visually-hidden">Login</span>
-                            </a>
-                        <% } %>
-                    </div>
-                </div>
+                            <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
+                            <span class="visually-hidden"><%= i18n.menu.logout %></span>
+                        </button>
+                    </form>
+                <% } else { %>
+                    <a href="/login" style="position: relative;">
+                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                        <span class="visually-hidden"><%= i18n.menu.login %></span>
+                    </a>
+                <% } %>
             </div>
-        </nav>
+        </div>
+    </div>
+</nav>
 <section class="contact-section section-padding section-bg" id="section_5">
     <div class="container">
         <h5 class="text-black mobile-margin">
