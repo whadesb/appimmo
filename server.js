@@ -591,8 +591,9 @@ app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
-  const { rooms, surface, price, city, country } = req.body;
-
+  console.log("Request body:", req.body);  // Affiche les données du formulaire
+  console.log("Uploaded files:", req.files);  // Affiche les fichiers envoyés
+  
   try {
     let photo1 = null;
     let photo2 = null;
@@ -635,9 +636,9 @@ app.post('/add-property', isAuthenticated, upload.fields([
     await property.save();
 
     res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
-  } catch (error) {
-    console.error('Erreur lors de l\'ajout de la propriété : ', error);
-    res.status(500).json({ error: 'Une erreur est survenue lors de l\'ajout de la propriété.' });
+  } } catch (error) {
+    console.error("Error adding property:", error);  // Log plus détaillé de l'erreur
+    res.status(500).json({ error: 'Erreur lors de l\'ajout de la propriété.' });
   }
 });
 
