@@ -393,6 +393,11 @@ app.get('/:locale/user', (req, res) => {
     const { locale } = req.params;
     const user = req.user;  // Assurez-vous que l'utilisateur est connecté
 
+    // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
+    if (!user) {
+        return res.redirect(`/${locale}/login`);
+    }
+
     // Chemin des traductions de la page utilisateur pour la langue spécifiée
     const userTranslationsPath = `./locales/${locale}/user.json`;
 
@@ -411,6 +416,8 @@ app.get('/:locale/user', (req, res) => {
         i18n: userTranslations
     });
 });
+
+
 app.get('/user', isAuthenticated, (req, res) => {
   if (!req.user) {
     return res.redirect('/login'); // Redirection si l'utilisateur n'est pas connecté
