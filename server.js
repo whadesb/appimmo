@@ -657,11 +657,13 @@ app.post('/add-property', isAuthenticated, upload.fields([
     await property.save();
 
     res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
-  } } catch (error) {
+    
+  } catch (error) {  // L'accolade en trop a été supprimée ici
     console.error("Error adding property:", error);  // Log plus détaillé de l'erreur
     res.status(500).json({ error: 'Erreur lors de l\'ajout de la propriété.' });
   }
 });
+
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
