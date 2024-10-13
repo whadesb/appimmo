@@ -588,40 +588,46 @@
     }
 
     // Gestion de la soumission du formulaire
-    document.getElementById('add-property-form').addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const formData = new FormData(this);
+document.getElementById('add-property-form').addEventListener('submit', async function(event) {
+  event.preventDefault();
+  const formData = new FormData(this);
 
-        try {
-            const response = await fetch('/add-property', {
-                method: 'POST',
-                body: formData
-            });
+  try {
+    console.log('Envoi du formulaire en cours...');  // Log avant l'envoi
 
-            if (response.ok) {
-                const result = await response.json();
-                document.getElementById('generatedLink').innerHTML = `
-                    <div class="alert alert-success">
-                        ${result.message} <br>
-                        <a href="${result.url}" target="_blank">${result.url}</a>
-                    </div>
-                `;
-            } else {
-                const error = await response.json();
-                document.getElementById('generatedLink').innerHTML = `
-                    <div class="alert alert-danger">
-                        Une erreur est survenue: ${error.error}
-                    </div>
-                `;
-            }
-        } catch (error) {
-            document.getElementById('generatedLink').innerHTML = `
-                <div class="alert alert-danger">
-                    Une erreur est survenue lors de la soumission du formulaire.
-                </div>
-            `;
-        }
+    const response = await fetch('/add-property', {
+      method: 'POST',
+      body: formData
     });
+
+    console.log('Réponse du serveur:', response);  // Log après réception de la réponse
+
+    if (response.ok) {
+      const result = await response.json();
+      document.getElementById('generatedLink').innerHTML = `
+        <div class="alert alert-success">
+          ${result.message} <br>
+          <a href="${result.url}" target="_blank">${result.url}</a>
+        </div>
+      `;
+    } else {
+      const error = await response.json();
+      document.getElementById('generatedLink').innerHTML = `
+        <div class="alert alert-danger">
+          Une erreur est survenue: ${error.error}
+        </div>
+      `;
+    }
+  } catch (error) {
+    console.log('Erreur lors de la soumission:', error);  // Log l'erreur
+    document.getElementById('generatedLink').innerHTML = `
+      <div class="alert alert-danger">
+        Une erreur est survenue lors de la soumission du formulaire.
+      </div>
+    `;
+  }
+});
+
 
     // Temps en millisecondes (5 minutes)
     const inactivityTime = 5 * 60 * 1000;
