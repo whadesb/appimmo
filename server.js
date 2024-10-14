@@ -425,18 +425,18 @@ app.get('/logout', (req, res, next) => {
         });
     });
 });
-app.get('/:locale/user', (req, res) => {
-    const { locale } = req.params;
-    const user = req.user;  // Assurez-vous que l'utilisateur est connecté
+// Route pour la page utilisateur avec locale et récupération des propriétés
+app.get('/:locale/user', isAuthenticated, async (req, res) => {
+    const { locale } = req.params;  // Récupérer la langue depuis l'URL
+    const user = req.user;  // Utilisateur authentifié
 
-    // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
+    // Rediriger si l'utilisateur n'est pas connecté
     if (!user) {
         return res.redirect(`/${locale}/login`);
     }
 
-    // Chemin des traductions de la page utilisateur pour la langue spécifiée
+    // Charger les traductions spécifiques à la page utilisateur
     const userTranslationsPath = `./locales/${locale}/user.json`;
-
     let userTranslations = {};
     try {
         userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
@@ -445,34 +445,17 @@ app.get('/:locale/user', (req, res) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    // Rendre la page utilisateur avec les traductions appropriées
-    res.render('user', {
-        locale: locale,
-        user: user,
-        i18n: userTranslations
-    });
-});
-
-
-app.get('/user', isAuthenticated, (req, res) => {
-  if (!req.user) {
-    return res.redirect('/login'); // Redirection si l'utilisateur n'est pas connecté
-  }
-
-  res.render('user', {
-    user: req.user, // Passe l'objet utilisateur à la vue
-    locale: req.cookies.locale || 'fr', // Utilise la langue définie par le cookie ou par défaut
-    i18n: req.i18n // Passe l'objet de traduction à la vue
-  });
-});
-
-app.get('/user', async (req, res) => {
+    // Récupérer les propriétés de l'utilisateur connecté
     try {
-        // Récupérer les propriétés liées à l'utilisateur connecté
-        const properties = await Property.find({ createdBy: req.user._id });
-        
-        // Passer 'properties' à la vue EJS
-        res.render('user', { user: req.user, properties });
+        const properties = await Property.find({ createdBy: user._id });
+
+        // Afficher la page utilisateur avec les propriétés et traductions
+        res.render('user', {
+            locale: locale,  // Passer la langue active
+            user: user,  // Utilisateur connecté
+            i18n: userTranslations,  // Traductions spécifiques
+            properties: properties  // Propriétés de l'utilisateur
+        });
     } catch (error) {
         console.error('Erreur lors de la récupération des propriétés :', error);
         res.status(500).json({ error: 'Erreur lors de la récupération des propriétés.' });
