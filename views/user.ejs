@@ -590,17 +590,15 @@
 document.getElementById('add-property-form').addEventListener('submit', async function(event) {
   event.preventDefault();
   const formData = new FormData(this);
-  
+
   try {
     const response = await fetch('/add-property', {
       method: 'POST',
       body: formData
     });
     
-    const result = await response.json();
-    if (result.success) {
-      document.getElementById('generatedLink').innerHTML = `<p class="text-success">${result.message}</p>`;
-    }
+    const result = await response.text();  // Récupérer la réponse sous forme de texte HTML
+    document.getElementById('generatedLink').innerHTML = result;  // Afficher le message sous le formulaire
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la propriété :', error);
   }
