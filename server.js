@@ -362,24 +362,6 @@ app.post('/:locale/login', (req, res, next) => {
     })(req, res, next);
 });
 
-
-app.post('/logout', (req, res, next) => {
-    req.logout((err) => {
-        if (err) {
-            return next(err);
-        }
-        req.session.destroy((err) => {
-            if (err) {
-                return next(err);
-            }
-            res.clearCookie('connect.sid');
-            res.redirect('/login');
-        });
-    });
-});
-
-// server.js
-
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
     const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
