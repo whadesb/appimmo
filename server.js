@@ -609,12 +609,12 @@ app.post('/add-property', isAuthenticated, upload.fields([
     property.url = landingPageUrl;
     await property.save();
 
-    // **Rediriger vers une nouvelle page HTML**
+    // **Redirection après la soumission du formulaire**
     res.redirect(`/user`);
   } catch (error) {
     console.error("Erreur lors de l'ajout de la propriété :", error);
 
-    // Renvoyer une page d'erreur
+    // **Afficher une page d'erreur si la soumission échoue**
     res.status(500).render('error-page', {
       message: 'Erreur lors de l\'ajout de la propriété.',
       details: error.message
