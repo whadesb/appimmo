@@ -818,16 +818,18 @@ async function generateLandingPage(property) {
         }
       </style>
     </head>
-    <body>
+    body>
       <div class="property-container">
         <h1 class="property-title">Propriété à ${property.city}</h1>
         <div class="property-details">
+          <p><strong>Type de bien:</strong> ${property.propertyType}</p>  <!-- Type de bien -->
           <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
-           <p><strong>Nombre de chambres:</strong> ${property.bedrooms}</p>
+          <p><strong>Nombre de chambres:</strong> ${property.bedrooms}</p>
           <p><strong>Surface:</strong> ${property.surface} m²</p>
           <p><strong>Prix:</strong> ${property.price} €</p>
           <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
-          ${property.garden ? '<p><strong>Jardin:</strong> Oui</p>' : '<p><strong>Jardin:</strong> Non</p>'}
+          ${property.yearBuilt ? `<p><strong>Année de construction:</strong> ${property.yearBuilt}</p>` : ''}
+          ${property.pool ? '<p><strong>Piscine:</strong> Oui</p>' : ''}
         </div>
         <div class="property-photos">
           <img src="/uploads/${property.photos[0]}" alt="Photo 1">
