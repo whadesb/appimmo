@@ -3,12 +3,14 @@ const Schema = mongoose.Schema;
 
 const propertySchema = new Schema({
     rooms: { type: Number, required: true },
-    bedrooms: { type: Number, required: true },  // Ajout du champ nombre de chambres
+    bedrooms: { type: Number, required: true },
     surface: { type: Number, required: true },
     price: { type: Number, required: true },
     city: { type: String, required: true },
     country: { type: String, required: true },
-    garden: { type: Boolean, default: false },  // Ajout du champ jardin
+    yearBuilt: { type: Number, required: false }, // Année de construction
+    pool: { type: Boolean, default: false }, // Piscine
+    propertyType: { type: String, required: true }, // Type de bien
     url: { type: String, required: false },
     createdAt: { type: Date, default: Date.now },
     views: { type: Number, default: 0 },
