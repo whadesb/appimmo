@@ -588,15 +588,16 @@ app.post('/register', async (req, res) => {
     res.redirect('/register');
   }
 });
-
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
-  console.log("Request body:", req.body);  // Affiche les données du formulaire
-  console.log("Uploaded files:", req.files);  // Affiche les fichiers envoyés
-  
   try {
+    console.log(req.body);  // Pour vérifier les données du formulaire
+    console.log(req.files);  // Pour vérifier les fichiers uploadés
+
+    let { rooms, surface, price, city, country } = req.body;
+
     let photo1 = null;
     let photo2 = null;
 
@@ -638,13 +639,12 @@ app.post('/add-property', isAuthenticated, upload.fields([
     await property.save();
 
     res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
-    
-  } catch (error) {  // L'accolade en trop a été supprimée ici
-    console.error("Error adding property:", error);  // Log plus détaillé de l'erreur
+
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de la propriété :", error);
     res.status(500).json({ error: 'Erreur lors de l\'ajout de la propriété.' });
   }
 });
-
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
