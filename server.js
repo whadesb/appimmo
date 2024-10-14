@@ -606,12 +606,14 @@ app.post('/add-property', isAuthenticated, upload.fields([
   try {
     const property = new Property({
       rooms: req.body.rooms,
-      bedrooms: req.body.bedrooms,  // Enregistrer le nombre de chambres
+      bedrooms: req.body.bedrooms,
       surface: req.body.surface,
       price: req.body.price,
       city: req.body.city,
       country: req.body.country,
-      garden: req.body.garden === 'true',
+      yearBuilt: req.body.yearBuilt || null, // Année de construction (facultatif)
+      pool: req.body.pool === 'true', // Piscine
+      propertyType: req.body.propertyType, // Type de bien
       createdBy: req.user._id,
       photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
     });
@@ -633,7 +635,6 @@ app.post('/add-property', isAuthenticated, upload.fields([
     res.status(500).send('Erreur lors de l\'ajout de la propriété.');
   }
 });
-
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
