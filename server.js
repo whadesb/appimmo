@@ -605,19 +605,16 @@ app.post('/add-property', isAuthenticated, upload.fields([
 
     await property.save();
 
-    const landingPageUrl = await generateLandingPage(property);
-    property.url = landingPageUrl;
-    await property.save();
-
-    // Redirection dynamique en fonction de la langue
-    const locale = req.locale || 'en'; // Valeur par défaut si locale n'est pas définie
-    res.redirect(`/${locale}/user`);
+    // Retourner un morceau de HTML pour un message de succès à afficher
+    const successMessage = `
+      <div class="alert alert-success" role="alert">
+        Propriété ajoutée avec succès !
+      </div>
+    `;
+    res.send(successMessage);
   } catch (error) {
     console.error("Erreur lors de l'ajout de la propriété :", error);
-    res.status(500).render('error-page', {
-      message: 'Erreur lors de l\'ajout de la propriété.',
-      details: error.message
-    });
+    res.status(500).send('Erreur lors de l\'ajout de la propriété.');
   }
 });
 
