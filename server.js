@@ -392,8 +392,7 @@ app.post('/set-cookie-consent', (req, res) => {
     res.json({ message: 'Consentement enregistré', maxAge: maxAge });
 });
 
-
-app.get('/logout', (req, res, next) => {
+app.get('/:locale/logout', (req, res, next) => {
     req.logout((err) => {
         if (err) {
             return next(err);
@@ -403,10 +402,12 @@ app.get('/logout', (req, res, next) => {
                 return next(err);
             }
             res.clearCookie('connect.sid');
-            res.redirect('/login');
+            // Redirige vers la page de login avec la bonne langue
+            res.redirect(`/${req.params.locale}/login`);
         });
     });
 });
+
 // Route pour la page utilisateur avec locale et récupération des propriétés
 app.get('/:locale/user', isAuthenticated, async (req, res) => {
     const { locale } = req.params;  // Récupérer la langue depuis l'URL
