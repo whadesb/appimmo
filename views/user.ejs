@@ -391,7 +391,7 @@
   <div class="form-group">
     <label for="bedrooms">Nombre de chambres</label>
     <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
-  </div>  
+  </div>
   <div class="form-group">
     <label for="surface"><%= i18n.surface %></label>
     <input type="number" class="form-control" id="surface" name="surface" required>
@@ -408,6 +408,31 @@
     <label for="country"><%= i18n.country %></label>
     <input type="text" class="form-control" id="country" name="country" required>
   </div>
+  <!-- Année de construction -->
+  <div class="form-group">
+    <label for="yearBuilt">Année de construction</label>
+    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
+  </div>
+  <!-- Piscine -->
+  <div class="form-group">
+    <label for="pool">Piscine</label>
+    <select class="form-control" id="pool" name="pool">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <!-- Type de bien -->
+  <div class="form-group">
+    <label for="propertyType">Type de bien</label>
+    <select class="form-control" id="propertyType" name="propertyType" required>
+      <option value="Propriété">Propriété</option>
+      <option value="Villa">Villa</option>
+      <option value="Hôtel particulier">Hôtel particulier</option>
+      <option value="Appartement">Appartement</option>
+      <option value="Chateau">Château</option>
+      <option value="Maison">Maison</option>
+    </select>
+  </div>
   <div class="form-group">
     <label for="photo1"><%= i18n.photo_1 %></label>
     <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
@@ -415,13 +440,6 @@
   <div class="form-group">
     <label for="photo2"><%= i18n.photo_2 %></label>
     <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-  </div>
-<div class="form-group">
-    <label for="garden">Jardin</label>
-    <select class="form-control" id="garden" name="garden" required>
-      <option value="true">Oui</option>
-      <option value="false">Non</option>
-    </select>
   </div>
   <button type="submit" class="btn btn-custom"><%= i18n.save %></button>
 </form>
