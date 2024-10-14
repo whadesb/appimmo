@@ -593,56 +593,32 @@ app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    console.log(req.body);  // Pour vérifier les données du formulaire
-    console.log(req.files);  // Pour vérifier les fichiers uploadés
-
-    let { rooms, surface, price, city, country } = req.body;
-
-    let photo1 = null;
-    let photo2 = null;
-
-    if (req.files.photo1) {
-      const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
-      await sharp(req.files.photo1[0].path)
-        .resize(800)
-        .jpeg({ quality: 80 })
-        .toFile(photo1Path);
-      photo1 = path.basename(photo1Path);
-      fs.unlinkSync(req.files.photo1[0].path);
-    }
-
-    if (req.files.photo2) {
-      const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
-      await sharp(req.files.photo2[0].path)
-        .resize(800)
-        .jpeg({ quality: 80 })
-        .toFile(photo2Path);
-      photo2 = path.basename(photo2Path);
-      fs.unlinkSync(req.files.photo2[0].path);
-    }
-
     const property = new Property({
-      rooms,
-      surface,
-      price,
-      city,
-      country,
+      rooms: req.body.rooms,
+      surface: req.body.surface,
+      price: req.body.price,
+      city: req.body.city,
+      country: req.body.country,
       createdBy: req.user._id,
-      photos: [photo1, photo2]
+      photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
     });
 
     await property.save();
 
     const landingPageUrl = await generateLandingPage(property);
-
     property.url = landingPageUrl;
     await property.save();
 
-    res.status(201).json({ message: 'Le bien immobilier a été ajouté avec succès.', url: landingPageUrl });
-
+    // **Rediriger vers une nouvelle page HTML**
+    res.redirect(`/user`);
   } catch (error) {
     console.error("Erreur lors de l'ajout de la propriété :", error);
-    res.status(500).json({ error: 'Erreur lors de l\'ajout de la propriété.' });
+
+    // Renvoyer une page d'erreur
+    res.status(500).render('error-page', {
+      message: 'Erreur lors de l\'ajout de la propriété.',
+      details: error.message
+    });
   }
 });
 
