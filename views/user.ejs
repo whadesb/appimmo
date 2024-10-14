@@ -593,14 +593,10 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
   const formData = new FormData(this);
 
   try {
-    console.log('Envoi du formulaire en cours...');
-
     const response = await fetch('/add-property', {
       method: 'POST',
       body: formData
     });
-
-    console.log('Réponse du serveur:', response);
 
     if (response.ok) {
       const result = await response.json();
@@ -627,6 +623,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     `;
   }
 });
+
 
     // Temps en millisecondes (5 minutes)
     const inactivityTime = 5 * 60 * 1000;
