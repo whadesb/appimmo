@@ -604,33 +604,23 @@ app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    // Création de la nouvelle propriété
     const property = new Property({
       rooms: req.body.rooms,
       surface: req.body.surface,
       price: req.body.price,
       city: req.body.city,
       country: req.body.country,
+      garden: req.body.garden === 'true',  // Enregistrer la valeur du jardin
       createdBy: req.user._id,
       photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
     });
 
-    // Sauvegarde de la propriété pour générer l'ID
     await property.save();
 
-    // Vérification que l'ID est bien généré
-    console.log("Property ID:", property._id); 
-
-    // Génération de la page de destination avec l'ID
     const landingPageUrl = await generateLandingPage(property);
-    console.log("Generated Landing Page URL:", landingPageUrl);
-
-    // Sauvegarde de l'URL dans la base de données
     property.url = landingPageUrl;
     await property.save();
-    console.log("Property updated with URL:", property.url);  // Vérification de l'URL sauvegardée
 
-    // Retourner un morceau de HTML pour un message de succès à afficher
     const successMessage = `
       <div class="alert alert-success" role="alert">
         Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>
@@ -642,7 +632,6 @@ app.post('/add-property', isAuthenticated, upload.fields([
     res.status(500).send('Erreur lors de l\'ajout de la propriété.');
   }
 });
-
 
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
