@@ -606,11 +606,12 @@ app.post('/add-property', isAuthenticated, upload.fields([
   try {
     const property = new Property({
       rooms: req.body.rooms,
+      bedrooms: req.body.bedrooms,  // Enregistrer le nombre de chambres
       surface: req.body.surface,
       price: req.body.price,
       city: req.body.city,
       country: req.body.country,
-      garden: req.body.garden === 'true',  // Enregistrer la valeur du jardin
+      garden: req.body.garden === 'true',
       createdBy: req.user._id,
       photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
     });
