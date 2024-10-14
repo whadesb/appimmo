@@ -824,6 +824,7 @@ async function generateLandingPage(property) {
           <p><strong>Surface:</strong> ${property.surface} m²</p>
           <p><strong>Prix:</strong> ${property.price} €</p>
           <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
+          ${property.garden ? '<p><strong>Jardin:</strong> Oui</p>' : '<p><strong>Jardin:</strong> Non</p>'}
         </div>
         <div class="property-photos">
           <img src="/uploads/${property.photos[0]}" alt="Photo 1">
