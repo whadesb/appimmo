@@ -1,4 +1,14 @@
 require('dotenv').config();
+// Gérer les erreurs non capturées
+process.on('uncaughtException', function (err) {
+  console.error('Uncaught Exception:', err);
+});
+
+// Gérer les promesses rejetées non gérées
+process.on('unhandledRejection', function (err, promise) {
+  console.error('Unhandled Rejection:', err);
+});
+
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
