@@ -343,7 +343,7 @@ app.post('/reset-password/:token', async (req, res) => {
 });
 
 app.post('/:locale/login', (req, res, next) => {
-    const locale = req.params.locale || 'fr';  // Récupérer la langue depuis l'URL ou utiliser 'fr' par défaut
+    const locale = req.params.locale || 'fr';  // Utiliser la langue fournie dans l'URL ou 'fr' par défaut
 
     passport.authenticate('local', (err, user, info) => {
         if (err) {
@@ -351,13 +351,13 @@ app.post('/:locale/login', (req, res, next) => {
         }
         if (!user) {
             req.flash('error', 'Erreur d\'authentification.');
-            return res.redirect(`/${locale}/login`); // Rediriger vers la page de connexion en cas d'erreur
+            return res.redirect(`/${locale}/login`); // Redirection en cas d'erreur avec la langue
         }
         req.logIn(user, (err) => {
             if (err) {
                 return next(err);
             }
-            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la langue courante
+            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la langue
         });
     })(req, res, next);
 });
