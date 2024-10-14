@@ -609,18 +609,18 @@ app.post('/add-property', isAuthenticated, upload.fields([
     property.url = landingPageUrl;
     await property.save();
 
-    // **Redirection après la soumission du formulaire**
-    res.redirect(`/user`);
+    // Redirection dynamique en fonction de la langue
+    const locale = req.locale || 'en'; // Valeur par défaut si locale n'est pas définie
+    res.redirect(`/${locale}/user`);
   } catch (error) {
     console.error("Erreur lors de l'ajout de la propriété :", error);
-
-    // **Afficher une page d'erreur si la soumission échoue**
     res.status(500).render('error-page', {
       message: 'Erreur lors de l\'ajout de la propriété.',
       details: error.message
     });
   }
 });
+
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
