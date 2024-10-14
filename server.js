@@ -342,11 +342,26 @@ app.post('/reset-password/:token', async (req, res) => {
   }
 });
 
-app.post('/login', passport.authenticate('local', {
-  successRedirect: '/user',
-  failureRedirect: '/login',
-  failureFlash: true
-}));
+app.post('/:locale/login', (req, res, next) => {
+    const locale = req.params.locale || 'fr';  // Récupérer la langue depuis l'URL ou utiliser 'fr' par défaut
+
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            return next(err);
+        }
+        if (!user) {
+            req.flash('error', 'Erreur d\'authentification.');
+            return res.redirect(`/${locale}/login`); // Rediriger vers la page de connexion en cas d'erreur
+        }
+        req.logIn(user, (err) => {
+            if (err) {
+                return next(err);
+            }
+            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la langue courante
+        });
+    })(req, res, next);
+});
+
 
 app.post('/logout', (req, res, next) => {
     req.logout((err) => {
