@@ -7,11 +7,12 @@ const propertySchema = new Schema({
     price: { type: Number, required: true },
     city: { type: String, required: true },
     country: { type: String, required: true },
+    garden: { type: Boolean, default: false },  // Ajout du champ jardin
     url: { type: String, required: false },
     createdAt: { type: Date, default: Date.now },
     views: { type: Number, default: 0 },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' }, // Association avec l'utilisateur
-    photos: [String] // Photos de la propriété
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    photos: [String]
 });
 
 const Property = mongoose.model('Property', propertySchema);
