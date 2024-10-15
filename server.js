@@ -88,7 +88,10 @@ app.use((req, res, next) => {
           return next(err);
         }
         res.clearCookie('connect.sid');
-        res.redirect('/login');
+        
+        // Vérifier si la langue est définie dans les cookies
+        const locale = req.cookies.locale || 'fr';  // Utiliser 'fr' comme langue par défaut
+        res.redirect(`/${locale}/login`);
       });
     });
   } else {
