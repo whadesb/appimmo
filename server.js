@@ -33,7 +33,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
 const app = express();
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./middleware/auth');
 
 // Utilisation de la route 2FA
 app.use('/auth', authRoutes);
