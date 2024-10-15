@@ -831,18 +831,31 @@ async function generateLandingPage(property) {
         }
       </style>
     </head>
-    body>
+    <body>
       <div class="property-container">
         <h1 class="property-title">Propriété à ${property.city}</h1>
         <div class="property-details">
-          <p><strong>Type de bien:</strong> ${property.propertyType}</p>  <!-- Type de bien -->
+          <p><strong>Type de bien:</strong> ${property.propertyType}</p>
           <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
           <p><strong>Nombre de chambres:</strong> ${property.bedrooms}</p>
           <p><strong>Surface:</strong> ${property.surface} m²</p>
           <p><strong>Prix:</strong> ${property.price} €</p>
           <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
           ${property.yearBuilt ? `<p><strong>Année de construction:</strong> ${property.yearBuilt}</p>` : ''}
+          ${property.bathrooms ? `<p><strong>Salles de douche:</strong> ${property.bathrooms}</p>` : ''}
+          ${property.toilets ? `<p><strong>Toilettes:</strong> ${property.toilets}</p>` : ''}
           ${property.pool ? '<p><strong>Piscine:</strong> Oui</p>' : ''}
+          ${property.elevator ? '<p><strong>Ascenseur:</strong> Oui</p>' : ''}
+          ${property.fireplace ? '<p><strong>Cheminée:</strong> Oui</p>' : ''}
+          ${property.internet ? '<p><strong>Internet:</strong> Oui</p>' : ''}
+          ${property.doubleGlazing ? '<p><strong>Double vitrage:</strong> Oui</p>' : ''}
+          ${property.wateringSystem ? '<p><strong>Arrosage:</strong> Oui</p>' : ''}
+          ${property.barbecue ? '<p><strong>Barbecue:</strong> Oui</p>' : ''}
+          ${property.carShelter ? '<p><strong>Abri de voiture:</strong> Oui</p>' : ''}
+          ${property.parking ? '<p><strong>Parking:</strong> Oui</p>' : ''}
+          ${property.caretakerHouse ? '<p><strong>Maison de gardien:</strong> Oui</p>' : ''}
+          ${property.electricShutters ? '<p><strong>Stores électriques:</strong> Oui</p>' : ''}
+          ${property.outdoorLighting ? '<p><strong>Éclairage extérieur:</strong> Oui</p>' : ''}
         </div>
         <div class="property-photos">
           <img src="/uploads/${property.photos[0]}" alt="Photo 1">
