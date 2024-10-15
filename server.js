@@ -364,7 +364,7 @@ app.post('/reset-password/:token', async (req, res) => {
 app.post('/:locale/login', (req, res, next) => {
     const locale = req.params.locale || 'fr';  // Récupérer la langue dans l'URL ou 'fr' par défaut
 
-    passport.authenticate('local', (err, user, info) => {
+    passport.authenticate('local', async (err, user, info) => {
         if (err) {
             return next(err);
         }
@@ -372,14 +372,23 @@ app.post('/:locale/login', (req, res, next) => {
             req.flash('error', 'Erreur d\'authentification.');
             return res.redirect(`/${locale}/login`);  // Rediriger en cas d'erreur
         }
+
+        // Si l'utilisateur a activé le 2FA, redirige vers la page pour entrer le code 2FA
+        if (user.twoFactorEnabled) {
+            req.session.tempUserId = user._id;  // Stocker l'ID utilisateur temporairement
+            return res.redirect(`/${locale}/2fa`);  // Rediriger vers la page de vérification 2FA
+        }
+
+        // Si le 2FA n'est pas activé, procéder à la connexion normale
         req.logIn(user, (err) => {
             if (err) {
                 return next(err);
             }
-            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la langue
+            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur
         });
     })(req, res, next);
 });
+
 
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
