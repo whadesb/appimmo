@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Activation 2FA</title>
+</head>
+<body>
+  <h1>Scannez ce QR code avec Google Authenticator</h1>
+  <img src="<%= qrCode %>" alt="QR Code">
+  <form action="/verify-2fa" method="POST">
+    <label for="token">Code 2FA</label>
+    <input type="text" name="token" id="token" required>
+    <button type="submit">Activer 2FA</button>
+  </form>
+</body>
+</html>
