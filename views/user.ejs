@@ -526,6 +526,11 @@
     <label for="photo2"><%= i18n.photo_2 %></label>
     <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
   </div>
+<div class="form-group">
+    <label for="description">Description (max. 820 caractères)</label>
+    <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
+    <small id="charCount">0/820 caractères</small>
+  </div>
   <button type="submit" class="btn btn-custom"><%= i18n.save %></button>
 </form>
 
@@ -737,6 +742,14 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     document.onkeypress = resetTimer;
     document.onclick = resetTimer;
     document.onscroll = resetTimer;
+</script>
+<script>
+  const descriptionInput = document.getElementById('description');
+  const charCount = document.getElementById('charCount');
+
+  descriptionInput.addEventListener('input', function() {
+    charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
+  });
 </script>
 </body>
 </html>
