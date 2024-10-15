@@ -768,7 +768,7 @@ async function generateLandingPage(property) {
     <head>
       <meta charset="UTF-8">
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Propriété à ${property.city}</title>
+      <title>Propriété à ${property.city}, ${property.country}</title>
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
       <style>
         body, html {
@@ -834,14 +834,14 @@ async function generateLandingPage(property) {
     </head>
     <body>
       <div class="property-container">
-        <h1 class="property-title">Propriété à ${property.city}</h1>
+        <h1 class="property-title">Propriété à ${property.city}, ${property.country}</h1>
         <div class="property-details">
-          <p><strong>Type de bien:</strong> ${property.propertyType}</p>
-          <p><strong>Nombre de pièces:</strong> ${property.rooms}</p>
-          <p><strong>Nombre de chambres:</strong> ${property.bedrooms}</p>
-          <p><strong>Surface:</strong> ${property.surface} m²</p>
-          <p><strong>Prix:</strong> ${property.price} €</p>
-          <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
+          <p><strong>Type de bien:</strong> ${property.propertyType || 'Non renseigné'}</p>
+          <p><strong>Nombre de pièces:</strong> ${property.rooms || 'Non renseigné'}</p>
+          <p><strong>Nombre de chambres:</strong> ${property.bedrooms || 'Non renseigné'}</p>
+          <p><strong>Surface:</strong> ${property.surface ? `${property.surface} m²` : 'Non renseigné'}</p>
+          <p><strong>Prix:</strong> ${property.price ? `${property.price} €` : 'Non renseigné'}</p>
+          <p><strong>Localisation:</strong> ${property.city || 'Non renseigné'}, ${property.country || 'Non renseigné'}</p>
           ${property.description ? `<p><strong>Description:</strong> ${property.description}</p>` : ''}
           ${property.yearBuilt ? `<p><strong>Année de construction:</strong> ${property.yearBuilt}</p>` : ''}
           ${property.bathrooms ? `<p><strong>Salles de douche:</strong> ${property.bathrooms}</p>` : ''}
@@ -860,8 +860,8 @@ async function generateLandingPage(property) {
           ${property.outdoorLighting ? '<p><strong>Éclairage extérieur:</strong> Oui</p>' : ''}
         </div>
         <div class="property-photos">
-          <img src="/uploads/${property.photos[0]}" alt="Photo 1">
-          <img src="/uploads/${property.photos[1]}" alt="Photo 2">
+          ${property.photos && property.photos[0] ? `<img src="/uploads/${property.photos[0]}" alt="Photo 1">` : ''}
+          ${property.photos && property.photos[1] ? `<img src="/uploads/${property.photos[1]}" alt="Photo 2">` : ''}
         </div>
       </div>
     </body>
