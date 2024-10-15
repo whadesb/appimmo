@@ -4,7 +4,7 @@ const router = express.Router();
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const User = require('../models/User');  // Assurez-vous d'importer correctement le modèle User
-const isAuthenticated = require('../middleware/auth'); // Middleware d'authentification
+const isAuthenticated = require('../routes/auth'); // Middleware d'authentification
 
 // Route pour activer 2FA et générer le QR code
 router.get('/enable-2fa', isAuthenticated, async (req, res) => {
