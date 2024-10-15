@@ -187,7 +187,7 @@ async function generateLandingPage(property) {
 
             .property-description .section-title {
                 font-size: 1.4rem;
-                font-weight: bold;
+                font-weight: 400;
                 color: #3c3c3c;
                 margin-bottom: 10px;
             }
@@ -281,15 +281,15 @@ async function generateLandingPage(property) {
                     </div>
                     <div class="detail">
                         <i class="fal fa-shower"></i>
-                        <p>Salles de douche: ${property.bathrooms || 'Non renseigné'}</p>
+                        <p>${property.bathrooms || 'Non renseigné'}</p>
                     </div>
                     <div class="detail">
                         <i class="fal fa-toilet"></i>
-                        <p>Toilettes: ${property.toilets || 'Non renseigné'}</p>
+                        <p>${property.toilets || 'Non renseigné'}</p>
                     </div>
                     <div class="detail">
                         <i class="fal fa-arrow-up"></i>
-                        <p>Ascenseur: ${property.elevator ? 'Oui' : 'Non'}</p>
+                        <p>${property.elevator ? 'Oui' : 'Non'}</p>
                     </div>
                 </div>
 
