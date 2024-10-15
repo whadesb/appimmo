@@ -1010,15 +1010,15 @@ async function generateLandingPage(property) {
                 <div class="property-details">
                     <div class="detail">
                         <i class="fal fa-home"></i>
-                        <p>Nombre de pièces: ${property.rooms}</p>
+                        <p>${property.rooms}</p>
                     </div>
                     <div class="detail">
                         <i class="fal fa-bed"></i>
-                        <p>Nombre de chambres: ${property.bedrooms}</p>
+                        <p>${property.bedrooms}</p>
                     </div>
                     <div class="detail">
                         <i class="fal fa-ruler-combined"></i>
-                        <p>Surface: ${property.surface} m²</p>
+                        <p>${property.surface} m²</p>
                     </div>
                     <div class="detail">
                         <i class="fal fa-shower"></i>
