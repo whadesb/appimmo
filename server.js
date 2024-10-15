@@ -842,6 +842,7 @@ async function generateLandingPage(property) {
           <p><strong>Surface:</strong> ${property.surface} m²</p>
           <p><strong>Prix:</strong> ${property.price} €</p>
           <p><strong>Localisation:</strong> ${property.city}, ${property.country}</p>
+          ${property.description ? `<p><strong>Description:</strong> ${property.description}</p>` : ''}
           ${property.yearBuilt ? `<p><strong>Année de construction:</strong> ${property.yearBuilt}</p>` : ''}
           ${property.bathrooms ? `<p><strong>Salles de douche:</strong> ${property.bathrooms}</p>` : ''}
           ${property.toilets ? `<p><strong>Toilettes:</strong> ${property.toilets}</p>` : ''}
