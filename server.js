@@ -611,9 +611,22 @@ app.post('/add-property', isAuthenticated, upload.fields([
       price: req.body.price,
       city: req.body.city,
       country: req.body.country,
-      yearBuilt: req.body.yearBuilt || null, // Année de construction (facultatif)
-      pool: req.body.pool === 'true', // Piscine
-      propertyType: req.body.propertyType, // Type de bien
+      yearBuilt: req.body.yearBuilt || null,
+      pool: req.body.pool === 'true',
+      propertyType: req.body.propertyType,
+      bathrooms: req.body.bathrooms || null,
+      toilets: req.body.toilets || null,
+      elevator: req.body.elevator === 'true',
+      fireplace: req.body.fireplace === 'true',
+      internet: req.body.internet === 'true',
+      doubleGlazing: req.body.doubleGlazing === 'true',
+      wateringSystem: req.body.wateringSystem === 'true',
+      barbecue: req.body.barbecue === 'true',
+      carShelter: req.body.carShelter === 'true',
+      parking: req.body.parking === 'true',
+      caretakerHouse: req.body.caretakerHouse === 'true',
+      electricShutters: req.body.electricShutters === 'true',
+      outdoorLighting: req.body.outdoorLighting === 'true',
       createdBy: req.user._id,
       photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
     });
