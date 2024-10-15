@@ -7,7 +7,9 @@ const UserSchema = new mongoose.Schema({
   lastName: { type: String, required: true },
   role: { type: String, required: true },
   resetPasswordToken: String,
-  resetPasswordExpires: Date
+  resetPasswordExpires: Date,
+  twoFactorSecret: { type: String }, // Secret utilisé pour la 2FA (Google Authenticator)
+  twoFactorEnabled: { type: Boolean, default: false } // Indique si 2FA est activé ou non
 });
 
 // Configurer passportLocalMongoose pour utiliser l'email comme nom d'utilisateur
