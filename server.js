@@ -611,6 +611,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
       price: req.body.price,
       city: req.body.city,
       country: req.body.country,
+      description: req.body.description, // Description ajoutée
       yearBuilt: req.body.yearBuilt || null,
       pool: req.body.pool === 'true',
       propertyType: req.body.propertyType,
