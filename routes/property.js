@@ -20,109 +20,292 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Fonction pour générer la landing page
+// Fonction pour générer la landing page
 async function generateLandingPage(property) {
   const template = `
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="fr">
     <head>
-      <meta charset="UTF-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>Propriété à ${property.city}, ${property.country}</title>
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-      <style>
-        body, html {
-          margin: 0;
-          padding: 0;
-          height: 100%;
-          width: 100%;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          background: rgba(0, 0, 0, 0.6);
-          font-family: Arial, sans-serif;
-        }
-        .property-container {
-          background-color: white;
-          border-radius: 10px;
-          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-          max-width: 800px;
-          width: 100%;
-          padding: 20px;
-          text-align: center;
-          color: black;
-        }
-        .property-title {
-          font-size: 32px;
-          margin-bottom: 20px;
-          color: black;
-        }
-        .property-details {
-          font-size: 18px;
-          margin-bottom: 20px;
-          color: black;
-        }
-        .property-photos {
-          display: flex;
-          justify-content: space-around;
-          gap: 10px;
-        }
-        .property-photos img {
-          width: 48%;
-          border-radius: 8px;
-        }
-        @media (max-width: 768px) {
-          .property-container {
-            padding: 10px;
-          }
-          .property-title {
-            font-size: 24px;
-          }
-          .property-details {
-            font-size: 16px;
-          }
-          .property-photos {
-            flex-direction: column;
-            align-items: center;
-          }
-          .property-photos img {
-            width: 100%;
-            margin-bottom: 10px;
-          }
-        }
-      </style>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Propriété à ${property.city}, ${property.country}</title>
+
+        <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet">
+
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #ffffff;
+                color: #3c3c3c;
+                line-height: 1.5;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .container {
+                max-width: 1400px;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                background-color: white;
+                border-radius: 0;
+                overflow: hidden;
+                margin: 0 auto;
+                height: 100%; /* Assure que le container occupe toute la hauteur de l'écran */
+            }
+
+            .slider {
+                flex: 2;
+                overflow: hidden;
+                position: relative;
+                width: 100%;
+                height: 100%;
+            }
+
+            .slides {
+                display: flex;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
+
+            .slides img {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0;
+                animation: slide 10s infinite;
+            }
+
+            .slides img:nth-child(1) {
+                animation-delay: 0s;
+            }
+
+            .slides img:nth-child(2) {
+                animation-delay: 5s;
+            }
+
+            @keyframes slide {
+                0%, 50% {
+                    opacity: 1;
+                }
+                55%, 100% {
+                    opacity: 0;
+                }
+            }
+
+            .property-info {
+                flex: 0.8;
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+                justify-content:space-around;
+                height: 100%;
+            }
+
+            .property-lorem {
+                font-family: "Lora", serif;
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+                color: #3c3c3c;
+                border-bottom: 1px solid #C4B990;
+                padding-bottom: 5px;
+            }
+
+            .property-info h1 {
+                font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                line-height: 1.1;
+                margin-bottom: .5rem;
+                font-weight: 400;
+                color: #3c3c3c;
+                font-size: 2.5rem;
+            }
+
+            .property-info h2 {
+                font-size: 1.6rem;
+                color: #2c2c2c;
+                font-weight: 300;
+                margin-bottom: 30px;
+            }
+
+            .property-details {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .detail {
+                display: flex;
+                align-items: center;
+            }
+
+            .detail i {
+                font-size: 1.3rem;
+                color: #C4B990;
+                margin-right: 8px;
+            }
+
+            .detail p {
+                font-size: 1rem;
+                color: #333;
+            }
+
+            .price {
+                background-color: #c4b9905f;
+                padding: 5px 15px;
+                font-size: 1.5rem;
+                font-weight: 400;
+                color: #212529;
+                text-align: center;
+                text-transform: uppercase;
+                margin-top: 30px;
+                width: fit-content;
+                align-self: flex-start;
+            }
+
+            .property-description {
+                margin-top: 20px;
+                padding: 15px;
+                background-color: #f7f7f7;
+                border: 1px solid #ddd;
+                font-size: 1rem;
+                color: #555;
+                text-align: justify;
+                line-height: 1.6;
+            }
+
+            .property-description .section-title {
+                font-size: 1.4rem;
+                font-weight: bold;
+                color: #3c3c3c;
+                margin-bottom: 10px;
+            }
+
+            .construction-year {
+                margin-top: 20px;
+                font-size: 1.2rem;
+                color: #3c3c3c;
+                font-weight: 300;
+            }
+
+            @media screen and (max-width: 768px) {
+                .container {
+                    flex-direction: column;
+                }
+
+                .property-details {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .property-info {
+                    padding: 20px;
+                }
+
+                .property-info h1 {
+                    font-size: 2.4rem;
+                }
+
+                .property-info h2 {
+                    font-size: 1.4rem;
+                }
+
+                .price {
+                    font-size: 1.3rem;
+                    width: 100%;
+                    padding: 10px;
+                    text-align: center;
+                }
+
+                .property-description {
+                    font-size: 0.9rem;
+                }
+            }
+
+            @media screen and (min-width: 769px) {
+                body {
+                    height: 100vh;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .container {
+                    height: 80vh;
+                    align-items: center;
+                }
+            }
+        </style>
     </head>
     <body>
-      <div class="property-container">
-        <h1 class="property-title">Propriété à ${property.city}, ${property.country}</h1>
-        <div class="property-details">
-          <p><strong>Type de bien:</strong> ${property.propertyType || 'Non renseigné'}</p>
-          <p><strong>Nombre de pièces:</strong> ${property.rooms || 'Non renseigné'}</p>
-          <p><strong>Nombre de chambres:</strong> ${property.bedrooms || 'Non renseigné'}</p>
-          <p><strong>Surface:</strong> ${property.surface ? `${property.surface} m²` : 'Non renseigné'}</p>
-          <p><strong>Prix:</strong> ${property.price ? `${property.price} €` : 'Non renseigné'}</p>
-          <p><strong>Localisation:</strong> ${property.city || 'Non renseigné'}, ${property.country || 'Non renseigné'}</p>
-          ${property.description ? `<p><strong>Description:</strong> ${property.description}</p>` : ''}
-          ${property.yearBuilt ? `<p><strong>Année de construction:</strong> ${property.yearBuilt}</p>` : ''}
-          ${property.bathrooms ? `<p><strong>Salles de douche:</strong> ${property.bathrooms}</p>` : ''}
-          ${property.toilets ? `<p><strong>Toilettes:</strong> ${property.toilets}</p>` : ''}
-          ${property.pool ? '<p><strong>Piscine:</strong> Oui</p>' : ''}
-          ${property.elevator ? '<p><strong>Ascenseur:</strong> Oui</p>' : ''}
-          ${property.fireplace ? '<p><strong>Cheminée:</strong> Oui</p>' : ''}
-          ${property.internet ? '<p><strong>Internet:</strong> Oui</p>' : ''}
-          ${property.doubleGlazing ? '<p><strong>Double vitrage:</strong> Oui</p>' : ''}
-          ${property.wateringSystem ? '<p><strong>Arrosage:</strong> Oui</p>' : ''}
-          ${property.barbecue ? '<p><strong>Barbecue:</strong> Oui</p>' : ''}
-          ${property.carShelter ? '<p><strong>Abri de voiture:</strong> Oui</p>' : ''}
-          ${property.parking ? '<p><strong>Parking:</strong> Oui</p>' : ''}
-          ${property.caretakerHouse ? '<p><strong>Maison de gardien:</strong> Oui</p>' : ''}
-          ${property.electricShutters ? '<p><strong>Stores électriques:</strong> Oui</p>' : ''}
-          ${property.outdoorLighting ? '<p><strong>Éclairage extérieur:</strong> Oui</p>' : ''}
+
+        <div class="container">
+            <!-- Slider de la propriété -->
+            <div class="slider">
+                <div class="slides">
+                    <img src="/uploads/${property.photos[0] || 'default.jpg'}" alt="Image 1">
+                    <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2">
+                </div>
+            </div>
+
+            <!-- Informations sur la propriété -->
+            <div class="property-info">
+                <p class="property-lorem">UAP Immo Annonce</p>
+
+                <h1>Propriété à ${property.city}, ${property.country}</h1>
+                <h2>Type de bien: ${property.propertyType}</h2>
+
+                <!-- Détails de la propriété avec pictogrammes -->
+                <div class="property-details">
+                    <div class="detail">
+                        <i class="fal fa-home"></i>
+                        <p>Nombre de pièces: ${property.rooms}</p>
+                    </div>
+                    <div class="detail">
+                        <i class="fal fa-bed"></i>
+                        <p>Nombre de chambres: ${property.bedrooms}</p>
+                    </div>
+                    <div class="detail">
+                        <i class="fal fa-ruler-combined"></i>
+                        <p>Surface: ${property.surface} m²</p>
+                    </div>
+                    <div class="detail">
+                        <i class="fal fa-shower"></i>
+                        <p>Salles de douche: ${property.bathrooms || 'Non renseigné'}</p>
+                    </div>
+                    <div class="detail">
+                        <i class="fal fa-toilet"></i>
+                        <p>Toilettes: ${property.toilets || 'Non renseigné'}</p>
+                    </div>
+                    <div class="detail">
+                        <i class="fal fa-arrow-up"></i>
+                        <p>Ascenseur: ${property.elevator ? 'Oui' : 'Non'}</p>
+                    </div>
+                </div>
+
+                <!-- Année de construction -->
+                <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
+
+                <!-- Brève description sous les pictogrammes -->
+                <div class="property-description">
+                    <div class="section-title">Visite guidée</div>
+                    ${property.description || 'Aucune description fournie.'}
+                </div>
+
+                <div class="price">Prix: ${property.price} €</div>
+            </div>
         </div>
-        <div class="property-photos">
-          ${property.photos && property.photos[0] ? `<img src="/uploads/${property.photos[0]}" alt="Photo 1">` : ''}
-          ${property.photos && property.photos[1] ? `<img src="/uploads/${property.photos[1]}" alt="Photo 2">` : ''}
-        </div>
-      </div>
+
     </body>
     </html>`;
 
@@ -131,7 +314,6 @@ async function generateLandingPage(property) {
 
   return `/landing-pages/${property._id}.html`;
 }
-
 
 // Route pour ajouter une nouvelle propriété
 router.post('/add-property', authMiddleware, upload.fields([
