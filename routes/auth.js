@@ -63,4 +63,43 @@ router.post('/verify-2fa', isAuthenticated, async (req, res) => {
     }
 });
 
+// Route pour afficher la page 2FA après la vérification du mot de passe
+router.get('/2fa', (req, res) => {
+    if (!req.session.tempUserId) {
+        return res.redirect('/login');  // Si l'utilisateur n'a pas passé l'étape du mot de passe, redirige vers la connexion
+    }
+    res.render('2fa');  // Affiche la vue 2FA où l'utilisateur entre le code TOTP
+});
+
+// Route pour vérifier le code 2FA après la connexion
+router.post('/2fa', async (req, res) => {
+    const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
+    const userId = req.session.tempUserId;  // Récupérer l'utilisateur temporaire stocké dans la session
+
+    // Trouver l'utilisateur dans la base de données
+    const user = await User.findById(userId);
+    if (!user) {
+        return res.redirect('/login');  // Rediriger vers la connexion si l'utilisateur n'est pas trouvé
+    }
+
+    // Vérifier le code 2FA
+    const isVerified = speakeasy.totp.verify({
+        secret: user.twoFactorSecret,  // Secret stocké dans la base de données
+        encoding: 'base32',
+        token: token  // Le code 2FA entré par l'utilisateur
+    });
+
+    if (isVerified) {
+        // Connecter l'utilisateur et vider la session temporaire
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+            req.session.tempUserId = null;  // Supprimer l'utilisateur temporaire de la session
+            return res.redirect('/user');  // Rediriger vers la page utilisateur après vérification réussie
+        });
+    } else {
+        // Si le code est incorrect, renvoyer la page 2FA avec un message d'erreur
+        res.render('2fa', { error: 'Code incorrect, veuillez réessayer.' });
+    }
+});
+
 module.exports = router;
