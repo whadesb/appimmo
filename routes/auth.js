@@ -13,8 +13,8 @@ router.get('/enable-2fa', isAuthenticated, async (req, res) => {
 
         // Génère un secret unique pour l'utilisateur
         const secret = speakeasy.generateSecret({
-            name: `YourAppName (${user.email})`, // Nom de l'application + email utilisateur
-        });
+    name: `UAP Immo (${user.email})`, // "UAP Immo" est le nom de l'application, et on affiche l'email de l'utilisateur
+});
 
         // Sauvegarde le secret dans la base de données utilisateur
         user.twoFactorSecret = secret.base32;
