@@ -12,13 +12,13 @@
         <p class="text-center"><%= i18n.description %></p>
 
         <!-- Formulaire pour entrer le code 2FA -->
-       <form action="/<%= locale %>/2fa" method="POST" class="mt-4">
-        <div class="form-group">
-            <label for="token"><%= i18n.label %></label>
-            <input type="text" class="form-control" id="token" name="token" placeholder="<%= i18n.placeholder %>" required>
-        </div>
-        <button type="submit" class="btn btn-primary btn-block"><%= i18n.submit_button %></button>
-    </form>
+     <form action="/<%= locale %>/2fa" method="POST" class="mt-4">
+    <div class="form-group">
+        <label for="token"><%= i18n.label %></label>
+        <input type="text" class="form-control" id="token" name="token" placeholder="<%= i18n.placeholder %>" required>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block"><%= i18n.submit_button %></button>
+</form>
 
         <% if (typeof error !== 'undefined') { %>
             <div class="alert alert-danger mt-4">
