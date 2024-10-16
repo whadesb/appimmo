@@ -607,17 +607,22 @@ app.post('/register', async (req, res) => {
 
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+
     await sendAccountCreationEmail(newUser.email);
 
-    // Récupérer la langue de l'utilisateur
-    const locale = req.locale || 'fr'; // Par défaut 'fr'
-    
-    // Rediriger l'utilisateur vers la page d'activation 2FA
-    res.redirect(`/${locale}/enable-2fa`);
+    req.logIn(newUser, (err) => {  // Connexion automatique après inscription
+      if (err) return next(err);
+
+      // Récupérer la langue de l'utilisateur
+      const locale = req.locale || 'fr';
+
+      // Rediriger l'utilisateur vers la page d'activation 2FA
+      return res.redirect(`/${locale}/enable-2fa`);
+    });
   } catch (error) {
     console.error('Erreur lors de l\'inscription :', error.message);
     req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
-    res.redirect('/register');
+    return res.redirect('/register');
   }
 });
 
