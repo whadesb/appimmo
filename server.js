@@ -388,8 +388,6 @@ app.post('/:locale/login', (req, res, next) => {
     })(req, res, next);
 });
 
-
-
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
     const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
