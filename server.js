@@ -365,32 +365,29 @@ app.post('/reset-password/:token', async (req, res) => {
 });
 
 app.post('/:locale/login', (req, res, next) => {
-    const locale = req.params.locale || 'fr';  // Récupérer la langue dans l'URL ou 'fr' par défaut
+    const locale = req.params.locale;  // Récupérer la langue depuis l'URL
 
-    passport.authenticate('local', async (err, user, info) => {
-        if (err) {
-            return next(err);
-        }
+    passport.authenticate('local', (err, user, info) => {
+        if (err) return next(err);
         if (!user) {
-            req.flash('error', 'Erreur d\'authentification.');
-            return res.redirect(`/${locale}/login`);  // Rediriger en cas d'erreur
+            req.flash('error', 'Invalid credentials');
+            return res.redirect(`/${locale}/login`);
         }
 
-        // Si l'utilisateur a activé le 2FA, redirige vers la page pour entrer le code 2FA
+        // Si l'utilisateur a activé le 2FA, rediriger vers la page 2FA
         if (user.twoFactorEnabled) {
-            req.session.tempUserId = user._id;  // Stocker l'ID utilisateur temporairement
-            return res.redirect(`/${locale}/2fa`);  // Rediriger vers la page de vérification 2FA
+            req.session.tempUserId = user._id;  // Stocker l'utilisateur temporairement dans la session
+            return res.redirect(`/${locale}/2fa`);  // Rediriger vers la page 2FA avec la bonne locale
         }
 
-        // Si le 2FA n'est pas activé, procéder à la connexion normale
+        // Sinon, continuer la connexion normale
         req.logIn(user, (err) => {
-            if (err) {
-                return next(err);
-            }
-            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur
+            if (err) return next(err);
+            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la bonne locale
         });
     })(req, res, next);
 });
+
 
 
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
