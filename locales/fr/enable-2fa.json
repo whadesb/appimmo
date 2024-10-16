@@ -1,6 +1,7 @@
 {
-  "title": "Activation de la 2FA",
-  "instruction": "Scannez ce QR code avec Google Authenticator",
-  "enter_code": "Entrez le code fourni par Google Authenticator",
-  "submit_button": "Activer la 2FA"
+  "title": "Activer l'authentification à deux facteurs",
+  "instruction": "Veuillez scanner le QR code suivant avec votre application d'authentification pour activer le 2FA.",
+  "secret": "Code secret :",
+  "qrCode": "QR Code",
+  "verify": "Vérifier le code"
 }
