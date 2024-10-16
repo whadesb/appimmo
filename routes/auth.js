@@ -77,37 +77,4 @@ router.get('/:locale/2fa', (req, res) => {
     res.render('2fa', { locale: locale });
 });
 
-// Route pour vérifier le code 2FA après la connexion
-router.post('/:locale/2fa', async (req, res, next) => {
-    const { token } = req.body;
-    const userId = req.session.tempUserId;
-    const { locale } = req.params;
-
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.redirect(`/${locale}/login`);
-        }
-
-        const isVerified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,
-            encoding: 'base32',
-            token: token
-        });
-
-        if (isVerified) {
-            req.logIn(user, (err) => {
-                if (err) return next(err);
-                req.session.tempUserId = null;
-                return res.redirect(`/${locale}/user`);
-            });
-        } else {
-            res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
-        }
-    } catch (error) {
-        console.error('Erreur lors de la vérification du code 2FA:', error);
-        res.status(500).send('Erreur lors de la vérification du code 2FA.');
-    }
-});
-
 module.exports = router;
