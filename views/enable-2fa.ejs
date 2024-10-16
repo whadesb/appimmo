@@ -2,15 +2,15 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Activation 2FA</title>
+  <title><%= i18n.enable_2fa.title %></title>
 </head>
 <body>
-  <h1>Scannez ce QR code avec Google Authenticator</h1>
+  <h1><%= i18n.enable_2fa.instruction %></h1>
   <img src="<%= qrCode %>" alt="QR Code">
   <form action="/verify-2fa" method="POST">
-    <label for="token">Code 2FA</label>
+    <label for="token"><%= i18n.enable_2fa.enter_code %></label>
     <input type="text" name="token" id="token" required>
-    <button type="submit">Activer 2FA</button>
+    <button type="submit"><%= i18n.enable_2fa.submit_button %></button>
   </form>
 </body>
 </html>
