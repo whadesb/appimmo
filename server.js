@@ -37,7 +37,6 @@ const authRoutes = require('./routes/auth');
 
 
 const app = express();
-const authRoutes = require('./middleware/auth');
 
 // Utilisation de la route 2FA
 app.use('/auth', authRoutes);
