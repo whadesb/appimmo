@@ -1,0 +1,6 @@
+{
+  "title": "Activation de la 2FA",
+  "instruction": "Scannez ce QR code avec Google Authenticator",
+  "enter_code": "Entrez le code fourni par Google Authenticator",
+  "submit_button": "Activer la 2FA"
+}
