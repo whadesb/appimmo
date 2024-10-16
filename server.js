@@ -618,7 +618,7 @@ app.post('/:locale/register', async (req, res, next) => {
       if (err) return next(err);
 
       // Rediriger l'utilisateur vers la page d'activation 2FA avec la bonne locale
-      return res.redirect(`/${locale}/enable-2fa`);
+      return res.redirect(`/${locale}/enable-2fa`);  // Assure-toi que tu rediriges bien ici
     });
   } catch (error) {
     console.error('Erreur lors de l\'inscription :', error.message);
