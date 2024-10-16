@@ -36,37 +36,36 @@ router.get('/enable-2fa', isAuthenticated, async (req, res) => {
 });
 
 // Route pour vérifier le code TOTP après activation
-router.post('/:locale/2fa', async (req, res) => {
-    if (!req.session.tempUserId) {
-        return res.redirect(`/${req.params.locale}/login`);
+router.post('/:locale/2fa', async (req, res, next) => {
+    const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
+    const userId = req.session.tempUserId;  // Récupérer l'utilisateur temporaire stocké dans la session
+    const { locale } = req.params;  // Récupérer la locale depuis l'URL
+
+    try {
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.redirect(`/${locale}/login`);  // Rediriger si l'utilisateur n'est pas trouvé
+        }
+
+        const isVerified = speakeasy.totp.verify({
+            secret: user.twoFactorSecret,
+            encoding: 'base32',
+            token: token  // Le code 2FA entré par l'utilisateur
+        });
+
+        if (isVerified) {
+            req.logIn(user, (err) => {
+                if (err) return next(err);
+                req.session.tempUserId = null;
+                return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur
+            });
+        } else {
+            res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
+        }
+    } catch (error) {
+        console.error('Erreur lors de la vérification du code 2FA:', error);
+        res.status(500).send('Erreur lors de la vérification du code 2FA.');
     }
-
-    const { token } = req.body;
-    const userId = req.session.tempUserId;
-    const { locale } = req.params;
-
-    const user = await User.findById(userId);
-    if (!user) {
-        return res.redirect(`/${locale}/login`);
-    }
-
-    // Vérifier le code 2FA
-    const isVerified = speakeasy.totp.verify({
-    secret: user.twoFactorSecret,  // Le secret stocké dans la base de données
-    encoding: 'base32',
-    token: token  // Le code TOTP envoyé par l'utilisateur
-});
-
-if (isVerified) {
-    req.logIn(user, (err) => {
-        if (err) return next(err);
-        req.session.tempUserId = null;
-        return res.redirect(`/${locale}/user`);
-    });
-} else {
-    // Si le code est incorrect, afficher un message d'erreur
-    res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
-}
 });
 
 // Route pour afficher la page 2FA après la vérification du mot de passe
