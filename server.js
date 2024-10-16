@@ -589,19 +589,16 @@ app.get('/register', (req, res) => {
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword } = req.body;
 
-  // Validation de l'email
   if (!validator.isEmail(email)) {
     req.flash('error', 'L\'adresse email n\'est pas valide.');
     return res.redirect('/register');
   }
 
-  // Validation des mots de passe
   if (password !== confirmPassword) {
     req.flash('error', 'Les mots de passe ne correspondent pas.');
     return res.redirect('/register');
   }
 
-  // Validation des exigences de sécurité du mot de passe
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   if (!passwordRequirements.test(password)) {
     req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
@@ -609,19 +606,14 @@ app.post('/register', async (req, res) => {
   }
 
   try {
-    // Création de l'utilisateur
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+    await sendAccountCreationEmail(newUser.email);
 
-    // Authentification automatique après l'inscription
-    req.logIn(newUser, (err) => {
-      if (err) {
-        req.flash('error', 'Une erreur est survenue lors de la connexion après l\'inscription.');
-        return res.redirect('/login');
-      }
+    // Récupérer la langue de l'utilisateur (locale), supposons que tu la passes dans la session ou une variable.
+    const locale = req.locale || 'fr'; // Utilise 'fr' par défaut si la langue n'est pas définie.
 
-      // Redirection vers la page d'activation du 2FA
-      res.redirect('/enable-2fa');
-    });
+    // Rediriger vers la page 2FA en fonction de la langue
+    res.redirect(`/${locale}/enable-2fa`);
   } catch (error) {
     console.error('Erreur lors de l\'inscription :', error.message);
     req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
