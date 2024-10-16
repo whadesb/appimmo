@@ -71,34 +71,38 @@ router.get('/:locale/2fa', (req, res) => {
 });
 
 // Route pour vérifier le code 2FA après la connexion
-router.post('/:locale/2fa', async (req, res) => {
+router.post('/:locale/2fa', async (req, res, next) => {
     const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
     const userId = req.session.tempUserId;  // Récupérer l'utilisateur temporaire stocké dans la session
-    const { locale } = req.params; // Récupérer la locale depuis l'URL
+    const { locale } = req.params;  // Récupérer la locale depuis l'URL
 
-    // Trouver l'utilisateur dans la base de données
-    const user = await User.findById(userId);
-    if (!user) {
-        return res.redirect(`/${locale}/login`);  // Rediriger vers la connexion avec la locale si l'utilisateur n'est pas trouvé
-    }
+    try {
+        // Trouver l'utilisateur dans la base de données
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.redirect(`/${locale}/login`);  // Rediriger vers la connexion avec la locale si l'utilisateur n'est pas trouvé
+        }
 
-    // Vérifier le code 2FA
-    const isVerified = speakeasy.totp.verify({
-        secret: user.twoFactorSecret,  // Secret stocké dans la base de données
-        encoding: 'base32',
-        token: token  // Le code 2FA entré par l'utilisateur
-    });
-
-    if (isVerified) {
-        // Connecter l'utilisateur et vider la session temporaire
-        req.logIn(user, (err) => {
-            if (err) return next(err);
-            req.session.tempUserId = null;  // Supprimer l'utilisateur temporaire de la session
-            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la bonne locale
+        // Vérifier le code 2FA
+        const isVerified = speakeasy.totp.verify({
+            secret: user.twoFactorSecret,  // Secret stocké dans la base de données
+            encoding: 'base32',
+            token: token  // Le code 2FA entré par l'utilisateur
         });
-    } else {
-        // Si le code est incorrect, renvoyer la page 2FA avec un message d'erreur
-        res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
+
+        if (isVerified) {
+            // Connecter l'utilisateur et vider la session temporaire
+            req.logIn(user, (err) => {
+                if (err) return next(err);
+                req.session.tempUserId = null;  // Supprimer l'utilisateur temporaire de la session
+                return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la bonne locale
+            });
+        } else {
+            res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
+        }
+    } catch (error) {
+        console.error('Erreur lors de la vérification du code 2FA:', error);
+        res.status(500).send('Erreur lors de la vérification du code 2FA.');
     }
 });
 
