@@ -638,6 +638,26 @@ app.get('/enable-2fa', isAuthenticated, async (req, res) => {
         res.render('enable-2fa', { qrCode: data_url });
     });
 });
+app.post('/verify-2fa', isAuthenticated, async (req, res) => {
+    const user = req.user;
+    const { token } = req.body; // Récupère le code TOTP
+
+    // Vérifie le code TOTP
+    const isVerified = speakeasy.totp.verify({
+        secret: user.twoFactorSecret,
+        encoding: 'base32',
+        token: token
+    });
+
+    if (isVerified) {
+        // Active le 2FA
+        user.twoFactorEnabled = true;
+        await user.save();
+        res.redirect('/user'); // Redirige vers le profil utilisateur après vérification
+    } else {
+        res.status(400).send('Code incorrect, veuillez réessayer.');
+    }
+});
 
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
