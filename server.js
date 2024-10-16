@@ -629,7 +629,18 @@ app.post('/:locale/register', async (req, res, next) => {
 
 app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   const user = req.user;
-  const locale = req.params.locale;  // Récupérer la langue depuis l'URL
+  const { locale } = req.params;  // Récupérer la langue depuis l'URL
+
+  // Charger les traductions en fonction de la langue
+  const translationsPath = path.join(__dirname, `locales/${locale}/enable-2fa.json`);
+  
+  let translations;
+  try {
+    translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
 
   // Générer un secret pour l'utilisateur
   const secret = speakeasy.generateSecret({
@@ -646,23 +657,14 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
       return res.status(500).send('Erreur lors de la génération du QR code');
     }
 
-    // Charger les traductions en fonction de la langue
-    const translationsPath = path.join(__dirname, 'locales', locale, 'enable-2fa.json');
-    let translations;
-    try {
-      translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-    } catch (error) {
-      console.error(`Erreur lors du chargement des traductions : ${error}`);
-      return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
-
     // Rendre la vue avec le QR code et les traductions
     res.render('enable-2fa', {
       qrCode: data_url,
-      i18n: translations // Assure-toi de passer les traductions ici
+      i18n: translations  // Passer les traductions à la vue
     });
   });
 });
+
 
 app.post('/verify-2fa', isAuthenticated, async (req, res) => {
     const user = req.user;
