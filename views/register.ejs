@@ -166,7 +166,7 @@
                                     <%= i18n.error_message %>
                                 </div>
                             <% } %>
-                            <form action="/register" method="POST" autocomplete="off">
+                            <form action="/<%= locale %>/register" method="POST" autocomplete="off">
                                 <div class="mb-3">
                                     <label for="email" class="form-label"><%= i18n.email %></label>
                                     <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
