@@ -35,6 +35,17 @@ router.get('/enable-2fa', isAuthenticated, async (req, res) => {
     }
 });
 
+
+
+// Route pour afficher la page 2FA après la vérification du mot de passe
+router.get('/:locale/2fa', (req, res) => {
+    const { locale } = req.params;
+    if (!req.session.tempUserId) {
+        return res.redirect(`/${locale}/login`);
+    }
+    res.render('2fa', { locale: locale });
+});
+
 // Route pour vérifier le code TOTP après activation
 router.post('/:locale/2fa', async (req, res, next) => {
     const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
@@ -66,15 +77,6 @@ router.post('/:locale/2fa', async (req, res, next) => {
         console.error('Erreur lors de la vérification du code 2FA:', error);
         res.status(500).send('Erreur lors de la vérification du code 2FA.');
     }
-});
-
-// Route pour afficher la page 2FA après la vérification du mot de passe
-router.get('/:locale/2fa', (req, res) => {
-    const { locale } = req.params;
-    if (!req.session.tempUserId) {
-        return res.redirect(`/${locale}/login`);
-    }
-    res.render('2fa', { locale: locale });
 });
 
 module.exports = router;
