@@ -38,7 +38,8 @@ router.get('/enable-2fa', isAuthenticated, async (req, res) => {
 });
 
 // Route pour vérifier le code TOTP après activation
-router.post('/verify-2fa', isAuthenticated, async (req, res) => {
+router.post('/:locale/verify-2fa', isAuthenticated, async (req, res) => {
+    const { locale } = req.params;  // Récupère la langue depuis l'URL
     const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
     const user = req.user;
 
@@ -52,11 +53,12 @@ router.post('/verify-2fa', isAuthenticated, async (req, res) => {
     if (isVerified) {
         user.twoFactorEnabled = true;
         await user.save();
-        res.redirect('/user');  // Redirige vers la page utilisateur après vérification
+        res.redirect(`/${locale}/user`);  // Redirige vers la page utilisateur avec la bonne locale
     } else {
         res.status(400).send('Code incorrect, veuillez réessayer.');
     }
 });
+
 
 
 // Route pour afficher la page 2FA après la vérification du mot de passe
