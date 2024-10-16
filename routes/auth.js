@@ -52,20 +52,21 @@ router.post('/:locale/2fa', async (req, res) => {
 
     // Vérifier le code 2FA
     const isVerified = speakeasy.totp.verify({
-        secret: user.twoFactorSecret,
-        encoding: 'base32',
-        token: token
-    });
+    secret: user.twoFactorSecret,  // Le secret stocké dans la base de données
+    encoding: 'base32',
+    token: token  // Le code TOTP envoyé par l'utilisateur
+});
 
-    if (isVerified) {
-        req.logIn(user, (err) => {
-            if (err) return next(err);
-            req.session.tempUserId = null;
-            return res.redirect(`/${locale}/user`);
-        });
-    } else {
-        res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
-    }
+if (isVerified) {
+    req.logIn(user, (err) => {
+        if (err) return next(err);
+        req.session.tempUserId = null;
+        return res.redirect(`/${locale}/user`);
+    });
+} else {
+    // Si le code est incorrect, afficher un message d'erreur
+    res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
+}
 });
 
 // Route pour afficher la page 2FA après la vérification du mot de passe
