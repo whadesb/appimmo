@@ -1,5 +1,3 @@
-// routes/auth.js
-
 const express = require('express');
 const router = express.Router();
 const speakeasy = require('speakeasy');
@@ -42,7 +40,7 @@ router.post('/:locale/2fa', async (req, res) => {
     if (!req.session.tempUserId) {
         return res.redirect(`/${req.params.locale}/login`);
     }
-    
+
     const { token } = req.body;
     const userId = req.session.tempUserId;
     const { locale } = req.params;
@@ -70,55 +68,38 @@ router.post('/:locale/2fa', async (req, res) => {
     }
 });
 
-    if (isVerified) {
-        // Connecter l'utilisateur et vider la session temporaire
-        req.logIn(user, (err) => {
-            if (err) return next(err);
-            req.session.tempUserId = null;  // Supprimer l'utilisateur temporaire de la session
-            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la bonne locale
-        });
-    } else {
-        // Si le code est incorrect, renvoyer la page 2FA avec un message d'erreur
-        res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
-    }
-});
-
-
 // Route pour afficher la page 2FA après la vérification du mot de passe
 router.get('/:locale/2fa', (req, res) => {
-    const { locale } = req.params; // Récupère la locale depuis l'URL
+    const { locale } = req.params;
     if (!req.session.tempUserId) {
-        return res.redirect(`/${locale}/login`);  // Si l'utilisateur n'a pas passé l'étape du mot de passe, redirige vers la connexion avec la bonne locale
+        return res.redirect(`/${locale}/login`);
     }
-    res.render('2fa', { locale: locale });  // Affiche la vue 2FA avec la locale
+    res.render('2fa', { locale: locale });
 });
 
 // Route pour vérifier le code 2FA après la connexion
 router.post('/:locale/2fa', async (req, res, next) => {
-    const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
-    const userId = req.session.tempUserId;  // Récupérer l'utilisateur temporaire stocké dans la session
-    const { locale } = req.params;  // Récupérer la locale depuis l'URL
+    const { token } = req.body;
+    const userId = req.session.tempUserId;
+    const { locale } = req.params;
 
     try {
-        // Trouver l'utilisateur dans la base de données
         const user = await User.findById(userId);
         if (!user) {
-            return res.redirect(`/${locale}/login`);  // Rediriger vers la connexion avec la locale si l'utilisateur n'est pas trouvé
+            return res.redirect(`/${locale}/login`);
         }
 
-        // Vérifier le code 2FA
         const isVerified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,  // Secret stocké dans la base de données
+            secret: user.twoFactorSecret,
             encoding: 'base32',
-            token: token  // Le code 2FA entré par l'utilisateur
+            token: token
         });
 
         if (isVerified) {
-            // Connecter l'utilisateur et vider la session temporaire
             req.logIn(user, (err) => {
                 if (err) return next(err);
-                req.session.tempUserId = null;  // Supprimer l'utilisateur temporaire de la session
-                return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la bonne locale
+                req.session.tempUserId = null;
+                return res.redirect(`/${locale}/user`);
             });
         } else {
             res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
