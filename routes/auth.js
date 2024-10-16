@@ -65,35 +65,37 @@ router.get('/:locale/2fa', (req, res) => {
 
 // Route pour vérifier le code TOTP après activation
 router.post('/:locale/2fa', async (req, res, next) => {
-    const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
-    const userId = req.session.tempUserId;  // Récupérer l'utilisateur temporaire stocké dans la session
-    const { locale } = req.params;  // Récupérer la locale depuis l'URL
+  const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
+  const userId = req.session.tempUserId;  // Récupérer l'utilisateur temporaire stocké dans la session
+  const { locale } = req.params;  // Récupérer la locale depuis l'URL
 
-    try {
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.redirect(`/${locale}/login`);  // Rediriger si l'utilisateur n'est pas trouvé
-        }
-
-        const isVerified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,
-            encoding: 'base32',
-            token: token  // Le code 2FA entré par l'utilisateur
-        });
-
-        if (isVerified) {
-            req.logIn(user, (err) => {
-                if (err) return next(err);
-                req.session.tempUserId = null;
-                return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur
-            });
-        } else {
-            res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
-        }
-    } catch (error) {
-        console.error('Erreur lors de la vérification du code 2FA:', error);
-        res.status(500).send('Erreur lors de la vérification du code 2FA.');
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.redirect(`/${locale}/login`);  // Rediriger si l'utilisateur n'est pas trouvé
     }
+
+    const isVerified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: token  // Le code 2FA entré par l'utilisateur
+    });
+
+    if (isVerified) {
+      // Utiliser req.login au lieu de req.logIn (en minuscule) pour Passport.js
+      req.login(user, (err) => {
+        if (err) return next(err);
+        req.session.tempUserId = null;
+        return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur
+      });
+    } else {
+      res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
+    }
+  } catch (error) {
+    console.error('Erreur lors de la vérification du code 2FA:', error);
+    res.status(500).send('Erreur lors de la vérification du code 2FA.');
+  }
 });
+
 
 module.exports = router;
