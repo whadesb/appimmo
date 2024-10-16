@@ -621,38 +621,37 @@ app.post('/register', async (req, res) => {
   }
 });
 
-app.get('/enable-2fa', isAuthenticated, async (req, res) => {
-    const user = req.user;
+app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
+  const user = req.user;
+  const locale = req.params.locale;  // Récupérer la langue depuis l'URL
 
-    // Génère un secret unique pour l'utilisateur
-    const secret = speakeasy.generateSecret({
-        name: `YourAppName (${user.email})`,
+  // Générer un secret pour l'utilisateur
+  const secret = speakeasy.generateSecret({
+    name: `immoapp (${user.email})`,
+  });
+
+  // Sauvegarder le secret dans la base de données
+  user.twoFactorSecret = secret.base32;
+  await user.save();
+
+  // Générer le QR code
+  qrcode.toDataURL(secret.otpauth_url, (err, data_url) => {
+    if (err) {
+      return res.status(500).send('Erreur lors de la génération du QR code');
+    }
+
+    // Charger les traductions en fonction de la langue
+    const translationsPath = path.join(__dirname, `../locales/${locale}/enable-2fa.json`);
+    const translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+
+    // Rendre la vue avec le QR code et les traductions
+    res.render('enable-2fa', {
+      qrCode: data_url,
+      i18n: translations
     });
-
-    // Sauvegarde le secret dans la base de données
-    user.twoFactorSecret = secret.base32;
-    await user.save();
-
-    // Génère un QR code pour l'utilisateur
-    qrcode.toDataURL(secret.otpauth_url, (err, data_url) => {
-        if (err) {
-            return res.status(500).send('Erreur lors de la génération du QR code');
-        }
-
-        // Détermine la langue de l'utilisateur (par exemple, 'fr' ou 'en')
-        const locale = req.locale || 'fr'; // Par défaut 'fr'
-
-        // Charge les traductions depuis le fichier JSON
-        const translationsPath = path.join(__dirname, `../locales/${locale}/enable-2fa.json`);
-        const translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-
-        // Rendre la vue avec les traductions et le QR code
-        res.render('enable-2fa', {
-            qrCode: data_url,
-            i18n: translations  // Passer les traductions à la vue
-        });
-    });
+  });
 });
+
 app.post('/verify-2fa', isAuthenticated, async (req, res) => {
     const user = req.user;
     const { token } = req.body; // Récupère le code TOTP
