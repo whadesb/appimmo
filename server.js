@@ -627,7 +627,7 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
 
   // Générer un secret pour l'utilisateur
   const secret = speakeasy.generateSecret({
-    name: `immoapp (${user.email})`,
+    name: `UAP Immo (${user.email})`,
   });
 
   // Sauvegarder le secret dans la base de données
