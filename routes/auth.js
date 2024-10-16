@@ -71,7 +71,6 @@ router.get('/:locale/2fa', (req, res) => {
 });
 
 // Route pour vérifier le code 2FA après la connexion
-// Route pour vérifier le code 2FA après la connexion
 router.post('/:locale/2fa', async (req, res) => {
     const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
     const userId = req.session.tempUserId;  // Récupérer l'utilisateur temporaire stocké dans la session
