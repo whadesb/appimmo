@@ -33,6 +33,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
+const authRoutes = require('./routes/auth');
 
 
 const app = express();
