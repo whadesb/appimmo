@@ -589,23 +589,24 @@ app.get('/register', (req, res) => {
   res.redirect('/fr/register');
 });
 
-app.post('/register', async (req, res) => {
+app.post('/:locale/register', async (req, res, next) => {
   const { email, firstName, lastName, role, password, confirmPassword } = req.body;
+  const { locale } = req.params;  // Récupérer la langue (locale) depuis l'URL
 
   if (!validator.isEmail(email)) {
     req.flash('error', 'L\'adresse email n\'est pas valide.');
-    return res.redirect('/register');
+    return res.redirect(`/${locale}/register`);
   }
 
   if (password !== confirmPassword) {
     req.flash('error', 'Les mots de passe ne correspondent pas.');
-    return res.redirect('/register');
+    return res.redirect(`/${locale}/register`);
   }
 
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   if (!passwordRequirements.test(password)) {
     req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
-    return res.redirect('/register');
+    return res.redirect(`/${locale}/register`);
   }
 
   try {
@@ -616,16 +617,13 @@ app.post('/register', async (req, res) => {
     req.logIn(newUser, (err) => {  // Connexion automatique après inscription
       if (err) return next(err);
 
-      // Récupérer la langue de l'utilisateur
-      const locale = req.locale || 'fr';
-
-      // Rediriger l'utilisateur vers la page d'activation 2FA
+      // Rediriger l'utilisateur vers la page d'activation 2FA avec la bonne locale
       return res.redirect(`/${locale}/enable-2fa`);
     });
   } catch (error) {
     console.error('Erreur lors de l\'inscription :', error.message);
     req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
-    return res.redirect('/register');
+    return res.redirect(`/${locale}/register`);
   }
 });
 
