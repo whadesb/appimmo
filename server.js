@@ -39,12 +39,20 @@ const flash = require('connect-flash');
 
 const app = express();
 
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
+}));
+
+app.use(flash());
 // Middleware
 app.use(compression());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(flash());
 app.use(i18n.init);
 
 app.use((req, res, next) => {
@@ -59,14 +67,6 @@ app.use((req, res, next) => {
 
 // Utilisation de la route 2FA
 app.use('/', authRoutes);
-
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
-}));
 
 app.use(passport.initialize());
 app.use(passport.session());
