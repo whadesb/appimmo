@@ -32,6 +32,8 @@ const validator = require('validator');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
+const qrcode = require('qrcode');
+
 
 const app = express();
 const authRoutes = require('./middleware/auth');
