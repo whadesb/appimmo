@@ -65,11 +65,12 @@ router.post('/verify-2fa', isAuthenticated, async (req, res) => {
 });
 
 // Route pour afficher la page 2FA après la vérification du mot de passe
-router.get('/2fa', (req, res) => {
+router.get('/:locale/2fa', (req, res) => {
+    const { locale } = req.params; // Récupère la locale depuis l'URL
     if (!req.session.tempUserId) {
-        return res.redirect('/login');  // Si l'utilisateur n'a pas passé l'étape du mot de passe, redirige vers la connexion
+        return res.redirect(`/${locale}/login`);  // Si l'utilisateur n'a pas passé l'étape du mot de passe, redirige vers la connexion avec la bonne locale
     }
-    res.render('2fa');  // Affiche la vue 2FA où l'utilisateur entre le code TOTP
+    res.render('2fa', { locale: locale });  // Affiche la vue 2FA avec la locale
 });
 
 // Route pour vérifier le code 2FA après la connexion
