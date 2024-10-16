@@ -1,6 +1,7 @@
 {
   "title": "Enable Two-Factor Authentication",
   "instruction": "Scan this QR code with Google Authenticator",
-  "enter_code": "Enter the code from Google Authenticator",
-  "submit_button": "Enable 2FA"
+  "secret": "Secret Code:",
+  "qrCode": "QR Code",
+  "verify": "Verify Code"
 }
