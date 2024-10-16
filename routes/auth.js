@@ -73,14 +73,16 @@ router.get('/2fa', (req, res) => {
 });
 
 // Route pour vérifier le code 2FA après la connexion
-router.post('/2fa', async (req, res) => {
+// Route pour vérifier le code 2FA après la connexion
+router.post('/:locale/2fa', async (req, res) => {
     const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
     const userId = req.session.tempUserId;  // Récupérer l'utilisateur temporaire stocké dans la session
+    const { locale } = req.params; // Récupérer la locale depuis l'URL
 
     // Trouver l'utilisateur dans la base de données
     const user = await User.findById(userId);
     if (!user) {
-        return res.redirect('/login');  // Rediriger vers la connexion si l'utilisateur n'est pas trouvé
+        return res.redirect(`/${locale}/login`);  // Rediriger vers la connexion avec la locale si l'utilisateur n'est pas trouvé
     }
 
     // Vérifier le code 2FA
@@ -95,11 +97,11 @@ router.post('/2fa', async (req, res) => {
         req.logIn(user, (err) => {
             if (err) return next(err);
             req.session.tempUserId = null;  // Supprimer l'utilisateur temporaire de la session
-            return res.redirect('/user');  // Rediriger vers la page utilisateur après vérification réussie
+            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la bonne locale
         });
     } else {
         // Si le code est incorrect, renvoyer la page 2FA avec un message d'erreur
-        res.render('2fa', { error: 'Code incorrect, veuillez réessayer.' });
+        res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
     }
 });
 
