@@ -38,10 +38,6 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 
-// Utilisation de la route 2FA
-app.use('/auth', authRoutes);
-
-
 // Middleware
 app.use(compression());
 app.use(cookieParser());
@@ -106,7 +102,8 @@ app.use((req, res, next) => {
     next();
   }
 });
-
+// Utilisation de la route 2FA
+app.use('/auth', authRoutes);
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
