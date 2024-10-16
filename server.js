@@ -31,6 +31,7 @@ const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const speakeasy = require('speakeasy');
 
 const app = express();
 const authRoutes = require('./middleware/auth');
