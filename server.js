@@ -657,14 +657,14 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
       return res.status(500).send('Erreur lors de la génération du QR code');
     }
 
-    // Rendre la vue avec le QR code et les traductions
+    // Rendre la vue avec le QR code, les traductions et l'utilisateur
     res.render('enable-2fa', {
       qrCode: data_url,
-      i18n: translations  // Passer les traductions à la vue
+      i18n: translations,  // Passer les traductions à la vue
+      user: user           // Passer l'utilisateur à la vue
     });
   });
 });
-
 
 app.post('/verify-2fa', isAuthenticated, async (req, res) => {
     const user = req.user;
