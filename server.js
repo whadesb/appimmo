@@ -34,8 +34,6 @@ const nodemailer = require('nodemailer');
 const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const authRoutes = require('./routes/auth');
-const flash = require('connect-flash');
-
 
 const app = express();
 
