@@ -650,12 +650,18 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
 
     // Charger les traductions en fonction de la langue
     const translationsPath = path.join(__dirname, 'locales', locale, 'enable-2fa.json');
-    const translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    let translations;
+    try {
+      translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+      console.error(`Erreur lors du chargement des traductions : ${error}`);
+      return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
 
     // Rendre la vue avec le QR code et les traductions
     res.render('enable-2fa', {
       qrCode: data_url,
-      i18n: translations
+      i18n: translations // Assure-toi de passer les traductions ici
     });
   });
 });
