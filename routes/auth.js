@@ -4,6 +4,9 @@ const speakeasy = require('speakeasy');
 const qrcode = require('qrcode');
 const User = require('../models/User');  // Modèle utilisateur
 const isAuthenticated = require('../middleware/auth');  // Import du middleware d'authentification
+const fs = require('fs'); // Importation du module fs
+const path = require('path'); // Importation du module path
+
 
 // Route pour activer 2FA et générer le QR code
 router.get('/enable-2fa', isAuthenticated, async (req, res) => {
