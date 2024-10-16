@@ -1,0 +1,10 @@
+{
+    "title": "Vérification 2FA",
+    "heading": "Vérification à deux facteurs (2FA)",
+    "description": "Veuillez entrer le code à 6 chiffres généré par votre application Google Authenticator.",
+    "label": "Code de vérification 2FA",
+    "placeholder": "Entrez le code 2FA",
+    "submit_button": "Vérifier",
+    "error_message": "Code incorrect, veuillez réessayer.",
+    "logout": "Se déconnecter"
+}
