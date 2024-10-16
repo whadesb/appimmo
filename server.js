@@ -44,6 +44,8 @@ app.use(session({
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use(flash());
 // Middleware
@@ -66,8 +68,6 @@ app.use((req, res, next) => {
 // Utilisation de la route 2FA
 app.use('/', authRoutes);
 
-app.use(passport.initialize());
-app.use(passport.session());
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
