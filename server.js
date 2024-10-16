@@ -616,6 +616,29 @@ app.post('/register', async (req, res) => {
     res.redirect('/register');
   }
 });
+app.get('/enable-2fa', isAuthenticated, async (req, res) => {
+    const user = req.user;
+
+    // Génère un secret unique pour l'utilisateur
+    const secret = speakeasy.generateSecret({
+        name: `YourAppName (${user.email})`, // Le nom de l'application + email utilisateur
+    });
+
+    // Sauvegarde le secret dans la base de données
+    user.twoFactorSecret = secret.base32;
+    await user.save();
+
+    // Génère un QR code que l'utilisateur peut scanner
+    qrcode.toDataURL(secret.otpauth_url, (err, data_url) => {
+        if (err) {
+            return res.status(500).send('Erreur lors de la génération du QR code');
+        }
+
+        // Rends une page avec le QR code
+        res.render('enable-2fa', { qrCode: data_url });
+    });
+});
+
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
