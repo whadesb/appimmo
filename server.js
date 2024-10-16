@@ -102,8 +102,7 @@ app.use((req, res, next) => {
     next();
   }
 });
-// Utilisation de la route 2FA
-app.use('/auth', authRoutes);
+
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -207,7 +206,8 @@ app.get('/:lang/login', (req, res) => {
 app.get('/login', (req, res) => {
     res.redirect('/fr/login');  // Rediriger vers la version française par défaut
 });
-
+// Utilisation de la route 2FA
+app.use('/auth', authRoutes);
 
 app.get('/:lang/forgot-password', (req, res) => {
   const locale = req.params.lang;
