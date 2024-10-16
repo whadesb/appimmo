@@ -46,7 +46,7 @@ router.get('/:locale/2fa', (req, res) => {
     const { locale } = req.params;
     
     // Charger les traductions depuis le fichier correspondant
-    const translationsPath = `./locales/${locale}/2fa.json`;
+    const translationsPath = path.join(__dirname, '../locales', locale, '2fa.json');
 
     let translations;
     try {
