@@ -39,30 +39,25 @@ router.get('/enable-2fa', isAuthenticated, async (req, res) => {
 
 // Route pour vérifier le code TOTP après activation
 router.post('/verify-2fa', isAuthenticated, async (req, res) => {
-    try {
-        const user = req.user;
-        const { token } = req.body;  // Récupère le code TOTP entré par l'utilisateur
+    const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
+    const user = req.user;
 
-        // Vérifie si le code est valide
-        const isVerified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,
-            encoding: 'base32',
-            token: token
-        });
+    // Vérifie le code TOTP
+    const isVerified = speakeasy.totp.verify({
+        secret: user.twoFactorSecret,
+        encoding: 'base32',
+        token: token
+    });
 
-        if (isVerified) {
-            // Active le 2FA pour l'utilisateur après vérification
-            user.twoFactorEnabled = true;
-            await user.save();
-            res.redirect('/user');  // Redirige vers le profil utilisateur après activation
-        } else {
-            res.status(400).send('Code incorrect, veuillez réessayer.');
-        }
-    } catch (error) {
-        console.error('Erreur lors de la vérification du 2FA', error);
-        res.status(500).send('Erreur lors de la vérification du 2FA');
+    if (isVerified) {
+        user.twoFactorEnabled = true;
+        await user.save();
+        res.redirect('/user');  // Redirige vers la page utilisateur après vérification
+    } else {
+        res.status(400).send('Code incorrect, veuillez réessayer.');
     }
 });
+
 
 // Route pour afficher la page 2FA après la vérification du mot de passe
 router.get('/:locale/2fa', (req, res) => {
