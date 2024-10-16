@@ -666,9 +666,10 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   });
 });
 
-app.post('/verify-2fa', isAuthenticated, async (req, res) => {
+app.post('/:locale/verify-2fa', isAuthenticated, async (req, res) => {
     const user = req.user;
     const { token } = req.body; // Récupère le code TOTP
+    const { locale } = req.params; // Récupère la langue depuis l'URL
 
     // Vérifie le code TOTP
     const isVerified = speakeasy.totp.verify({
@@ -681,7 +682,7 @@ app.post('/verify-2fa', isAuthenticated, async (req, res) => {
         // Active le 2FA
         user.twoFactorEnabled = true;
         await user.save();
-        res.redirect('/user'); // Redirige vers le profil utilisateur après vérification
+        res.redirect(`/${locale}/user`); // Redirige vers le profil utilisateur avec la bonne langue
     } else {
         res.status(400).send('Code incorrect, veuillez réessayer.');
     }
