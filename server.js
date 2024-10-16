@@ -435,6 +435,20 @@ app.get('/:locale/logout', (req, res, next) => {
         });
     });
 });
+app.get('/:locale/2fa', (req, res) => {
+    const { locale } = req.params;
+    const translationsPath = `./locales/${locale}/2fa.json`;
+
+    let translations;
+    try {
+        translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    res.render('2fa', { i18n: translations, locale: locale });
+});
 
 // Route pour la page utilisateur avec locale et récupération des propriétés
 app.get('/:locale/user', isAuthenticated, async (req, res) => {
