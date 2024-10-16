@@ -12,13 +12,13 @@
         <p class="text-center">Veuillez entrer le code à 6 chiffres généré par votre application Google Authenticator.</p>
 
         <!-- Formulaire pour entrer le code 2FA -->
-        <form action="/2fa" method="POST" class="mt-4">
-            <div class="form-group">
-                <label for="token">Code de vérification 2FA</label>
-                <input type="text" class="form-control" id="token" name="token" placeholder="Entrez le code 2FA" required>
-            </div>
-            <button type="submit" class="btn btn-primary btn-block">Vérifier</button>
-        </form>
+       <form action="/<%= locale %>/2fa" method="POST" class="mt-4">
+    <div class="form-group">
+        <label for="token">Code de vérification 2FA</label>
+        <input type="text" class="form-control" id="token" name="token" placeholder="Entrez le code 2FA" required>
+    </div>
+    <button type="submit" class="btn btn-primary btn-block">Vérifier</button>
+</form>
 
         <% if (typeof error !== 'undefined') { %>
             <div class="alert alert-danger mt-4">
