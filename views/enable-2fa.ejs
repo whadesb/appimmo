@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="<%= locale %>">
 <head>
   <meta charset="UTF-8">
-  <title><%= i18n.enable_2fa.title %></title>
+  <title><%= i18n.title %></title>
 </head>
 <body>
-  <h1><%= i18n.enable_2fa.instruction %></h1>
-  <img src="<%= qrCode %>" alt="QR Code">
+  <h1><%= i18n.instruction %></h1>
+  <img src="<%= qrCode %>" alt="<%= i18n.qrCode %>">
+  <p><%= i18n.secret %> <%= user.twoFactorSecret %></p>
+  
   <form action="/verify-2fa" method="POST">
-    <label for="token"><%= i18n.enable_2fa.enter_code %></label>
-    <input type="text" name="token" id="token" required>
-    <button type="submit"><%= i18n.enable_2fa.submit_button %></button>
+    <input type="text" name="token" placeholder="Enter the code">
+    <button type="submit"><%= i18n.verify %></button>
   </form>
 </body>
 </html>
