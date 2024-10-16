@@ -207,7 +207,7 @@ app.get('/login', (req, res) => {
     res.redirect('/fr/login');  // Rediriger vers la version française par défaut
 });
 // Utilisation de la route 2FA
-app.use('/auth', authRoutes);
+app.use('/', authRoutes);
 
 app.get('/:lang/forgot-password', (req, res) => {
   const locale = req.params.lang;
