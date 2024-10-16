@@ -649,7 +649,7 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
     }
 
     // Charger les traductions en fonction de la langue
-    const translationsPath = path.join(__dirname, `../locales/${locale}/enable-2fa.json`);
+    const translationsPath = path.join(__dirname, 'locales', locale, 'enable-2fa.json');
     const translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
 
     // Rendre la vue avec le QR code et les traductions
