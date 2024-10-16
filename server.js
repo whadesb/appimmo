@@ -609,10 +609,10 @@ app.post('/register', async (req, res) => {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
     await sendAccountCreationEmail(newUser.email);
 
-    // Récupérer la langue de l'utilisateur (locale), supposons que tu la passes dans la session ou une variable.
-    const locale = req.locale || 'fr'; // Utilise 'fr' par défaut si la langue n'est pas définie.
-
-    // Rediriger vers la page 2FA en fonction de la langue
+    // Récupérer la langue de l'utilisateur
+    const locale = req.locale || 'fr'; // Par défaut 'fr'
+    
+    // Rediriger l'utilisateur vers la page d'activation 2FA
     res.redirect(`/${locale}/enable-2fa`);
   } catch (error) {
     console.error('Erreur lors de l\'inscription :', error.message);
