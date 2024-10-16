@@ -38,12 +38,26 @@ router.get('/enable-2fa', isAuthenticated, async (req, res) => {
 
 
 // Route pour afficher la page 2FA après la vérification du mot de passe
+// Route pour afficher la page 2FA après la vérification du mot de passe
 router.get('/:locale/2fa', (req, res) => {
     const { locale } = req.params;
-    if (!req.session.tempUserId) {
-        return res.redirect(`/${locale}/login`);
+    
+    // Charger les traductions depuis le fichier correspondant
+    const translationsPath = `./locales/${locale}/2fa.json`;
+
+    let translations;
+    try {
+        translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
     }
-    res.render('2fa', { locale: locale });
+
+    // Rendre la vue 2FA avec les traductions chargées
+    res.render('2fa', {
+        i18n: translations, // Passer les traductions à la vue
+        locale: locale      // Passer la langue active
+    });
 });
 
 // Route pour vérifier le code TOTP après activation
