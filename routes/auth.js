@@ -38,27 +38,36 @@ router.get('/enable-2fa', isAuthenticated, async (req, res) => {
 });
 
 // Route pour vérifier le code TOTP après activation
-router.post('/:locale/verify-2fa', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;  // Récupère la langue depuis l'URL
+router.post('/:locale/2fa', async (req, res) => {
     const { token } = req.body;  // Le code TOTP envoyé par l'utilisateur
-    const user = req.user;
+    const userId = req.session.tempUserId;  // Récupérer l'utilisateur temporaire stocké dans la session
+    const { locale } = req.params; // Récupérer la locale depuis l'URL
 
-    // Vérifie le code TOTP
+    // Trouver l'utilisateur dans la base de données
+    const user = await User.findById(userId);
+    if (!user) {
+        return res.redirect(`/${locale}/login`);  // Rediriger vers la connexion avec la locale si l'utilisateur n'est pas trouvé
+    }
+
+    // Vérifier le code 2FA
     const isVerified = speakeasy.totp.verify({
-        secret: user.twoFactorSecret,
+        secret: user.twoFactorSecret,  // Secret stocké dans la base de données
         encoding: 'base32',
-        token: token
+        token: token  // Le code 2FA entré par l'utilisateur
     });
 
     if (isVerified) {
-        user.twoFactorEnabled = true;
-        await user.save();
-        res.redirect(`/${locale}/user`);  // Redirige vers la page utilisateur avec la bonne locale
+        // Connecter l'utilisateur et vider la session temporaire
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+            req.session.tempUserId = null;  // Supprimer l'utilisateur temporaire de la session
+            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la bonne locale
+        });
     } else {
-        res.status(400).send('Code incorrect, veuillez réessayer.');
+        // Si le code est incorrect, renvoyer la page 2FA avec un message d'erreur
+        res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale: locale });
     }
 });
-
 
 
 // Route pour afficher la page 2FA après la vérification du mot de passe
