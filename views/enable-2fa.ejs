@@ -9,9 +9,9 @@
   <img src="<%= qrCode %>" alt="<%= i18n.qrCode %>">
   <p><%= i18n.secret %> <%= user.twoFactorSecret %></p>
   
-  <form action="/verify-2fa" method="POST">
+  <form action="/<%= locale %>/verify-2fa" method="POST">
     <input type="text" name="token" placeholder="Enter the code">
-    <button type="submit"><%= i18n.verify %></button>
-  </form>
+    <button type="submit">Submit</button>
+</form>
 </body>
 </html>
