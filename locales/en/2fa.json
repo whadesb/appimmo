@@ -6,5 +6,18 @@
   "placeholder": "Enter 2FA Code",
   "submit_button": "Verify",
   "error_message": "Incorrect code, please try again.",
-  "logout": "Logout"
+  "logout": "Logout",
+  "menu": {
+    "home": "Home",
+    "fonctionnement": "How it works",
+    "processus": "Process",
+    "faq": "FAQ",
+    "contact": "Contact"
+  },
+  "footer": {
+    "information": "Information",
+    "create_account": "Create an account",
+    "access": "Access",
+    "contact": "Contact"
+  }
 }
