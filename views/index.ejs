@@ -33,203 +33,220 @@
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
 
-    <!-- Custom CSS for animations and layout -->
     <style>
         /* Custom styles */
-        .cookie-consent-popup {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: #232430;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            z-index: 9999;
-            display: none;
+        body {
+            font-family: 'Montserrat', sans-serif;
         }
 
-        .cookie-consent-popup.visible {
-            display: block;
-        }
-
-        .btn-accept,
-        .btn-decline {
-            background-color: #C4B990;
-            color: #232430;
-            border: none;
-            padding: 10px 20px;
-            font-size: 1rem;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-        }
-
-        .btn-accept:hover,
-        .btn-decline:hover {
-            background-color: #a4946c;
-        }
-
-        .hero-section {
-            position: relative;
-            height: 100vh;
-            background: url('/images/hero-background.jpg') no-repeat center center/cover;
-            color: white;
-            text-align: left;
-        }
-
-        .hero-section .overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        .hero-content {
+        .hero {
             display: flex;
-            flex-direction: row;
+            flex-wrap: wrap;
+            background-color: #fff;
+            padding: 50px;
             align-items: center;
-            height: 100%;
-            z-index: 1;
         }
 
-        .hero-text {
-            flex: 1;
-            padding-right: 2rem;
+        .hero .col-left {
+            flex: 2;
+            padding-right: 20px;
         }
 
-        .hero-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #52566f;
-        }
-
-        .hero-subtitle {
-            font-size: 1.5rem;
-            font-weight: 400;
-            margin-top: 20px;
-        }
-
-        .btn-hero {
-            margin-top: 30px;
-            padding: 15px 30px;
-            font-size: 1.2rem;
-        }
-
-        .hero-image {
-            flex: 1;
-            text-align: center;
-        }
-
-        .hero-image img {
+        .hero .col-left img {
             width: 100%;
-            max-width: 500px;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        .hero .col-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            color: #333;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .hero h2 {
+            font-size: 1.5rem;
+            color: #666;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                padding: 20px;
+            }
+
+            .hero .col-left {
+                order: 2;
+                padding-right: 0;
+            }
+
+            .hero .col-right {
+                order: 1;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero h2 {
+                font-size: 1.2rem;
+            }
+
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+
+        .site-footer {
+            background-color: #f8f9fa;
+            padding: 40px 0;
+        }
+
+        .site-footer h6 {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .site-footer a {
+            color: #666;
+        }
+
+        .site-footer a:hover {
+            color: #C4B990;
         }
     </style>
 </head>
 <body id="top">
-  
-     <main>
-         <nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container">
-        <a class="navbar-brand" href="/<%= locale %>">
-            <span>UAP Immo</span>
-        </a>
-        <div class="d-lg-none ms-auto me-4">
-            <a href="/<%= locale %>/login" style="position: relative;">
-                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                <span class="visually-hidden">Login</span>
-            </a>
-        </div>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/<%= locale %>#fonctionnement"><%= i18n.menu.fonctionnement %></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/<%= locale %>#processus"><%= i18n.menu.processus %></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/<%= locale %>#faq"><%= i18n.menu.faq %></a>
-                </li>
-                              <li class="nav-item">
-    <a class="nav-link click-scroll" href="/fr/contact">contact</a>
-</li>
-            </ul>
-            <div class="d-none d-lg-block">
-                <a href="/<%= locale %>/login" style="position: relative;">
-                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                    <span class="visually-hidden">Login</span>
+    <main>
+        <!-- Navigation -->
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="/<%= locale %>">
+                    <span>UAP Immo</span>
                 </a>
-            </div>
-            <div class="dropdown d-none d-lg-block ms-3">
-                <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                    <%= locale === 'fr' ? 'FR' : 'EN' %>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                    <li>
-                        <a class="dropdown-item" href="/fr/login">FR</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="/en/login">EN</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</nav>
-         
- 
-
-    <footer class="site-footer section-padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-12 mb-4 pb-2">
-                    <a class="navbar-brand mb-2" href="/<%= locale %>">
-                        <span>UAP Immo</span>
+                <div class="d-lg-none ms-auto me-4">
+                    <a href="/<%= locale %>/login" style="position: relative;">
+                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                        <span class="visually-hidden">Login</span>
                     </a>
                 </div>
-                <div class="col-lg-3 col-md-4 col-6">
-                    <h6 class="site-footer-title mb-3">Informations</h6>
-                    <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
-                        <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/<%= locale %>#fonctionnement"><%= i18n.menu.fonctionnement %></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/<%= locale %>#processus"><%= i18n.menu.processus %></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/<%= locale %>#faq"><%= i18n.menu.faq %></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/fr/contact">contact</a>
+                        </li>
                     </ul>
+                    <div class="d-none d-lg-block">
+                        <a href="/<%= locale %>/login" style="position: relative;">
+                            <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                            <span class="visually-hidden">Login</span>
+                        </a>
+                    </div>
+                    <div class="dropdown d-none d-lg-block ms-3">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+                            <%= locale === 'fr' ? 'FR' : 'EN' %>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                            <li>
+                                <a class="dropdown-item" href="/fr/login">FR</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/en/login">EN</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <div class="col-lg-3 col-md-4 col-6">
-                    <h6 class="site-footer-title mb-3">Accès</h6>
-                    <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-        <%= i18n.menu.language %>
-    </button>
-    <ul class="dropdown-menu">
-        <li>
-            <a class="dropdown-item" href="/en/contact">English</a>
-        </li>
-        <li>
-            <a class="dropdown-item" href="/fr/contact">Français</a>
-        </li>
-    </ul>
-</div>
             </div>
-        </div>
-        <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. <%= i18n.footer.all_rights %></p>
-    </div>
-</footer>
-</body>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <div class="col-left">
+                <img src="https://via.placeholder.com/800x500" alt="Image Immobilier">
+            </div>
+            <div class="col-right">
+                <h1>UAP Immo</h1>
+                <h2>Votre solution de webmarketing immobilier</h2>
+                <p>UAP Immo vous accompagne dans la création et la diffusion de vos annonces immobilières grâce à une plateforme simple et efficace.</p>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="site-footer section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-12 mb-4 pb-2">
+                        <a class="navbar-brand mb-2" href="/<%= locale %>">
+                            <span>UAP Immo</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <h6 class="site-footer-title mb-3">Informations</h6>
+                        <ul class="site-footer-links">
+                            <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
+                            <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <h6 class="site-footer-title mb-3">Accès</h6>
+                        <ul class="site-footer-links">
+                            <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <%= i18n.menu.language %>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="/en/contact">English</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="/fr/contact">Français</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. <%= i18n.footer.all_rights %></p>
+            </div>
+        </footer>
+    </main>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
