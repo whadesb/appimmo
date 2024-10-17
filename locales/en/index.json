@@ -61,5 +61,11 @@
   "type": "Contact Type",
   "particulier": "Individual",
   "professionnel": "Professional",
-  "submit_button": "Submit"
+  "submit_button": "Submit",
+  "new_hero": {
+    "title": "Real Estate Made Simple",
+    "subtitle": "Manage your listings effortlessly with UAP Immo",
+    "description": "UAP Immo provides an easy-to-use platform to create, manage, and publish your real estate listings. Join us today and maximize your exposure.",
+    "image_alt": "Real estate platform screenshot"
+  }
 }
