@@ -107,6 +107,24 @@
         .navbar .navbar-icon.bi-person {
             color: #000 !important;
         }
+.btn-commencer {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 1rem;
+    text-align: center;
+    text-decoration: none;
+    color: #52566f;
+    border: 2px solid #52566f; /* Bords fins et gris foncé */
+    background-color: transparent;
+    transition: background-color 0.3s, color 0.3s;
+    margin-top: 20px;
+}
+
+.btn-commencer:hover {
+    background-color: #52566f;
+    color: #fff;
+}
+
 
         @media (max-width: 767px) {
             .form-container {
@@ -197,6 +215,8 @@
                     <h4><%= i18n.heading %></h4>
                     <p class="form-text"><%= i18n.intro %></p>
                     <p class="form-text"><%= i18n.details %></p>
+                    <!-- Ajout du bouton ici -->
+                    <a href="#commencer" class="btn-commencer">Commencer maintenant</a>
                 </div>
             </div>
             <div class="col-lg-6 col-12">
@@ -207,6 +227,7 @@
         </div>
     </div>
 </section>
+
 <section class="second-section">
     <div class="container">
         <div class="row">
