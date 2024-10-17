@@ -61,5 +61,11 @@
   "type": "Type de contact",
   "particulier": "Particulier",
   "professionnel": "Professionnel",
-  "submit_button": "Envoyer"
+  "submit_button": "Envoyer",
+  "new_hero": {
+    "title": "Simplifiez la gestion immobilière",
+    "subtitle": "Gérez vos annonces facilement avec UAP Immo",
+    "description": "UAP Immo vous propose une plateforme simple pour créer, gérer et publier vos annonces immobilières. Rejoignez-nous dès aujourd'hui et maximisez votre visibilité.",
+    "image_alt": "Capture d'écran de la plateforme immobilière"
+  }
 }
