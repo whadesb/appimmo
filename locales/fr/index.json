@@ -24,7 +24,8 @@
     "fonctionnement": "Fonctionnement",
     "processus": "Processus",
     "faq": "FAQs",
-    "contact": "Contact"
+    "contact": "Contact",
+    "language": "Langue"
   },
   "faq": {
     "questions": [
@@ -41,5 +42,24 @@
         "answer": "Actuellement, nous acceptons les paiements par cartes bancaires."
       }
     ]
-  }
+  },
+  "footer": {
+    "informations": "Informations",
+    "create_account": "Créer un compte",
+    "access": "Accès",
+    "all_rights": "Tous droits réservés."
+  },
+  "heading": "Bienvenue sur UAP Immo",
+  "intro": "UAP Immo est votre solution complète pour créer et diffuser des annonces immobilières.",
+  "details": "Remplissez simplement notre formulaire, et nous nous occupons de générer une landing page optimisée pour vos annonces.",
+  "form_title": "Contactez-nous",
+  "success_message": "Merci pour votre message. Nous reviendrons vers vous dès que possible.",
+  "first_name": "Prénom",
+  "last_name": "Nom",
+  "email": "E-mail",
+  "message": "Votre message",
+  "type": "Type de contact",
+  "particulier": "Particulier",
+  "professionnel": "Professionnel",
+  "submit_button": "Envoyer"
 }
