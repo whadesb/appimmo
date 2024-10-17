@@ -1,7 +1,20 @@
 {
   "title": "Activer l'authentification à deux facteurs",
-  "instruction": "Veuillez scanner le QR code suivant avec votre application d'authentification pour activer le 2FA.",
+  "instruction": "Veuillez scanner ce QR code avec votre application d'authentification pour activer le 2FA.",
   "secret": "Code secret :",
   "qrCode": "QR Code",
-  "verify": "Vérifier le code"
+  "verify": "Vérifier",
+  "menu": {
+    "home": "Accueil",
+    "fonctionnement": "Fonctionnement",
+    "processus": "Processus",
+    "faq": "FAQ",
+    "contact": "Contact"
+  },
+  "footer": {
+    "information": "Informations",
+    "create_account": "Créer un compte",
+    "access": "Accès",
+    "contact": "Contact"
+  }
 }
