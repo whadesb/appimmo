@@ -300,6 +300,7 @@ section[id] {
 
 .navbar-brand,
 .navbar-brand:hover {
+  font-family: lato, open sans;
   font-size: var(--h3-font-size);
   font-weight: var(--font-weight-bold);
   display: block;
