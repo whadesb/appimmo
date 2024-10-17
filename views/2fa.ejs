@@ -3,36 +3,179 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= i18n.title %></title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <meta name="description" content="Two-Factor Authentication page for UAP Immo.">
+    <title>UAP Immo | <%= i18n.title %></title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preload" href="/css/styles-main.css" as="style">
+    <link rel="stylesheet" href="/css/styles-main.css">
+    <style>
+        .form-container {
+            max-width: 600px;
+            margin: 110px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+        .form-control-icon {
+            position: relative;
+        }
+        .form-control-icon input {
+            padding-right: 2.5rem;
+        }
+        .form-control-icon .icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #52566f;
+            border-color: #000;
+        }
+        .btn-primary:hover {
+            background-color: #52566f;
+            border-color: #52566f;
+        }
+        .navbar {
+            background-color: #C4B990;
+        }
+        .navbar .navbar-brand, .navbar .nav-link {
+            color: #000;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
-        <h1 class="text-center"><%= i18n.heading %></h1>
-        <p class="text-center"><%= i18n.description %></p>
 
-        <!-- Formulaire pour entrer le code 2FA -->
-        <form action="/<%= locale %>/2fa" method="POST" class="mt-4">
-            <div class="form-group">
-                <label for="token"><%= i18n.label %></label>
-                <input type="text" class="form-control" id="token" name="token" placeholder="<%= i18n.placeholder %>" required>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/<%= locale %>">
+            <span>UAP Immo</span>
+        </a>
+        <div class="d-lg-none ms-auto me-4">
+            <a href="/<%= locale %>/login" style="position: relative;">
+                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                <span class="visually-hidden">Login</span>
+            </a>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>#fonctionnement"><%= i18n.menu.fonctionnement %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>#processus"><%= i18n.menu.processus %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>#faq"><%= i18n.menu.faq %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/fr/contact">contact</a>
+                </li>
+            </ul>
+            <div class="d-none d-lg-block">
+                <a href="/<%= locale %>/login" style="position: relative;">
+                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                    <span class="visually-hidden">Login</span>
+                </a>
             </div>
-            <button type="submit" class="btn btn-primary btn-block"><%= i18n.submit_button %></button>
-        </form>
-
-        <% if (typeof error !== 'undefined') { %>
-            <div class="alert alert-danger mt-4">
-                <%= i18n.error_message %>
+            <div class="dropdown d-none d-lg-block ms-3">
+                <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+                    <%= locale === 'fr' ? 'FR' : 'EN' %>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                    <li>
+                        <a class="dropdown-item" href="/fr/login">FR</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/en/login">EN</a>
+                    </li>
+                </ul>
             </div>
-        <% } %>
-
-        <!-- Lien pour se déconnecter -->
-        <div class="text-center mt-3">
-            <a href="/logout"><%= i18n.logout %></a>
         </div>
     </div>
+  </nav>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+  <main>
+    <!-- Section for 2FA -->
+    <section class="new-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 mx-auto">
+            <div class="form-container">
+              <h2 class="text-center"><%= i18n.heading %></h2>
+              <p class="text-center"><%= i18n.description %></p>
+
+              <!-- Formulaire pour entrer le code 2FA -->
+              <form action="/<%= locale %>/2fa" method="POST" class="mt-4">
+                <div class="form-group">
+                  <label for="token"><%= i18n.label %></label>
+                  <div class="form-control-icon">
+                    <input type="text" class="form-control" id="token" name="token" placeholder="<%= i18n.placeholder %>" required>
+                    <i class="bi bi-key icon"></i>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block"><%= i18n.submit_button %></button>
+              </form>
+
+              <% if (typeof error !== 'undefined') { %>
+                <div class="alert alert-danger mt-4">
+                  <%= i18n.error_message %>
+                </div>
+              <% } %>
+
+              <!-- Lien pour se déconnecter -->
+              <div class="text-center mt-3">
+                <a href="/logout"><%= i18n.logout %></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer section-padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-3 col-12 mb-4 pb-2">
+          <a class="navbar-brand mb-2" href="/">
+            <span>UAP Immo</span>
+          </a>
+        </div>
+        <div class="col-lg-3 col-md-4 col-6">
+          <h6 class="site-footer-title mb-3">Informations</h6>
+          <ul class="site-footer-links">
+            <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
+            <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-3 col-md-4 col-6">
+          <h6 class="site-footer-title mb-3">Accès</h6>
+          <ul class="site-footer-links">
+            <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
+          </ul>
+        </div>
+        <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JAVASCRIPT FILES -->
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
