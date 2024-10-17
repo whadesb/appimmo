@@ -180,55 +180,7 @@
                 </div>
             </div>
         </nav>
-        <section class="new-section" id="section_4">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-12">
-                        <div class="text-container">
-                            <h4><%= i18n.heading %></h4>
-                            <p class="form-text"><%= i18n.intro %></p>
-                            <p class="form-text"><%= i18n.details %></p>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-12">
-                        <div class="form-container">
-                            <h4><%= i18n.form_title %></h4>
-                            <% if (typeof messageEnvoye !== 'undefined' && messageEnvoye) { %>
-                                <div class="alert alert-success" role="alert">
-                                    <%= i18n.success_message %>
-                                </div>
-                            <% } %>
-                            <form action="/send-contact" method="POST">
-                                <div class="mb-3">
-                                    <label for="firstName" class="form-label"><%= i18n.first_name %></label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lastName" class="form-label"><%= i18n.last_name %></label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="email" class="form-label"><%= i18n.email %></label>
-                                    <input type="email" class="form-control" id="email" name="email" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="message" class="form-label"><%= i18n.message %></label>
-                                    <textarea class="form-control" id="message" name="message" rows="4" required style="resize: none;"></textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="type" class="form-label"><%= i18n.type %></label>
-                                    <select class="form-control" id="type" name="type" required>
-                                        <option value="particulier"><%= i18n.particulier %></option>
-                                        <option value="professionnel"><%= i18n.professionnel %></option>
-                                    </select>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100"><%= i18n.submit_button %></button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
+       
  <section class="new-section" id="section_4">
             <div class="container">
                 <div class="row">
