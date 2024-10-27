@@ -200,19 +200,20 @@ box-shadow : 5px 4px 5px -2px #3B3B3B;
                             <span class="visually-hidden">Login</span>
                         </a>
                     </div>
-                    <div class="dropdown d-none d-lg-block ms-3">
-                        <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                            <%= locale === 'fr' ? 'FR' : 'EN' %>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                            <li>
-                                <a class="dropdown-item" href="/fr">FR</a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item" href="/en">EN</a>
-                            </li>
-                        </ul>
-                    </div>
+                    <div class="dropdown ms-lg-3">
+    <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+        <%= locale === 'fr' ? 'FR' : 'EN' %>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+        <li>
+            <a class="dropdown-item" href="/fr">FR</a>
+        </li>
+        <li>
+            <a class="dropdown-item" href="/en">EN</a>
+        </li>
+    </ul>
+</div>
+
                 </div>
             </div>
         </nav>
