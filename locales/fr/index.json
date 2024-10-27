@@ -43,11 +43,9 @@
       }
     ]
   },
-  {
   "fonctionnementTitle": "Fonctionnement de la plateforme",
   "fonctionnementPart1": "La plateforme UAP Immo simplifie la création d'annonces immobilières en offrant un processus en ligne rapide et intuitif. En quelques étapes, vous pouvez générer une landing page optimisée pour chaque propriété. Il vous suffit de remplir un formulaire dédié, de télécharger des photos et de renseigner les détails clés de votre bien immobilier. Une fois ces informations saisies, notre système génère automatiquement une page professionnelle prête à être diffusée.",
-  "fonctionnementPart2": "Une fois votre annonce créée, UAP Immo met à profit son expertise en webmarketing pour maximiser sa visibilité. Nous diffusons votre annonce sur les canaux de communication les plus pertinents pour capter l’attention de votre audience cible et attirer des prospects qualifiés. En utilisant des stratégies de diffusion ciblées et optimisées, nous vous aidons à convertir efficacement votre audience en clients potentiels pour atteindre vos objectifs de vente."
-},
+  "fonctionnementPart2": "Une fois votre annonce créée, UAP Immo met à profit son expertise en webmarketing pour maximiser sa visibilité. Nous diffusons votre annonce sur les canaux de communication les plus pertinents pour capter l’attention de votre audience cible et attirer des prospects qualifiés. En utilisant des stratégies de diffusion ciblées et optimisées, nous vous aidons à convertir efficacement votre audience en clients potentiels pour atteindre vos objectifs de vente.",
   "footer": {
     "informations": "Informations",
     "create_account": "Créer un compte",
