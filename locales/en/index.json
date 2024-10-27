@@ -43,6 +43,11 @@
       }
     ]
   },
+{
+  "fonctionnementTitle": "How the Platform Works",
+  "fonctionnementPart1": "UAP Immo simplifies the creation of real estate ads with a quick and intuitive online process. In just a few steps, you can generate an optimized landing page for each property. Simply fill out a dedicated form, upload photos, and enter the essential details of your property. Once this information is submitted, our system automatically generates a professional page ready for distribution.",
+  "fonctionnementPart2": "Once your ad is created, UAP Immo leverages its web marketing expertise to maximize its visibility. We broadcast your ad on the most relevant channels to capture your target audience's attention and attract qualified prospects. With targeted and optimized marketing strategies, we help you effectively convert your audience into potential clients, helping you achieve your sales objectives."
+},
   "footer": {
     "informations": "Information",
     "create_account": "Create an account",
