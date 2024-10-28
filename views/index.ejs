@@ -16,12 +16,6 @@
     <meta property="og:image" content="<%= i18n.ogImage %>">
     <meta property="og:url" content="https://www.uapimmo.com">
     <meta property="og:type" content="website">
-    <!-- Balises Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="<%= i18n.ogTitle %>">
-    <meta name="twitter:description" content="<%= i18n.ogDescription %>">
-    <meta name="twitter:image" content="<%= i18n.ogImage %>">
-
     <!-- Liens CSS et préchargement -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -130,9 +124,14 @@
                 margin-bottom: 10px;
                 color: #333;
             }
+            /* Réduction de l’espace entre sections en version mobile */
             .new-section {
-                padding-top: 20px;
-                padding-bottom: 20px;
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            .second-section {
+                padding-top: 10px;
+                padding-bottom: 10px;
             }
         }
     </style>
@@ -186,9 +185,7 @@
             </div>
         </section>
 
-      
-
-        <section class="second-section">
+       <section class="second-section">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 col-12">
