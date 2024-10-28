@@ -144,14 +144,31 @@
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto d-inline-block me-2">
+                    <!-- Icône de profil en version mobile -->
                     <a href="/<%= locale %>/login" style="position: relative;">
-                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                        <i class="bi bi-person-circle"></i>
                         <span class="visually-hidden">Login</span>
                     </a>
                 </div>
+
+                <!-- Dropdown pour le changement de langue en version mobile -->
+                <div class="d-lg-none language-dropdown-mobile d-inline-block me-2">
+                    <div class="dropdown">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false">
+                            <%= locale === 'fr' ? 'FR' : 'EN' %>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="languageDropdownMobile">
+                            <li><a class="dropdown-item" href="/fr">FR</a></li>
+                            <li><a class="dropdown-item" href="/en">EN</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Bouton de menu hamburger mobile -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-lg-5 me-lg-auto">
                         <li class="nav-item">
@@ -161,30 +178,28 @@
                             <a class="nav-link click-scroll" href="/fr/contact">Contact</a>
                         </li>
                     </ul>
-            <!-- Icône de profil et bouton de changement de langue pour la version desktop -->
-            <div class="d-none d-lg-flex align-items-center">
-                <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
-                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                    <span class="visually-hidden">Login</span>
-                </a>
-                <div class="dropdown">
-                    <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownDesktop" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                        <%= locale === 'fr' ? 'FR' : 'EN' %>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownDesktop">
-                        <li>
-                            <a class="dropdown-item" href="/fr">FR</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/en">EN</a>
-                        </li>
-                    </ul>
+
+                    <!-- Icône de profil et bouton de changement de langue pour la version desktop -->
+                    <div class="d-none d-lg-flex align-items-center">
+                        <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
+                            <i class="bi bi-person-circle"></i>
+                            <span class="visually-hidden">Login</span>
+                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownDesktop" data-bs-toggle="dropdown" aria-expanded="false">
+                                <%= locale === 'fr' ? 'FR' : 'EN' %>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownDesktop">
+                                <li><a class="dropdown-item" href="/fr">FR</a></li>
+                                <li><a class="dropdown-item" href="/en">EN</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</nav>
+        </nav>
 
+        <!-- Contenu principal -->
         <section class="new-section">
             <div class="container">
                 <div class="row">
@@ -193,7 +208,7 @@
                             <h4><%= i18n.heading %></h4>
                             <p class="form-text"><%= i18n.intro %></p>
                             <p class="form-text"><%= i18n.details %></p>
-                            <a href="/<%= locale %>/login" class="btn-commencer" style="position: relative;">Commencer maintenant</a>
+                            <a href="/<%= locale %>/login" class="btn-commencer">Commencer maintenant</a>
                         </div>
                     </div>
                     <div class="col-lg-6 col-12">
@@ -255,12 +270,8 @@
                                 <%= i18n.menu.language %>
                             </button>
                             <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="/en/contact">English</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="/fr/contact">Français</a>
-                                </li>
+                                <li><a class="dropdown-item" href="/en/contact">English</a></li>
+                                <li><a class="dropdown-item" href="/fr/contact">Français</a></li>
                             </ul>
                         </div>
                     </div>
