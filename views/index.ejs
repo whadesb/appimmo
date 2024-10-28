@@ -87,6 +87,15 @@ box-shadow : 5px 4px 5px -2px #3B3B3B;
     margin-bottom: 0px;
 }
 
+.icon-container {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.icon-container i {
+    font-size: 2rem; /* Taille de l'icône */
+    color: #52566f; /* Couleur de l'icône */
+}
 
         .hero-section {
             padding-top: 100px;
@@ -269,22 +278,28 @@ box-shadow : 5px 4px 5px -2px #3B3B3B;
 
 <section class="second-section">
     <div class="container">
-     
         <div class="row">
             <div class="col-lg-6 col-12">
                 <div class="text-container">
+                    <!-- Icône centrée au-dessus du paragraphe -->
+                    <div class="icon-container">
+                        <i class="bi bi-house-door"></i>
+                    </div>
                     <p class="form-text"><%= i18n.fonctionnementPart1 %></p>
                 </div>
             </div>
             <div class="col-lg-6 col-12">
                 <div class="text-container">
+                    <!-- Icône centrée au-dessus du paragraphe -->
+                    <div class="icon-container">
+                        <i class="bi bi-building"></i>
+                    </div>
                     <p class="form-text"><%= i18n.fonctionnementPart2 %></p>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
 
     </main>
         <footer class="site-footer section-padding">
