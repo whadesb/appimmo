@@ -29,22 +29,55 @@
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        .form-container h2 {
+            margin-bottom: 20px;
+        }
+        .form-container .form-text {
+            margin-bottom: 15px;
+        }
+        .new-section {
+            padding: 60px 0; /* Padding for the new section */
+            background-color: #f8f9fa; /* Light background color */
+        }
+        .hero-section {
+            padding-top: 100px; /* Ensure content is not hidden behind the fixed navbar */
+        }
+        .form-control-icon {
+            position: relative;
+        }
+        .form-control-icon input {
+            padding-right: 2.5rem;
+        }
+        .form-control-icon .icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #52566f;
+            border-color: #000;
+        }
+        .btn-primary:hover {
+            background-color: #52566f;
+            border-color: #52566f;
+        }
+        .form-container .form-label {
+            font-weight: 600;
+        }
         .navbar {
             background-color: #C4B990; 
         }
         .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
             color: #000; 
         }
+        .navbar .navbar-icon {
+            font-size: 1.5rem;
+        }
         .navbar .navbar-icon.bi-person {
             color: #000 !important;
         }
-        .dropdown-toggle::after {
-            display: none;
-        }
-        .dropdown-menu-end {
-            text-align: left;
-        }
-        /* Correction pour les dropdowns en version mobile */
         @media (max-width: 767px) {
             .form-container {
                 background: none;
@@ -57,141 +90,173 @@
 <body id="top">
   <main>
        <nav class="navbar navbar-expand-lg fixed-top">
-            <div class="container">
-                <a class="navbar-brand" href="/<%= locale %>">UAP Immo</a>
-                <div class="d-lg-none ms-auto d-inline-block me-2">
-                    <a href="/<%= locale %>/login" style="position: relative;">
-                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                        <span class="visually-hidden">Login</span>
-                    </a>
-                </div>
-
-                <!-- Bouton de changement de langue en version mobile -->
-                <div class="d-lg-none d-inline-block me-2">
-                    <div class="dropdown">
-                        <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                            <%= locale === 'fr' ? 'FR' : 'EN' %>
-                        </button>
-                        <ul class="dropdown-menu" aria-labelledby="languageDropdownMobile">
-                            <li><a class="dropdown-item" href="/fr">FR</a></li>
-                            <li><a class="dropdown-item" href="/en">EN</a></li>
-                        </ul>
-                    </div>
-                </div>
-
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                        <li class="nav-item"><a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a></li>
-                        <li class="nav-item"><a class="nav-link click-scroll" href="/<%= locale %>#faq"><%= i18n.menu.faq %></a></li>
-                        <li class="nav-item"><a class="nav-link click-scroll" href="/fr/contact">Contact</a></li>
-                    </ul>
-
-                    <!-- Changement de langue pour la version desktop -->
-                    <div class="d-none d-lg-flex align-items-center">
-                        <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
-                            <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                            <span class="visually-hidden">Login</span>
-                        </a>
-                        <div class="dropdown">
-                            <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownDesktop" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                                <%= locale === 'fr' ? 'FR' : 'EN' %>
-                            </button>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownDesktop">
-                                <li><a class="dropdown-item" href="/fr">FR</a></li>
-                                <li><a class="dropdown-item" href="/en">EN</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </nav>
-        
-        <section class="new-section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-12 col-lg-8 mx-auto">
-                        <div class="form-container">
-                            <h2 class="text-center"><%= i18n.heading %></h2>
-                            <form action="/<%= locale %>/login" method="POST" autocomplete="off">
-                                <div class="mb-3">
-                                    <label for="email" class="form-label"><%= i18n.email %></label>
-                                    <div class="form-control-icon">
-                                        <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
-                                        <i class="bi bi-envelope-fill icon"></i>
-                                    </div>
-                                    <div id="emailHelp" class="form-text"><%= i18n.email_help %></div>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label"><%= i18n.password %></label>
-                                    <div class="form-control-icon">
-                                        <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
-                                        <i class="bi bi-eye-fill icon" id="togglePassword"></i>
-                                    </div>
-                                </div>
-                                <button type="submit" class="btn btn-primary w-100"><%= i18n.login_button %></button>
-                            </form>
-                            <div class="mt-3 text-center">
-                                <a href="/forgot-password"><%= i18n.forgot_password %></a>
-                            </div>
-                            <div class="mt-3 text-center">
-                                <span><%= i18n.register_prompt %> <a href="/<%= locale %>/register"><%= i18n.register_link %></a></span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-  </main>
-
-  <footer class="site-footer section-padding">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-3 col-12 mb-4 pb-2">
-                <a class="navbar-brand mb-2" href="/">
-                    <span>UAP Immo</span>
+        <!-- Logo de la marque -->
+        <a class="navbar-brand" href="/<%= locale %>">
+            <span>UAP Immo</span>
+        </a>
+
+        <!-- Icône de profil en version mobile -->
+        <div class="d-lg-none ms-auto d-inline-block me-2">
+            <a href="/<%= locale %>/login" style="position: relative;">
+                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                <span class="visually-hidden">Login</span>
+            </a>
+        </div>
+
+        <!-- Bouton de changement de langue en version mobile et desktop -->
+        <div class="d-lg-none d-inline-block me-2">
+            <div class="dropdown">
+                <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+                    <%= locale === 'fr' ? 'FR' : 'EN' %>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownMobile">
+                    <li>
+                        <a class="dropdown-item" href="/fr">FR</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/en">EN</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bouton de menu mobile -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Menu collapsible -->
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/<%= locale %>#faq"><%= i18n.menu.faq %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/fr/contact">Contact</a>
+                </li>
+            </ul>
+
+            <!-- Icône de profil et bouton de changement de langue pour la version desktop -->
+            <div class="d-none d-lg-flex align-items-center">
+                <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
+                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                    <span class="visually-hidden">Login</span>
                 </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <h6 class="site-footer-title mb-3">Informations</h6>
-                <ul class="site-footer-links">
-                    <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
-                    <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
-                </ul>
-            </div>
-            <div class="col-lg-3 col-md-4 col-6">
-                <h6 class="site-footer-title mb-3">Accès</h6>
-                <ul class="site-footer-links">
-                    <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                </ul>
-            <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
                 <div class="dropdown">
-                    <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Langue</button>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">English</a></li>
-                        <li><a class="dropdown-item" href="#">Français</a></li>
+                    <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownDesktop" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+                        <%= locale === 'fr' ? 'FR' : 'EN' %>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownDesktop">
+                        <li>
+                            <a class="dropdown-item" href="/fr">FR</a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/en">EN</a>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
-        <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
     </div>
-  </footer>
+</nav>
+              <section class="new-section">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 col-lg-8 mx-auto">
+            <div class="form-container">
+              <h2 class="text-center"><%= i18n.heading %></h2>
+              <form action="/<%= locale %>/login" method="POST" autocomplete="off">
+                <div class="mb-3">
+                  <label for="email" class="form-label"><%= i18n.email %></label>
+                  <div class="form-control-icon">
+                    <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
+                    <i class="bi bi-envelope-fill icon"></i>
+                  </div>
+                  <div id="emailHelp" class="form-text"><%= i18n.email_help %></div>
+                </div>
+                <div class="mb-3">
+                  <label for="password" class="form-label"><%= i18n.password %></label>
+                  <div class="form-control-icon">
+                    <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
+                    <i class="bi bi-eye-fill icon" id="togglePassword"></i>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary w-100"><%= i18n.login_button %></button>
+              </form>
+              <div class="mt-3 text-center">
+                <a href="/forgot-password"><%= i18n.forgot_password %></a>
+              </div>
+           <div class="mt-3 text-center">
+    <span><%= i18n.register_prompt %> <a href="/<%= locale %>/register"><%= i18n.register_link %></a></span>
+</div>
 
-  <!-- JAVASCRIPT FILES -->
-  <script src="/js/jquery.min.js"></script>
-  <script src="/js/bootstrap.bundle.min.js"></script>
-  <script>
-      document.getElementById('togglePassword').addEventListener('click', function (e) {
-          const passwordInput = document.getElementById('password');
-          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-          passwordInput.setAttribute('type', type);
-          this.classList.toggle('bi-eye-fill');
-          this.classList.toggle('bi-eye-slash-fill');
-      });
-  </script>
-</body>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+
+        <footer class="site-footer section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-3 col-12 mb-4 pb-2">
+                        <a class="navbar-brand mb-2" href="/">
+                            
+                            <span>UAP Immo</span>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <h6 class="site-footer-title mb-3">Informations</h6>
+                        <ul class="site-footer-links">
+                            <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
+                            <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-3 col-md-4 col-6">
+                        <h6 class="site-footer-title mb-3">Accès</h6>
+                        <ul class="site-footer-links">
+                            <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
+                            
+                        </ul>
+                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                        <div class="dropdown">
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="#">English</a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="#">Français</a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
+        <!-- JAVASCRIPT FILES -->
+        <script src="/js/jquery.min.js"></script>
+        <script src="/js/bootstrap.bundle.min.js"></script>
+        <!-- Remove or comment out the following scripts if they control the sticky navbar behavior -->
+        <!-- <script src="/js/jquery.sticky.js"></script> -->
+        <!-- <script src="/js/click-scroll.js"></script> -->
+        <script src="/js/custom.js"></script>
+        <script>
+            document.getElementById('togglePassword').addEventListener('click', function (e) {
+                const passwordInput = document.getElementById('password');
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                this.classList.toggle('bi-eye-fill');
+                this.classList.toggle('bi-eye-slash-fill');
+            });
+        </script>
+    </body>
 </html>
