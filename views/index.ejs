@@ -1,82 +1,118 @@
 <!doctype html>
 <html lang="<%= locale %>">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0LN60RQ12K"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-0LN60RQ12K');
-    </script>
+    <!-- Balises Meta SEO -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="">
-    <meta name="author" content="">
-    <meta name="theme-color" content="#C4B990"> 
-    <title>UAP Immo | <%= i18n.title %></title>
+    <meta name="description" content="<%= i18n.metaDescription %>">
+    <meta name="author" content="<%= i18n.metaAuthor %>">
+    <meta name="robots" content="index, follow">
+    <meta name="keywords" content="<%= i18n.metaKeywords %>">
+    <meta name="theme-color" content="#C4B990">
+    <title><%= i18n.title %></title>
+    <!-- Balises Open Graph pour le partage social -->
+    <meta property="og:title" content="<%= i18n.ogTitle %>">
+    <meta property="og:description" content="<%= i18n.ogDescription %>">
+    <meta property="og:image" content="<%= i18n.ogImage %>">
+    <meta property="og:url" content="https://www.uapimmo.com">
+    <meta property="og:type" content="website">
+    <!-- Liens CSS et préchargement -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
+    <link rel="preload" href="/css/bootstrap.min.css" as="style">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="preload" href="/css/bootstrap-icons.css" as="style">
+    <link rel="stylesheet" href="/css/bootstrap-icons.css">
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
+        /* Styles supplémentaires */
+        @media (min-width: 992px) {
+            .icon-container i {
+                font-size: 3.5rem;
+                width: 100px;
+                height: 100px;
+            }
+            .border-right-lg {
+                border-right: 1px solid #ccc; /* Couleur et épaisseur de la bordure */
+                padding-right: 20px; /* Espace pour éviter que le texte touche la bordure */
+            }
+        }
+        .text-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .text-container h4 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .text-container .form-text {
+            margin-bottom: 15px;
+            font-size: 1.01rem;
+        }
+        .image-container {
+            box-shadow: 5px 4px 5px -2px #3B3B3B;
+        }
         .form-container {
             max-width: 600px;
-            margin: 110px auto;
+            margin: 50px auto;
             padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .form-container h2 {
-            margin-bottom: 20px;
-        }
-        .form-container .form-text {
-            margin-bottom: 15px;
+            background: #fefefe;
+            border-radius: 2px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
         .new-section {
-            padding: 60px 0; /* Padding for the new section */
-            background-color: #f8f9fa; /* Light background color */
+            padding-top: 200px;
+            padding-bottom: 50px;
+            background-color: #f8f9fa;
+        }
+        .second-section {
+            padding: 20px 0;
+            background-color: #f8f9fa;
+        }
+        .second-section .text-container h4 {
+            margin-bottom: 10px;
+        }
+        
+        .icon-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .icon-container i {
+            font-size: 3rem;
+            color: #52566f;
+            width: 90px;
+            height: 90px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #52566f;
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+        .icon-container i:hover {
+            transform: scale(1.1);
         }
         .hero-section {
-            padding-top: 100px; /* Ensure content is not hidden behind the fixed navbar */
+            padding-top: 100px;
         }
-        .form-control-icon {
-            position: relative;
+        .btn-commencer {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: #52566f;
+            border: 1px solid #52566f;
+            background-color: transparent;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 20px;
         }
-        .form-control-icon input {
-            padding-right: 2.5rem;
-        }
-        .form-control-icon .icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-        .btn-primary {
+        .btn-commencer:hover {
             background-color: #52566f;
-            border-color: #000;
-        }
-        .btn-primary:hover {
-            background-color: #52566f;
-            border-color: #52566f;
-        }
-        .form-container .form-label {
-            font-weight: 600;
-        }
-        .navbar {
-            background-color: #C4B990; 
-        }
-        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #000; 
-        }
-        .navbar .navbar-icon {
-            font-size: 1.5rem;
-        }
-        .navbar .navbar-icon.bi-person {
-            color: #000 !important;
+            color: #fff;
         }
         @media (max-width: 767px) {
             .form-container {
@@ -84,62 +120,47 @@
                 box-shadow: none;
                 border: none;
             }
+            .form-summary p {
+                margin-bottom: 10px;
+                color: #333;
+            }
+            /* Réduction de l’espace entre sections en version mobile */
+            .new-section {
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
+            .second-section {
+                padding-top: 10px;
+                padding-bottom: 10px;
+            }
         }
-    </style>    
+    </style>
 </head>
 <body id="top">
-  <main>
-       <nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container">
-        <!-- Logo de la marque -->
-        <a class="navbar-brand" href="/<%= locale %>">
-            <span>UAP Immo</span>
-        </a>
-
-        <!-- Icône de profil en version mobile -->
-        <div class="d-lg-none ms-auto d-inline-block me-2">
-            <a href="/<%= locale %>/login" style="position: relative;">
-                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                <span class="visually-hidden">Login</span>
-            </a>
-        </div>
-
-        <!-- Bouton de changement de langue en version mobile et desktop -->
-        <div class="d-lg-none d-inline-block me-2">
-            <div class="dropdown">
-                <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                    <%= locale === 'fr' ? 'FR' : 'EN' %>
+    <main>
+        <nav class="navbar navbar-expand-lg fixed-top">
+            <div class="container">
+                <a class="navbar-brand" href="/<%= locale %>">
+                    <span>UAP Immo</span>
+                </a>
+                <div class="d-lg-none ms-auto d-inline-block me-2">
+                    <a href="/<%= locale %>/login" style="position: relative;">
+                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                        <span class="visually-hidden">Login</span>
+                    </a>
+                </div>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownMobile">
-                    <li>
-                        <a class="dropdown-item" href="/fr">FR</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="/en">EN</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Bouton de menu mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Menu collapsible -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/<%= locale %>#faq"><%= i18n.menu.faq %></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/fr/contact">Contact</a>
-                </li>
-            </ul>
-
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link click-scroll" href="/fr/contact">Contact</a>
+                        </li>
+                    </ul>
             <!-- Icône de profil et bouton de changement de langue pour la version desktop -->
             <div class="d-none d-lg-flex align-items-center">
                 <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
@@ -163,100 +184,91 @@
         </div>
     </div>
 </nav>
-              <section class="new-section">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 col-lg-8 mx-auto">
-            <div class="form-container">
-              <h2 class="text-center"><%= i18n.heading %></h2>
-              <form action="/<%= locale %>/login" method="POST" autocomplete="off">
-                <div class="mb-3">
-                  <label for="email" class="form-label"><%= i18n.email %></label>
-                  <div class="form-control-icon">
-                    <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
-                    <i class="bi bi-envelope-fill icon"></i>
-                  </div>
-                  <div id="emailHelp" class="form-text"><%= i18n.email_help %></div>
-                </div>
-                <div class="mb-3">
-                  <label for="password" class="form-label"><%= i18n.password %></label>
-                  <div class="form-control-icon">
-                    <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
-                    <i class="bi bi-eye-fill icon" id="togglePassword"></i>
-                  </div>
-                </div>
-                <button type="submit" class="btn btn-primary w-100"><%= i18n.login_button %></button>
-              </form>
-              <div class="mt-3 text-center">
-                <a href="/forgot-password"><%= i18n.forgot_password %></a>
-              </div>
-           <div class="mt-3 text-center">
-    <span><%= i18n.register_prompt %> <a href="/<%= locale %>/register"><%= i18n.register_link %></a></span>
-</div>
 
+        <section class="new-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        <div class="text-container">
+                            <h4><%= i18n.heading %></h4>
+                            <p class="form-text"><%= i18n.intro %></p>
+                            <p class="form-text"><%= i18n.details %></p>
+                            <a href="/<%= locale %>/login" class="btn-commencer" style="position: relative;">Commencer maintenant</a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                        <div class="image-container">
+                            <img src="/images/uap%20immo%20plateforme%20de%20webmarketing%20immobilier.png" alt="<%= i18n.new_hero.image_alt %>" class="img-fluid" />
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
+        </section>
 
-
-        <footer class="site-footer section-padding">
+       <section class="second-section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-6 col-12">
+                        <div class="text-container">
+                            <div class="icon-container">
+                                <i class="bi bi-laptop"></i>
+                            </div>
+                            <p class="form-text"><%= i18n.fonctionnementPart1 %></p>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 col-12">
+                        <div class="text-container">
+                            <div class="icon-container">
+                                <i class="bi bi-house-door"></i>
+                            </div>
+                            <p class="form-text"><%= i18n.fonctionnementPart2 %></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+  <footer class="site-footer section-padding">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-3 col-12 mb-4 pb-2">
-                        <a class="navbar-brand mb-2" href="/">
-                            
+                        <a class="navbar-brand mb-2" href="/<%= locale %>">
                             <span>UAP Immo</span>
                         </a>
                     </div>
                     <div class="col-lg-3 col-md-4 col-6">
                         <h6 class="site-footer-title mb-3">Informations</h6>
                         <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
-                            <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
+                            <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
+                            <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
                         </ul>
                     </div>
                     <div class="col-lg-3 col-md-4 col-6">
                         <h6 class="site-footer-title mb-3">Accès</h6>
                         <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
-                            
+                            <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
                         </ul>
+                    </div>
                     <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <%= i18n.menu.language %>
+                            </button>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a class="dropdown-item" href="#">English</a>
+                                    <a class="dropdown-item" href="/en/contact">English</a>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item" href="#">Français</a>
+                                    <a class="dropdown-item" href="/fr/contact">Français</a>
                                 </li>
                             </ul>
                         </div>
                     </div>
-                    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
                 </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. <%= i18n.footer.all_rights %></p>
             </div>
         </footer>
-
-        <!-- JAVASCRIPT FILES -->
-        <script src="/js/jquery.min.js"></script>
-        <script src="/js/bootstrap.bundle.min.js"></script>
-        <!-- Remove or comment out the following scripts if they control the sticky navbar behavior -->
-        <!-- <script src="/js/jquery.sticky.js"></script> -->
-        <!-- <script src="/js/click-scroll.js"></script> -->
-        <script src="/js/custom.js"></script>
-        <script>
-            document.getElementById('togglePassword').addEventListener('click', function (e) {
-                const passwordInput = document.getElementById('password');
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                this.classList.toggle('bi-eye-fill');
-                this.classList.toggle('bi-eye-slash-fill');
-            });
-        </script>
-    </body>
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
 </html>
