@@ -144,14 +144,31 @@
                     <span>UAP Immo</span>
                 </a>
                 <div class="d-lg-none ms-auto d-inline-block me-2">
+                    <!-- Icône de profil en version mobile -->
                     <a href="/<%= locale %>/login" style="position: relative;">
                         <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
                         <span class="visually-hidden">Login</span>
                     </a>
                 </div>
+                
+                <!-- Dropdown pour le changement de langue en version mobile -->
+                <div class="d-lg-none d-inline-block me-2">
+                    <div class="dropdown">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+                            <%= locale === 'fr' ? 'FR' : 'EN' %>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="languageDropdownMobile">
+                            <li><a class="dropdown-item" href="/fr">FR</a></li>
+                            <li><a class="dropdown-item" href="/en">EN</a></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Bouton de menu hamburger mobile -->
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav ms-lg-5 me-lg-auto">
                         <li class="nav-item">
@@ -161,30 +178,28 @@
                             <a class="nav-link click-scroll" href="/fr/contact">Contact</a>
                         </li>
                     </ul>
-            <!-- Icône de profil et bouton de changement de langue pour la version desktop -->
-            <div class="d-none d-lg-flex align-items-center">
-                <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
-                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                    <span class="visually-hidden">Login</span>
-                </a>
-                <div class="dropdown">
-                    <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownDesktop" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                        <%= locale === 'fr' ? 'FR' : 'EN' %>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownDesktop">
-                        <li>
-                            <a class="dropdown-item" href="/fr">FR</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/en">EN</a>
-                        </li>
-                    </ul>
+
+                    <!-- Icône de profil et bouton de changement de langue pour la version desktop -->
+                    <div class="d-none d-lg-flex align-items-center">
+                        <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
+                            <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                            <span class="visually-hidden">Login</span>
+                        </a>
+                        <div class="dropdown">
+                            <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownDesktop" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+                                <%= locale === 'fr' ? 'FR' : 'EN' %>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownDesktop">
+                                <li><a class="dropdown-item" href="/fr">FR</a></li>
+                                <li><a class="dropdown-item" href="/en">EN</a></li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-</nav>
+        </nav>
 
+        <!-- Contenu principal -->
         <section class="new-section">
             <div class="container">
                 <div class="row">
@@ -205,7 +220,8 @@
             </div>
         </section>
 
-       <section class="second-section">
+        <!-- Section supplémentaire -->
+        <section class="second-section">
             <div class="container">
                 <div class="row">
                     <div class="col-lg-6 col-12">
@@ -228,46 +244,46 @@
             </div>
         </section>
     </main>
-  <footer class="site-footer section-padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-3 col-12 mb-4 pb-2">
-                        <a class="navbar-brand mb-2" href="/<%= locale %>">
-                            <span>UAP Immo</span>
-                        </a>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Informations</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
-                            <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+
+    <!-- Footer -->
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/<%= locale %>">
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Informations</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
+                        <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3">Accès</h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <%= i18n.menu.language %>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="/en/contact">English</a></li>
+                            <li><a class="dropdown-item" href="/fr/contact">Français</a></li>
                         </ul>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-6">
-                        <h6 class="site-footer-title mb-3">Accès</h6>
-                        <ul class="site-footer-links">
-                            <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
-                        </ul>
-                    </div>
-                    <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                        <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <%= i18n.menu.language %>
-                            </button>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a class="dropdown-item" href="/en/contact">English</a>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item" href="/fr/contact">Français</a>
-                                </li>
-                            </ul>
-                        </div>
                     </div>
                 </div>
-                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. <%= i18n.footer.all_rights %></p>
             </div>
-        </footer>
+            <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. <%= i18n.footer.all_rights %></p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
