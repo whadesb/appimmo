@@ -33,6 +33,13 @@
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
 <style>
+@media (min-width: 992px) {
+    .icon-container i {
+        font-size: 3rem; /* Taille plus grande pour les écrans larges */
+        width: 80px;
+        height: 80px;
+    }
+}
         .text-container {
             max-width: 600px;
             margin: 50px auto;
@@ -93,22 +100,21 @@ box-shadow : 5px 4px 5px -2px #3B3B3B;
 }
 
 .icon-container i {
-    font-size: 2rem; /* Taille de l'icône */
-    color: white; /* Couleur de l'icône */
-    background-color: #52566f; /* Couleur de fond */
-    width: 70px; /* Largeur fixe pour garder la forme ronde */
-    height: 70px; /* Hauteur fixe pour garder la forme ronde */
-    line-height: 70px; /* Centrer verticalement l'icône */
-    display: inline-block; /* Garder l'icône en bloc */
+    font-size: 2rem; /* Taille par défaut de l'icône */
+    color: #52566f; /* Couleur de l'icône */
+    width: 60px; /* Largeur de l'icône */
+    height: 60px; /* Hauteur de l'icône */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #52566f; /* Bordure fine */
     border-radius: 50%; /* Bordure ronde */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Ombre pour l’effet design */
     transition: transform 0.3s ease; /* Effet de survol */
 }
 
 .icon-container i:hover {
-    transform: scale(1.1); /* Effet d'agrandissement au survol */
+    transform: scale(1.1); /* Agrandissement au survol */
 }
-
 
 
         .hero-section {
