@@ -27,6 +27,13 @@
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
+ @media (max-width: 767px) {
+            .form-container {
+                background: none;
+                box-shadow: none;
+                border: none;
+            }
+        }
         /* Styles supplémentaires */
         @media (min-width: 992px) {
             .icon-container i {
@@ -156,22 +163,17 @@
             </a>
         </div>
 
-        <!-- Bouton de changement de langue en version mobile et desktop -->
         <div class="d-lg-none d-inline-block me-2">
-            <div class="dropdown">
-                <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                    <%= locale === 'fr' ? 'FR' : 'EN' %>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownMobile">
-                    <li>
-                        <a class="dropdown-item" href="/fr">FR</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="/en">EN</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
+                    <div class="dropdown">
+                        <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+                            <%= locale === 'fr' ? 'FR' : 'EN' %>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="languageDropdownMobile">
+                            <li><a class="dropdown-item" href="/fr">FR</a></li>
+                            <li><a class="dropdown-item" href="/en">EN</a></li>
+                        </ul>
+                    </div>
+                </div>
 
         <!-- Bouton de menu mobile -->
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -299,7 +301,16 @@
                 <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. <%= i18n.footer.all_rights %></p>
             </div>
         </footer>
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/bootstrap.bundle.min.js"></script>
+      <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script>
+      document.getElementById('togglePassword').addEventListener('click', function (e) {
+          const passwordInput = document.getElementById('password');
+          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          passwordInput.setAttribute('type', type);
+          this.classList.toggle('bi-eye-fill');
+          this.classList.toggle('bi-eye-slash-fill');
+      });
+  </script>
 </body>
 </html>
