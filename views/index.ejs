@@ -61,7 +61,15 @@
             margin: 50px auto;
             padding: 20px;
         }
-        .new-section, .second-section, .features-section, .faq-section, .results-section {
+        .text-container h4 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .text-container .form-text {
+            margin-bottom: 15px;
+            font-size: 1.01rem;
+        }
+        .new-section, .second-section, .testimonials-section, .results-section {
             padding: 50px 0;
             background-color: #f8f9fa;
         }
@@ -69,6 +77,26 @@
             background-color: #ffffff;
             padding-top: 60px;
             padding-bottom: 60px;
+        }
+        .section-divider {
+            border-top: 1px solid #52566f;
+            width: 50%;
+            margin: 0 auto;
+        }
+        .btn-commencer {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 1rem;
+            color: #52566f;
+            border: 1px solid #52566f;
+            background-color: transparent;
+            transition: background-color 0.3s, color 0.3s;
+            margin-top: 20px;
+            text-decoration: none;
+        }
+        .btn-commencer:hover {
+            background-color: #52566f;
+            color: #fff;
         }
         .fixed-cta {
             position: fixed;
@@ -123,18 +151,6 @@
             </div>
         </section>
 
-        <section class="features-section">
-            <div class="container text-center">
-                <h4>Fonctionnalités clés</h4>
-                <div class="row">
-                    <div class="col-lg-3 col-6 icon-container"><i class="bi bi-card-checklist"></i><p>Gestion des annonces</p></div>
-                    <div class="col-lg-3 col-6 icon-container"><i class="bi bi-bar-chart"></i><p>Suivi des performances</p></div>
-                    <div class="col-lg-3 col-6 icon-container"><i class="bi bi-people"></i><p>Accès aux clients potentiels</p></div>
-                    <div class="col-lg-3 col-6 icon-container"><i class="bi bi-shield-check"></i><p>Sécurité des données</p></div>
-                </div>
-            </div>
-        </section>
-
         <div class="section-divider"></div>
 
         <section class="second-section">
@@ -174,23 +190,34 @@
             </div>
         </section>
 
-        <section class="faq-section">
-            <div class="container">
-                <h4 class="text-center">Questions Fréquemment Posées</h4>
-                <div class="accordion" id="faqAccordion">
-                    <div class="accordion-item">
-                        <h5 class="accordion-header" id="faq1">
-                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapse1">Comment s'inscrire sur UAP Immo ?</button>
-                        </h5>
-                        <div id="collapse1" class="accordion-collapse collapse"><div class="accordion-body">Cliquez sur le bouton "S'inscrire" et suivez les instructions.</div></div>
-                    </div>
-                    <!-- Ajoutez d'autres questions -->
-                </div>
-            </div>
-        </section>
-
         <div class="fixed-cta"><a href="/<%= locale %>/register" class="btn btn-primary">Rejoignez-nous dès maintenant !</a></div>
     </main>
+
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/<%= locale %>">UAP Immo</a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6>Informations</h6>
+                    <ul><li><a href="/<%= locale %>">Accueil</a></li><li><a href="/<%= locale %>/register">Créer un compte</a></li></ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6>Accès</h6>
+                    <ul><li><a href="/<%= locale %>/contact">Contact</a></li></ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">Langue</button>
+                        <ul class="dropdown-menu"><li><a href="/en/contact">English</a></li><li><a href="/fr/contact">Français</a></li></ul>
+                    </div>
+                </div>
+            </div>
+            <p class="text-center mt-lg-5 mt-4">&copy; 2024 UAP Company. Tous droits réservés.</p>
+        </div>
+    </footer>
+
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
