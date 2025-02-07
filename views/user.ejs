@@ -165,6 +165,18 @@
         resize: none;
         height: 120px;
     }
+/* Désactiver les flèches d'incrémentation pour tous les navigateurs */
+input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+/* Supprimer les flèches dans Webkit (Chrome, Safari, Edge) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
 
     /* 📱 Adaptation mobile */
     @media (max-width: 767px) {
