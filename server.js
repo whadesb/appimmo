@@ -84,26 +84,18 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 
 // Middleware de déconnexion automatique après expiration de la session
 app.use((req, res, next) => {
-  if (req.session && req.session.cookie.expires < new Date()) {
-    req.logout((err) => {
-      if (err) {
-        return next(err);
-      }
-      req.session.destroy((err) => {
+  if (req.session && req.session.cookie.expires && new Date() > req.session.cookie.expires) {
+    req.logout();
+    req.session.destroy((err) => {
         if (err) {
-          return next(err);
+            return next(err);
         }
         res.clearCookie('connect.sid');
-        
-        // Vérifier si la langue est définie dans les cookies
-        const locale = req.cookies.locale || 'fr';  // Utiliser 'fr' comme langue par défaut
-        res.redirect(`/${locale}/login`);
-      });
+        const locale = req.cookies.locale || 'fr';
+        return res.redirect(`/${locale}/login`);
     });
-  } else {
-    next();
-  }
-});
+}
+
 
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
@@ -185,7 +177,7 @@ app.get('/:locale', (req, res) => {
 // Route dynamique pour la page de connexion avec gestion de la langue
 app.get('/:lang/login', (req, res) => {
     const locale = req.params.lang; // Récupérer la langue depuis l'URL
-    const loginTranslationsPath = `./locales/${locale}/login.json`; // Chemin vers les traductions de cette page
+    const loginTranslationsPath = `./locales/${locale}/login.json`;
 
     let loginTranslations = {};
 
