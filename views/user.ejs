@@ -731,7 +731,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
 
 
     // Temps en millisecondes (5 minutes)
-    const inactivityTime = 5 * 60 * 1000;
+    const inactivityTime = 30 * 60 * 1000;
     let timeout;
 
     function resetTimer() {
@@ -740,7 +740,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     }
 
     function logout() {
-        window.location.href = '/login';
+        window.location.href = '/<%= locale %>/logout';
     }
 
     window.onload = resetTimer;
