@@ -74,14 +74,23 @@
             padding: 20px 0;
         }
         .btn-custom {
-            background-color: #333;
-            color: #fff;
-            border: none;
-        }
-        .btn-custom:hover {
-            background-color: #000;
-            color: #fff;
-        }
+    max-width: 400px;
+    width: 100%;
+    display: block;
+    margin: 20px auto;
+    padding: 12px;
+    font-size: 18px;
+    background-color: #C4B990;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    transition: background-color 0.3s;
+}
+
+.btn-custom:hover {
+    background-color: #a69876;
+}
+
         .btn-custom i {
             font-size: 24px;
         }
@@ -199,6 +208,24 @@
                 padding: 10px;
                 font-size: 18px;
             }
+.form-control {
+    width: 100%; /* Assure que le champ s'adapte bien à la largeur définie */
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    transition: border-color 0.3s;
+}
+/* Amélioration de l'expérience utilisateur */
+.form-control:focus {
+    border-color: #C4B990; /* Couleur de focus cohérente avec ton design */
+    box-shadow: 0 0 5px rgba(196, 185, 144, 0.5);
+}
+
+textarea.form-control {
+    resize: none;
+    height: 120px; /* Hauteur fixe pour éviter une apparence étirée */
+}
             .card-title {
                 font-weight: 400;
                 font-size: 1.4rem;
@@ -217,6 +244,12 @@
                 margin-bottom: 0.2rem;
                 line-height: 1.2rem;
             }
+        /* Réduction de la largeur des champs de formulaire */
+            .form-group {
+            max-width: 600px; /* Limite la largeur à 600px */
+            margin: 0 auto; /* Centre le champ */
+            }
+
         }
         @media (min-width: 768px) {
             .sidebar-links {
@@ -232,6 +265,10 @@
                 line-height: 1.6rem;
                 letter-spacing: 0.4px;
             }
+.form-group {
+        max-width: 100%; /* Permet une bonne adaptation sur mobile */
+        padding: 5px;
+    }
         }
     </style>
 </head>
