@@ -419,7 +419,8 @@ textarea.form-control {
                                 <h5 class="card-title"><%= i18n.add_property %></h5>
                                 <p class="card-text"><%= i18n.property_details %></p>
                                 <h5 class="card-title"><%= i18n.add_property %></h5>
-                                <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+<div class="container-form">                                
+<form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
   <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
   <div class="form-group">
     <label for="rooms"><%= i18n.rooms %></label>
