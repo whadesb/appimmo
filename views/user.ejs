@@ -11,266 +11,226 @@
     <link rel="stylesheet" href="/css/styles-main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-        html, body {
-            height: 100%;
-        }
-        body {
-            display: flex;
-            flex-direction: column;
-            font-family: 'Arial', sans-serif;
-            background-color: #f8f9fa;
-            margin: 0;
-        }
-        h3 {
-            color: #000;
-            text-align: left;
-        }
-        .navbar {
-            background-color: #C4B990;
-            margin-bottom: 20px;
-        }
-        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #000;
-        }
-        .navbar .navbar-icon {
-            color: #000;
+    html, body {
+        height: 100%;
+    }
+    body {
+        display: flex;
+        flex-direction: column;
+        font-family: 'Arial', sans-serif;
+        background-color: #f8f9fa;
+        margin: 0;
+    }
+    h3 {
+        color: #000;
+        text-align: left;
+    }
+    .navbar {
+        background-color: #C4B990;
+        margin-bottom: 20px;
+    }
+    .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+        color: #000;
+    }
+    .main-section {
+        flex: 1;
+        padding: 20px;
+        background-color: #fff;
+        margin-left: 10px;
+        min-height: 500px;
+    }
+    .main-section .card {
+        border: none;
+        box-shadow: none;
+    }
+    .sidebar {
+        background-color: #8f97c4;
+        border-radius: 60px;
+        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+        padding: 20px;
+        width: 60px;
+        height: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: sticky;
+        top: 20px;
+    }
+    .sidebar a {
+        margin: 10px 0;
+        color: #000;
+        font-size: 24px;
+        text-decoration: none;
+    }
+    .sidebar a:hover {
+        color: #000;
+    }
+    .footer {
+        background-color: #343a40;
+        color: #fff;
+        padding: 20px 0;
+    }
+    
+    /* Bouton personnalisé */
+    .btn-custom {
+        max-width: 400px;
+        width: 100%;
+        display: block;
+        margin: 20px auto;
+        padding: 12px;
+        font-size: 18px;
+        background-color: #C4B990;
+        border: none;
+        color: white;
+        border-radius: 6px;
+        transition: background-color 0.3s;
+    }
+    .btn-custom:hover {
+        background-color: #a69876;
+    }
+
+    /* Amélioration UX/UI */
+    .tooltip {
+        position: absolute;
+        background-color: #ADD8E6;
+        color: #000;
+        padding: 5px 10px;
+        border-radius: 4px;
+        white-space: nowrap;
+        z-index: 1000;
+        top: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    .copy-message {
+        display: none;
+        background-color: #d1e7dd;
+        color: #0f5132;
+        padding: 10px;
+        border-radius: 5px;
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 1000;
+    }
+    .action-icons i {
+        font-size: 24px;
+        cursor: pointer;
+        margin-right: 10px;
+        color: #333;
+    }
+
+    /* Styles des cartes */
+    .card-title {
+        font-weight: 400;
+        font-size: 1.6rem;
+        color: #000;
+        margin-bottom: 0.5rem;
+    }
+    .card-text {
+        font-size: 1.1rem;
+        line-height: 1.8rem;
+        color: #666;
+        margin-bottom: 1rem;
+        letter-spacing: 0.5px;
+    }
+
+    /* Limitation de la largeur du formulaire */
+    .container-form {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-group {
+        max-width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 10px;
+        font-size: 16px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        transition: border-color 0.3s;
+    }
+
+    /* Amélioration du focus */
+    .form-control:focus {
+        border-color: #C4B990;
+        box-shadow: 0 0 5px rgba(196, 185, 144, 0.5);
+    }
+
+    textarea.form-control {
+        resize: none;
+        height: 120px;
+    }
+
+    /* 📱 Adaptation mobile */
+    @media (max-width: 767px) {
+        .container-form {
+            max-width: 90%;
         }
         .main-section {
-            flex: 1;
-            padding: 20px;
-            background-color: #fff;
-            margin-left: 10px;
-            min-height: 500px;
-        }
-        .main-section .card {
-            border: none;
+            margin-left: 0;
+            margin-right: 0;
+            margin-top: 0;
+            width: 100%;
+            border-radius: 0;
             box-shadow: none;
+            min-height: 300px;
+            overflow-x: auto;
+            padding-left: 0;
+            padding-right: 0;
         }
         .sidebar {
-            background-color: #8f97c4;
-            border-radius: 60px;
-            box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
-            padding: 20px;
-            width: 60px;
-            height: auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: sticky;
-            top: 20px;
-        }
-        .sidebar a {
-            margin: 10px 0;
-            color: #000;
-            font-size: 24px;
-            text-decoration: none;
-        }
-        .sidebar a:hover {
-            color: #000;
-        }
-        .footer {
-            background-color: #343a40;
-            color: #fff;
-            padding: 20px 0;
-        }
-        .btn-custom {
-    max-width: 400px;
-    width: 100%;
-    display: block;
-    margin: 20px auto;
-    padding: 12px;
-    font-size: 18px;
-    background-color: #C4B990;
-    border: none;
-    color: white;
-    border-radius: 6px;
-    transition: background-color 0.3s;
-}
-
-.btn-custom:hover {
-    background-color: #a69876;
-}
-
-        .btn-custom i {
-            font-size: 24px;
-        }
-        .tooltip {
-            position: absolute;
-            background-color: #ADD8E6;
-            color: #000;
-            padding: 5px 10px;
-            border-radius: 4px;
-            white-space: nowrap;
-            z-index: 1000;
-            top: -30px;
-            left: 50%;
-            transform: translateX(-50%);
-        }
-        .copy-message {
             display: none;
-            background-color: #d1e7dd;
-            color: #0f5132;
-            padding: 10px;
-            border-radius: 5px;
-            position: fixed;
-            top: 10px;
-            right: 10px;
-            z-index: 1000;
         }
-        .action-icons i {
-            font-size: 24px;
-            cursor: pointer;
-            margin-right: 10px;
-            color: #333;
+        .sidebar-mobile-links {
+            display: block !important;
+            margin-top: 10px;
         }
-        .short-column {
-            width: 10%;
+        .mobile-margin {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            table-layout: auto;
+        }
+        th, td {
+            white-space: nowrap;
+            padding: 8px;
+            text-align: left;
+        }
+        .table-responsive {
+            display: block;
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+    }
+
+    @media (min-width: 768px) {
+        .sidebar-links {
+            display: none;
         }
         .card-title {
+            font-size: 1.475rem;
             font-weight: 400;
-            font-size: 1.6rem;
             color: #000;
-            margin-bottom: 0.5rem;
         }
         .card-text {
-            font-size: 1.1rem;
-            line-height: 1.8rem;
-            color: #666;
-            margin-bottom: 1rem;
-            letter-spacing: 0.5px;
-        }
-        .card-body .user-info {
-            color: #333;
-            margin-bottom: 0.2rem;
+            font-size: 1rem;
             line-height: 1.6rem;
+            letter-spacing: 0.4px;
         }
-        @media (max-width: 767px) {
-            .container-fluid {
-                padding-left: 0;
-                padding-right: 0;
-            }
-            .container {
-                padding-left: 15px;
-                padding-right: 15px;
-            }
-            .row {
-                flex-direction: column;
-                align-items: center;
-            }
-            .main-section {
-                margin-left: 0;
-                margin-right: 0;
-                margin-top: 0;
-                width: 100%;
-                border-radius: 0;
-                box-shadow: none;
-                min-height: 300px;
-                overflow-x: auto;
-                padding-left: 0;
-                padding-right: 0;
-            }
-            .sidebar {
-                display: none;
-            }
-            .sidebar-mobile-links {
-                display: block !important;
-                margin-top: 10px;
-            }
-            .mobile-margin {
-                margin-top: 30px;
-            }
-            table {
-                width: 100%;
-                table-layout: auto;
-            }
-            th, td {
-                white-space: nowrap;
-                padding: 8px;
-                text-align: left;
-            }
-            .table-responsive {
-                display: block;
-                width: 100%;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            #landing .form-group {
-                width: 100%;
-                padding: 5px;
-            }
-            #landing .form-control {
-                width: 100%;
-                padding: 10px;
-                font-size: 16px;
-            }
-            #landing button.btn-custom {
-                width: 100%;
-                padding: 10px;
-                font-size: 18px;
-            }
-.form-control {
-    width: 100%; /* Assure que le champ s'adapte bien à la largeur définie */
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-    transition: border-color 0.3s;
-}
-/* Amélioration de l'expérience utilisateur */
-.form-control:focus {
-    border-color: #C4B990; /* Couleur de focus cohérente avec ton design */
-    box-shadow: 0 0 5px rgba(196, 185, 144, 0.5);
-}
-
-textarea.form-control {
-    resize: none;
-    height: 120px; /* Hauteur fixe pour éviter une apparence étirée */
-}
-            .card-title {
-                font-weight: 400;
-                font-size: 1.4rem;
-                color: #000;
-                margin-bottom: 0.5rem;
-            }
-            .card-text {
-                font-size: 1.1rem;
-                line-height: 1.8rem;
-                color: #666;
-                margin-bottom: 1rem;
-                letter-spacing: 0.5px;
-            }
-            .card-body .user-info {
-                color: #333;
-                margin-bottom: 0.2rem;
-                line-height: 1.2rem;
-            }
-        /* Réduction de la largeur des champs de formulaire */
-            .form-group {
-            max-width: 600px; /* Limite la largeur à 600px */
-            margin: 0 auto; /* Centre le champ */
-            }
-
-        }
-        @media (min-width: 768px) {
-            .sidebar-links {
-                display: none;
-            }
-            .card-title {
-                font-size: 1.475rem;
-                font-weight: 400;
-                color: #000;
-            }
-            .card-text {
-                font-size: 1rem;
-                line-height: 1.6rem;
-                letter-spacing: 0.4px;
-            }
-.form-group {
-        max-width: 100%; /* Permet une bonne adaptation sur mobile */
-        padding: 5px;
     }
-        }
-    </style>
+</style>
+
 </head>
 <body id="top">
     <main>
