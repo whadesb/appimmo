@@ -730,24 +730,25 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
 });
 
 
-    // Temps en millisecondes (5 minutes)
-    const inactivityTime = 30 * 60 * 1000;
-    let timeout;
+// Temps en millisecondes (30 minutes)
+const inactivityTime = 30 * 60 * 1000;
+let timeout;
 
-    function resetTimer() {
-        clearTimeout(timeout);
-        timeout = setTimeout(logout, inactivityTime);
-    }
+function resetTimer() {
+    clearTimeout(timeout);
+    timeout = setTimeout(logout, inactivityTime);
+}
 
-    function logout() {
-        window.location.href = '/<%= locale %>/logout';
-    }
+function logout() {
+    window.location.href = '/<%= locale %>/logout';
+}
 
-    window.onload = resetTimer;
-    document.onmousemove = resetTimer;
-    document.onkeypress = resetTimer;
-    document.onclick = resetTimer;
-    document.onscroll = resetTimer;
+window.onload = resetTimer;
+document.onmousemove = resetTimer;
+document.onkeypress = resetTimer;
+document.onclick = resetTimer;
+document.onscroll = resetTimer;
+
 </script>
 <script>
   const descriptionInput = document.getElementById('description');
