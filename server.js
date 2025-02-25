@@ -84,18 +84,26 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 
 // Middleware de déconnexion automatique après expiration de la session
 app.use((req, res, next) => {
-  if (req.session && req.session.cookie.expires && new Date() > req.session.cookie.expires) {
-    req.logout();
-    req.session.destroy((err) => {
+  if (req.session && req.session.cookie.expires < new Date()) {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      req.session.destroy((err) => {
         if (err) {
-            return next(err);
+          return next(err);
         }
         res.clearCookie('connect.sid');
-        const locale = req.cookies.locale || 'fr';
-        return res.redirect(`/${locale}/login`);
+        
+        // Vérifier si la langue est définie dans les cookies
+        const locale = req.cookies.locale || 'fr';  // Utiliser 'fr' comme langue par défaut
+        res.redirect(/${locale}/login);
+      });
     });
-}
-
+  } else {
+    next();
+  }
+});
 
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
@@ -140,7 +148,7 @@ app.get('/', (req, res) => {
     if (acceptedLanguages.includes('en')) {
         res.redirect('/en');
     } else {
-        res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
+        res.redirect(/${defaultLocale}); // Rediriger vers la langue par défaut (français)
     }
 });
 
@@ -155,13 +163,13 @@ app.get('/:locale', (req, res) => {
     return res.sendStatus(404); // Ne pas tenter de charger des traductions pour ces fichiers
   }
 
-  const translationsPath = `./locales/${locale}/index.json`;
+  const translationsPath = ./locales/${locale}/index.json;
   let translations = {};
 
   try {
     translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
   } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    console.error(Erreur lors du chargement des traductions : ${error});
     return res.status(500).send('Erreur lors du chargement des traductions.');
   }
 
@@ -177,14 +185,14 @@ app.get('/:locale', (req, res) => {
 // Route dynamique pour la page de connexion avec gestion de la langue
 app.get('/:lang/login', (req, res) => {
     const locale = req.params.lang; // Récupérer la langue depuis l'URL
-    const loginTranslationsPath = `./locales/${locale}/login.json`;
+    const loginTranslationsPath = ./locales/${locale}/login.json; // Chemin vers les traductions de cette page
 
     let loginTranslations = {};
 
     try {
         loginTranslations = JSON.parse(fs.readFileSync(loginTranslationsPath, 'utf8'));
     } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        console.error(Erreur lors du chargement des traductions : ${error});
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
@@ -204,14 +212,14 @@ app.get('/login', (req, res) => {
 
 app.get('/:lang/forgot-password', (req, res) => {
   const locale = req.params.lang;
-  const passwordResetTranslationsPath = `./locales/${locale}/password-reset.json`;
+  const passwordResetTranslationsPath = ./locales/${locale}/password-reset.json;
 
   let passwordResetTranslations = {};
 
   try {
     passwordResetTranslations = JSON.parse(fs.readFileSync(passwordResetTranslationsPath, 'utf8'));
   } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    console.error(Erreur lors du chargement des traductions : ${error});
     return res.status(500).send('Erreur lors du chargement des traductions.');
   }
 
@@ -248,7 +256,7 @@ app.post('/:lang/forgot-password', async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) {
       req.flash('error', 'Aucun compte trouvé avec cette adresse email.');
-      return res.redirect(`/${locale}/forgot-password`);
+      return res.redirect(/${locale}/forgot-password);
     }
 
     const token = crypto.randomBytes(32).toString('hex');
@@ -256,12 +264,12 @@ app.post('/:lang/forgot-password', async (req, res) => {
     user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
     await user.save();
 
-    const resetUrl = `http://${req.headers.host}/${locale}/reset-password/${token}`;
+    const resetUrl = http://${req.headers.host}/${locale}/reset-password/${token};
     const mailOptions = {
       to: user.email,
       from: process.env.EMAIL_USER,
       subject: 'Réinitialisation du mot de passe',
-      html: `
+      html: 
         <div style="font-family: Arial, sans-serif; line-height: 1.6;">
           <h2 style="color: #52566f;">Réinitialisation de votre mot de passe</h2>
           <p>Bonjour,</p>
@@ -282,16 +290,16 @@ app.post('/:lang/forgot-password', async (req, res) => {
           <hr>
           <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company" style="color: #52566f; text-decoration: underline;">support@uap.company</a>.</p>
         </div>
-      `
+      
     };
     await sendEmail(mailOptions);
 
     req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.');
-    return res.redirect(`/${locale}/forgot-password?emailSent=true`);
+    return res.redirect(/${locale}/forgot-password?emailSent=true);
   } catch (error) {
     console.error('Erreur lors de la réinitialisation du mot de passe :', error);
     req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
-    return res.redirect(`/${locale}/forgot-password`);
+    return res.redirect(/${locale}/forgot-password);
   }
 });
 
@@ -361,19 +369,19 @@ app.post('/:locale/login', (req, res, next) => {
         if (err) return next(err);
         if (!user) {
             req.flash('error', 'Invalid credentials');
-            return res.redirect(`/${locale}/login`);
+            return res.redirect(/${locale}/login);
         }
 
         // Si l'utilisateur a activé le 2FA, rediriger vers la page 2FA
         if (user.twoFactorEnabled) {
             req.session.tempUserId = user._id;  // Stocker l'utilisateur temporairement dans la session
-            return res.redirect(`/${locale}/2fa`);  // Rediriger vers la page 2FA avec la bonne locale
+            return res.redirect(/${locale}/2fa);  // Rediriger vers la page 2FA avec la bonne locale
         }
 
         // Sinon, continuer la connexion normale
         req.logIn(user, (err) => {
             if (err) return next(err);
-            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la bonne locale
+            return res.redirect(/${locale}/user);  // Rediriger vers la page utilisateur avec la bonne locale
         });
     })(req, res, next);
 });
@@ -419,19 +427,19 @@ app.get('/:locale/logout', (req, res, next) => {
             }
             res.clearCookie('connect.sid');
             // Redirige vers la page de login avec la bonne langue
-            res.redirect(`/${req.params.locale}/login`);
+            res.redirect(/${req.params.locale}/login);
         });
     });
 });
 app.get('/:locale/2fa', (req, res) => {
     const { locale } = req.params;
-    const translationsPath = `./locales/${locale}/2fa.json`;
+    const translationsPath = ./locales/${locale}/2fa.json;
 
     let translations;
     try {
         translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
     } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        console.error(Erreur lors du chargement des traductions : ${error});
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
@@ -445,16 +453,16 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
 
     // Rediriger si l'utilisateur n'est pas connecté
     if (!user) {
-        return res.redirect(`/${locale}/login`);
+        return res.redirect(/${locale}/login);
     }
 
     // Charger les traductions spécifiques à la page utilisateur
-    const userTranslationsPath = `./locales/${locale}/user.json`;
+    const userTranslationsPath = ./locales/${locale}/user.json;
     let userTranslations = {};
     try {
         userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
     } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        console.error(Erreur lors du chargement des traductions : ${error});
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
@@ -485,8 +493,8 @@ app.get('/:lang/contact', (req, res) => {
     const messageEnvoye = req.query.messageEnvoye === 'true';
 
     // Charger les traductions globales et spécifiques à la page
-    const globalTranslationsPath = `./locales/${locale}/global.json`;
-    const contactTranslationsPath = `./locales/${locale}/contact.json`;
+    const globalTranslationsPath = ./locales/${locale}/global.json;
+    const contactTranslationsPath = ./locales/${locale}/contact.json;
 
     let globalTranslations = {};
     let contactTranslations = {};
@@ -495,7 +503,7 @@ app.get('/:lang/contact', (req, res) => {
         globalTranslations = JSON.parse(fs.readFileSync(globalTranslationsPath, 'utf8'));
         contactTranslations = JSON.parse(fs.readFileSync(contactTranslationsPath, 'utf8'));
     } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        console.error(Erreur lors du chargement des traductions : ${error});
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
@@ -516,15 +524,15 @@ app.post('/send-contact', async (req, res) => {
 
     // Configurer les options d'email
     const mailOptions = {
-        from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+        from: "UAP Immo" <${process.env.EMAIL_USER}>,
         to: process.env.CONTACT_EMAIL,
         subject: 'Nouveau message de contact',
-        html: `
+        html: 
             <p><b>Nom :</b> ${firstName} ${lastName}</p>
             <p><b>Email :</b> ${email}</p>
             <p><b>Type :</b> ${type}</p>
             <p><b>Message :</b><br>${message}</p>
-        `
+        
     };
 
     try {
@@ -563,14 +571,14 @@ app.get('/payment', isAuthenticated, async (req, res) => {
 
 app.get('/:lang/register', (req, res) => {
   const locale = req.params.lang;
-  const registerTranslationsPath = `./locales/${locale}/register.json`;
+  const registerTranslationsPath = ./locales/${locale}/register.json;
 
   let registerTranslations = {};
 
   try {
     registerTranslations = JSON.parse(fs.readFileSync(registerTranslationsPath, 'utf8'));
   } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    console.error(Erreur lors du chargement des traductions : ${error});
     return res.status(500).send('Erreur lors du chargement des traductions.');
   }
 
@@ -594,18 +602,18 @@ app.post('/:locale/register', async (req, res, next) => {
 
   if (!validator.isEmail(email)) {
     req.flash('error', 'L\'adresse email n\'est pas valide.');
-    return res.redirect(`/${locale}/register`);
+    return res.redirect(/${locale}/register);
   }
 
   if (password !== confirmPassword) {
     req.flash('error', 'Les mots de passe ne correspondent pas.');
-    return res.redirect(`/${locale}/register`);
+    return res.redirect(/${locale}/register);
   }
 
   const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
   if (!passwordRequirements.test(password)) {
     req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
-    return res.redirect(`/${locale}/register`);
+    return res.redirect(/${locale}/register);
   }
 
   try {
@@ -617,12 +625,12 @@ app.post('/:locale/register', async (req, res, next) => {
       if (err) return next(err);
 
       // Rediriger l'utilisateur vers la page d'activation 2FA avec la bonne locale
-      return res.redirect(`/${locale}/enable-2fa`);  // Assure-toi que tu rediriges bien ici
+      return res.redirect(/${locale}/enable-2fa);  // Assure-toi que tu rediriges bien ici
     });
   } catch (error) {
     console.error('Erreur lors de l\'inscription :', error.message);
-    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
-    return res.redirect(`/${locale}/register`);
+    req.flash('error', Une erreur est survenue lors de l'inscription : ${error.message});
+    return res.redirect(/${locale}/register);
   }
 });
 
@@ -631,19 +639,19 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   const { locale } = req.params;  // Récupérer la langue depuis l'URL
 
   // Charger les traductions en fonction de la langue
-  const translationsPath = path.join(__dirname, `locales/${locale}/enable-2fa.json`);
+  const translationsPath = path.join(__dirname, locales/${locale}/enable-2fa.json);
   
   let translations;
   try {
     translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
   } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    console.error(Erreur lors du chargement des traductions : ${error});
     return res.status(500).send('Erreur lors du chargement des traductions.');
   }
 
   // Générer un secret pour l'utilisateur
   const secret = speakeasy.generateSecret({
-    name: `UAP Immo (${user.email})`,
+    name: UAP Immo (${user.email}),
   });
 
   // Sauvegarder le secret dans la base de données
@@ -681,7 +689,7 @@ app.post('/:locale/verify-2fa', isAuthenticated, async (req, res) => {
         // Active le 2FA
         user.twoFactorEnabled = true;
         await user.save();
-        res.redirect(`/${locale}/user`); // Redirige vers le profil utilisateur avec la bonne langue
+        res.redirect(/${locale}/user); // Redirige vers le profil utilisateur avec la bonne langue
     } else {
         res.status(400).send('Code incorrect, veuillez réessayer.');
     }
@@ -726,11 +734,11 @@ app.post('/add-property', isAuthenticated, upload.fields([
     property.url = landingPageUrl;
     await property.save();
 
-    const successMessage = `
+    const successMessage = 
       <div class="alert alert-success" role="alert">
         Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>
       </div>
-    `;
+    ;
     res.send(successMessage);
   } catch (error) {
     console.error("Erreur lors de l'ajout de la propriété :", error);
@@ -773,7 +781,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     property.country = country;
 
     if (req.files.photo1) {
-      const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
+      const photo1Path = public/uploads/${uuidv4()}-photo1.jpg;
       await sharp(req.files.photo1[0].path)
         .resize(800)
         .jpeg({ quality: 80 })
@@ -783,7 +791,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     }
 
     if (req.files.photo2) {
-      const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
+      const photo2Path = public/uploads/${uuidv4()}-photo2.jpg;
       await sharp(req.files.photo2[0].path)
         .resize(800)
         .jpeg({ quality: 80 })
@@ -829,7 +837,7 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
       amount: parseInt(amount, 10),
       currency: 'eur',
       source: stripeToken,
-      description: `Payment for property ${propertyId}`,
+      description: Payment for property ${propertyId},
     });
 
     const order = new Order({
@@ -851,7 +859,7 @@ app.get('/config', (req, res) => {
 
 // Fonction pour générer la landing page
 async function generateLandingPage(property) {
-  const template = `
+  const template = 
     <!DOCTYPE html>
     <html lang="fr">
     <head>
@@ -1136,12 +1144,12 @@ async function generateLandingPage(property) {
         </div>
 
     </body>
-    </html>`;
+    </html>;
 
-  const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
+  const filePath = path.join(__dirname, 'public', 'landing-pages', ${property._id}.html);
   fs.writeFileSync(filePath, template);
 
-  return `/landing-pages/${property._id}.html`;
+  return /landing-pages/${property._id}.html;
 }
 
 
@@ -1166,10 +1174,10 @@ async function sendEmail(mailOptions) {
 
 async function sendAccountCreationEmail(email) {
   const mailOptions = {
-    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+    from: "UAP Immo" <${process.env.EMAIL_USER}>,
     to: email,
     subject: 'Bienvenue chez UAP Immo',
-    html: `
+    html: 
       <div style="font-family: Arial, sans-serif; line-height: 1.6;">
         <h2 style="color: #52566f;">Bienvenue chez UAP Immo!</h2>
         <p>Bonjour,</p>
@@ -1186,7 +1194,7 @@ async function sendAccountCreationEmail(email) {
         <hr>
         <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company">support@uap.company</a>.</p>
       </div>
-    `,
+    ,
   };
 
   await sendEmail(mailOptions);
@@ -1196,15 +1204,15 @@ app.post('/send-contact', async (req, res) => {
   const { firstName, lastName, email, message, type } = req.body;
 
   const mailOptions = {
-    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+    from: "UAP Immo" <${process.env.EMAIL_USER}>,
     to: process.env.CONTACT_EMAIL,
     subject: 'Nouveau message de contact',
-    html: `
+    html: 
       <p><b>Nom :</b> ${firstName} ${lastName}</p>
       <p><b>Email :</b> ${email}</p>
       <p><b>Type :</b> ${type}</p>
       <p><b>Message :</b><br>${message}</p>
-    `
+    
   };
 
   try {
@@ -1218,5 +1226,5 @@ app.post('/send-contact', async (req, res) => {
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(Server is running on port ${port});
 });
