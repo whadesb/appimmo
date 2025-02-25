@@ -11,234 +11,229 @@
     <link rel="stylesheet" href="/css/styles-main.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
-    html, body {
-        height: 100%;
-    }
-    body {
-        display: flex;
-        flex-direction: column;
-        font-family: 'Arial', sans-serif;
-        background-color: #f8f9fa;
-        margin: 0;
-    }
-    h3 {
-        color: #000;
-        text-align: left;
-    }
-    .navbar {
-        background-color: #C4B990;
-        margin-bottom: 20px;
-    }
-    .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-        color: #000;
-    }
-    .main-section {
-        flex: 1;
-        padding: 20px;
-        background-color: #fff;
-        margin-left: 10px;
-        min-height: 500px;
-    }
-    .main-section .card {
-        border: none;
-        box-shadow: none;
-    }
-    .sidebar {
-        background-color: #8f97c4;
-        border-radius: 60px;
-        box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
-        padding: 20px;
-        width: 60px;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: sticky;
-        top: 20px;
-    }
-    .sidebar a {
-        margin: 10px 0;
-        color: #000;
-        font-size: 24px;
-        text-decoration: none;
-    }
-    .sidebar a:hover {
-        color: #000;
-    }
-    .footer {
-        background-color: #343a40;
-        color: #fff;
-        padding: 20px 0;
-    }
-    
-    /* Bouton personnalisé */
-    .btn-custom {
-        max-width: 400px;
-        width: 100%;
-        display: block;
-        margin: 20px auto;
-        padding: 12px;
-        font-size: 18px;
-        background-color: #C4B990;
-        border: none;
-        color: white;
-        border-radius: 6px;
-        transition: background-color 0.3s;
-    }
-    .btn-custom:hover {
-        background-color: #a69876;
-    }
-
-    /* Amélioration UX/UI */
-    .tooltip {
-        position: absolute;
-        background-color: #ADD8E6;
-        color: #000;
-        padding: 5px 10px;
-        border-radius: 4px;
-        white-space: nowrap;
-        z-index: 1000;
-        top: -30px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-    .copy-message {
-        display: none;
-        background-color: #d1e7dd;
-        color: #0f5132;
-        padding: 10px;
-        border-radius: 5px;
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        z-index: 1000;
-    }
-    .action-icons i {
-        font-size: 24px;
-        cursor: pointer;
-        margin-right: 10px;
-        color: #333;
-    }
-
-    /* Styles des cartes */
-    .card-title {
-        font-weight: 400;
-        font-size: 1.6rem;
-        color: #000;
-        margin-bottom: 0.5rem;
-    }
-    .card-text {
-        font-size: 1.1rem;
-        line-height: 1.8rem;
-        color: #666;
-        margin-bottom: 1rem;
-        letter-spacing: 0.5px;
-    }
-
-    /* Limitation de la largeur du formulaire */
-    .container-form {
-        max-width: 600px;
-        
-    }
-
-    .form-group {
-        max-width: 100%;
-        margin-bottom: 15px;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 10px;
-        font-size: 16px;
-        border-radius: 6px;
-        border: 1px solid #ccc;
-        transition: border-color 0.3s;
-    }
-
-    /* Amélioration du focus */
-    .form-control:focus {
-        border-color: #C4B990;
-        box-shadow: 0 0 5px rgba(196, 185, 144, 0.5);
-    }
-
-    textarea.form-control {
-        resize: none;
-        height: 120px;
-    }
-/* Désactiver les flèches d'incrémentation pour tous les navigateurs */
-input[type="number"] {
-    -moz-appearance: textfield;
-    appearance: textfield;
-}
-
-/* Supprimer les flèches dans Webkit (Chrome, Safari, Edge) */
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-
-    /* 📱 Adaptation mobile */
-    @media (max-width: 767px) {
-        .container-form {
-            max-width: 90%;
+        html, body {
+            height: 100%;
         }
-        .main-section {
-            margin-left: 0;
-            margin-right: 0;
-            margin-top: 0;
-            width: 100%;
-            border-radius: 0;
-            box-shadow: none;
-            min-height: 300px;
-            overflow-x: auto;
-            padding-left: 0;
-            padding-right: 0;
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
         }
-        .sidebar {
-            display: none;
-        }
-        .sidebar-mobile-links {
-            display: block !important;
-            margin-top: 10px;
-        }
-        .mobile-margin {
-            margin-top: 30px;
-        }
-        table {
-            width: 100%;
-            table-layout: auto;
-        }
-        th, td {
-            white-space: nowrap;
-            padding: 8px;
+        h3 {
+            color: #000;
             text-align: left;
         }
-        .table-responsive {
-            display: block;
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
+        .navbar {
+            background-color: #C4B990;
+            margin-bottom: 20px;
         }
-    }
-
-    @media (min-width: 768px) {
-        .sidebar-links {
-            display: none;
-        }
-        .card-title {
-            font-size: 1.475rem;
-            font-weight: 400;
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
             color: #000;
         }
-        .card-text {
-            font-size: 1rem;
-            line-height: 1.6rem;
-            letter-spacing: 0.4px;
+        .navbar .navbar-icon {
+            color: #000;
         }
-    }
-</style>
-
+        .main-section {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            margin-left: 10px;
+            min-height: 500px;
+        }
+        .main-section .card {
+            border: none;
+            box-shadow: none;
+        }
+        .sidebar {
+            background-color: #8f97c4;
+            border-radius: 60px;
+            box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            width: 60px;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+        }
+        .sidebar a {
+            margin: 10px 0;
+            color: #000;
+            font-size: 24px;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            color: #000;
+        }
+        .footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 0;
+        }
+        .btn-custom {
+            background-color: #333;
+            color: #fff;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #000;
+            color: #fff;
+        }
+        .btn-custom i {
+            font-size: 24px;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: #ADD8E6;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 1000;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .copy-message {
+            display: none;
+            background-color: #d1e7dd;
+            color: #0f5132;
+            padding: 10px;
+            border-radius: 5px;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .action-icons i {
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 10px;
+            color: #333;
+        }
+        .short-column {
+            width: 10%;
+        }
+        .card-title {
+            font-weight: 400;
+            font-size: 1.6rem;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+        .card-text {
+            font-size: 1.1rem;
+            line-height: 1.8rem;
+            color: #666;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+        .card-body .user-info {
+            color: #333;
+            margin-bottom: 0.2rem;
+            line-height: 1.6rem;
+        }
+        @media (max-width: 767px) {
+            .container-fluid {
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            .row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .main-section {
+                margin-left: 0;
+                margin-right: 0;
+                margin-top: 0;
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+                min-height: 300px;
+                overflow-x: auto;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .sidebar {
+                display: none;
+            }
+            .sidebar-mobile-links {
+                display: block !important;
+                margin-top: 10px;
+            }
+            .mobile-margin {
+                margin-top: 30px;
+            }
+            table {
+                width: 100%;
+                table-layout: auto;
+            }
+            th, td {
+                white-space: nowrap;
+                padding: 8px;
+                text-align: left;
+            }
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            #landing .form-group {
+                width: 100%;
+                padding: 5px;
+            }
+            #landing .form-control {
+                width: 100%;
+                padding: 10px;
+                font-size: 16px;
+            }
+            #landing button.btn-custom {
+                width: 100%;
+                padding: 10px;
+                font-size: 18px;
+            }
+            .card-title {
+                font-weight: 400;
+                font-size: 1.4rem;
+                color: #000;
+                margin-bottom: 0.5rem;
+            }
+            .card-text {
+                font-size: 1.1rem;
+                line-height: 1.8rem;
+                color: #666;
+                margin-bottom: 1rem;
+                letter-spacing: 0.5px;
+            }
+            .card-body .user-info {
+                color: #333;
+                margin-bottom: 0.2rem;
+                line-height: 1.2rem;
+            }
+        }
+        @media (min-width: 768px) {
+            .sidebar-links {
+                display: none;
+            }
+            .card-title {
+                font-size: 1.475rem;
+                font-weight: 400;
+                color: #000;
+            }
+            .card-text {
+                font-size: 1rem;
+                line-height: 1.6rem;
+                letter-spacing: 0.4px;
+            }
+        }
+    </style>
 </head>
 <body id="top">
     <main>
@@ -270,6 +265,15 @@ input[type="number"]::-webkit-inner-spin-button {
             <ul class="navbar-nav ms-lg-5 me-lg-auto">
                 <li class="nav-item">
                     <a class="nav-link click-scroll" href="/"><%= i18n.menu.home %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#fonctionnement"><%= i18n.menu.fonctionnement %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#processus"><%= i18n.menu.processus %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#faq"><%= i18n.menu.faq %></a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link click-scroll" href="/#contact"><%= i18n.menu.contact %></a>
@@ -378,8 +382,7 @@ input[type="number"]::-webkit-inner-spin-button {
                                 <h5 class="card-title"><%= i18n.add_property %></h5>
                                 <p class="card-text"><%= i18n.property_details %></p>
                                 <h5 class="card-title"><%= i18n.add_property %></h5>
-<div class="container-form">                                
-<form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+                                <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
   <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
   <div class="form-group">
     <label for="rooms"><%= i18n.rooms %></label>
@@ -536,9 +539,9 @@ input[type="number"]::-webkit-inner-spin-button {
                         </div>
 
                         <!-- Section Données -->
-                        <div id="donnees" class="card" style="display: block;">
+                        <div id="donnees" class="card" style="display: none;">
                             <div class="card-body">
-                                <h5 class="card-title">Statistiques</h5>
+                                <h5 class="card-title"><%= i18n.stats %></h5>
                                 <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.</p>
                             </div>
                         </div>
@@ -621,13 +624,11 @@ input[type="number"]::-webkit-inner-spin-button {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
     function showSection(sectionId) {
-        console.log("Tentative d'affichage de la section:", sectionId);
         const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
         sections.forEach(id => {
             const sectionElement = document.getElementById(id);
             if (sectionElement) {
                 sectionElement.style.display = id === sectionId ? 'block' : 'none';
-                console.log(`Section ${id}: `, sectionElement.style.display);
             }
         });
 
@@ -651,7 +652,7 @@ input[type="number"]::-webkit-inner-spin-button {
                     noPropertiesMessage.style.display = 'none';
                     properties.forEach(property => {
                         const row = document.createElement('tr');
-                        row.innerHTML = `
+                        row.innerHTML = 
                             <td>${property.rooms}</td>
                             <td>${property.surface}</td>
                             <td>${property.price}</td>
@@ -665,7 +666,7 @@ input[type="number"]::-webkit-inner-spin-button {
                                     <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
                                 </div>
                             </td>
-                        `;
+                        ;
                         propertiesList.appendChild(row);
                     });
                 }
@@ -680,7 +681,7 @@ input[type="number"]::-webkit-inner-spin-button {
     }
 
     function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
+        const fullUrl = https://uap.immo${url};
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 showCopyMessage();
@@ -699,11 +700,11 @@ input[type="number"]::-webkit-inner-spin-button {
     }
 
     function testURL(propertyId) {
-        window.location.href = `/payment?propertyId=${propertyId}`;
+        window.location.href = /payment?propertyId=${propertyId};
     }
 
     function editProperty(propertyId) {
-        window.location.href = `/property/edit/${propertyId}`;
+        window.location.href = /property/edit/${propertyId};
     }
 document.getElementById('add-property-form').addEventListener('submit', async function(event) {
   event.preventDefault();
@@ -723,32 +724,31 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
 });
 
 
-// Temps en millisecondes (30 minutes)
-const inactivityTime = 30 * 60 * 1000;
-let timeout;
+    // Temps en millisecondes (5 minutes)
+    const inactivityTime = 5 * 60 * 1000;
+    let timeout;
 
-function resetTimer() {
-    clearTimeout(timeout);
-    timeout = setTimeout(logout, inactivityTime);
-}
+    function resetTimer() {
+        clearTimeout(timeout);
+        timeout = setTimeout(logout, inactivityTime);
+    }
 
-function logout() {
-    window.location.href = '/<%= locale %>/logout';
-}
+    function logout() {
+        window.location.href = '/login';
+    }
 
-window.onload = resetTimer;
-document.onmousemove = resetTimer;
-document.onkeypress = resetTimer;
-document.onclick = resetTimer;
-document.onscroll = resetTimer;
-
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+    document.onclick = resetTimer;
+    document.onscroll = resetTimer;
 </script>
 <script>
   const descriptionInput = document.getElementById('description');
   const charCount = document.getElementById('charCount');
 
   descriptionInput.addEventListener('input', function() {
-    charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
+    charCount.textContent = ${descriptionInput.value.length}/820 caractères;
   });
 </script>
 </body>
