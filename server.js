@@ -766,7 +766,7 @@ app.get('/config', (req, res) => {
 });
 
 async function generateLandingPage(property) {
-    const GTM_ID = 'GTM-G-0LN60RQ12K'; 
+    const GTM_ID = 'GTM-TF7HSC3N'; 
 
     const template = `
     <!DOCTYPE html>
