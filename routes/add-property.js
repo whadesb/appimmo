@@ -65,8 +65,8 @@ router.post('/add-property', authMiddleware, upload.fields([
         const property = new Property({
             rooms,
             surface,
-            price,
-            city,
+    price: parseFloat(price), 
+    city,
             country,
             createdBy: req.user._id,
             photos: [photo1, photo2]
