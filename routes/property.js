@@ -302,7 +302,7 @@ async function generateLandingPage(property) {
                     ${property.description || 'Aucune description fournie.'}
                 </div>
 
-                <div class="price">Prix: ${property.price.toLocaleString('fr-FR')} €</div>
+               <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
             </div>
         </div>
 
