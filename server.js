@@ -766,7 +766,7 @@ app.get('/config', (req, res) => {
 });
 
 async function generateLandingPage(property) {
-    const GTM_ID = 'GTM-XXXXXXX'; // Remplace par ton vrai ID GTM
+    const GTM_ID = 'GTM-G-0LN60RQ12K'; 
 
     const template = `
     <!DOCTYPE html>
@@ -856,7 +856,7 @@ async function generateLandingPage(property) {
     </body>
     </html>`;
 
-    // Générer un fichier HTML dans le dossier public
+    
     const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
     fs.writeFileSync(filePath, template);
 
