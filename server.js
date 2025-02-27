@@ -1046,7 +1046,7 @@ async function generateLandingPage(property) {
                     ${property.description || 'Aucune description fournie.'}
                 </div>
 
-               <div class="price">Prix: ${new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(property.price)}</div>
+                <div class="price">Prix: ${property.price} €</div>
             </div>
         </div>
 
@@ -1130,7 +1130,6 @@ app.post('/send-contact', async (req, res) => {
     res.status(500).send('Erreur lors de l\'envoi de l\'email.');
   }
 });
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
