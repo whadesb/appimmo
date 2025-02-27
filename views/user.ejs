@@ -647,7 +647,8 @@
 
                 const noPropertiesMessage = document.getElementById('no-properties-message');
                 if (properties.length === 0) {
-                    noPropertiesMessage.style.display = 'block';
+                    noPropertiesMessage.style.display = 'block';<td><%= property.price.toLocaleString('fr-FR') %> €</td>
+
                 } else {
                     noPropertiesMessage.style.display = 'none';
                     properties.forEach(property => {
