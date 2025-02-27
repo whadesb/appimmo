@@ -646,10 +646,9 @@
                 propertiesList.innerHTML = '';
 
                 const noPropertiesMessage = document.getElementById('no-properties-message');
-                if (properties.length === 0) {
-                    noPropertiesMessage.style.display = 'block';<td><%= property.price.toLocaleString('fr-FR') %> €</td>
-
-                } else {
+               if (properties.length === 0) {
+    noPropertiesMessage.style.display = 'block';<td><%= property.price.toLocaleString('fr-FR') %> €</td>
+} else {
                     noPropertiesMessage.style.display = 'none';
                    properties.forEach(property => {
     const row = document.createElement('tr');
