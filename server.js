@@ -602,6 +602,7 @@ app.post('/register', async (req, res) => {
     res.redirect('/register');
   }
 });
+
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
@@ -611,10 +612,10 @@ app.post('/add-property', isAuthenticated, upload.fields([
       rooms: req.body.rooms,
       bedrooms: req.body.bedrooms,
       surface: req.body.surface,
-      price: req.body.price,
+      price: parseFloat(req.body.price), // ✅ Convertir en nombre avant d'enregistrer
       city: req.body.city,
       country: req.body.country,
-      description: req.body.description, // Description ajoutée
+      description: req.body.description,
       yearBuilt: req.body.yearBuilt || null,
       pool: req.body.pool === 'true',
       propertyType: req.body.propertyType,
