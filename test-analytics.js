@@ -4,7 +4,8 @@ const path = require('path');
 
 async function testAnalyticsAccess() {
   // Chemin vers ton fichier JSON de compte de service
-  const keyFilePath = path.join(__dirname, 'chemin/vers/ton-fichier-service-account.json');
+  const keyFilePath = path.join(__dirname, 'middleware', 'uapimmo-dashboard-service-78462e7fc4cd.json');
+
 
   // Initialisation de l'authentification avec le compte de service
   const auth = new google.auth.GoogleAuth({
@@ -16,7 +17,7 @@ async function testAnalyticsAccess() {
     // Vérifie la connexion avec Google Analytics Data API
     const analyticsClient = await analyticsData.properties.runReport({
       auth,
-      property: 'properties/XXXXXXXXX', // Remplace par ton Property ID Analytics
+      property: 'properties/448283789', // Remplace par ton Property ID Analytics
       requestBody: {
         dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
         dimensions: [{ name: 'pagePath' }],
