@@ -1130,6 +1130,10 @@ app.post('/send-contact', async (req, res) => {
     res.status(500).send('Erreur lors de l\'envoi de l\'email.');
   }
 });
+app.locals.formatPrice = (price) => {
+    return new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' }).format(price);
+};
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
