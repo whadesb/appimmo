@@ -19,8 +19,9 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Fonction pour générer la landing page
 async function generateLandingPage(property) {
+    const GTM_ID = 'GTM-XXXXXXX'; // Remplace par ton vrai ID GTM
+
     const template = `
     <!DOCTYPE html>
     <html lang="fr">
@@ -29,8 +30,23 @@ async function generateLandingPage(property) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Propriété à ${property.city}, ${property.country}</title>
         <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet">
+         <!-- Google Tag Manager -->
+        <script>
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','${GTM_ID}');
+        </script>
+        <!-- Fin Google Tag Manager -->
     </head>
     <body>
+<!-- Google Tag Manager (noscript) -->
+        <noscript>
+          <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" 
+          height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        </noscript>
+        <!-- Fin Google Tag Manager (noscript) -->
         <h1>${property.propertyType} à ${property.city}, ${property.country}</h1>
         <p>${property.description}</p>
         <p>Surface : ${property.surface} m²</p>
