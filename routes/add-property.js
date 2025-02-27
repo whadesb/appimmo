@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 async function generateLandingPage(property) {
-    const GTM_ID = 'GTM-XXXXXXX'; // Remplace par ton vrai ID GTM
+    const GTM_ID = 'GTM-G-0LN60RQ12K'; 
 
     const template = `
     <!DOCTYPE html>
