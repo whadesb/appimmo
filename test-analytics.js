@@ -1,37 +1,31 @@
 const { google } = require('googleapis');
-const analyticsData = google.analyticsdata('v1beta');
 const path = require('path');
 
-async function testAnalyticsAccess() {
-  // Chemin vers ton fichier JSON de compte de service
-  const keyFilePath = path.join(__dirname, 'middleware', 'uapimmo-dashboard-service-78462e7fc4cd.json');
+const keyFilePath = path.join(__dirname, 'middleware/uapimmo-dashboard-service-78462e7fc4cd.json');
+const propertyId = '448283789'; // Remplace par ton Property ID de GA4
 
-
-  // Initialisation de l'authentification avec le compte de service
-  const auth = new google.auth.GoogleAuth({
-    keyFile: keyFilePath,
-    scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
-  });
-
+async function getAnalyticsData() {
   try {
-    // Vérifie la connexion avec Google Analytics Data API
-    const analyticsClient = await analyticsData.properties.runReport({
-      auth,
-      property: 'properties/448283789', // Remplace par ton Property ID Analytics
+    const auth = new google.auth.GoogleAuth({
+      keyFile: keyFilePath,
+      scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
+    });
+
+    const analytics = google.analyticsdata({ version: 'v1beta', auth });
+
+    const response = await analytics.properties.runReport({
+      property: `properties/${propertyId}`,
       requestBody: {
         dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
         dimensions: [{ name: 'pagePath' }],
-        metrics: [{ name: 'screenPageViews' }],
-        limit: 5,
+        metrics: [{ name: 'screenPageViews' }, { name: 'averageSessionDuration' }],
       },
     });
 
-    console.log('✅ Connexion réussie ! Voici quelques données :');
-    console.log(analyticsClient.data.rows);
+    console.log(' Données récupérées avec succès :', JSON.stringify(response.data, null, 2));
   } catch (error) {
-    console.error('❌ Erreur d’accès à Google Analytics :', error);
+    console.error(' Erreur lors de la récupération des données Analytics :', error);
   }
 }
 
-// Exécute le test
-testAnalyticsAccess();
+getAnalyticsData();
