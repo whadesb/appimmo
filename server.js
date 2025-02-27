@@ -1046,8 +1046,8 @@ async function generateLandingPage(property) {
                     <div class="section-title">Visite guidée</div>
                     ${property.description || 'Aucune description fournie.'}
                 </div>
-
-                <div class="price">Prix: ${property.price.toLocaleString('fr-FR')} €</div>
+console.log(`Prix enregistré pour la landing page: ${property.price} (Type: ${typeof property.price})`);
+                <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
             </div>
         </div>
 
