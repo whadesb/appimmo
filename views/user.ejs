@@ -655,7 +655,7 @@
                         row.innerHTML = `
                             <td>${property.rooms}</td>
                             <td>${property.surface}</td>
-                            <td>${property.price}</td>
+                            <td><%= formatPrice(property.price) %></td>
                             <td>${property.city}</td>
                             <td>${property.country}</td>
                             <td><a href="${property.url}" target="_blank">${property.url}</a></td>
