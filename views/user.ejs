@@ -638,47 +638,48 @@
     }
 
     async function loadProperties() {
-        try {
-            const response = await fetch('/user/properties');
-            if (response.ok) {
-                const properties = await response.json();
-                const propertiesList = document.getElementById('properties-list');
-                propertiesList.innerHTML = '';
-
-                const noPropertiesMessage = document.getElementById('no-properties-message');
-               if (properties.length === 0) {
-    noPropertiesMessage.style.display = 'block';<td><%= property.price.toLocaleString('fr-FR') %> €</td>
-} else {
-                    noPropertiesMessage.style.display = 'none';
-                   properties.forEach(property => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-        <td>${property.rooms}</td>
-        <td>${property.surface}</td>
-        <td>${property.price.toLocaleString('fr-FR')} €</td>                           
-        <td>${property.city}</td>
-        <td>${property.country}</td>
-        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
-        <td>
-            <div class="action-icons">
-                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
-            </div>
-        </td>
-    `;
-    propertiesList.appendChild(row);
-});
-                }
-            } else {
-                const propertiesList = document.getElementById('properties-list');
-                propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
-            }
-        } catch (error) {
+    try {
+        const response = await fetch('/user/properties');
+        if (response.ok) {
+            const properties = await response.json();
             const propertiesList = document.getElementById('properties-list');
-            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
+            propertiesList.innerHTML = '';
+
+            const noPropertiesMessage = document.getElementById('no-properties-message');
+            if (properties.length === 0) {
+                noPropertiesMessage.style.display = 'block';
+            } else {
+                noPropertiesMessage.style.display = 'none';
+                properties.forEach(property => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${property.rooms}</td>
+                        <td>${property.surface}</td>
+                        <td>${property.price.toLocaleString('fr-FR')} €</td>
+                        <td>${property.city}</td>
+                        <td>${property.country}</td>
+                        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+                        <td>
+                            <div class="action-icons">
+                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
+                            </div>
+                        </td>
+                    `;
+                    propertiesList.appendChild(row);
+                });
+            }
+        } else {
+            const propertiesList = document.getElementById('properties-list');
+            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
         }
+    } catch (error) {
+        const propertiesList = document.getElementById('properties-list');
+        propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
     }
+}
+
 
     function copyURL(url) {
         const fullUrl = `https://uap.immo${url}`;
