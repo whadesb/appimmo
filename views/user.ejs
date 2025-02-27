@@ -651,25 +651,25 @@
 
                 } else {
                     noPropertiesMessage.style.display = 'none';
-                    properties.forEach(property => {
-                        const row = document.createElement('tr');
-                        row.innerHTML = `
-                            <td>${property.rooms}</td>
-                            <td>${property.surface}</td>
-                            <td><%= property.price.toLocaleString('fr-FR') %> €</td>                           
-                            <td>${property.city}</td>
-                            <td>${property.country}</td>
-                            <td><a href="${property.url}" target="_blank">${property.url}</a></td>
-                            <td>
-                                <div class="action-icons">
-                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                                    <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                    <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
-                                </div>
-                            </td>
-                        `;
-                        propertiesList.appendChild(row);
-                    });
+                   properties.forEach(property => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${property.rooms}</td>
+        <td>${property.surface}</td>
+        <td>${property.price.toLocaleString('fr-FR')} €</td>                           
+        <td>${property.city}</td>
+        <td>${property.country}</td>
+        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+        <td>
+            <div class="action-icons">
+                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
+            </div>
+        </td>
+    `;
+    propertiesList.appendChild(row);
+});
                 }
             } else {
                 const propertiesList = document.getElementById('properties-list');
