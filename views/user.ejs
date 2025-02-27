@@ -423,8 +423,9 @@
   </div>
   <!-- Type de bien -->
   <div class="form-group">
-    <label for="propertyType">Type de bien</label>
+    <label for="propertyType">Type de bien :</label>
     <select class="form-control" id="propertyType" name="propertyType" required>
+      <option value="">Sélectionner un type</option>
       <option value="Propriété">Propriété</option>
       <option value="Villa">Villa</option>
       <option value="Hôtel particulier">Hôtel particulier</option>
@@ -526,7 +527,7 @@
     <label for="photo2"><%= i18n.photo_2 %></label>
     <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
   </div>
-<div class="form-group">
+ <div class="form-group">
     <label for="description">Description (max. 820 caractères)</label>
     <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
     <small id="charCount">0/820 caractères</small>
@@ -750,6 +751,27 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
 
   descriptionInput.addEventListener('input', function() {
     charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
+  });
+</script>
+<script>
+  document.getElementById('add-property-form').addEventListener('submit', function(event) {
+      let missingFields = [];
+      const requiredFields = ['price', 'surface', 'country', 'city', 'propertyType', 'description'];
+      
+      requiredFields.forEach(field => {
+          const input = document.getElementById(field);
+          if (!input.value.trim()) {
+              missingFields.push(field);
+              input.style.border = "2px solid red";  // Mets en rouge les champs vides
+          } else {
+              input.style.border = "";  // Remets la bordure normale si rempli
+          }
+      });
+
+      if (missingFields.length > 0) {
+          event.preventDefault(); // Empêche l'envoi du formulaire
+          alert("Veuillez remplir tous les champs obligatoires avant de soumettre le formulaire.");
+      }
   });
 </script>
 </body>
