@@ -516,13 +516,12 @@ app.post('/send-contact', async (req, res) => {
 
     try {
         await sendEmail(mailOptions);
-        res.json({ success: true }); // ✅ Envoyer une réponse JSON au lieu d'une redirection
+        res.json({ success: true, message: "Message envoyé avec succès !" }); // ✅ Retourne JSON valide
     } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'email :', error);
-        res.status(500).json({ success: false, error: 'Erreur lors de l\'envoi de l\'email.' });
+        console.error("Erreur lors de l'envoi de l'email :", error);
+        res.status(500).json({ success: false, error: "Erreur lors de l'envoi de l'email." }); // ✅ Retourne JSON même en cas d'erreur
     }
 });
-
 
 app.get('/payment', isAuthenticated, async (req, res) => {
   const { propertyId } = req.query;
