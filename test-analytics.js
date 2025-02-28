@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const path = require('path');
 
-const keyFilePath = path.join(__dirname, 'middleware/uapimmo-dashboard-service-78462e7fc4cd.json'); // Vérifie bien ce chemin !
+const keyFilePath = path.join(__dirname, 'middleware/uapimmo-dashboard-service-1f15a378df94.json');
 
 async function getAnalyticsData() {
   const auth = new google.auth.GoogleAuth({
