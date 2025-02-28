@@ -22,5 +22,4 @@ async function getAnalyticsData() {
 
   console.log(response.data);
 }
-
 getAnalyticsData().catch(console.error);
