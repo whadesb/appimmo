@@ -284,27 +284,35 @@
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
  <script>
-        document.getElementById("contact-form").addEventListener("submit", function(event) {
-            event.preventDefault(); // Empêche le rechargement de la page
-            
-            const formData = new FormData(this);
+document.getElementById("contact-form").addEventListener("submit", function(event) {
+    event.preventDefault(); // Empêche le rechargement de la page
+    
+    const formData = new FormData(this);
 
-            fetch("/send-contact", {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    document.getElementById("message-success").style.display = "block"; // ✅ Afficher confirmation
-                    document.getElementById("contact-form").reset(); // ✅ Réinitialiser le formulaire
-                } else {
-                    alert("Une erreur s'est produite. Veuillez réessayer.");
-                }
-            })
-            .catch(error => console.error("Erreur :", error));
-        });
-    </script>
+    fetch("/send-contact", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.text().then(text => { throw new Error(text) }); // Catcher une erreur non JSON
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (data.success) {
+            document.getElementById("message-success").style.display = "block"; // Afficher confirmation
+            document.getElementById("contact-form").reset(); // réinitialiser le formulaire
+        } else {
+            alert("Une erreur s'est produite : " + data.error);
+        }
+    })
+    .catch(error => {
+        console.error("Erreur attrapée :", error);
+        alert("Erreur : " + error.message); // Affichage de l'erreur pour diagnostic
+    });
+});
+</script>
 
 </body>
 </html>
