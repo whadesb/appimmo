@@ -518,7 +518,8 @@ app.post('/send-contact', async (req, res) => {
     try {
         // Envoyer l'email avec le transporteur
         await sendEmail(mailOptions);
-        res.redirect('/contact?messageEnvoye=true'); // Redirection après envoi du message
+        const locale = req.cookies.locale || 'fr';
+res.redirect(`/${locale}/contact?messageEnvoye=true`);
     } catch (error) {
         console.error('Erreur lors de l\'envoi de l\'email :', error);
         res.status(500).send('Erreur lors de l\'envoi de l\'email.');
