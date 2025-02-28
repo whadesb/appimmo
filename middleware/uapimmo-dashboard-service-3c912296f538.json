@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "uapimmo-dashboard-service",
+  "private_key_id": "3c912296f5388fc99c16da3662475db58800647a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCtsL0SaquVz3VI\n25CrkppTOj1oJZB6nB6THXh04tD6WC7CgnaC5hEUv4NVKUhw2xdK75WaFadDuv7W\nZ+vi3keBL7EZwJjUnYalBzxuo4JGpUqet4G9VNdfrVJG2Ootq80FIT5SZbkeS3kh\nhGVLtMdcdmNYlful8ADVLfnKItCmo5VTFIl+vm9fsA0fWvHEyzJix+2Q9qyTRDSl\nsV0c38TkLoQXJpdRRElX2x1qDj9Sdg22IaXNVPsWBDVaqmXTVBOIs7Trd5UhObuA\nq1kfqAbM6AHoIW1r+Mc8/b03VVLTQRYHM3B1UjrcIVCiqojI39V32jw3NIF67dR+\nQ9AZr8hpAgMBAAECggEACpphNGxcHKldOs0ijALHVoDV6lNuujlpGWiBZ7tH8Bxt\ngFTICM4kKUzWpt5+DFunlJzDGHStcRJLh8mwyfjxSwbfDBgojEQwiccDDqr/IzJo\nd39y1VzGSBIz1VzdENwtyBwjKpMIpbuMQbpMF77Js9CLWIdRZSwdVOY5WzhcXevB\nOIFLT9zy4/IKe/GvxfJZCmbHArxeMzMeO7LmeT3vWEUOvfdpC3I8+xGuRNErE/GN\nF9F/HjawFsNpe84tyQ0Gk9XxMvD+DinEj7AXpMrV6ZrTOpmXL6b5mM0niqtBTMN0\nOcULFvoiRIERf/eNOBhDX4PXaXY6uKopjFEee4FwQQKBgQDkTOjvoU953tYD1/7M\niC0SD2gCHwwG647VazugTb/BvK2/iSa4VjkNYzEvRvCTeVOsiDx/x8MvXTXfKbp7\n8140Su73tbb+ii6JVigIdXl9B8l9F8q4JQjDJXJEgF1pN7yp47ODLEw8mZJSZGRR\n7gps/unsWe7aE4gg02bbKlgwCQKBgQDCw58w6iJlqkGfD0N21Daoknp/EICryyti\n2vs0mf0mOP50maK0KnT2ioNreUu3pZVtfUQ5B1uL7dHrkr+YyY+MCKQmp1WyTYhn\n94EywfyVGYUqjCvJLYYl3CXaRpYkDzD7leCGmWTfK0LtWSFD6j1oGklnaJS3Ir7f\nGcJ2bDQtYQKBgCCoe93jpnnZjaXpHRLnHANsXsWG6XKH+du/xjzNQnQVaIlwtjBC\nbVDj8qI/tKR0A6s3pefljJ9W5yDwWDPpAX3bhkm7Hd1VqQiOYZWsMF/ZYFJbt+0V\npyY7UhhIgJRPm9Z1szU9ff5hPZQ5tjweIDGtWYss5kUd7Cg99YW+jfT5AoGBAIad\nUP0tBuM/3yVCFn4eRT0UKQiD7ntO7Mjh0/jSai8t+2m5+sQOCFOS/yycZKIlF3fa\nufm0xSidEpeBEV5YChherJ5u0ANyJVK+thTQEXU4c1sqEOV2yp6GX79TRFjeCxwI\nxmwhv5+kNhj4ns5jK1g1uwB3PzqpEEYBdvAE77dhAoGASLwh8kTZSKoI9x7yayAf\nWM23glhqUOmzMFtlTYhSBwLYMi0T+M33wVTZuhV7NrUEKeVYbY8FejABKOg++3EI\nIxTFJluNHhAzaIYC7cFlwUetFnqImzY2EJLlkL3halX4zdaDXsuyoB4gtLUuER6y\nZyIzjb/G80eQUTA1QWOeDE4=\n-----END PRIVATE KEY-----\n",
+  "client_email": "uap-immo@uapimmo-dashboard-service.iam.gserviceaccount.com",
+  "client_id": "114737758556357820393",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/uap-immo%40uapimmo-dashboard-service.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
