@@ -88,16 +88,21 @@ app.use((req, res, next) => {
           return next(err);
         }
         res.clearCookie('connect.sid');
-        
-        // Vérifier si la langue est définie dans les cookies
-        const locale = req.cookies.locale || 'fr';  // Utiliser 'fr' comme langue par défaut
-        res.redirect(`/${locale}/login`);
+
+        // Détecter la langue du cookie, sinon utiliser 'fr' par défaut
+        const locale = req.cookies.locale || req.acceptsLanguages('en', 'fr') || 'fr';
+
+        // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
+        const validLocale = ['fr', 'en'].includes(locale) ? locale : 'fr';
+
+        res.redirect(`/${validLocale}/login`);
       });
     });
   } else {
     next();
   }
 });
+
 
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
