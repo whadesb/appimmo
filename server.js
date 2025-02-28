@@ -1,28 +1,3 @@
-const { google } = require('googleapis');
-const path = require('path');
-
-const keyFilePath = path.join(__dirname, 'middleware/uapimmo-dashboard-service-3c912296f538.json'); // Mets le bon fichier ici
-
-async function testGoogleAuth() {
-    try {
-        const auth = new google.auth.GoogleAuth({
-            keyFile: keyFilePath,
-            scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
-        });
-
-        // Vérification en récupérant un token d'accès
-        const client = await auth.getClient();
-        const token = await client.getAccessToken();
-        console.log("✅ Authentification réussie, Token :", token.token);
-    } catch (error) {
-        console.error("❌ Erreur d'authentification :", error);
-    }
-}
-
-// Exécute le test à chaque démarrage du serveur
-testGoogleAuth();
-
-
 require('dotenv').config();
 // Gérer les erreurs non capturées
 process.on('uncaughtException', function (err) {
