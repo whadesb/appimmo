@@ -285,7 +285,7 @@
     <script src="/js/bootstrap.bundle.min.js"></script>
  <script>
 document.getElementById("contact-form").addEventListener("submit", function(event) {
-    event.preventDefault(); // Empêche le rechargement de la page
+    event.preventDefault(); 
     
     const formData = new FormData(this);
 
@@ -294,25 +294,26 @@ document.getElementById("contact-form").addEventListener("submit", function(even
         body: formData
     })
     .then(response => {
+        console.log("Réponse brute : ", response); // ✅ Vérifie la réponse du serveur
+
         if (!response.ok) {
-            return response.text().then(text => { throw new Error(text) }); // Catcher une erreur non JSON
+            return response.text().then(text => { throw new Error(text) });
         }
         return response.json();
     })
     .then(data => {
         if (data.success) {
-            document.getElementById("message-success").style.display = "block"; // Afficher confirmation
-            document.getElementById("contact-form").reset(); // réinitialiser le formulaire
+            document.getElementById("message-success").style.display = "block"; 
+            document.getElementById("contact-form").reset();
         } else {
-            alert("Une erreur s'est produite : " + data.error);
+            alert("Erreur : " + data.error);
         }
     })
     .catch(error => {
         console.error("Erreur attrapée :", error);
-        alert("Erreur : " + error.message); // Affichage de l'erreur pour diagnostic
+        alert("Erreur : " + error.message);
     });
 });
 </script>
-
 </body>
 </html>
