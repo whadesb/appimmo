@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const path = require('path');
 
-const keyFilePath = path.join(__dirname, 'middleware/uapimmo-dashboard-service-1f15a378df94.json');
+const keyFilePath = path.join(__dirname, 'middleware/uapimmo-dashboard-service-3c912296f538.json');
 
 async function testAuth() {
   try {
