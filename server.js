@@ -499,7 +499,7 @@ app.get('/:lang/contact', (req, res) => {
     });
 });
 
-pp.post('/send-contact', async (req, res) => {
+app.post('/send-contact', async (req, res) => {
     const { firstName, lastName, email, message, type } = req.body;
 
     // Configurer les options d'email
