@@ -499,11 +499,9 @@ app.get('/:lang/contact', (req, res) => {
     });
 });
 
-
 app.post('/send-contact', async (req, res) => {
     const { firstName, lastName, email, message, type } = req.body;
 
-    // Configurer les options d'email
     const mailOptions = {
         from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
         to: process.env.CONTACT_EMAIL,
@@ -517,14 +515,14 @@ app.post('/send-contact', async (req, res) => {
     };
 
     try {
-        // Envoyer l'email avec le transporteur
         await sendEmail(mailOptions);
-        res.redirect('/contact?messageEnvoye=true'); // Redirection après envoi du message
+        res.json({ success: true }); // ✅ Envoyer une réponse JSON au lieu d'une redirection
     } catch (error) {
         console.error('Erreur lors de l\'envoi de l\'email :', error);
-        res.status(500).send('Erreur lors de l\'envoi de l\'email.');
+        res.status(500).json({ success: false, error: 'Erreur lors de l\'envoi de l\'email.' });
     }
 });
+
 
 app.get('/payment', isAuthenticated, async (req, res) => {
   const { propertyId } = req.query;
