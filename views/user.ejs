@@ -761,8 +761,9 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     }
 
     function logout() {
-        window.location.href = '/login';
-    }
+    const locale = document.documentElement.lang || 'fr'; // Récupère la langue de la page
+    window.location.href = `/${locale}/login`;
+}
 
     window.onload = resetTimer;
     document.onmousemove = resetTimer;
