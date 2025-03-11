@@ -103,6 +103,23 @@ app.use((req, res, next) => {
   }
 });
 
+app.use((req, res, next) => {
+    res.locals.i18n = {
+        menu: { home: "Accueil", contact: "Contact" },
+        payment_title: "Paiement",
+        payment_description_1: "Description du paiement",
+        payment_card: "Carte de paiement",
+        pay_now: "Payer maintenant",
+        order_summary: "Récapitulatif de commande",
+        rooms: "Pièces",
+        surface: "Surface",
+        price: "Prix",
+        city: "Ville",
+        country: "Pays",
+        total: "Total"
+    };
+    next();
+});
 
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
@@ -526,41 +543,26 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
     }
 });
 
-app.get('/:locale/payment', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;
-    const { propertyId } = req.query;
-
-    console.log(` Récupération de la propriété avec ID: ${propertyId}`);
-
-    try {
-        const property = await Property.findById(propertyId);
-        if (!property) {
-            console.error(' Propriété non trouvée pour ID:', propertyId);
-            return res.status(404).send('Property not found');
+app.get('/payment', (req, res) => {
+    res.render('payment', {
+        locale: req.locale || 'fr', // Définit une valeur par défaut
+        i18n: {
+            menu: { home: "Accueil", contact: "Contact" },
+            payment_title: "Paiement",
+            payment_description_1: "Description du paiement",
+            payment_card: "Carte de paiement",
+            pay_now: "Payer maintenant",
+            order_summary: "Récapitulatif de commande",
+            rooms: "Pièces",
+            surface: "Surface",
+            price: "Prix",
+            city: "Ville",
+            country: "Pays",
+            total: "Total"
         }
-
-        console.log('Propriété trouvée:', property);
-
-        // Charger les traductions spécifiques à la langue
-        const translations = require(`./locales/${locale}/payment.json`);
-
-        res.render('payment', {
-            locale: locale,
-            i18n: translations,
-            user: req.user || null,  // Ajoute cette ligne pour passer `user` à la vue
-            propertyId: property._id,
-            rooms: property.rooms,
-            surface: property.surface,
-            price: property.price,
-            city: property.city,
-            country: property.country,
-            url: property.url
-        });
-    } catch (error) {
-        console.error(' Erreur lors de la récupération de la propriété:', error);
-        res.status(500).send('Erreur lors de la récupération de la propriété.');
-    }
+    });
 });
+
 
 
 
