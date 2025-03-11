@@ -528,7 +528,7 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
 
 app.get('/payment', (req, res) => {
     res.render('payment', {
-        locale: req.locale || 'fr', // Définit une valeur par défaut
+        locale: req.locale || 'fr',
         i18n: {
             menu: { home: "Accueil", contact: "Contact" },
             payment_title: "Paiement",
@@ -545,8 +545,6 @@ app.get('/payment', (req, res) => {
         }
     });
 });
-
-
 
 
 
