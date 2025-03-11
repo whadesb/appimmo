@@ -961,7 +961,15 @@ async function generateLandingPage(property) {
             @media screen and (max-width: 768px) {
                 .container {
                     flex-direction: column;
+height: auto;
                 }
+                .slider {
+        height: 250px; /* Ajuster la hauteur */
+    }
+
+    .slides img {
+        height: 250px; /* Même hauteur que le slider */
+    }
 
                 .property-details {
                     grid-template-columns: repeat(2, 1fr);
@@ -972,24 +980,31 @@ async function generateLandingPage(property) {
                 }
 
                 .property-info h1 {
-                    font-size: 2.4rem;
+                    font-size: 1.8rem;
                 }
 
                 .property-info h2 {
-                    font-size: 1.4rem;
+                    font-size: 1.2rem;
                 }
 
                 .price {
-                    font-size: 1.3rem;
+                    font-size: 1.2rem;
                     width: 100%;
                     padding: 10px;
                     text-align: center;
+align-self: center;
                 }
 
                 .property-description {
                     font-size: 0.9rem;
                 }
             }
+@media screen and (max-width: 500px) {
+    .property-details {
+        grid-template-columns: 1fr; /* Une seule colonne */
+        gap: 5px; /* Moins d’espace entre les éléments */
+    }
+}
 
             @media screen and (min-width: 769px) {
                 body {
