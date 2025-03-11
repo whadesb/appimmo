@@ -103,23 +103,6 @@ app.use((req, res, next) => {
   }
 });
 
-app.use((req, res, next) => {
-    res.locals.i18n = {
-        menu: { home: "Accueil", contact: "Contact" },
-        payment_title: "Paiement",
-        payment_description_1: "Description du paiement",
-        payment_card: "Carte de paiement",
-        pay_now: "Payer maintenant",
-        order_summary: "Récapitulatif de commande",
-        rooms: "Pièces",
-        surface: "Surface",
-        price: "Prix",
-        city: "Ville",
-        country: "Pays",
-        total: "Total"
-    };
-    next();
-});
 
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
