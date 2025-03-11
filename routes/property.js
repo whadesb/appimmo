@@ -336,19 +336,6 @@ align-self: center;
         </div>
 
     </body>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        if (window.innerWidth <= 768) { // Vérifie si l'écran est en mode mobile
-            let slider = document.querySelector(".slider"); // Sélectionne le slider
-            let title = document.createElement("p"); // Crée un élément <p>
-            title.className = "property-lorem"; // Ajoute la classe pour conserver le style
-            title.textContent = "UAP Immo Annonce"; // Ajoute le texte
-            
-            slider.parentNode.insertBefore(title, slider); // Insère avant le slider
-        }
-    });
-</script>
-
     </html>`;
 
   const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
