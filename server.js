@@ -530,11 +530,16 @@ app.get('/payment', isAuthenticated, async (req, res) => {
     const { propertyId } = req.query;
     const locale = req.cookies.locale || 'fr';
     
+    console.log(`Récupération de la propriété pour ID: ${propertyId}`);
+
     try {
         const property = await Property.findById(propertyId);
         if (!property) {
+            console.error('Propriété non trouvée pour ID:', propertyId);
             return res.status(404).send('Property not found');
         }
+
+        console.log(' Propriété récupérée avec succès:', property);
 
         const translations = require(`./locales/${locale}/payment.json`);
 
@@ -550,8 +555,8 @@ app.get('/payment', isAuthenticated, async (req, res) => {
             url: property.url
         });
     } catch (error) {
-        console.error('Error fetching property', error);
-        res.status(500).send('Error fetching property');
+        console.error(' Erreur lors de la récupération de la propriété:', error);
+        res.status(500).send('Erreur lors de la récupération de la propriété.');
     }
 });
 
