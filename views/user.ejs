@@ -161,6 +161,50 @@ input[type="number"]::-webkit-outer-spin-button {
 input[type="number"] {
     -moz-appearance: textfield;
 }
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: border 0.3s ease-in-out;
+}
+
+/* Effet focus */
+.form-control:focus {
+    border-color: #8f97c4; /* Bleu */
+    outline: none;
+    box-shadow: 0 0 5px rgba(143, 151, 196, 0.5);
+}
+
+/* Bouton */
+.btn-custom {
+    background-color: #8f97c4;
+    color: white;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    width: 100%;
+    text-align: center;
+    transition: background 0.3s ease-in-out;
+}
+
+.btn-custom:hover {
+    background-color: #6e76a3;
+}
+
         @media (max-width: 767px) {
             .container-fluid {
                 padding-left: 0;
