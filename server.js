@@ -539,7 +539,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             return res.status(404).send('Property not found');
         }
 
-        console.log(' Propriété trouvée:', property);
+        console.log('Propriété trouvée:', property);
 
         // Charger les traductions spécifiques à la langue
         const translations = require(`./locales/${locale}/payment.json`);
@@ -547,6 +547,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
         res.render('payment', {
             locale: locale,
             i18n: translations,
+            user: req.user || null,  // Ajoute cette ligne pour passer `user` à la vue
             propertyId: property._id,
             rooms: property.rooms,
             surface: property.surface,
@@ -556,7 +557,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             url: property.url
         });
     } catch (error) {
-        console.error('⚠️ Erreur lors de la récupération de la propriété:', error);
+        console.error(' Erreur lors de la récupération de la propriété:', error);
         res.status(500).send('Erreur lors de la récupération de la propriété.');
     }
 });
