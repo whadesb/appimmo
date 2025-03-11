@@ -22,5 +22,7 @@
   "rooms": "Nombre de pièces",
   "surface": "Surface",
   "price": "Prix",
+    "login": "Connexion",
+    "logout": "Déconnexion",
   "total": "Total"
 }
