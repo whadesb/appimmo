@@ -144,6 +144,15 @@
             margin-bottom: 0.2rem;
             line-height: 1.6rem;
         }
+.hidden {
+    display: none;
+}
+
+progress {
+    width: 100%;
+    height: 10px;
+    margin-top: 5px;
+}
         @media (max-width: 767px) {
             .container-fluid {
                 padding-left: 0;
@@ -226,6 +235,15 @@
                 margin-bottom: 0.2rem;
                 line-height: 1.2rem;
             }
+.hidden {
+    display: none;
+}
+
+progress {
+    width: 100%;
+    height: 10px;
+    margin-top: 5px;
+}
         }
         @media (min-width: 768px) {
             .sidebar-links {
@@ -241,6 +259,15 @@
                 line-height: 1.6rem;
                 letter-spacing: 0.4px;
             }
+.hidden {
+    display: none;
+}
+
+progress {
+    width: 100%;
+    height: 10px;
+    margin-top: 5px;
+}
         }
     </style>
 </head>
@@ -536,14 +563,20 @@
       <option value="true">Oui</option>
     </select>
   </div>
-  <div class="form-group">
+ <div class="form-group">
     <label for="photo1"><%= i18n.photo_1 %></label>
     <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-  </div>
-  <div class="form-group">
+    <progress id="progress1" value="0" max="100" class="hidden"></progress>
+    <span id="status1" class="hidden">Chargement...</span>
+</div>
+
+<div class="form-group">
     <label for="photo2"><%= i18n.photo_2 %></label>
     <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-  </div>
+    <progress id="progress2" value="0" max="100" class="hidden"></progress>
+    <span id="status2" class="hidden">Chargement...</span>
+</div>
+
 <div class="form-group">
     <label for="description"><%= i18n.description %> (max. 820 caractères)</label>
     <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
@@ -792,5 +825,49 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
       }
   });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    function handleFileUpload(input, progressId, statusId) {
+        const file = input.files[0];
+
+        if (file) {
+            const progressBar = document.getElementById(progressId);
+            const status = document.getElementById(statusId);
+
+            // Réinitialisation
+            progressBar.value = 0;
+            progressBar.classList.remove("hidden");
+            status.classList.remove("hidden");
+            status.textContent = "Chargement en cours...";
+
+            // Simulation d'upload progressif (remplace ça par une vraie requête si besoin)
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.value = progress;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    status.textContent = "✅ Image chargée avec succès !";
+                    setTimeout(() => {
+                        progressBar.classList.add("hidden");
+                        status.classList.add("hidden");
+                    }, 2000); // Cache après 2 secondes
+                }
+            }, 200);
+        }
+    }
+
+    // Événements sur les inputs file
+    document.getElementById("photo1").addEventListener("change", function () {
+        handleFileUpload(this, "progress1", "status1");
+    });
+
+    document.getElementById("photo2").addEventListener("change", function () {
+        handleFileUpload(this, "progress2", "status2");
+    });
+});
+</script>
+
 </body>
 </html>
