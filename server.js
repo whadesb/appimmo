@@ -526,7 +526,7 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
     }
 });
 
-app.get('/payment', isAuthenticated, async (req, res) => {
+app.get('/:lang(payment)', isAuthenticated, async (req, res) => {
     const { propertyId } = req.query;
     const locale = req.cookies.locale || 'fr';
     
