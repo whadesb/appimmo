@@ -529,8 +529,8 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;
     const { propertyId } = req.query;
-    
-    console.log(` Récupération de la propriété pour ID: ${propertyId}`);
+
+    console.log(` Récupération de la propriété avec ID: ${propertyId}`);
 
     try {
         const property = await Property.findById(propertyId);
@@ -539,9 +539,9 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             return res.status(404).send('Property not found');
         }
 
-        console.log(' Propriété récupérée avec succès:', property);
+        console.log(' Propriété trouvée:', property);
 
-        // Charger les traductions pour la langue spécifiée
+        // Charger les traductions spécifiques à la langue
         const translations = require(`./locales/${locale}/payment.json`);
 
         res.render('payment', {
@@ -556,10 +556,11 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             url: property.url
         });
     } catch (error) {
-        console.error(' Erreur lors de la récupération de la propriété:', error);
-        res.status(500).send('Erreur interne lors du chargement de la propriété.');
+        console.error('⚠️ Erreur lors de la récupération de la propriété:', error);
+        res.status(500).send('Erreur lors de la récupération de la propriété.');
     }
 });
+
 
 
 
