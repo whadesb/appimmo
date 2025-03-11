@@ -22,5 +22,7 @@
   "rooms": "Number of rooms",
   "surface": "Surface",
   "price": "Price",
+    "login": "Login",
+    "logout": "Logout",
   "total": "Total"
 }
