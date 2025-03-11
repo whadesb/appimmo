@@ -526,21 +526,22 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
     }
 });
 
-app.get('/:lang(payment)', isAuthenticated, async (req, res) => {
+app.get('/:locale/payment', isAuthenticated, async (req, res) => {
+    const { locale } = req.params;
     const { propertyId } = req.query;
-    const locale = req.cookies.locale || 'fr';
     
-    console.log(`Récupération de la propriété pour ID: ${propertyId}`);
+    console.log(` Récupération de la propriété pour ID: ${propertyId}`);
 
     try {
         const property = await Property.findById(propertyId);
         if (!property) {
-            console.error('Propriété non trouvée pour ID:', propertyId);
+            console.error(' Propriété non trouvée pour ID:', propertyId);
             return res.status(404).send('Property not found');
         }
 
         console.log(' Propriété récupérée avec succès:', property);
 
+        // Charger les traductions pour la langue spécifiée
         const translations = require(`./locales/${locale}/payment.json`);
 
         res.render('payment', {
@@ -556,9 +557,10 @@ app.get('/:lang(payment)', isAuthenticated, async (req, res) => {
         });
     } catch (error) {
         console.error(' Erreur lors de la récupération de la propriété:', error);
-        res.status(500).send('Erreur lors de la récupération de la propriété.');
+        res.status(500).send('Erreur interne lors du chargement de la propriété.');
     }
 });
+
 
 
 app.get('/:lang/register', (req, res) => {
