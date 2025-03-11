@@ -208,7 +208,16 @@ async function generateLandingPage(property) {
             }
 
             @media screen and (max-width: 768px) {
-                .container {
+  .slider::before {
+        content: "UAP Immo Annonce";
+        display: block;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #3c3c3c;
+        text-align: center;
+        margin-bottom: 10px;
+    }                
+.container {
                     flex-direction: column;
 height: auto;
                 }
