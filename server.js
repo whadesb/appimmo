@@ -966,6 +966,7 @@ height: auto;
                 }
                 .slider {
         height: 250px; /* Ajuster la hauteur */
+        margin-top: 20px; /* Ajoute une marge propre au-dessus du slider */
     }
 
     .slides img {
