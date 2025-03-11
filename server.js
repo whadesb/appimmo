@@ -151,7 +151,25 @@ app.get('/', (req, res) => {
     }
 });
 
-
+app.get('/payment', (req, res) => {
+    res.render('payment', {
+        locale: req.locale || 'fr',
+        i18n: {
+            menu: { home: "Accueil", contact: "Contact" },
+            payment_title: "Paiement",
+            payment_description_1: "Description du paiement",
+            payment_card: "Carte de paiement",
+            pay_now: "Payer maintenant",
+            order_summary: "Récapitulatif de commande",
+            rooms: "Pièces",
+            surface: "Surface",
+            price: "Prix",
+            city: "Ville",
+            country: "Pays",
+            total: "Total"
+        }
+    });
+});
 app.get('/:locale', (req, res) => {
   const locale = req.params.locale || 'fr';
 
@@ -525,28 +543,6 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
         res.status(500).send('Erreur lors de l\'envoi de l\'email.');
     }
 });
-
-app.get('/payment', (req, res) => {
-    res.render('payment', {
-        locale: req.locale || 'fr',
-        i18n: {
-            menu: { home: "Accueil", contact: "Contact" },
-            payment_title: "Paiement",
-            payment_description_1: "Description du paiement",
-            payment_card: "Carte de paiement",
-            pay_now: "Payer maintenant",
-            order_summary: "Récapitulatif de commande",
-            rooms: "Pièces",
-            surface: "Surface",
-            price: "Prix",
-            city: "Ville",
-            country: "Pays",
-            total: "Total"
-        }
-    });
-});
-
-
 
 app.get('/:lang/register', (req, res) => {
   const locale = req.params.lang;
