@@ -797,11 +797,19 @@ progress {
         }, 2000);
     }
 
-   function testURL(propertyId) {
+function testURL(propertyId) {
     console.log("🔍 ID de la propriété cliqué :", propertyId);
-    window.location.href = `/payment?propertyId=${propertyId}`;
-}
 
+    // Récupération de la langue à partir de l'URL actuelle
+    const currentLang = window.location.pathname.split('/')[1]; // 'en' ou 'fr'
+
+    // Vérifier que currentLang est bien 'en' ou 'fr', sinon rediriger sans préfixe de langue
+    if (currentLang === 'en' || currentLang === 'fr') {
+        window.location.href = `/${currentLang}/payment?propertyId=${propertyId}`;
+    } else {
+        window.location.href = `/payment?propertyId=${propertyId}`;
+    }
+}
 
     function editProperty(propertyId) {
         window.location.href = `/property/edit/${propertyId}`;
