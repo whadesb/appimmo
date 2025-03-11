@@ -527,28 +527,34 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
 });
 
 app.get('/payment', isAuthenticated, async (req, res) => {
-  const { propertyId } = req.query;
+    const { propertyId } = req.query;
+    const locale = req.cookies.locale || 'fr';
+    
+    try {
+        const property = await Property.findById(propertyId);
+        if (!property) {
+            return res.status(404).send('Property not found');
+        }
 
-  try {
-    const property = await Property.findById(propertyId);
-    if (!property) {
-      return res.status(404).send('Property not found');
+        const translations = require(`./locales/${locale}/payment.json`);
+
+        res.render('payment', {
+            locale: locale,
+            i18n: translations,
+            propertyId: property._id,
+            rooms: property.rooms,
+            surface: property.surface,
+            price: property.price,
+            city: property.city,
+            country: property.country,
+            url: property.url
+        });
+    } catch (error) {
+        console.error('Error fetching property', error);
+        res.status(500).send('Error fetching property');
     }
-
-    res.render('payment', {
-      propertyId: property._id,
-      rooms: property.rooms,
-      surface: property.surface,
-      price: property.price,
-      city: property.city,
-      country: property.country,
-      url: property.url
-    });
-  } catch (error) {
-    console.error('Error fetching property', error);
-    res.status(500).send('Error fetching property');
-  }
 });
+
 
 app.get('/:lang/register', (req, res) => {
   const locale = req.params.lang;
