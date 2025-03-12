@@ -1250,6 +1250,24 @@ app.post('/webhook-stripe', async (req, res) => {
 
     res.sendStatus(200);
 });
+app.post('/create-order', async (req, res) => {
+    const { userId, amount, pageUrl } = req.body; // Récupération de l'URL de la page
+    
+    try {
+        const order = new Order({
+            userId,
+            amount,
+            pageUrl, // Stocke l'URL correcte
+            status: "en attente", // Toujours en attente avant validation Stripe
+            createdAt: new Date()
+        });
+        await order.save();
+        res.status(201).json({ message: "Commande créée avec succès", order });
+    } catch (error) {
+        console.error("Erreur lors de la création de la commande :", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
