@@ -781,6 +781,7 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
 });
 
 app.get('/config', (req, res) => {
+console.log("🔍 Stripe Public Key:", process.env.STRIPE_PUBLIC_KEY);
   res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
 });
 
