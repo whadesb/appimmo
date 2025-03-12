@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+  _id: {
+    type: mongoose.Schema.Types.ObjectId,
+    auto: true, // ✅ Assure la génération automatique d'un ObjectId
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
@@ -16,7 +20,8 @@ const orderSchema = new mongoose.Schema({
     default: 'pending'
   },
   pageUrl: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId, // ✅ S'assurer que c'est bien un ObjectId si c'est une référence
+    ref: 'Property', // Mettre la référence correcte si nécessaire
     required: false
   },
   orderNumber: {
@@ -30,11 +35,11 @@ const orderSchema = new mongoose.Schema({
   }
 });
 
-// Fonction pour générer un numéro de commande unique
+// ✅ Fonction pour générer un numéro de commande unique
 orderSchema.pre('save', async function (next) {
   if (!this.orderNumber) {
     const datePart = new Date().toISOString().split('T')[0].replace(/-/g, '');
-    const randomPart = Math.floor(1000 + Math.random() * 9000); // Numéro aléatoire à 4 chiffres
+    const randomPart = Math.floor(1000 + Math.random() * 9000);
 
     this.orderNumber = `CMD-${datePart}-${randomPart}`;
   }
