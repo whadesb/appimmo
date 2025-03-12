@@ -1,10 +1,13 @@
 {
-  "login": "Connexion",
-  "home": "Accueil",
-  "functioning": "Fonctionnement",
-  "process": "Processus",
-  "faqs": "FAQs",
-  "contact": "Contact",
+  "menu": {
+    "home": "Accueil",
+    "functioning": "Fonctionnement",
+    "process": "Processus",
+    "faqs": "FAQs",
+    "contact": "Contact",
+    "login": "Connexion",
+    "logout": "Déconnexion"
+  },
   "payment_title": "Paiement de votre annonce",
   "payment_description_1": "Maximisez la visibilité de votre annonce immobilière grâce à notre offre de diffusion premium.",
   "payment_description_2": "Votre annonce sera affichée sur les plateformes les plus influentes : Facebook, Google, ECA-N et Ads by UAP, pendant 3 mois.",
@@ -22,7 +25,5 @@
   "rooms": "Nombre de pièces",
   "surface": "Surface",
   "price": "Prix",
-    "login": "Connexion",
-    "logout": "Déconnexion",
   "total": "Total"
 }
