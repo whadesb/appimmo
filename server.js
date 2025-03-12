@@ -1223,6 +1223,33 @@ app.post('/send-contact', async (req, res) => {
     res.status(500).send('Erreur lors de l\'envoi de l\'email.');
   }
 });
+app.post('/webhook-stripe', async (req, res) => {
+    let event = req.body;
+    
+    if (event.type === 'checkout.session.completed') {
+        const session = event.data.object;
+        const userId = session.metadata.userId;
+        const amount = session.amount_total / 100; // Conversion correcte en euros
+        const orderId = session.metadata.orderId;
+        const pageUrl = session.metadata.pageUrl; // Récupération de l'URL de la page
+
+        try {
+            const order = await Order.findByIdAndUpdate(orderId, { 
+                status: "validé",
+                userId: userId,
+                amount: amount, 
+                pageUrl: pageUrl, // Stocke l'URL
+                createdAt: new Date()
+            }, { new: true, upsert: true });
+
+            console.log("Commande validée :", order);
+        } catch (error) {
+            console.error("Erreur mise à jour commande Stripe :", error);
+        }
+    }
+
+    res.sendStatus(200);
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
