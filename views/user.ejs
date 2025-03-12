@@ -847,6 +847,12 @@ progress {
     }
 
 function testURL(orderId) {
+    if (!orderId || orderId.length !== 24) {
+        console.error("❌ OrderId non valide :", orderId);
+        alert("Erreur : l'ID de commande est invalide.");
+        return;
+    }
+
     console.log("🔍 ID de la commande cliqué :", orderId);
 
     const currentLang = window.location.pathname.split('/')[1];
