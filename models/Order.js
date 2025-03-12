@@ -20,10 +20,9 @@ const orderSchema = new mongoose.Schema({
     default: 'pending'
   },
   pageUrl: {
-    type: mongoose.Schema.Types.ObjectId, // ✅ S'assurer que c'est bien un ObjectId si c'est une référence
-    ref: 'Property', // Mettre la référence correcte si nécessaire
+    type: String, // ✅ Modifier en String
     required: false
-  },
+},
   orderNumber: {
     type: String, // Numéro unique généré
     unique: true,
