@@ -806,7 +806,7 @@ progress {
                         <td>
                             <div class="action-icons">
                                 <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('<%= order.orderNumber %>')"></i>
                                 <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
                             </div>
                         </td>
@@ -844,17 +844,15 @@ progress {
         }, 2000);
     }
 
-function testURL(propertyId) {
-    console.log("🔍 ID de la propriété cliqué :", propertyId);
+function testURL(orderId) {
+    console.log("🔍 ID de la commande cliqué :", orderId);
 
-    // Récupération de la langue à partir de l'URL actuelle
-    const currentLang = window.location.pathname.split('/')[1]; // 'en' ou 'fr'
+    const currentLang = window.location.pathname.split('/')[1];
 
-    // Vérifier que currentLang est bien 'en' ou 'fr', sinon rediriger sans préfixe de langue
     if (currentLang === 'en' || currentLang === 'fr') {
-        window.location.href = `/${currentLang}/payment?propertyId=${propertyId}`;
+        window.location.href = `/${currentLang}/payment?orderId=${orderId}`;
     } else {
-        window.location.href = `/payment?propertyId=${propertyId}`;
+        window.location.href = `/payment?orderId=${orderId}`;
     }
 }
 
