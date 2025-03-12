@@ -1275,21 +1275,24 @@ app.post('/create-order', async (req, res) => {
     }
 
     try {
+        // Création de la commande
         const order = new Order({
             userId,
-            amount: parseFloat(amount), // Conversion correcte en euros
-            pageUrl, // Ajout de l'URL
-            status: "pending", // En attente avant paiement
-            createdAt: new Date()
+            amount: parseFloat(amount),
+            pageUrl,
+            status: "pending"
         });
 
+        // Sauvegarde dans la BDD
         await order.save();
-        res.status(201).json({ message: "Commande créée avec succès", order });
+
+        res.status(201).json({ message: "Commande créée avec succès", orderNumber: order.orderNumber, order });
     } catch (error) {
         console.error("Erreur lors de la création de la commande :", error);
         res.status(500).json({ error: "Erreur serveur" });
     }
 });
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
