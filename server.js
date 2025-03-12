@@ -151,29 +151,44 @@ app.get('/', (req, res) => {
     }
 });
 
-app.get('/payment', isAuthenticated, async (req, res) => {
-  const { propertyId } = req.query;
+app.get('/:locale/payment', isAuthenticated, async (req, res) => {
+    const { locale } = req.params;  // Récupérer la langue depuis l'URL
+    const { propertyId } = req.query;
 
-  try {
-    const property = await Property.findById(propertyId);
-    if (!property) {
-      return res.status(404).send('Property not found');
+    try {
+        const property = await Property.findById(propertyId);
+        if (!property) {
+            return res.status(404).send('Property not found');
+        }
+
+        // Charger les traductions spécifiques à la langue
+        const translationsPath = `./locales/${locale}/payment.json`;
+        let i18n = {};
+
+        try {
+            i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+        } catch (error) {
+            console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+            return res.status(500).send('Erreur lors du chargement des traductions.');
+        }
+
+        res.render('payment', {
+            locale,
+            i18n,
+            propertyId: property._id,
+            rooms: property.rooms,
+            surface: property.surface,
+            price: property.price,
+            city: property.city,
+            country: property.country,
+            url: property.url
+        });
+    } catch (error) {
+        console.error('Error fetching property:', error);
+        res.status(500).send('Error fetching property');
     }
-
-    res.render('payment', {
-      propertyId: property._id,
-      rooms: property.rooms,
-      surface: property.surface,
-      price: property.price,
-      city: property.city,
-      country: property.country,
-      url: property.url
-    });
-  } catch (error) {
-    console.error('Error fetching property', error);
-    res.status(500).send('Error fetching property');
-  }
 });
+
 app.get('/:locale', (req, res) => {
   const locale = req.params.locale || 'fr';
 
