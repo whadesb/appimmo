@@ -450,6 +450,30 @@ progress {
                                 <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
                                 <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
                             </div>
+<div id="order-history" class="card" style="display: none;">
+    <div class="card-body">
+        <h5 class="card-title">Historique des Commandes</h5>
+        <p class="card-text">Consultez votre historique de commandes passées.</p>
+        <div class="table-responsive">
+            <table class="table table-striped" id="order-history-table">
+                <thead>
+                    <tr>
+                        <th scope="col">Date</th>
+                        <th scope="col">Heure</th>
+                        <th scope="col">Montant</th>
+                        <th scope="col">URL</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Les commandes seront chargées ici via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+        <div id="no-orders-message" style="display: none;" class="text-center">
+            <p>Aucune commande trouvée.</p>
+        </div>
+    </div>
+</div>
                         </div>
 
                         <!-- Section Reset Password -->
