@@ -951,6 +951,42 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        function loadOrderHistory() {
+            fetch('/user/orders')
+                .then(response => response.json())
+                .then(orders => {
+                    const orderTable = document.querySelector("#order-history-table tbody");
+                    orderTable.innerHTML = "";
+                    const noOrdersMessage = document.getElementById("no-orders-message");
+
+                    if (orders.length === 0) {
+                        noOrdersMessage.style.display = "block";
+                    } else {
+                        noOrdersMessage.style.display = "none";
+                        orders.forEach(order => {
+                            const row = document.createElement("tr");
+                            row.innerHTML = `
+                                <td>\${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
+                                <td>\${new Date(order.createdAt).toLocaleTimeString('fr-FR')}</td>
+                                <td>\${order.amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</td>
+                                <td><a href="\${order.url}" target="_blank">Voir la page</a></td>
+                            `;
+                            orderTable.appendChild(row);
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error("Erreur lors du chargement des commandes :", error);
+                });
+        }
+
+        // Charger l'historique des commandes quand l'utilisateur affiche la section
+        document.querySelector("[onclick='showSection(\'order-history\')']").addEventListener("click", loadOrderHistory);
+    });
+</script>
+
 
 </body>
 </html>
