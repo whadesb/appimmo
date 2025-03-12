@@ -1232,28 +1232,29 @@ app.post('/webhook-stripe', async (req, res) => {
         const userId = session.metadata.userId;
         const amount = session.amount_total / 100; // Conversion correcte en euros
         const orderId = session.metadata.orderId;
-        const pageUrl = session.metadata.pageUrl; // Vérifie que `pageUrl` est bien récupéré
+        const pageUrl = session.metadata.pageUrl; // Vérification
 
         try {
             const order = await Order.findByIdAndUpdate(orderId, { 
-                status: "validé",
+                status: "paid",
                 userId: userId,
-                amount: amount, // Assure-toi que le montant est bien en euros
-                pageUrl: pageUrl, //  Vérifie que l'URL est bien enregistrée
+                amount: amount,
+                pageUrl: pageUrl, // Mise à jour de l'URL
                 createdAt: new Date()
             }, { new: true, upsert: true });
 
-            console.log(" Commande validée :", order);
+            console.log("Commande validée :", order);
         } catch (error) {
-            console.error(" Erreur mise à jour commande Stripe :", error);
+            console.error("Erreur mise à jour commande Stripe :", error);
         }
     }
 
     res.sendStatus(200);
 });
 
+
 app.post('/create-order', async (req, res) => {
-    const { userId, amount, pageUrl } = req.body; // Vérifie que pageUrl est bien reçu
+    const { userId, amount, pageUrl } = req.body;
 
     if (!userId || !amount || !pageUrl) {
         return res.status(400).json({ error: "Données manquantes : userId, amount ou pageUrl" });
@@ -1262,9 +1263,9 @@ app.post('/create-order', async (req, res) => {
     try {
         const order = new Order({
             userId,
-            amount: parseFloat(amount) / 100, // Conversion correcte en euros
-            pageUrl, // Stocke l'URL correcte
-            status: "en attente", // Statut en attente avant validation Stripe
+            amount: parseFloat(amount), // Conversion correcte en euros
+            pageUrl, // Ajout de l'URL
+            status: "pending", // En attente avant paiement
             createdAt: new Date()
         });
 
@@ -1275,8 +1276,6 @@ app.post('/create-order', async (req, res) => {
         res.status(500).json({ error: "Erreur serveur" });
     }
 });
-
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
