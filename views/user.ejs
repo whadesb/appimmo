@@ -457,14 +457,14 @@ progress {
         <div class="table-responsive">
             <table class="table table-striped" id="order-history-table">
                 <thead>
-                    <tr>
-                        <th scope="col">Date</th>
-                        <th scope="col">Heure</th>
-                        <th scope="col">Montant</th>
-                        <th scope="col">Statut</th>
-                        <th scope="col">URL</th>
-                    </tr>
-                </thead>
+                   <tr>
+    <td>${new Date(order.createdAt).toLocaleDateString()}</td>
+    <td>${new Date(order.createdAt).toLocaleTimeString()}</td>
+    <td>${(order.amount / 100).toFixed(2)}€</td> <!-- ✅ Conversion en euros -->
+    <td>${order.status}</td>
+    <td><a href="${order.pageUrl}" target="_blank">Voir</a></td>
+</tr>
+
                 <tbody>
                     <!-- Les commandes seront insérées ici -->
                 </tbody>
