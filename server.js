@@ -163,13 +163,18 @@ app.get('/', (req, res) => {
 });
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;  // Récupérer la langue depuis l'URL
-    const { propertyId } = req.query;
+    const { locale } = req.params;
+    const { orderId } = req.query; // Récupération de l'ID de commande
 
     try {
-        const property = await Property.findById(propertyId);
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).send('Commande introuvable');
+        }
+
+        const property = await Property.findById(order.pageUrl);
         if (!property) {
-            return res.status(404).send('Property not found');
+            return res.status(404).send('Propriété non trouvée');
         }
 
         // Charger les traductions spécifiques à la langue
@@ -186,6 +191,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
         res.render('payment', {
             locale,
             i18n,
+            orderNumber: order.orderNumber, // Ajout du numéro de commande
             propertyId: property._id,
             rooms: property.rooms,
             surface: property.surface,
@@ -195,8 +201,8 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             url: property.url
         });
     } catch (error) {
-        console.error('Error fetching property:', error);
-        res.status(500).send('Error fetching property');
+        console.error('Erreur lors de la récupération des données:', error);
+        res.status(500).send('Erreur serveur');
     }
 });
 
