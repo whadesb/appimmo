@@ -457,13 +457,30 @@ progress {
         <div class="table-responsive">
             <table class="table table-striped" id="order-history-table">
                 <thead>
-                   <tr>
-    <td>${new Date(order.createdAt).toLocaleDateString()}</td>
-    <td>${new Date(order.createdAt).toLocaleTimeString()}</td>
-    <td>${(order.amount / 100).toFixed(2)}€</td> <!-- ✅ Conversion en euros -->
-    <td>${order.status}</td>
-    <td><a href="${order.pageUrl}" target="_blank">Voir</a></td>
-</tr>
+                  <tbody id="order-history-table-body">
+    <% if (orders.length === 0) { %>
+        <tr>
+            <td colspan="5" class="text-center">Aucune commande trouvée.</td>
+        </tr>
+    <% } else { %>
+        <% orders.forEach(order => { %>
+            <tr>
+                <td><%= new Date(order.createdAt).toLocaleDateString('fr-FR') %></td>
+                <td><%= new Date(order.createdAt).toLocaleTimeString('fr-FR') %></td>
+                <td><%= (order.amount / 100).toFixed(2) %>€</td>
+                <td><%= order.status %></td>
+                <td>
+                    <% if (order.pageUrl) { %>
+                        <a href="<%= order.pageUrl %>" target="_blank">Voir la page</a>
+                    <% } else { %>
+                        URL non disponible
+                    <% } %>
+                </td>
+            </tr>
+        <% }) %>
+    <% } %>
+</tbody>
+
 
                 <tbody>
                     <!-- Les commandes seront insérées ici -->
