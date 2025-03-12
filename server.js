@@ -151,24 +151,28 @@ app.get('/', (req, res) => {
     }
 });
 
-app.get('/payment', (req, res) => {
+app.get('/payment', isAuthenticated, async (req, res) => {
+  const { propertyId } = req.query;
+
+  try {
+    const property = await Property.findById(propertyId);
+    if (!property) {
+      return res.status(404).send('Property not found');
+    }
+
     res.render('payment', {
-        locale: req.locale || 'fr',
-        i18n: {
-            menu: { home: "Accueil", contact: "Contact" },
-            payment_title: "Paiement",
-            payment_description_1: "Description du paiement",
-            payment_card: "Carte de paiement",
-            pay_now: "Payer maintenant",
-            order_summary: "Récapitulatif de commande",
-            rooms: "Pièces",
-            surface: "Surface",
-            price: "Prix",
-            city: "Ville",
-            country: "Pays",
-            total: "Total"
-        }
+      propertyId: property._id,
+      rooms: property.rooms,
+      surface: property.surface,
+      price: property.price,
+      city: property.city,
+      country: property.country,
+      url: property.url
     });
+  } catch (error) {
+    console.error('Error fetching property', error);
+    res.status(500).send('Error fetching property');
+  }
 });
 app.get('/:locale', (req, res) => {
   const locale = req.params.locale || 'fr';
