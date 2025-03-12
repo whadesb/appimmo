@@ -807,7 +807,7 @@ progress {
                             <div class="action-icons">
                                 <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
                                 <% orders.forEach(order => { %>
-    <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('<%= order.orderNumber %>')"></i>
+    <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('<%= order._id %>')"></i>
 <% }) %>
                                 <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
                             </div>
