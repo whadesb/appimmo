@@ -450,7 +450,7 @@ progress {
                                 <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
                                 <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
                             </div>
-<div id="order-history" class="card" style="display: none;">
+<div id="order-history" class="card" style="display: block !important;">
     <div class="card-body">
         <h5 class="card-title">Historique des Commandes</h5>
         <p class="card-text">Consultez votre historique de commandes passées.</p>
@@ -952,39 +952,33 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        function loadOrderHistory() {
-            fetch('/user/orders')
-                .then(response => response.json())
-                .then(orders => {
-                    const orderTable = document.querySelector("#order-history-table tbody");
-                    orderTable.innerHTML = "";
-                    const noOrdersMessage = document.getElementById("no-orders-message");
+  document.addEventListener("DOMContentLoaded", function() {
+    fetch('/user/orders')
+        .then(response => response.json())
+        .then(orders => {
+            const orderSection = document.getElementById("order-history");
+            const orderTable = document.querySelector("#order-history-table tbody");
+            orderTable.innerHTML = "";
 
-                    if (orders.length === 0) {
-                        noOrdersMessage.style.display = "block";
-                    } else {
-                        noOrdersMessage.style.display = "none";
-                        orders.forEach(order => {
-                            const row = document.createElement("tr");
-                            row.innerHTML = `
-                                <td>\${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
-                                <td>\${new Date(order.createdAt).toLocaleTimeString('fr-FR')}</td>
-                                <td>\${order.amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</td>
-                                <td><a href="\${order.url}" target="_blank">Voir la page</a></td>
-                            `;
-                            orderTable.appendChild(row);
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error("Erreur lors du chargement des commandes :", error);
+            if (orders.length > 0) {
+                orderSection.style.display = "block"; // Afficher la section si commandes existent
+                orders.forEach(order => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
+                        <td>${new Date(order.createdAt).toLocaleTimeString('fr-FR')}</td>
+                        <td>${order.amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</td>
+                        <td><a href="${order.url}" target="_blank">Voir la page</a></td>
+                    `;
+                    orderTable.appendChild(row);
                 });
-        }
+            } else {
+                document.getElementById("no-orders-message").style.display = "block";
+            }
+        })
+        .catch(error => console.error("Erreur lors du chargement des commandes :", error));
+});
 
-        // Charger l'historique des commandes quand l'utilisateur affiche la section
-        document.querySelector("[onclick='showSection(\'order-history\')']").addEventListener("click", loadOrderHistory);
-    });
 </script>
 
 
