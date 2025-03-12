@@ -507,29 +507,36 @@ app.get('/:locale/logout', (req, res, next) => {
 app.get('/:locale/user', isAuthenticated, async (req, res) => {
     const { locale } = req.params;
     const user = req.user;
+
     if (!user) {
         return res.redirect(`/${locale}/login`);
     }
-    
-    const userTranslationsPath = `./locales/${locale}/user.json`;
-    let userTranslations = {};
 
     try {
-        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+        // Charger les commandes de l'utilisateur
+        const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
+
+        // Charger les traductions
+        const userTranslationsPath = `./locales/${locale}/user.json`;
+        let userTranslations = {};
+
+        try {
+            userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+        } catch (error) {
+            console.error(`Erreur lors du chargement des traductions : ${error}`);
+            return res.status(500).send('Erreur lors du chargement des traductions.');
+        }
+
+        res.render('user', {
+            locale,
+            user,
+            orders, // ✅ Passer les commandes à la vue
+            i18n: userTranslations
+        });
     } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
+        console.error("Erreur lors de la récupération des commandes :", error);
+        res.status(500).send("Erreur lors du chargement de la page utilisateur.");
     }
-
-    res.render('user', {
-        locale,
-        user,
-        i18n: userTranslations
-    });
-});
-
-app.get('/faq', (req, res) => {
-  res.render('faq', { title: 'faq' });
 });
 
 app.get('/:lang/contact', (req, res) => {
