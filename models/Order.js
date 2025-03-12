@@ -15,6 +15,10 @@ const orderSchema = new mongoose.Schema({
     enum: ['pending', 'paid'],
     default: 'pending'
   },
+  pageUrl: {
+    type: String, // Ajout de l'URL de la commande
+    required: false
+  },
   createdAt: {
     type: Date,
     default: Date.now
