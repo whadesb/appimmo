@@ -213,6 +213,7 @@
                         <h4><%= i18n.payment_card %></h4>
                         <form id="payment-form" autocomplete="off">
 <input type="hidden" id="pageUrl" name="pageUrl" value="<%= url %>">
+<input type="hidden" id="orderId" name="orderId" value="<%= orderNumber %>">
                             <div class="mb-3">
                                 <label for="name" class="form-label"><%= i18n.card_name %></label>
                                 <input type="text" class="form-control" id="name" name="name" autocomplete="off" required>
@@ -349,9 +350,11 @@
     }
 
     const formData = new FormData(event.target);
-    formData.append('stripeToken', token.id);
-    formData.append('amount', 50000);
-    formData.append('pageUrl', document.getElementById('pageUrl').value); // ✅ Récupère l'URL depuis l'input hidden
+formData.append('stripeToken', token.id);
+formData.append('amount', 50000);
+formData.append('orderId', document.getElementById('orderId').value); // ✅ Ajout du numéro de commande
+formData.append('pageUrl', document.getElementById('pageUrl').value);
+
 
     try {
         const response = await fetch('/process-payment', {
