@@ -816,16 +816,15 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
     }
 });
 
-
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
 
         const ordersWithUrls = orders.map(order => ({
             createdAt: order.createdAt,
-            amount: order.amount,
-            status: order.status, // ✅ Ajout du statut
-            pageUrl: order.pageUrl // ✅ Assure-toi que l'URL est bien récupérée
+            amount: (order.amount / 100).toFixed(2), // ✅ Convertir les centimes en euros
+            status: order.status,
+            pageUrl: order.pageUrl
         }));
 
         res.json(ordersWithUrls);
@@ -834,6 +833,7 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
         res.status(500).json({ error: 'Erreur lors du chargement des commandes.' });
     }
 });
+
 
 
 async function generateLandingPage(property) {
