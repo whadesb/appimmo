@@ -356,10 +356,13 @@
                     });
 
                     if (response.ok) {
-                        const data = await response.json();
-                        alert('Payment successful!');
-                        window.location.href = '/user';
-                    } else {
+    const data = await response.json();
+    alert('Payment successful!');
+    const userLocale = window.location.pathname.split('/')[1]; // Récupère la langue depuis l'URL
+    window.location.href = `/${userLocale}/user`;  // Redirige en conservant la langue
+}
+
+                     else {
                         const errorData = await response.json();
                         console.error('Payment error:', errorData.error);
                         alert('Payment failed. Please try again.');
