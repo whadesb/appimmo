@@ -960,33 +960,33 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function loadOrderHistory() {
     fetch('/user/orders')
-        .then(response => response.json())
-        .then(orders => {
-            const orderTable = document.querySelector("#order-history-table tbody");
-            orderTable.innerHTML = "";
+    .then(response => response.json())
+    .then(orders => {
+        const orderTable = document.querySelector("#order-history-table tbody");
+        orderTable.innerHTML = "";
 
-            if (orders.length === 0) {
-                document.getElementById("no-orders-message").style.display = "block";
-            } else {
-                document.getElementById("no-orders-message").style.display = "none";
-                orders.forEach(order => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
-                        <td>${new Date(order.createdAt).toLocaleTimeString('fr-FR')}</td>
-                        <td>${order.amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</td>
-                        <td>${order.status}</td>
-                        <td>
-                            ${order.pageUrl ? `<a href="${order.pageUrl}" target="_blank">Voir la page</a>` : 'URL non disponible'}
-                        </td>
-                    `;
-                    orderTable.appendChild(row);
-                });
-            }
-        })
-        .catch(error => {
-            console.error("Erreur lors du chargement des commandes :", error);
-        });
+        if (orders.length === 0) {
+            document.getElementById("no-orders-message").style.display = "block";
+        } else {
+            document.getElementById("no-orders-message").style.display = "none";
+            orders.forEach(order => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
+                    <td>${new Date(order.createdAt).toLocaleTimeString('fr-FR')}</td>
+                    <td>${order.amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</td>
+                    <td>${order.status}</td>
+                    <td>
+                        ${order.pageUrl ? `<a href="${order.pageUrl}" target="_blank">Voir la page</a>` : 'URL non disponible'}
+                    </td>
+                `;
+                orderTable.appendChild(row);
+            });
+        }
+    })
+    .catch(error => {
+        console.error("Erreur lors du chargement des commandes :", error);
+    });
 }
 
 
