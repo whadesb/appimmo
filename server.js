@@ -782,33 +782,40 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 });
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
-  const { stripeToken, amount, propertyId } = req.body;
-  const userId = req.user._id;
+    const { stripeToken, amount, propertyId, pageUrl } = req.body; // Ajout de `pageUrl`
+    const userId = req.user._id;
 
-  if (isNaN(amount)) {
-    return res.status(400).json({ error: 'Invalid amount' });
-  }
+    if (isNaN(amount)) {
+        return res.status(400).json({ error: 'Invalid amount' });
+    }
 
-  try {
-    const charge = await stripe.charges.create({
-      amount: parseInt(amount, 10),
-      currency: 'eur',
-      source: stripeToken,
-      description: `Payment for property ${propertyId}`,
-    });
+    try {
+        const charge = await stripe.charges.create({
+            amount: parseInt(amount, 10),
+            currency: 'eur',
+            source: stripeToken,
+            description: `Payment for property ${propertyId}`,
+        });
 
-    const order = new Order({
-      userId,
-      amount: parseInt(amount, 10),
-      status: 'paid'
-    });
-    await order.save();
-    res.status(200).json({ message: 'Payment successful' });
-  } catch (error) {
-    console.error('Error processing payment:', error);
-    res.status(500).json({ error: 'Payment failed' });
-  }
+        const order = new Order({
+            userId,
+            amount: parseInt(amount, 10),
+            status: 'paid',
+            pageUrl, // Enregistre l'URL de la page
+            createdAt: new Date()
+        });
+
+        await order.save();
+        
+        console.log("✅ Paiement réussi, redirection vers :", pageUrl);
+        res.json({ success: true, redirectUrl: pageUrl }); // Envoie l'URL de redirection au front-end
+
+    } catch (error) {
+        console.error('❌ Erreur de paiement:', error);
+        res.status(500).json({ error: 'Payment failed' });
+    }
 });
+
 
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
