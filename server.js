@@ -190,61 +190,64 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     }
 });
 
-app.get('/:locale', (req, res) => {
-  let locale = req.params.locale || 'fr';
+app.get('/:locale', (req, res, next) => {
+    const locale = req.params.locale;
 
-  // Sécurité : ne permettre que "fr" ou "en"
-  if (!['fr', 'en'].includes(locale)) {
-    console.warn(`🔍 Valeur de locale invalide : ${locale}, utilisation de 'fr' par défaut.`);
-    locale = 'fr'; // Forcer le français si valeur incorrecte
-  }
+    // Liste des valeurs qui ne doivent pas être traitées comme des langues
+    const invalidLocales = [
+        'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
+        'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py'
+    ];
 
-  // Liste des fichiers qui ne doivent pas être interprétés comme des traductions
-  const excludedFiles = ['favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php'];
+    if (invalidLocales.includes(locale)) {
+        return res.sendStatus(404); // Retourne une erreur 404 pour ces chemins
+    }
 
-  if (excludedFiles.includes(locale)) {
-    return res.sendStatus(404); // Ne pas tenter de charger des traductions pour ces fichiers
-  }
+    // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
+    const validLocales = ['fr', 'en'];
+    if (!validLocales.includes(locale)) {
+        console.warn(`🔍 Valeur de locale invalide : ${locale}, utilisation de 'fr' par défaut.`);
+        return res.redirect('/fr'); // Redirection vers la langue par défaut
+    }
 
-  const translationsPath = `./locales/${locale}/index.json`;
-  let translations = {};
-
-  try {
-    translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-  } catch (error) {
-    console.error(`Erreur lors du chargement des traductions (${locale}): ${error}`);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
-
-  res.render('index', {
-    locale: locale,
-    i18n: translations
-  });
-});
-
-
-
-// Route dynamique pour la page de connexion avec gestion de la langue
-app.get('/:lang/login', (req, res) => {
-    const locale = req.params.lang; // Récupérer la langue depuis l'URL
-    const loginTranslationsPath = `./locales/${locale}/login.json`; // Chemin vers les traductions de cette page
-
-    let loginTranslations = {};
+    const translationsPath = `./locales/${locale}/index.json`;
+    let translations = {};
 
     try {
-        loginTranslations = JSON.parse(fs.readFileSync(loginTranslationsPath, 'utf8'));
+        translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
     } catch (error) {
         console.error(`Erreur lors du chargement des traductions : ${error}`);
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    // Rendre la page avec les traductions de la langue choisie
-    res.render('login', {
-        title: loginTranslations.title,
-        locale: locale,  // Passer la langue active pour les balises HTML
-        i18n: loginTranslations // Passer les traductions spécifiques à la page
+    res.render('index', {
+        locale: locale,
+        i18n: translations
     });
 });
+
+
+
+// Route dynamique pour la page de connexion avec gestion de la langue
+app.get('/', (req, res) => {
+    const excludedPaths = ['config', 'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php'];
+    
+    // Vérifier si la requête concerne une route spécifique (ex: /config)
+    if (excludedPaths.includes(req.path.replace('/', ''))) {
+        return res.sendStatus(404);
+    }
+
+    const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
+    const defaultLocale = 'fr'; // Langue par défaut
+
+    // Vérifier si l'utilisateur préfère l'anglais
+    if (acceptedLanguages.includes('en')) {
+        res.redirect('/en');
+    } else {
+        res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
+    }
+});
+
 
 // Redirection vers la langue par défaut (ex: français) si aucune langue n'est spécifiée
 app.get('/login', (req, res) => {
