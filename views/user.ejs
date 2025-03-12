@@ -975,8 +975,10 @@ function loadOrderHistory() {
                         <td>${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
                         <td>${new Date(order.createdAt).toLocaleTimeString('fr-FR')}</td>
                         <td>${order.amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</td>
-                        <td>${order.status}</td> <!-- Affichage du statut -->
-                        <td><a href="${order.pageUrl}" target="_blank">Voir la page</a></td>
+                        <td>${order.status}</td>
+                        <td>
+                            ${order.pageUrl ? `<a href="${order.pageUrl}" target="_blank">Voir la page</a>` : 'URL non disponible'}
+                        </td>
                     `;
                     orderTable.appendChild(row);
                 });
@@ -986,6 +988,7 @@ function loadOrderHistory() {
             console.error("Erreur lors du chargement des commandes :", error);
         });
 }
+
 
 </script>
 
