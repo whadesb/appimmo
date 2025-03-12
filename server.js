@@ -810,6 +810,22 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
   }
 });
 
+app.get('/user/orders', isAuthenticated, async (req, res) => {
+    try {
+        const orders = await Order.find({ userId: req.user._id, status: 'paid' }).sort({ createdAt: -1 });
+
+        const ordersWithUrls = orders.map(order => ({
+            createdAt: order.createdAt,
+            amount: order.amount,
+            url: `/payment?orderId=${order._id}`
+        }));
+
+        res.json(ordersWithUrls);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des commandes:', error);
+        res.status(500).json({ error: 'Erreur lors du chargement des commandes.' });
+    }
+});
 
 
 async function generateLandingPage(property) {
