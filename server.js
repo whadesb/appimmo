@@ -180,7 +180,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             return res.status(404).send("Commande introuvable");
         }
 
-        const property = await Property.findById(order.pageUrl);
+        const property = await Property.findOne({ url: order.pageUrl });
         if (!property) {
             console.error("❌ Propriété non trouvée pour la commande:", orderId);
             return res.status(404).send("Propriété non trouvée");
