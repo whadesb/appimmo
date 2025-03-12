@@ -164,9 +164,17 @@ app.get('/', (req, res) => {
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;
-    const { orderId } = req.query; // ✅ Utilisation de orderId
+    const { orderId } = req.query;
+
+    console.log("🔍 OrderId reçu :", orderId); // Log pour voir la valeur
 
     try {
+        // Vérifie si l'orderId est valide
+        if (!orderId || !mongoose.Types.ObjectId.isValid(orderId)) {
+            console.error("❌ OrderId invalide ou vide:", orderId);
+            return res.status(400).send('L\'ID de commande est invalide.');
+        }
+
         const order = await Order.findById(orderId);
         if (!order) {
             return res.status(404).send('Commande introuvable');
@@ -191,7 +199,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
         res.render('payment', {
             locale,
             i18n,
-            orderNumber: order.orderNumber, // ✅ Ajout du numéro de commande
+            orderNumber: order.orderNumber,
             propertyId: property._id,
             rooms: property.rooms,
             surface: property.surface,
@@ -205,6 +213,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
         res.status(500).send('Erreur serveur');
     }
 });
+
 
 
 app.get('/:locale', (req, res, next) => {
