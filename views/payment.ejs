@@ -337,42 +337,41 @@
 
         const form = document.getElementById('payment-form');
         form.addEventListener('submit', async (event) => {
-            event.preventDefault();
+    event.preventDefault();
 
-            const { token, error } = await stripe.createToken(cardElement);
-            if (error) {
-                console.error('Error creating payment token:', error);
-                return;
-            }
+    const { token, error } = await stripe.createToken(cardElement);
+    if (error) {
+        console.error('❌ Erreur de création du token Stripe:', error);
+        alert('Erreur lors de la création du paiement.');
+        return;
+    }
 
-            const formData = new FormData(event.target);
-            formData.append('stripeToken', token.id);
-            formData.append('amount', 50000); // Montant en centimes pour 500€
-            formData.append('pageUrl', window.location.href); // 🔹 Capture l'URL actuelle de la page
+    const formData = new FormData(event.target);
+    formData.append('stripeToken', token.id);
+    formData.append('amount', 50000);
+    formData.append('pageUrl', document.getElementById('pageUrl').value); // ✅ Récupère l'URL depuis l'input hidden
 
-            try {
-                const response = await fetch('/process-payment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(Object.fromEntries(formData.entries())),
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    alert('Paiement réussi !');
-                    window.location.href = "/success"; // Redirection après paiement
-                } else {
-                    const errorData = await response.json();
-                    console.error('Erreur de paiement:', errorData.error);
-                    alert('Échec du paiement. Veuillez réessayer.');
-                }
-            } catch (error) {
-                console.error('Erreur lors du paiement:', error);
-                alert('Erreur de traitement du paiement. Veuillez réessayer.');
-            }
+    try {
+        const response = await fetch('/process-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(Object.fromEntries(formData.entries())),
         });
+
+        const data = await response.json();
+        if (data.success) {
+            alert('✅ Paiement réussi !');
+            window.location.href = data.redirectUrl; // ✅ Redirection vers l'URL stockée
+        } else {
+            alert('Échec du paiement. Veuillez réessayer.');
+        }
+    } catch (error) {
+        console.error('❌ Erreur lors du paiement:', error);
+        alert('Erreur de traitement du paiement.');
+    }
+});
     }
 
     document.addEventListener('DOMContentLoaded', initializeStripe);
