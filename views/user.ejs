@@ -847,13 +847,15 @@ progress {
     }
 
 function testURL(orderId) {
-    if (!orderId || orderId.length !== 24) {
+    console.log("🔍 ID de la commande cliqué :", orderId);
+
+    // Vérifie que orderId a bien 24 caractères hexadécimaux (format MongoDB ObjectId)
+    const objectIdRegex = /^[a-fA-F0-9]{24}$/;
+    if (!orderId || !objectIdRegex.test(orderId)) {
         console.error("❌ OrderId non valide :", orderId);
         alert("Erreur : l'ID de commande est invalide.");
         return;
     }
-
-    console.log("🔍 ID de la commande cliqué :", orderId);
 
     const currentLang = window.location.pathname.split('/')[1];
 
