@@ -164,7 +164,7 @@ app.get('/', (req, res) => {
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;
-    const { orderId } = req.query; // Récupération de l'ID de commande
+    const { orderId } = req.query; // ✅ Utilisation de orderId
 
     try {
         const order = await Order.findById(orderId);
@@ -177,21 +177,21 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             return res.status(404).send('Propriété non trouvée');
         }
 
-        // Charger les traductions spécifiques à la langue
+        // Charger les traductions
         const translationsPath = `./locales/${locale}/payment.json`;
         let i18n = {};
 
         try {
             i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
         } catch (error) {
-            console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-            return res.status(500).send('Erreur lors du chargement des traductions.');
+            console.error(`Erreur de chargement des traductions pour ${locale}:`, error);
+            return res.status(500).send('Erreur de chargement des traductions.');
         }
 
         res.render('payment', {
             locale,
             i18n,
-            orderNumber: order.orderNumber, // Ajout du numéro de commande
+            orderNumber: order.orderNumber, // ✅ Ajout du numéro de commande
             propertyId: property._id,
             rooms: property.rooms,
             surface: property.surface,
@@ -201,10 +201,11 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             url: property.url
         });
     } catch (error) {
-        console.error('Erreur lors de la récupération des données:', error);
+        console.error('Erreur serveur:', error);
         res.status(500).send('Erreur serveur');
     }
 });
+
 
 app.get('/:locale', (req, res, next) => {
     const locale = req.params.locale;
