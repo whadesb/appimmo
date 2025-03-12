@@ -812,12 +812,13 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
 
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
-        const orders = await Order.find({ userId: req.user._id, status: 'paid' }).sort({ createdAt: -1 });
+        const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
 
         const ordersWithUrls = orders.map(order => ({
             createdAt: order.createdAt,
             amount: order.amount,
-            url: `/payment?orderId=${order._id}`
+            status: order.status, // ✅ Ajout du statut
+            pageUrl: order.pageUrl // ✅ Assure-toi que l'URL est bien récupérée
         }));
 
         res.json(ordersWithUrls);
@@ -1229,7 +1230,7 @@ app.post('/webhook-stripe', async (req, res) => {
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
         const userId = session.metadata.userId;
-        const amount = session.amount_total / 100; // Conversion correcte en euros
+        const amount = session.amount_total / 100; // ✅ Conversion correcte en euros
         const orderId = session.metadata.orderId;
         const pageUrl = session.metadata.pageUrl; // Récupération de l'URL de la page
 
@@ -1237,7 +1238,7 @@ app.post('/webhook-stripe', async (req, res) => {
             const order = await Order.findByIdAndUpdate(orderId, { 
                 status: "validé",
                 userId: userId,
-                amount: amount, 
+                amount: amount, // Assure-toi que le montant est bien en euros
                 pageUrl: pageUrl, // Stocke l'URL
                 createdAt: new Date()
             }, { new: true, upsert: true });
@@ -1250,13 +1251,14 @@ app.post('/webhook-stripe', async (req, res) => {
 
     res.sendStatus(200);
 });
+
 app.post('/create-order', async (req, res) => {
     const { userId, amount, pageUrl } = req.body; // Récupération de l'URL de la page
     
     try {
         const order = new Order({
             userId,
-            amount,
+            amount: parseFloat(amount) / 100, // Conversion correcte en euros
             pageUrl, // Stocke l'URL correcte
             status: "en attente", // Toujours en attente avant validation Stripe
             createdAt: new Date()
@@ -1268,6 +1270,7 @@ app.post('/create-order', async (req, res) => {
         res.status(500).json({ error: "Erreur serveur" });
     }
 });
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
