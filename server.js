@@ -1,5 +1,6 @@
 require('dotenv').config();
-// Gérer les erreurs non capturées
+console.log("Stripe Public Key:", process.env.STRIPE_PUBLIC_KEY);
+
 process.on('uncaughtException', function (err) {
   console.error('Uncaught Exception:', err);
 });
