@@ -191,7 +191,13 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
 });
 
 app.get('/:locale', (req, res) => {
-  const locale = req.params.locale || 'fr';
+  let locale = req.params.locale || 'fr';
+
+  // Sécurité : ne permettre que "fr" ou "en"
+  if (!['fr', 'en'].includes(locale)) {
+    console.warn(`🔍 Valeur de locale invalide : ${locale}, utilisation de 'fr' par défaut.`);
+    locale = 'fr'; // Forcer le français si valeur incorrecte
+  }
 
   // Liste des fichiers qui ne doivent pas être interprétés comme des traductions
   const excludedFiles = ['favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php'];
@@ -206,7 +212,7 @@ app.get('/:locale', (req, res) => {
   try {
     translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
   } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    console.error(`Erreur lors du chargement des traductions (${locale}): ${error}`);
     return res.status(500).send('Erreur lors du chargement des traductions.');
   }
 
@@ -215,7 +221,6 @@ app.get('/:locale', (req, res) => {
     i18n: translations
   });
 });
-
 
 
 
