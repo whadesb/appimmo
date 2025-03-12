@@ -107,7 +107,9 @@ app.use((req, res, next) => {
     next();
   }
 });
-
+app.get('/config', (req, res) => {
+  res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
+});
 
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
@@ -263,9 +265,24 @@ app.get('/', (req, res) => {
 
 // Redirection vers la langue par défaut (ex: français) si aucune langue n'est spécifiée
 app.get('/:locale/login', (req, res) => {
-    const { locale } = req.params;
-    res.render('login', { locale });
+    const locale = req.params.locale || 'fr';
+    const translationsPath = `./locales/${locale}/login.json`;
+    let i18n = {};
+
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    res.render('login', {
+        locale: locale,
+        i18n: i18n,
+        messages: req.flash()
+    });
 });
+
 
 
 app.get('/:lang/forgot-password', (req, res) => {
@@ -793,9 +810,7 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
   }
 });
 
-app.get('/config', (req, res) => {
-  res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
-});
+
 
 async function generateLandingPage(property) {
     const GTM_ID = 'GTM-TF7HSC3N'; 
