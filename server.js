@@ -32,6 +32,10 @@ const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
+const invalidLocales = [
+    'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
+    'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py'
+];
 
 const app = express();
 
@@ -193,23 +197,24 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
 app.get('/:locale', (req, res, next) => {
     const locale = req.params.locale;
 
-    // Liste des valeurs qui ne doivent pas être traitées comme des langues
-    const invalidLocales = [
-        'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
-        'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py'
-    ];
-
+    // Si la route est dans la liste des exclusions, retourner une erreur 404
     if (invalidLocales.includes(locale)) {
-        return res.sendStatus(404); // Retourne une erreur 404 pour ces chemins
+        return res.sendStatus(404);
     }
 
-    // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
+    // Si la route est `/config`, on la gère séparément (évite l'erreur Not Found)
+    if (locale === 'config') {
+        return res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
+    }
+
+    // Vérifier si la langue est bien 'fr' ou 'en', sinon rediriger vers 'fr'
     const validLocales = ['fr', 'en'];
     if (!validLocales.includes(locale)) {
         console.warn(`🔍 Valeur de locale invalide : ${locale}, utilisation de 'fr' par défaut.`);
-        return res.redirect('/fr'); // Redirection vers la langue par défaut
+        return res.redirect('/fr');
     }
 
+    // Charger les traductions
     const translationsPath = `./locales/${locale}/index.json`;
     let translations = {};
 
@@ -220,12 +225,12 @@ app.get('/:locale', (req, res, next) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
+    // Affichage de la page index avec la langue correcte
     res.render('index', {
         locale: locale,
         i18n: translations
     });
 });
-
 
 
 // Route dynamique pour la page de connexion avec gestion de la langue
@@ -789,7 +794,6 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
 });
 
 app.get('/config', (req, res) => {
-console.log("🔍 Stripe Public Key:", process.env.STRIPE_PUBLIC_KEY);
   res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
 });
 
