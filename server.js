@@ -142,6 +142,10 @@ const upload = multer({
   }
 });
 
+// Route spécifique pour la configuration Stripe (évite "Not Found")
+app.get('/config', (req, res) => {
+    res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
+});
 
 
 app.get('/', (req, res) => {
@@ -197,17 +201,19 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
 app.get('/:locale', (req, res, next) => {
     const locale = req.params.locale;
 
-    // Si la route est dans la liste des exclusions, retourner une erreur 404
-    if (invalidLocales.includes(locale)) {
-        return res.sendStatus(404);
+    // Liste des routes qui ne doivent PAS être interprétées comme des locales
+    const excludedPaths = [
+        'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
+        'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py',
+        'login', 'register', 'user', 'forgot-password', 'reset-password', 'contact', 'politique-confidentialite'
+    ];
+
+    // Si la route est exclue, on passe au middleware suivant
+    if (excludedPaths.includes(locale)) {
+        return next();
     }
 
-    // Si la route est `/config`, on la gère séparément (évite l'erreur Not Found)
-    if (locale === 'config') {
-        return res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
-    }
-
-    // Vérifier si la langue est bien 'fr' ou 'en', sinon rediriger vers 'fr'
+    // Vérifier si la locale est bien 'fr' ou 'en', sinon rediriger vers 'fr'
     const validLocales = ['fr', 'en'];
     if (!validLocales.includes(locale)) {
         console.warn(`🔍 Valeur de locale invalide : ${locale}, utilisation de 'fr' par défaut.`);
@@ -233,6 +239,7 @@ app.get('/:locale', (req, res, next) => {
 });
 
 
+
 // Route dynamique pour la page de connexion avec gestion de la langue
 app.get('/', (req, res) => {
     const excludedPaths = ['config', 'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php'];
@@ -255,8 +262,9 @@ app.get('/', (req, res) => {
 
 
 // Redirection vers la langue par défaut (ex: français) si aucune langue n'est spécifiée
-app.get('/login', (req, res) => {
-    res.redirect('/fr/login');  // Rediriger vers la version française par défaut
+app.get('/:locale/login', (req, res) => {
+    const { locale } = req.params;
+    res.render('login', { locale });
 });
 
 
@@ -480,17 +488,15 @@ app.get('/:locale/logout', (req, res, next) => {
 
 // Route pour la page utilisateur avec locale et récupération des propriétés
 app.get('/:locale/user', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;  // Récupérer la langue depuis l'URL
-    const user = req.user;  // Utilisateur authentifié
-
-    // Rediriger si l'utilisateur n'est pas connecté
+    const { locale } = req.params;
+    const user = req.user;
     if (!user) {
         return res.redirect(`/${locale}/login`);
     }
-
-    // Charger les traductions spécifiques à la page utilisateur
+    
     const userTranslationsPath = `./locales/${locale}/user.json`;
     let userTranslations = {};
+
     try {
         userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
     } catch (error) {
@@ -498,21 +504,11 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    // Récupérer les propriétés de l'utilisateur connecté
-    try {
-        const properties = await Property.find({ createdBy: user._id });
-
-        // Afficher la page utilisateur avec les propriétés et traductions
-        res.render('user', {
-            locale: locale,  // Passer la langue active
-            user: user,  // Utilisateur connecté
-            i18n: userTranslations,  // Traductions spécifiques
-            properties: properties  // Propriétés de l'utilisateur
-        });
-    } catch (error) {
-        console.error('Erreur lors de la récupération des propriétés :', error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des propriétés.' });
-    }
+    res.render('user', {
+        locale,
+        user,
+        i18n: userTranslations
+    });
 });
 
 app.get('/faq', (req, res) => {
@@ -575,6 +571,10 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
         console.error('Erreur lors de l\'envoi de l\'email :', error);
         res.status(500).send('Erreur lors de l\'envoi de l\'email.');
     }
+});
+app.get('/:locale/register', (req, res) => {
+    const { locale } = req.params;
+    res.render('register', { locale });
 });
 
 app.get('/:lang/register', (req, res) => {
