@@ -844,19 +844,18 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
 
-        const ordersWithUrls = orders.map(order => ({
-            createdAt: order.createdAt,
-            amount: (order.amount / 100).toFixed(2), // ✅ Convertir les centimes en euros
+        res.json(orders.map(order => ({
+            id: order._id,  // ✅ Assure-toi que cet ID est bien utilisé dans `user.ejs`
+            amount: (order.amount / 100).toFixed(2),
             status: order.status,
             pageUrl: order.pageUrl
-        }));
-
-        res.json(ordersWithUrls);
+        })));
     } catch (error) {
-        console.error('Erreur lors de la récupération des commandes:', error);
+        console.error('Erreur récupération commandes:', error);
         res.status(500).json({ error: 'Erreur lors du chargement des commandes.' });
     }
 });
+
 
 
 
