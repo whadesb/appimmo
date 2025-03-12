@@ -1,10 +1,13 @@
 {
-  "login": "Login",
-  "home": "Home",
-  "functioning": "Functioning",
-  "process": "Process",
-  "faqs": "FAQs",
-  "contact": "Contact",
+  "menu": {
+    "home": "Home",
+    "functioning": "Functioning",
+    "process": "Process",
+    "faqs": "FAQs",
+    "contact": "Contact",
+    "login": "Login",
+    "logout": "Logout"
+  },
   "payment_title": "Payment for Your Ad",
   "payment_description_1": "Maximize the visibility of your real estate ad with our premium broadcasting offer.",
   "payment_description_2": "Your ad will be displayed on the most influential platforms: Facebook, Google, ECA-N, and Ads by UAP, for 3 months.",
@@ -22,6 +25,5 @@
   "rooms": "Number of rooms",
   "surface": "Surface",
   "price": "Price",
-    "logout": "Logout",
   "total": "Total"
 }
