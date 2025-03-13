@@ -831,37 +831,42 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 });
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
-  const { stripeToken, amount, propertyId } = req.body;
-  const userId = req.user._id;
-  const orderId = `ORD-${Date.now()}`;
+    const { stripeToken, amount, propertyId } = req.body;
+    const userId = req.user._id;
+    const orderId = `ORD-${Date.now()}`;
 
-  try {
-    const paymentIntent = await stripe.paymentIntents.create({
-      amount: parseInt(amount, 10) * 100, // Stripe attend une valeur en centimes
-      currency: 'eur',
-      payment_method_types: ['card'],
-      description: `Payment for property ${propertyId}`,
-    });
+    if (!propertyId) {
+        console.error('Erreur: Property ID manquant');
+        return res.status(400).json({ error: 'Property ID is required' });
+    }
 
-    const order = new Order({
-      userId,
-      propertyId,
-      orderId,
-      stripePaymentIntent: paymentIntent.id,
-      amount: parseInt(amount, 10),
-      status: 'pending'
-    });
+    try {
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: parseInt(amount, 10) * 100,
+            currency: 'eur',
+            payment_method_types: ['card'],
+            description: `Payment for property ${propertyId}`,
+        });
 
-    await order.save();
+        const order = new Order({
+            userId,
+            propertyId,
+            orderId,
+            stripePaymentIntent: paymentIntent.id,
+            amount: parseInt(amount, 10),
+            status: 'pending'
+        });
 
-    res.status(200).json({ 
-      message: 'Paiement en attente de confirmation', 
-      clientSecret: paymentIntent.client_secret 
-    });
-  } catch (error) {
-    console.error('Erreur lors du paiement:', error);
-    res.status(500).json({ error: 'Échec du paiement' });
-  }
+        await order.save();
+
+        res.status(200).json({ 
+            message: 'Paiement en attente de confirmation', 
+            clientSecret: paymentIntent.client_secret 
+        });
+    } catch (error) {
+        console.error('Erreur lors du paiement:', error);
+        res.status(500).json({ error: 'Échec du paiement' });
+    }
 });
 
 
