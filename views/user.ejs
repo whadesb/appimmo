@@ -854,7 +854,6 @@ progress {
 function testURL(orderId) {
     console.log("🔍 ID de la commande cliqué :", orderId);
 
-    // Vérifie que orderId a bien 24 caractères hexadécimaux (format MongoDB ObjectId)
     const objectIdRegex = /^[a-fA-F0-9]{24}$/;
     if (!orderId || !objectIdRegex.test(orderId)) {
         console.error("❌ OrderId non valide :", orderId);
@@ -862,14 +861,10 @@ function testURL(orderId) {
         return;
     }
 
-    const currentLang = window.location.pathname.split('/')[1];
-
-    if (currentLang === 'en' || currentLang === 'fr') {
-        window.location.href = `/${currentLang}/payment?orderId=${orderId}`;
-    } else {
-        window.location.href = `/payment?orderId=${orderId}`;
-    }
+    // Rediriger vers la route backend qui gère la redirection
+    window.location.href = `/order/${orderId}`;
 }
+
 
 
     function editProperty(propertyId) {
