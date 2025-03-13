@@ -931,7 +931,8 @@ await newOrder.save();
 
 
         console.log("✅ Paiement réussi :", paymentIntent.id);
-        res.json({ success: true, message: "Paiement réussi", orderId: newOrder.orderId });
+        const locale = req.cookies.locale || 'fr'; // Utilise la langue du cookie ou 'fr' par défaut
+res.json({ success: true, message: "Paiement réussi", orderId: newOrder.orderId, redirectUrl: `/${locale}/user` });
 
     } catch (error) {
         console.error("❌ Erreur de paiement :", error);
