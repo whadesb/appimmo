@@ -704,15 +704,24 @@ progress {
           <tbody id="properties-list">
 <% if (properties && properties.length > 0) { %>
     <% properties.forEach(property => { %>
-        <div class="action-icons">
-            <i class="bi bi-clipboard" onclick="copyURL('<%= property.url %>')" title="Copier l'URL"></i>
-            <i class="fa fa-pencil-alt" onclick="editProperty('<%= property._id %>')" title="Modifier"></i>
-        </div>
+        <tr>
+            <td><%= property.rooms %></td>
+            <td><%= property.surface %></td>
+            <td><%= property.price.toLocaleString('fr-FR') %> €</td>
+            <td><%= property.city %></td>
+            <td><%= property.country %></td>
+            <td><a href="<%= property.url %>" target="_blank"><%= property.url %></a></td>
+            <td>
+                <div class="action-icons">
+                    <i class="bi bi-clipboard" onclick="copyURL('<%= property.url %>')" title="Copier l'URL"></i>
+                    <i class="fa fa-pencil-alt" onclick="editProperty('<%= property._id %>')" title="Modifier"></i>
+                </div>
+            </td>
+        </tr>
     <% }) %>
 <% } else { %>
-    <p>Aucune propriété trouvée.</p>
+    <tr><td colspan="7" class="text-center">Aucune propriété trouvée.</td></tr>
 <% } %>
-
 </tbody>
 
                                 </table>
