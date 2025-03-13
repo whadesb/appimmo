@@ -486,13 +486,14 @@ progress {
                 <td><%= order.orderId %></td>
                 <td><%= (order.amount / 100).toFixed(2) %> €</td>
                 <td><%= order.status %></td>
-                <td>
-                    <% if (order.propertyUrl) { %>
-                        <a href="<%= order.propertyUrl %>" target="_blank">Voir</a>
-                    <% } else { %>
-                        Non disponible
-                    <% } %>
-                </td>
+               <td>
+  <% if (order.propertyUrl) { %>
+    <a href="<%= order.propertyUrl %>" target="_blank">Voir l'annonce</a>
+  <% } else { %>
+    Non disponible
+  <% } %>
+</td>
+
                 <td>
                     <a href="/download-invoice/<%= order._id %>" class="btn btn-sm btn-primary">Télécharger</a>
                 </td>
