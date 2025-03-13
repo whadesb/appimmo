@@ -882,44 +882,44 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/process-payment', isAuthenticated, async (req, res) => {
-    const { stripeToken, amount, propertyId } = req.body;
-    const userId = req.user._id;
-    const orderId = `ORD-${Date.now()}`;
-
-    if (!propertyId) {
-        console.error('Erreur: Property ID manquant');
-        return res.status(400).json({ error: 'Property ID is required' });
-    }
-
+app.post('/process-payment', async (req, res) => {
     try {
+        const { propertyId, stripeToken, amount } = req.body;
+
+        // Vérifier si la propriété existe et récupérer son URL
+        const property = await Property.findById(propertyId);
+        if (!property) {
+            return res.status(404).json({ error: "Propriété introuvable" });
+        }
+
+        // Traitement du paiement via Stripe (exemple)
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: parseInt(amount, 10) * 100,
-            currency: 'eur',
-            payment_method_types: ['card'],
-            description: `Payment for property ${propertyId}`,
+            amount,
+            currency: "eur",
+            payment_method: stripeToken,
+            confirm: true
         });
 
-        const order = new Order({
-            userId,
+        // Création de la commande avec l'URL de la propriété
+        const newOrder = new Order({
+            userId: req.user._id,
             propertyId,
-            orderId,
+            orderId: `ORD-${Date.now()}`,
             stripePaymentIntent: paymentIntent.id,
-            amount: parseInt(amount, 10),
-            status: 'pending'
+            amount,
+            status: 'paid',
+            propertyUrl: property.url // 🔥 Ajout de l'URL ici
         });
 
-        await order.save();
+        await newOrder.save();
+        res.json({ success: true, message: "Paiement réussi", orderId: newOrder.orderId });
 
-        res.status(200).json({ 
-            message: 'Paiement en attente de confirmation', 
-            clientSecret: paymentIntent.client_secret 
-        });
     } catch (error) {
-        console.error('Erreur lors du paiement:', error);
-        res.status(500).json({ error: 'Échec du paiement' });
+        console.error("Erreur de paiement :", error);
+        res.status(500).json({ error: "Erreur lors du paiement" });
     }
 });
+
 
 
 async function generateLandingPage(property) {
