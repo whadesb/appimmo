@@ -333,6 +333,8 @@ progress {
     </noscript>
     <!-- Fin Google Tag Manager (noscript) -->
     <main>
+      <body id="top">
+    <main>
        <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
         <a class="navbar-brand" href="/">
@@ -448,46 +450,6 @@ progress {
                                 <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
                                 <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
                             </div>
-<div id="order-history" class="card">
-    <div class="card-body">
-        <h5 class="card-title">Historique des Commandes</h5>
-        <p class="card-text">Consultez votre historique de commandes passées.</p>
-        <div class="table-responsive">
-            <table class="table table-striped" id="order-history-table">
-                <thead>
-                  <tbody id="order-history-table-body">
-    <% if (!orders || orders.length === 0) { %>
-        <tr><td colspan="5" class="text-center">Aucune commande trouvée.</td></tr>
-    <% } else { %>
-        <% orders.forEach(order => { %>
-            <tr>
-                <td><%= new Date(order.createdAt).toLocaleDateString('fr-FR') %></td>
-                <td><%= (order.amount).toFixed(2) %> €</td>
-                <td><%= order.status %></td>
-                <td>
-                   <% if (order.pageUrl) { %>
-    <a href="<%= order.pageUrl %>" target="_blank">Voir</a>
-<% } else { %>
-    URL non disponible
-<% } %>
-
-                </td>
-            </tr>
-        <% }) %>
-    <% } %>
-</tbody>
-
-                <tbody>
-                    <!-- Les commandes seront insérées ici -->
-                </tbody>
-            </table>
-        </div>
-        <div id="no-orders-message" style="display: none;" class="text-center">
-            <p>Aucune commande trouvée.</p>
-        </div>
-    </div>
-</div>
-
                         </div>
 
                         <!-- Section Reset Password -->
@@ -701,29 +663,9 @@ progress {
                     <th scope="col"><%= i18n.actions %></th>
                 </tr>
             </thead>
-          <tbody id="properties-list">
-<% if (properties && properties.length > 0) { %>
-    <% properties.forEach(property => { %>
-        <tr>
-            <td><%= property.rooms %></td>
-            <td><%= property.surface %></td>
-            <td><%= property.price.toLocaleString('fr-FR') %> €</td>
-            <td><%= property.city %></td>
-            <td><%= property.country %></td>
-            <td><a href="<%= property.url %>" target="_blank"><%= property.url %></a></td>
-            <td>
-                <div class="action-icons">
-                    <i class="bi bi-clipboard" onclick="copyURL('<%= property?.url || '#' %>')" title="Copier l'URL"></i>
-                    <i class="fa fa-pencil-alt" onclick="editProperty('<%= property._id %>')" title="Modifier"></i>
-                </div>
-            </td>
-        </tr>
-    <% }) %>
-<% } else { %>
-    <tr><td colspan="7" class="text-center">Aucune propriété trouvée.</td></tr>
-<% } %>
-</tbody>
-
+            <tbody id="properties-list">
+                                        <!-- Propriétés de l'utilisateur ici -->
+                                    </tbody>
                                 </table>
                                 <div id="no-properties-message" style="display: none;" class="text-center">
                                     <p><%= i18n.no_properties_message %></p>
@@ -818,17 +760,12 @@ progress {
                         <td>${property.country}</td>
                         <td><a href="${property.url}" target="_blank">${property.url}</a></td>
                         <td>
-    <div class="action-icons">
-        <!-- Icône pour copier l'URL -->
-        <i class="bi bi-clipboard" onclick="copyURL('<%= property.url %>')" title="Copier l'URL"></i>
-
-        <!-- Icône pour modifier la page -->
-        <i class="fa fa-pencil-alt" onclick="editProperty('<%= property._id %>')" title="Modifier"></i>
-
-        <!-- Icône pour passer commande -->
-        <i class="fa fa-shopping-cart" onclick="createOrder('<%= property._id %>', 500, '<%= property.url %>')" title="Acheter pour 500€"></i>
-    </div>
-</td>
+                            <div class="action-icons">
+                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
+                            </div>
+                        </td>
                     `;
                     propertiesList.appendChild(row);
                 });
@@ -844,7 +781,16 @@ progress {
 }
 
 
-
+    function copyURL(url) {
+        const fullUrl = `https://uap.immo${url}`;
+        navigator.clipboard.writeText(fullUrl)
+            .then(() => {
+                showCopyMessage();
+            })
+            .catch(err => {
+                console.error('Impossible de copier l\'URL : ', err);
+            });
+    }
 
     function showCopyMessage() {
         const copyMessage = document.getElementById('copyMessage');
@@ -854,21 +800,19 @@ progress {
         }, 2000);
     }
 
-function testURL(orderId) {
-    console.log("🔍 ID de la commande cliqué :", orderId);
+function testURL(propertyId) {
+    console.log("🔍 ID de la propriété cliqué :", propertyId);
 
-    const objectIdRegex = /^[a-fA-F0-9]{24}$/;
-    if (!orderId || !objectIdRegex.test(orderId)) {
-        console.error("❌ OrderId non valide :", orderId);
-        alert("Erreur : l'ID de commande est invalide.");
-        return;
+    // Récupération de la langue à partir de l'URL actuelle
+    const currentLang = window.location.pathname.split('/')[1]; // 'en' ou 'fr'
+
+    // Vérifier que currentLang est bien 'en' ou 'fr', sinon rediriger sans préfixe de langue
+    if (currentLang === 'en' || currentLang === 'fr') {
+        window.location.href = `/${currentLang}/payment?propertyId=${propertyId}`;
+    } else {
+        window.location.href = `/payment?propertyId=${propertyId}`;
     }
-
-    // Rediriger vers la route backend qui gère la redirection
-    window.location.href = `/order/${orderId}`;
 }
-
-
 
     function editProperty(propertyId) {
         window.location.href = `/property/edit/${propertyId}`;
@@ -983,77 +927,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    loadOrderHistory();
-});
 
-function loadOrderHistory() {
-    fetch('/user/orders')
-    .then(response => response.json())
-    .then(orders => {
-        const orderTable = document.querySelector("#order-history-table tbody");
-        orderTable.innerHTML = "";
-
-        if (orders.length === 0) {
-            document.getElementById("no-orders-message").style.display = "block";
-        } else {
-            document.getElementById("no-orders-message").style.display = "none";
-            orders.forEach(order => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
-                    <td>${new Date(order.createdAt).toLocaleTimeString('fr-FR')}</td>
-                    <td>${order.amount.toLocaleString('fr-FR', { style: 'currency', currency: 'EUR' })}</td>
-                    <td>${order.status}</td>
-                    <td>
-                        ${order.pageUrl ? `<a href="${order.pageUrl}" target="_blank">Voir la page</a>` : 'URL non disponible'}
-                    </td>
-                `;
-                orderTable.appendChild(row);
-            });
-        }
-    })
-    .catch(error => {
-        console.error("Erreur lors du chargement des commandes :", error);
-    });
-}
-
-
-</script>
-<script>
-async function createOrder(propertyId, amount, pageUrl) {
-    try {
-        const response = await fetch('/create-order', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userId: "<%= user._id %>", amount, pageUrl })
-        });
-
-        const data = await response.json();
-        if (data.order) {
-            // Rediriger vers la page de paiement
-            window.location.href = `/payment?orderId=${data.order._id}`;
-        } else {
-            alert("Erreur lors de la création de la commande.");
-        }
-    } catch (error) {
-        console.error("Erreur :", error);
-    }
-}
-</script>
-<script>
-function copyURL(url) {
-    navigator.clipboard.writeText(url)
-        .then(() => {
-            alert("URL copiée avec succès !");
-        })
-        .catch(err => {
-            console.error('Erreur lors de la copie de l\'URL :', err);
-        });
-}
-</script>
 </body>
 </html>
