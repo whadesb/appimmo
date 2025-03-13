@@ -39,10 +39,12 @@ orderSchema.pre('save', async function (next) {
   if (!this.orderNumber) {
     const datePart = new Date().toISOString().split('T')[0].replace(/-/g, '');
     const randomPart = Math.floor(1000 + Math.random() * 9000);
-
     this.orderNumber = `CMD-${datePart}-${randomPart}`;
   }
+
+  console.log("✅ Order Number generated before saving:", this.orderNumber); // Log pour vérifier
   next();
 });
+
 
 module.exports = mongoose.model('Order', orderSchema);
