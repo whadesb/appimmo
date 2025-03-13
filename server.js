@@ -917,16 +917,18 @@ app.post('/process-payment', async (req, res) => {
 
         // Enregistrement de la commande
         const newOrder = new Order({
-            userId: req.user._id,
-            propertyId,
-            orderId: `ORD-${Date.now()}`,
-            stripePaymentIntent: paymentIntent.id,
-            amount: amountInCents / 100, // Stocker en euros pour l'affichage
-            status: 'paid',
-            propertyUrl: property.url
-        });
+  userId: req.user._id,
+  propertyId,
+  orderId: `ORD-${Date.now()}`,
+  orderNumber: `ORD-${Date.now()}`,  // 🔥 Ajout de orderNumber
+  stripePaymentIntent: paymentIntent.id,
+  amount: amountInCents / 100,
+  status: 'paid',
+  propertyUrl: property.url
+});
 
-        await newOrder.save();
+await newOrder.save();
+
 
         console.log("✅ Paiement réussi :", paymentIntent.id);
         res.json({ success: true, message: "Paiement réussi", orderId: newOrder.orderId });
