@@ -703,8 +703,34 @@ progress {
                 </tr>
             </thead>
             <tbody id="properties-list">
-                                        <!-- Propriétés de l'utilisateur ici -->
-                                    </tbody>
+    <% if (properties && properties.length > 0) { %>
+        <% properties.forEach(property => { %>
+            <tr>
+                <td><%= property.rooms %></td>
+                <td><%= property.surface %> m²</td>
+                <td><%= property.price.toLocaleString('fr-FR') %> €</td>
+                <td><%= property.city %></td>
+                <td><%= property.country %></td>
+                <td><a href="<%= property.url %>" target="_blank"><%= property.url %></a></td>
+                <td>
+                    <div class="action-icons">
+                        <!-- Icône pour copier l'URL -->
+                        <i class="bi bi-clipboard" onclick="copyURL('<%= property.url %>')" title="Copier l'URL"></i>
+
+                        <!-- Icône pour modifier la page -->
+                        <i class="fa fa-pencil-alt" onclick="editProperty('<%= property._id %>')" title="Modifier"></i>
+
+                        <!-- Icône pour passer commande -->
+                        <i class="fa fa-shopping-cart" onclick="createOrder('<%= property._id %>', 500, '<%= property.url %>')" title="Acheter pour 500€"></i>
+                    </div>
+                </td>
+            </tr>
+        <% }) %>
+    <% } else { %>
+        <tr><td colspan="7" class="text-center">Aucune propriété trouvée.</td></tr>
+    <% } %>
+</tbody>
+
                                 </table>
                                 <div id="no-properties-message" style="display: none;" class="text-center">
                                     <p><%= i18n.no_properties_message %></p>
