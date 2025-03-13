@@ -537,11 +537,11 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     }
 
     try {
-        // Récupération des commandes de l'utilisateur
-        const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
+        // Charger les propriétés de l'utilisateur
+        const properties = await Property.find({ userId: user._id });
 
-        // Récupération des propriétés créées par l'utilisateur
-        const properties = await Property.find({ owner: user._id });
+        // Charger les commandes de l'utilisateur
+        const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
 
         // Charger les traductions
         const userTranslationsPath = `./locales/${locale}/user.json`;
@@ -557,15 +557,16 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         res.render('user', {
             locale,
             user,
-            orders,
-            properties, // ✅ Ajouter les propriétés récupérées à la vue
+            properties,  // Ajout des propriétés ici
+            orders,      // ✅ Passer aussi les commandes
             i18n: userTranslations
         });
     } catch (error) {
-        console.error("Erreur lors de la récupération des données utilisateur :", error);
+        console.error("Erreur lors de la récupération des données :", error);
         res.status(500).send("Erreur lors du chargement de la page utilisateur.");
     }
 });
+
 
 app.get('/:lang/contact', (req, res) => {
     // Récupérer la langue depuis l'URL
