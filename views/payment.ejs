@@ -213,7 +213,9 @@
                         <h4><%= i18n.payment_card %></h4>
                         <form id="payment-form" autocomplete="off">
 <input type="hidden" id="pageUrl" name="pageUrl" value="<%= url %>">
+<input type="hidden" id="stripeToken" name="stripeToken">
 <input type="hidden" id="orderId" name="orderId" value="<%= orderNumber %>">
+
                             <div class="mb-3">
                                 <label for="name" class="form-label"><%= i18n.card_name %></label>
                                 <input type="text" class="form-control" id="name" name="name" autocomplete="off" required>
@@ -314,7 +316,7 @@
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
-    <script>
+   <script>
     async function initializeStripe() {
         const response = await fetch('/config');
         const { publicKey } = await response.json();
@@ -326,62 +328,60 @@
                 base: {
                     fontSize: '16px',
                     color: '#32325d',
-                    '::placeholder': {
-                        color: '#aab7c4',
-                    },
+                    '::placeholder': { color: '#aab7c4' },
                 },
-                invalid: {
-                    color: '#fa755a',
-                    iconColor: '#fa755a',
-                },
+                invalid: { color: '#fa755a', iconColor: '#fa755a' },
             },
         });
         cardElement.mount('#card-element');
 
-      const form = document.getElementById('payment-form');
-form.addEventListener('submit', async (event) => {
-    event.preventDefault();
+        // Gestion du formulaire de paiement
+        const form = document.getElementById('payment-form');
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            
+            console.log("🔍 Order ID récupéré depuis le formulaire:", document.getElementById('orderId').value);
 
-    console.log("🔍 Order ID récupéré depuis le formulaire:", document.getElementById('orderId').value);
+            const { paymentMethod, error } = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+            });
 
-    const { token, error } = await stripe.createToken(cardElement);
-    if (error) {
-        console.error('❌ Erreur de création du token Stripe:', error);
-        alert('Erreur lors de la création du paiement.');
-        return;
-    }
+            if (error) {
+                console.error('❌ Erreur de création du paiement Stripe:', error);
+                alert('Erreur lors de la création du paiement.');
+                return;
+            }
 
-    const formData = new FormData(event.target);
-    formData.append('stripeToken', token.id);
-    formData.append('amount', 50000);
-    formData.append('orderId', document.getElementById('orderId').value);
-    formData.append('pageUrl', document.getElementById('pageUrl').value);
+            const formData = {
+                stripeToken: paymentMethod.id,
+                amount: 50000,  // 500€ en centimes
+                orderId: document.getElementById('orderId').value,
+                pageUrl: document.getElementById('pageUrl').value
+            };
 
-    try {
-        const response = await fetch('/process-payment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(Object.fromEntries(formData.entries())),
+            try {
+                const response = await fetch('/process-payment', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(formData),
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    alert('✅ Paiement réussi !');
+                    window.location.href = data.redirectUrl;
+                } else {
+                    alert('Échec du paiement. Veuillez réessayer.');
+                }
+            } catch (error) {
+                console.error('❌ Erreur lors du paiement:', error);
+                alert('Erreur de traitement du paiement.');
+            }
         });
-
-        const data = await response.json();
-        if (data.success) {
-            alert('✅ Paiement réussi !');
-            window.location.href = data.redirectUrl;
-        } else {
-            alert('Échec du paiement. Veuillez réessayer.');
-        }
-    } catch (error) {
-        console.error('❌ Erreur lors du paiement:', error);
-        alert('Erreur de traitement du paiement.');
-    }
-});
     }
 
     document.addEventListener('DOMContentLoaded', initializeStripe);
 </script>
-
 </body>
 </html>
