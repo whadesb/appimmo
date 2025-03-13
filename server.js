@@ -886,47 +886,54 @@ app.post('/process-payment', async (req, res) => {
     try {
         const { propertyId, stripeToken, amount } = req.body;
 
+        // Vérifier si les valeurs sont bien présentes
         if (!propertyId || !stripeToken || !amount) {
-            return res.status(400).json({ error: "Données manquantes : propertyId, stripeToken ou amount" });
+            console.error("⚠️ Paramètres manquants :", { propertyId, stripeToken, amount });
+            return res.status(400).json({ error: "Données de paiement invalides." });
         }
 
-        console.log(`✅ Données reçues : propertyId=${propertyId}, amount=${amount}`);
-
-        // Vérifier si la propriété existe et récupérer son URL
+        // Vérifier si la propriété existe
         const property = await Property.findById(propertyId);
         if (!property) {
-            return res.status(404).json({ error: "Propriété introuvable" });
+            console.error("❌ Propriété introuvable :", propertyId);
+            return res.status(404).json({ error: "Propriété introuvable." });
         }
 
-        console.log(`✅ Propriété trouvée : ${property.city}, ${property.country}`);
+        // Assurer que le montant est bien en centimes
+        const amountInCents = parseInt(amount, 10);
+        if (isNaN(amountInCents) || amountInCents <= 0) {
+            console.error("❌ Montant invalide :", amount);
+            return res.status(400).json({ error: "Montant invalide." });
+        }
 
-        // Traitement du paiement via Stripe
+        // Création du paiement Stripe
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amount,
+            amount: amountInCents,  // ⚠️ Assurez-vous que c'est bien en centimes
             currency: "eur",
+            payment_method_types: ["card"],
             payment_method: stripeToken,
             confirm: true
         });
 
-        console.log(`✅ Paiement réussi : ${paymentIntent.id}`);
-
-        // Création de la commande avec l'URL de la propriété
+        // Enregistrement de la commande
         const newOrder = new Order({
             userId: req.user._id,
             propertyId,
             orderId: `ORD-${Date.now()}`,
             stripePaymentIntent: paymentIntent.id,
-            amount,
+            amount: amountInCents / 100, // Stocker en euros pour l'affichage
             status: 'paid',
             propertyUrl: property.url
         });
 
         await newOrder.save();
+
+        console.log("✅ Paiement réussi :", paymentIntent.id);
         res.json({ success: true, message: "Paiement réussi", orderId: newOrder.orderId });
 
     } catch (error) {
         console.error("❌ Erreur de paiement :", error);
-        res.status(500).json({ error: "Erreur lors du paiement", details: error.message });
+        res.status(500).json({ error: "Erreur lors du paiement." });
     }
 });
 
