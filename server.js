@@ -537,7 +537,8 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     }
 
     try {
-        const properties = await Property.find({ userId: user._id }) || [];
+        // ✅ Récupérer toutes les propriétés de l'utilisateur
+        const properties = await Property.find({ createdBy: user._id }) || [];
         const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
 
         const userTranslationsPath = `./locales/${locale}/user.json`;
@@ -553,7 +554,7 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         res.render('user', {
             locale,
             user,
-            properties,  // ✅ Vérifier que cette variable est bien passée
+            properties,  // ✅ Toutes les propriétés sont bien envoyées ici
             orders,
             i18n: userTranslations
         });
@@ -562,6 +563,7 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         res.status(500).send("Erreur lors du chargement de la page utilisateur.");
     }
 });
+
 
 
 app.get('/:lang/contact', (req, res) => {
