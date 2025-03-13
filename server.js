@@ -164,9 +164,9 @@ app.get('/', (req, res) => {
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;
-    const { orderId } = req.query; // ✅ Utilisation de orderId
+    const { orderId } = req.query;
 
-    console.log("🔍 OrderId reçu :", orderId); // 🛠️ Ajoute ce log pour déboguer
+    console.log("🔍 OrderId reçu :", orderId);
 
     if (!orderId || orderId.length !== 24) {
         console.error("❌ OrderId invalide ou vide:", orderId);
@@ -175,9 +175,17 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
 
     try {
         const order = await Order.findById(orderId);
+        console.log("🛠️ Commande trouvée :", order);
+
         if (!order) {
             console.error("❌ Commande non trouvée:", orderId);
             return res.status(404).send("Commande introuvable");
+        }
+
+        if (!order.orderNumber) {
+            console.warn("⚠️ Aucun orderNumber trouvé, génération manuelle...");
+            order.orderNumber = `CMD-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
+            await order.save(); // Sauvegarde immédiate
         }
 
         const property = await Property.findOne({ url: order.pageUrl });
@@ -189,7 +197,6 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
         // Charger les traductions
         const translationsPath = `./locales/${locale}/payment.json`;
         let i18n = {};
-
         try {
             i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
         } catch (error) {
@@ -200,7 +207,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
         res.render('payment', {
             locale,
             i18n,
-            orderNumber: order.orderNumber,
+            orderNumber: order.orderNumber, // ✅ Assuré qu'il est bien défini
             propertyId: property._id,
             rooms: property.rooms,
             surface: property.surface,
@@ -209,12 +216,12 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             country: property.country,
             url: property.url
         });
+
     } catch (error) {
         console.error('Erreur serveur:', error);
         res.status(500).send('Erreur serveur');
     }
 });
-
 
 
 app.get('/:locale', (req, res, next) => {
