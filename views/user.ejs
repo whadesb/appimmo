@@ -704,7 +704,6 @@ progress {
             </thead>
           <tbody id="properties-list">
 <% if (properties && properties.length > 0) { %>
-    <% if (properties && properties.length > 0) { %>
     <% properties.forEach(property => { %>
         <div class="action-icons">
             <i class="bi bi-clipboard" onclick="copyURL('<%= property.url %>')" title="Copier l'URL"></i>
@@ -714,6 +713,7 @@ progress {
 <% } else { %>
     <p>Aucune propriété trouvée.</p>
 <% } %>
+
 
 </tbody>
 
