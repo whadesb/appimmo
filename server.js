@@ -537,13 +537,9 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     }
 
     try {
-        // Charger les propriétés de l'utilisateur
-        const properties = await Property.find({ userId: user._id });
-
-        // Charger les commandes de l'utilisateur
+        const properties = await Property.find({ userId: user._id }) || [];
         const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
 
-        // Charger les traductions
         const userTranslationsPath = `./locales/${locale}/user.json`;
         let userTranslations = {};
 
@@ -557,8 +553,8 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         res.render('user', {
             locale,
             user,
-            properties,  // Ajout des propriétés ici
-            orders,      // ✅ Passer aussi les commandes
+            properties,  // ✅ Vérifier que cette variable est bien passée
+            orders,
             i18n: userTranslations
         });
     } catch (error) {
