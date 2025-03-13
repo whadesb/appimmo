@@ -916,7 +916,7 @@ app.post('/process-payment', async (req, res) => {
         });
 
         // Enregistrement de la commande
-        const newOrder = new Order({
+       const newOrder = new Order({
   userId: req.user._id,
   propertyId,
   orderId: `ORD-${Date.now()}`,
@@ -924,7 +924,7 @@ app.post('/process-payment', async (req, res) => {
   stripePaymentIntent: paymentIntent.id,
   amount: amountInCents / 100,
   status: 'paid',
-  propertyUrl: property.url
+  propertyUrl: property.url  // <== Assure-toi que cette ligne existe
 });
 
 await newOrder.save();
