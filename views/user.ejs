@@ -333,8 +333,6 @@ progress {
     </noscript>
     <!-- Fin Google Tag Manager (noscript) -->
     <main>
-      <body id="top">
-    <main>
        <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
         <a class="navbar-brand" href="/">
@@ -467,11 +465,12 @@ progress {
                 <td><%= (order.amount).toFixed(2) %> €</td>
                 <td><%= order.status %></td>
                 <td>
-                    <% if (order.pageUrl) { %>
-                        <a href="<%= order.pageUrl %>" target="_blank">Voir</a>
-                    <% } else { %>
-                        URL non disponible
-                    <% } %>
+                   <% if (order.pageUrl) { %>
+    <a href="<%= order.pageUrl %>" target="_blank">Voir</a>
+<% } else { %>
+    URL non disponible
+<% } %>
+
                 </td>
             </tr>
         <% }) %>
@@ -713,7 +712,6 @@ progress {
 <% } else { %>
     <p>Aucune propriété trouvée.</p>
 <% } %>
-
 
 </tbody>
 
