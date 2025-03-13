@@ -813,42 +813,22 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 });
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
-    const { stripeToken, amount, propertyId, pageUrl } = req.body;
-    const userId = req.user._id;
-
-    if (isNaN(amount)) {
-        return res.status(400).json({ error: 'Invalid amount' });
-    }
+    const { stripeToken, orderId, amount, pageUrl } = req.body;
 
     try {
         const charge = await stripe.charges.create({
-            amount: parseInt(amount, 10),
+            amount: amount * 100, 
             currency: 'eur',
             source: stripeToken,
-            description: `Payment for property ${propertyId}`,
+            description: `Paiement pour l'URL : ${pageUrl}`,
         });
 
-        const orderNumber = `CMD-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
+        await Order.findByIdAndUpdate(orderId, { status: "paid" });
 
-        console.log("✅ Order Number before saving:", orderNumber);
-
-        const order = new Order({
-            userId,
-            amount: parseInt(amount, 10),
-            status: 'paid',
-            pageUrl,
-            orderNumber, // ✅ Ajout explicite du numéro de commande
-            createdAt: new Date()
-        });
-
-        await order.save();
-
-        console.log("✅ Paiement réussi, commande enregistrée :", order);
-        res.json({ success: true, redirectUrl: pageUrl });
-
+        res.redirect('/user');
     } catch (error) {
-        console.error('❌ Erreur de paiement:', error);
-        res.status(500).json({ error: 'Payment failed' });
+        console.error('Erreur paiement:', error);
+        res.status(500).send("Échec du paiement.");
     }
 });
 
@@ -1296,28 +1276,18 @@ app.post('/send-contact', async (req, res) => {
     res.status(500).send('Erreur lors de l\'envoi de l\'email.');
   }
 });
+
 app.post('/webhook-stripe', async (req, res) => {
     let event = req.body;
 
     if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
-        const userId = session.metadata.userId;
-        const amount = session.amount_total / 100; // Conversion correcte en euros
         const orderId = session.metadata.orderId;
-        const pageUrl = session.metadata.pageUrl; // Vérification
 
         try {
-            const order = await Order.findByIdAndUpdate(orderId, { 
-                status: "paid",
-                userId: userId,
-                amount: amount,
-                pageUrl: pageUrl, // Mise à jour de l'URL
-                createdAt: new Date()
-            }, { new: true, upsert: true });
-
-            console.log("Commande validée :", order);
+            await Order.findByIdAndUpdate(orderId, { status: "paid" });
         } catch (error) {
-            console.error("Erreur mise à jour commande Stripe :", error);
+            console.error("Erreur mise à jour commande :", error);
         }
     }
 
@@ -1325,31 +1295,29 @@ app.post('/webhook-stripe', async (req, res) => {
 });
 
 
-app.post('/create-order', async (req, res) => {
+app.post('/create-order', isAuthenticated, async (req, res) => {
     const { userId, amount, pageUrl } = req.body;
 
     if (!userId || !amount || !pageUrl) {
-        return res.status(400).json({ error: "Données manquantes : userId, amount ou pageUrl" });
+        return res.status(400).json({ error: "Données manquantes" });
     }
 
     try {
-        // Création de la commande
         const order = new Order({
             userId,
-            amount: parseFloat(amount),
+            amount,
             pageUrl,
             status: "pending"
         });
 
-        // Sauvegarde dans la BDD
         await order.save();
-
-        res.status(201).json({ message: "Commande créée avec succès", orderNumber: order.orderNumber, order });
+        res.status(201).json({ message: "Commande créée", order });
     } catch (error) {
         console.error("Erreur lors de la création de la commande :", error);
         res.status(500).json({ error: "Erreur serveur" });
     }
 });
+
 
 
 const port = process.env.PORT || 3000;
