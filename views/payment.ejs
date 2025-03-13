@@ -312,70 +312,71 @@
     <script src="https://js.stripe.com/v3/"></script>
     <script>
         async function initializeStripe() {
-            const response = await fetch('/config');
-            const { publicKey } = await response.json();
-            const stripe = Stripe(publicKey);
-            const elements = stripe.elements();
-            const cardElement = elements.create('card', {
-                hidePostalCode: true,
-                style: {
-                    base: {
-                        fontSize: '16px',
-                        color: '#32325d',
-                        '::placeholder': {
-                            color: '#aab7c4',
-                        },
-                    },
-                    invalid: {
-                        color: '#fa755a',
-                        iconColor: '#fa755a',
-                    },
-                },
-            });
-            cardElement.mount('#card-element');
-
-            const form = document.getElementById('payment-form');
-           form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    const { token, error } = await stripe.createToken(cardElement);
-    if (error) {
-        console.error('Erreur lors de la création du token Stripe:', error);
-        alert("Erreur lors du paiement. Vérifiez votre carte.");
-        return;
-    }
-
-    const formData = new FormData(event.target);
-    formData.append('stripeToken', token.id);
-    formData.append('amount', 50000); // 🔥 Vérifie si amount est bien en centimes
-    formData.append('propertyId', "<%= propertyId %>"); // 🔥 Ajoute l'ID de la propriété
-
-    try {
-        const response = await fetch('/process-payment', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
+    const response = await fetch('/config');
+    const { publicKey } = await response.json();
+    const stripe = Stripe(publicKey);
+    const elements = stripe.elements();
+    
+    const cardElement = elements.create('card', {
+        hidePostalCode: true,
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+                '::placeholder': { color: '#aab7c4' },
             },
-            body: JSON.stringify(Object.fromEntries(formData.entries())),
+            invalid: { color: '#fa755a', iconColor: '#fa755a' },
+        },
+    });
+    
+    cardElement.mount('#card-element');
+
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        // 🔥 Créer un PaymentMethod via Stripe
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement,
         });
 
-        const data = await response.json();
-        if (response.ok) {
-            alert('✅ Paiement réussi !');
-            window.location.href = `/<%= locale %>/user`;
-        } else {
-            console.error('❌ Erreur de paiement:', data.error);
-            alert('Échec du paiement : ' + data.error);
-        }
-    } catch (error) {
-        console.error('❌ Erreur de requête:', error);
-        alert('Une erreur est survenue. Vérifie ta connexion.');
-    }
-});
-
+        if (error) {
+            console.error('❌ Erreur de création PaymentMethod:', error);
+            alert('Erreur lors de la saisie des données.');
+            return;
         }
 
-        document.addEventListener('DOMContentLoaded', initializeStripe);
+        const formData = {
+            propertyId: "<%= propertyId %>",
+            stripeToken: paymentMethod.id,  // ✅ Utilisation de paymentMethod.id au lieu de stripeToken
+            amount: 50000  // Montant en centimes (500€)
+        };
+
+        try {
+            const response = await fetch('/process-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert('✅ Paiement réussi !');
+                window.location.href = "/user";
+            } else {
+                const errorData = await response.json();
+                console.error('❌ Erreur paiement:', errorData.error);
+                alert('Erreur de paiement : ' + errorData.error);
+            }
+        } catch (error) {
+            console.error('❌ Erreur AJAX:', error);
+            alert('Une erreur est survenue.');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initializeStripe);
     </script>
 <script>
     console.log("Property ID:", "<%= propertyId %>");
