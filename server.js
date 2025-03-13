@@ -149,6 +149,55 @@ app.get('/config', (req, res) => {
     res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
 });
 
+app.get('/user/orders', isAuthenticated, async (req, res) => {
+  try {
+    const orders = await Order.find({ userId: req.user._id })
+      .populate('propertyId')
+      .sort({ createdAt: -1 });
+
+    res.json(orders);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des commandes:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
+app.get('/download-invoice/:orderId', isAuthenticated, async (req, res) => {
+  const { orderId } = req.params;
+
+  try {
+    const order = await Order.findOne({ orderId, userId: req.user._id }).populate('propertyId');
+
+    if (!order || order.status !== 'paid') {
+      return res.status(404).send('Facture non disponible.');
+    }
+
+    const invoiceContent = `
+      <h1>Facture UAP Immo</h1>
+      <p>Commande: ${order.orderId}</p>
+      <p>Utilisateur: ${req.user.firstName} ${req.user.lastName}</p>
+      <p>Montant: ${order.amount}€</p>
+      <p>Statut: ${order.status}</p>
+      <p>Annonce: ${order.propertyId.city}, ${order.propertyId.country}</p>
+    `;
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="facture-${orderId}.pdf"`);
+
+    const pdf = require('html-pdf');
+    pdf.create(invoiceContent).toStream((err, stream) => {
+      if (err) {
+        return res.status(500).send('Erreur lors de la génération de la facture.');
+      }
+      stream.pipe(res);
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de la génération de la facture:', error);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+
 
 app.get('/', (req, res) => {
     const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
@@ -784,32 +833,36 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 app.post('/process-payment', isAuthenticated, async (req, res) => {
   const { stripeToken, amount, propertyId } = req.body;
   const userId = req.user._id;
-
-  if (isNaN(amount)) {
-    return res.status(400).json({ error: 'Invalid amount' });
-  }
+  const orderId = `ORD-${Date.now()}`;
 
   try {
-    const charge = await stripe.charges.create({
-      amount: parseInt(amount, 10),
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: parseInt(amount, 10) * 100, // Stripe attend une valeur en centimes
       currency: 'eur',
-      source: stripeToken,
+      payment_method_types: ['card'],
       description: `Payment for property ${propertyId}`,
     });
 
     const order = new Order({
       userId,
+      propertyId,
+      orderId,
+      stripePaymentIntent: paymentIntent.id,
       amount: parseInt(amount, 10),
-      status: 'paid'
+      status: 'pending'
     });
+
     await order.save();
-    res.status(200).json({ message: 'Payment successful' });
+
+    res.status(200).json({ 
+      message: 'Paiement en attente de confirmation', 
+      clientSecret: paymentIntent.client_secret 
+    });
   } catch (error) {
-    console.error('Error processing payment:', error);
-    res.status(500).json({ error: 'Payment failed' });
+    console.error('Erreur lors du paiement:', error);
+    res.status(500).json({ error: 'Échec du paiement' });
   }
 });
-
 
 
 async function generateLandingPage(property) {
@@ -1183,6 +1236,43 @@ async function sendAccountCreationEmail(email) {
 
   await sendEmail(mailOptions);
 }
+
+app.post('/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  const sig = req.headers['stripe-signature'];
+  let event;
+
+  try {
+    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('⚠️ Erreur Webhook:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  if (event.type === 'payment_intent.succeeded') {
+    const paymentIntent = event.data.object;
+
+    await Order.findOneAndUpdate(
+      { stripePaymentIntent: paymentIntent.id },
+      { status: 'paid' }
+    );
+
+    console.log('✅ Paiement confirmé pour:', paymentIntent.id);
+  }
+
+  if (event.type === 'payment_intent.payment_failed') {
+    const paymentIntent = event.data.object;
+
+    await Order.findOneAndUpdate(
+      { stripePaymentIntent: paymentIntent.id },
+      { status: 'failed' }
+    );
+
+    console.log('❌ Paiement échoué pour:', paymentIntent.id);
+  }
+
+  res.json({ received: true });
+});
+
 
 app.post('/send-contact', async (req, res) => {
   const { firstName, lastName, email, message, type } = req.body;
