@@ -363,7 +363,7 @@
             if (response.ok) {
                 const data = await response.json();
                 alert('✅ Paiement réussi !');
-                window.location.href = "/user";
+               window.location.href = data.redirectUrl;
             } else {
                 const errorData = await response.json();
                 console.error('❌ Erreur paiement:', errorData.error);
