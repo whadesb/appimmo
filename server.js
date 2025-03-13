@@ -820,6 +820,21 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
   }
 });
 
+app.get('/payment', isAuthenticated, async (req, res) => {
+    const { propertyId } = req.query;
+
+    if (!propertyId) {
+        return res.status(400).send('Property ID is required');
+    }
+
+    res.render('payment', { 
+        propertyId, 
+        user: req.user,
+        i18n 
+    });
+});
+
+
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ createdBy: req.user._id });
