@@ -163,51 +163,29 @@ app.get('/', (req, res) => {
 });
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;
-    const { orderId } = req.query;
-
-    console.log("🔍 OrderId reçu :", orderId);
-
-    if (!orderId || orderId.length !== 24) {
-        console.error("❌ OrderId invalide ou vide:", orderId);
-        return res.status(400).send("Erreur : l'ID de commande est invalide.");
-    }
+    const { locale } = req.params;  // Récupérer la langue depuis l'URL
+    const { propertyId } = req.query;
 
     try {
-        const order = await Order.findById(orderId);
-        console.log("🛠️ Commande trouvée :", order);
-
-        if (!order) {
-            console.error("❌ Commande non trouvée:", orderId);
-            return res.status(404).send("Commande introuvable");
-        }
-
-        if (!order.orderNumber) {
-            console.warn("⚠️ Aucun orderNumber trouvé, génération manuelle...");
-            order.orderNumber = `CMD-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
-            await order.save(); // Sauvegarde immédiate
-        }
-
-        const property = await Property.findOne({ url: order.pageUrl });
+        const property = await Property.findById(propertyId);
         if (!property) {
-            console.error("❌ Propriété non trouvée pour la commande:", orderId);
-            return res.status(404).send("Propriété non trouvée");
+            return res.status(404).send('Property not found');
         }
 
-        // Charger les traductions
+        // Charger les traductions spécifiques à la langue
         const translationsPath = `./locales/${locale}/payment.json`;
         let i18n = {};
+
         try {
             i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
         } catch (error) {
-            console.error(`Erreur de chargement des traductions pour ${locale}:`, error);
-            return res.status(500).send('Erreur de chargement des traductions.');
+            console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+            return res.status(500).send('Erreur lors du chargement des traductions.');
         }
 
         res.render('payment', {
             locale,
             i18n,
-            orderNumber: order.orderNumber, // ✅ Assuré qu'il est bien défini
             propertyId: property._id,
             rooms: property.rooms,
             surface: property.surface,
@@ -216,13 +194,11 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             country: property.country,
             url: property.url
         });
-
     } catch (error) {
-        console.error('Erreur serveur:', error);
-        res.status(500).send('Erreur serveur');
+        console.error('Error fetching property:', error);
+        res.status(500).send('Error fetching property');
     }
 });
-
 
 app.get('/:locale', (req, res, next) => {
     const locale = req.params.locale;
@@ -526,63 +502,35 @@ app.get('/:locale/logout', (req, res, next) => {
         });
     });
 });
-app.get('/user', isAuthenticated, async (req, res) => {
-    if (!req.user) {
-        return res.redirect('/login');
-    }
-
-    try {
-        const userId = req.user.id;
-        const properties = await Property.find({ createdBy: userId });
-
-        res.render('user', { properties });
-    } catch (error) {
-        console.error('Erreur lors de la récupération des propriétés :', error);
-        res.render('user', { properties: [] });
-    }
-});
 
 // Route pour la page utilisateur avec locale et récupération des propriétés
 app.get('/:locale/user', isAuthenticated, async (req, res) => {
     const { locale } = req.params;
     const user = req.user;
-
     if (!user) {
         return res.redirect(`/${locale}/login`);
     }
+    
+    const userTranslationsPath = `./locales/${locale}/user.json`;
+    let userTranslations = {};
 
     try {
-        // Récupération des propriétés et commandes de l'utilisateur
-        const [properties, orders] = await Promise.all([
-            Property.find({ createdBy: user._id }),
-            Order.find({ userId: user._id }).sort({ createdAt: -1 })
-        ]);
-
-        // Chargement des traductions
-        const userTranslationsPath = `./locales/${locale}/user.json`;
-        let userTranslations = {};
-
-        if (fs.existsSync(userTranslationsPath)) {
-            userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-        } else {
-            console.warn(`Fichier de traduction manquant pour la locale ${locale}`);
-        }
-
-        res.render('user', {
-            locale,
-            user,
-            properties, // Assure-toi que cette variable est bien transmise
-            orders,
-            i18n: userTranslations
-        });
+        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
     } catch (error) {
-        console.error("Erreur lors de la récupération des données :", error);
-        res.status(500).send("Erreur lors du chargement de la page utilisateur.");
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
     }
+
+    res.render('user', {
+        locale,
+        user,
+        i18n: userTranslations
+    });
 });
 
-
-
+app.get('/faq', (req, res) => {
+  res.render('faq', { title: 'faq' });
+});
 
 app.get('/:lang/contact', (req, res) => {
     // Récupérer la langue depuis l'URL
@@ -834,89 +782,34 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 });
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
-    try {
-        const { stripeToken, amount, orderId, pageUrl } = req.body;
+  const { stripeToken, amount, propertyId } = req.body;
+  const userId = req.user._id;
 
-        if (!stripeToken || !amount || !orderId) {
-            return res.status(400).json({ success: false, message: "Données de paiement incomplètes." });
-        }
+  if (isNaN(amount)) {
+    return res.status(400).json({ error: 'Invalid amount' });
+  }
 
-        // Vérifier si la commande existe bien
-        const order = await Order.findById(orderId);
-        if (!order) {
-            return res.status(404).json({ success: false, message: "Commande introuvable." });
-        }
+  try {
+    const charge = await stripe.charges.create({
+      amount: parseInt(amount, 10),
+      currency: 'eur',
+      source: stripeToken,
+      description: `Payment for property ${propertyId}`,
+    });
 
-        // Création du paiement avec Stripe
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount, // Montant en centimes
-            currency: 'eur',
-            payment_method_types: ['card'],
-            description: `Paiement pour la commande ${orderId}`,
-            metadata: { orderId, pageUrl },
-            confirm: true,
-            payment_method: stripeToken,
-        });
-
-        console.log("✅ Paiement réussi :", paymentIntent);
-
-        // Mettre à jour le statut de la commande
-        order.status = 'paid';
-        await order.save();
-
-        res.json({ success: true, redirectUrl: `/confirmation/${orderId}` });
-    } catch (error) {
-        console.error("❌ Erreur lors du paiement :", error);
-        res.status(500).json({ success: false, message: "Erreur lors du traitement du paiement." });
-    }
+    const order = new Order({
+      userId,
+      amount: parseInt(amount, 10),
+      status: 'paid'
+    });
+    await order.save();
+    res.status(200).json({ message: 'Payment successful' });
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    res.status(500).json({ error: 'Payment failed' });
+  }
 });
 
-app.get('/user/orders', isAuthenticated, async (req, res) => {
-    try {
-        const orders = await Order.find({ userId: req.user._id }).sort({ createdAt: -1 });
-
-        res.json(orders.map(order => ({
-            id: order._id,  // ✅ Assure-toi que cet ID est bien utilisé dans `user.ejs`
-            amount: (order.amount / 100).toFixed(2),
-            status: order.status,
-            pageUrl: order.pageUrl
-        })));
-    } catch (error) {
-        console.error('Erreur récupération commandes:', error);
-        res.status(500).json({ error: 'Erreur lors du chargement des commandes.' });
-    }
-});
-
-
-app.get('/order/:orderId', isAuthenticated, async (req, res) => {
-    try {
-        const { orderId } = req.params;
-
-        console.log("🔍 Requête reçue pour Order ID:", orderId);
-
-        // Vérifie si l'ID est bien valide
-        if (!orderId || orderId.length !== 24) {
-            return res.status(400).json({ error: "ID de commande invalide." });
-        }
-
-        // Récupérer la commande
-        const order = await Order.findById(orderId);
-        if (!order) {
-            return res.status(404).json({ error: "Commande introuvable." });
-        }
-
-        // Vérifier si la commande a une URL associée
-        if (!order.pageUrl) {
-            return res.status(400).json({ error: "Cette commande ne possède pas d'URL associée." });
-        }
-
-        // Rediriger vers la page associée à la commande
-        res.redirect(order.pageUrl);
-    } catch (error) {
-        console.error("❌ Erreur lors de la récupération de la commande :", error);
-        res.status(500).json({ error: "Erreur serveur." });
-    }
-});
 
 
 async function generateLandingPage(property) {
@@ -1314,49 +1207,6 @@ app.post('/send-contact', async (req, res) => {
     res.status(500).send('Erreur lors de l\'envoi de l\'email.');
   }
 });
-
-app.post('/webhook-stripe', async (req, res) => {
-    let event = req.body;
-
-    if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
-        const orderId = session.metadata.orderId;
-
-        try {
-            await Order.findByIdAndUpdate(orderId, { status: "paid" });
-        } catch (error) {
-            console.error("Erreur mise à jour commande :", error);
-        }
-    }
-
-    res.sendStatus(200);
-});
-
-
-app.post('/create-order', isAuthenticated, async (req, res) => {
-    const { userId, amount, pageUrl } = req.body;
-
-    if (!userId || !amount || !pageUrl) {
-        return res.status(400).json({ error: "Données manquantes" });
-    }
-
-    try {
-        const order = new Order({
-            userId,
-            amount,
-            pageUrl,
-            status: "pending"
-        });
-
-        await order.save();
-        res.status(201).json({ message: "Commande créée", order });
-    } catch (error) {
-        console.error("Erreur lors de la création de la commande :", error);
-        res.status(500).json({ error: "Erreur serveur" });
-    }
-});
-
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
