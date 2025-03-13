@@ -537,8 +537,11 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     }
 
     try {
-        // Charger les commandes de l'utilisateur
+        // Récupération des commandes de l'utilisateur
         const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
+
+        // Récupération des propriétés créées par l'utilisateur
+        const properties = await Property.find({ owner: user._id });
 
         // Charger les traductions
         const userTranslationsPath = `./locales/${locale}/user.json`;
@@ -554,11 +557,12 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         res.render('user', {
             locale,
             user,
-            orders, // ✅ Passer les commandes à la vue
+            orders,
+            properties, // ✅ Ajouter les propriétés récupérées à la vue
             i18n: userTranslations
         });
     } catch (error) {
-        console.error("Erreur lors de la récupération des commandes :", error);
+        console.error("Erreur lors de la récupération des données utilisateur :", error);
         res.status(500).send("Erreur lors du chargement de la page utilisateur.");
     }
 });
