@@ -806,7 +806,7 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 });
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
-    const { stripeToken, amount, propertyId, pageUrl } = req.body; // Ajout de `pageUrl`
+    const { stripeToken, amount, propertyId, pageUrl } = req.body;
     const userId = req.user._id;
 
     if (isNaN(amount)) {
@@ -821,24 +821,30 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
             description: `Payment for property ${propertyId}`,
         });
 
+        const orderNumber = `CMD-${new Date().toISOString().split('T')[0].replace(/-/g, '')}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+        console.log("✅ Order Number before saving:", orderNumber);
+
         const order = new Order({
             userId,
             amount: parseInt(amount, 10),
             status: 'paid',
-            pageUrl, // Enregistre l'URL de la page
+            pageUrl,
+            orderNumber, // ✅ Ajout explicite du numéro de commande
             createdAt: new Date()
         });
 
         await order.save();
-        
-        console.log("✅ Paiement réussi, redirection vers :", pageUrl);
-        res.json({ success: true, redirectUrl: pageUrl }); // Envoie l'URL de redirection au front-end
+
+        console.log("✅ Paiement réussi, commande enregistrée :", order);
+        res.json({ success: true, redirectUrl: pageUrl });
 
     } catch (error) {
         console.error('❌ Erreur de paiement:', error);
         res.status(500).json({ error: 'Payment failed' });
     }
 });
+
 
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
