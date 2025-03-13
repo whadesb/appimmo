@@ -870,6 +870,35 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
 });
 
 
+app.get('/order/:orderId', isAuthenticated, async (req, res) => {
+    try {
+        const { orderId } = req.params;
+
+        console.log("🔍 Requête reçue pour Order ID:", orderId);
+
+        // Vérifie si l'ID est bien valide
+        if (!orderId || orderId.length !== 24) {
+            return res.status(400).json({ error: "ID de commande invalide." });
+        }
+
+        // Récupérer la commande
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ error: "Commande introuvable." });
+        }
+
+        // Vérifier si la commande a une URL associée
+        if (!order.pageUrl) {
+            return res.status(400).json({ error: "Cette commande ne possède pas d'URL associée." });
+        }
+
+        // Rediriger vers la page associée à la commande
+        res.redirect(order.pageUrl);
+    } catch (error) {
+        console.error("❌ Erreur lors de la récupération de la commande :", error);
+        res.status(500).json({ error: "Erreur serveur." });
+    }
+});
 
 
 async function generateLandingPage(property) {
