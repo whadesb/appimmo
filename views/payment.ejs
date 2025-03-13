@@ -212,10 +212,6 @@
 <div class="form-container">
                         <h4><%= i18n.payment_card %></h4>
                         <form id="payment-form" autocomplete="off">
-<input type="hidden" id="pageUrl" name="pageUrl" value="<%= url %>">
-<input type="hidden" id="stripeToken" name="stripeToken">
-<input type="hidden" id="orderId" name="orderId" value="<%= orderNumber %>">
-
                             <div class="mb-3">
                                 <label for="name" class="form-label"><%= i18n.card_name %></label>
                                 <input type="text" class="form-control" id="name" name="name" autocomplete="off" required>
@@ -252,18 +248,16 @@
                 </div>
            <div class="col-lg-6 col-12">
                     <div class="formunr-container">
-    <h4><%= i18n.order_summary %></h4>
-    <p><strong>Numéro de commande :</strong> <%= orderNumber %></p> <!-- Affichage du numéro de commande -->
-    <p><%= i18n.rooms %>: <%= rooms %></p>
-    <p><%= i18n.surface %>: <%= surface %> m²</p>
-    <p><%= i18n.price %>: <%= price %> €</p>
-    <p><%= i18n.city %>: <%= city %></p>
-    <p><%= i18n.country %>: <%= country %></p>
-    <p><strong>URL:</strong> <a href="<%= url %>"><%= url %></a></p>
-    <hr>
-    <p><%= i18n.total %>: 500€/3 mois</p>
-</div>
-
+                        <h4><%= i18n.order_summary %></h4>
+                        <p><%= i18n.rooms %>: <%= rooms %></p>
+                        <p><%= i18n.surface %>: <%= surface %> m²</p>
+                        <p><%= i18n.price %>: <%= price %> €</p>
+                        <p><%= i18n.city %>: <%= city %></p>
+                        <p><%= i18n.country %>: <%= country %></p>
+                        <p>URL:</strong> <a href="<%= url %>"><%= url %></a></p>
+                        <hr>
+                        <p><%= i18n.total %>: 500€/3 mois</p>
+                    </div>
             
                 </div>
             </div>
@@ -316,72 +310,71 @@
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
-   <script>
-    async function initializeStripe() {
-        const response = await fetch('/config');
-        const { publicKey } = await response.json();
-        const stripe = Stripe(publicKey);
-        const elements = stripe.elements();
-        const cardElement = elements.create('card', {
-            hidePostalCode: true,
-            style: {
-                base: {
-                    fontSize: '16px',
-                    color: '#32325d',
-                    '::placeholder': { color: '#aab7c4' },
+    <script>
+        async function initializeStripe() {
+            const response = await fetch('/config');
+            const { publicKey } = await response.json();
+            const stripe = Stripe(publicKey);
+            const elements = stripe.elements();
+            const cardElement = elements.create('card', {
+                hidePostalCode: true,
+                style: {
+                    base: {
+                        fontSize: '16px',
+                        color: '#32325d',
+                        '::placeholder': {
+                            color: '#aab7c4',
+                        },
+                    },
+                    invalid: {
+                        color: '#fa755a',
+                        iconColor: '#fa755a',
+                    },
                 },
-                invalid: { color: '#fa755a', iconColor: '#fa755a' },
-            },
-        });
-        cardElement.mount('#card-element');
-
-        // Gestion du formulaire de paiement
-        const form = document.getElementById('payment-form');
-        form.addEventListener('submit', async (event) => {
-            event.preventDefault();
-            
-            console.log("🔍 Order ID récupéré depuis le formulaire:", document.getElementById('orderId').value);
-
-            const { paymentMethod, error } = await stripe.createPaymentMethod({
-                type: 'card',
-                card: cardElement,
             });
+            cardElement.mount('#card-element');
 
-            if (error) {
-                console.error('❌ Erreur de création du paiement Stripe:', error);
-                alert('Erreur lors de la création du paiement.');
-                return;
-            }
-
-            const formData = {
-                stripeToken: paymentMethod.id,
-                amount: 50000,  // 500€ en centimes
-                orderId: document.getElementById('orderId').value,
-                pageUrl: document.getElementById('pageUrl').value
-            };
-
-            try {
-                const response = await fetch('/process-payment', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(formData),
-                });
-
-                const data = await response.json();
-                if (data.success) {
-                    alert('✅ Paiement réussi !');
-                    window.location.href = data.redirectUrl;
-                } else {
-                    alert('Échec du paiement. Veuillez réessayer.');
+            const form = document.getElementById('payment-form');
+            form.addEventListener('submit', async (event) => {
+                event.preventDefault();
+                const { token, error } = await stripe.createToken(cardElement);
+                if (error) {
+                    console.error('Error creating payment token:', error);
+                    return;
                 }
-            } catch (error) {
-                console.error('❌ Erreur lors du paiement:', error);
-                alert('Erreur de traitement du paiement.');
-            }
-        });
-    }
+                const formData = new FormData(event.target);
+                formData.append('stripeToken', token.id);
+                formData.append('amount', 50000); // Montant en centimes pour 500€
 
-    document.addEventListener('DOMContentLoaded', initializeStripe);
-</script>
+                try {
+                    const response = await fetch('/process-payment', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(Object.fromEntries(formData.entries())),
+                    });
+
+                    if (response.ok) {
+    const data = await response.json();
+    alert('Payment successful!');
+    const userLocale = window.location.pathname.split('/')[1]; // Récupère la langue depuis l'URL
+    window.location.href = `/${userLocale}/user`;  // Redirige en conservant la langue
+}
+
+                     else {
+                        const errorData = await response.json();
+                        console.error('Payment error:', errorData.error);
+                        alert('Payment failed. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Payment processing error:', error);
+                    alert('Payment processing failed. Please try again.');
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', initializeStripe);
+    </script>
 </body>
 </html>
