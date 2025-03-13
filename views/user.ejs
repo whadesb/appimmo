@@ -851,16 +851,16 @@ progress {
 }
 
 
-    function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
-        navigator.clipboard.writeText(fullUrl)
-            .then(() => {
-                showCopyMessage();
-            })
-            .catch(err => {
-                console.error('Impossible de copier l\'URL : ', err);
-            });
-    }
+function copyURL(url) {
+    navigator.clipboard.writeText(url)
+        .then(() => {
+            alert("URL copiée avec succès !");
+        })
+        .catch(err => {
+            console.error('Erreur lors de la copie de l\'URL :', err);
+        });
+}
+
 
     function showCopyMessage() {
         const copyMessage = document.getElementById('copyMessage');
