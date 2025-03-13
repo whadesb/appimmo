@@ -813,25 +813,42 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 });
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
-    const { stripeToken, orderId, amount, pageUrl } = req.body;
-
     try {
-        const charge = await stripe.charges.create({
-            amount: amount * 100, 
+        const { stripeToken, amount, orderId, pageUrl } = req.body;
+
+        if (!stripeToken || !amount || !orderId) {
+            return res.status(400).json({ success: false, message: "Données de paiement incomplètes." });
+        }
+
+        // Vérifier si la commande existe bien
+        const order = await Order.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Commande introuvable." });
+        }
+
+        // Création du paiement avec Stripe
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount, // Montant en centimes
             currency: 'eur',
-            source: stripeToken,
-            description: `Paiement pour l'URL : ${pageUrl}`,
+            payment_method_types: ['card'],
+            description: `Paiement pour la commande ${orderId}`,
+            metadata: { orderId, pageUrl },
+            confirm: true,
+            payment_method: stripeToken,
         });
 
-        await Order.findByIdAndUpdate(orderId, { status: "paid" });
+        console.log("✅ Paiement réussi :", paymentIntent);
 
-        res.redirect('/user');
+        // Mettre à jour le statut de la commande
+        order.status = 'paid';
+        await order.save();
+
+        res.json({ success: true, redirectUrl: `/confirmation/${orderId}` });
     } catch (error) {
-        console.error('Erreur paiement:', error);
-        res.status(500).send("Échec du paiement.");
+        console.error("❌ Erreur lors du paiement :", error);
+        res.status(500).json({ success: false, message: "Erreur lors du traitement du paiement." });
     }
 });
-
 
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
