@@ -335,43 +335,53 @@
             cardElement.mount('#card-element');
 
             const form = document.getElementById('payment-form');
-            form.addEventListener('submit', async (event) => {
-                event.preventDefault();
-                const { token, error } = await stripe.createToken(cardElement);
-                if (error) {
-                    console.error('Error creating payment token:', error);
-                    return;
-                }
-                const formData = new FormData(event.target);
-                formData.append('stripeToken', token.id);
-                formData.append('amount', 50000); // Montant en centimes pour 500€
+           form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    
+    const { token, error } = await stripe.createToken(cardElement);
+    if (error) {
+        console.error('Error creating payment token:', error);
+        return;
+    }
 
-                try {
-                    const response = await fetch('/process-payment', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify(Object.fromEntries(formData.entries())),
-                    });
+    const formData = new FormData(event.target);
+    formData.append('stripeToken', token.id);
+    formData.append('amount', 50000); // Montant en centimes pour 500€
+    
+    // Vérifier si propertyId est bien défini
+    const propertyId = "<%= propertyId %>"; 
+    if (!propertyId) {
+        console.error('Property ID is missing');
+        alert('Erreur: ID de la propriété manquant.');
+        return;
+    }
+    formData.append('propertyId', propertyId);
 
-                    if (response.ok) {
-    const data = await response.json();
-    alert('Payment successful!');
-    const userLocale = window.location.pathname.split('/')[1]; // Récupère la langue depuis l'URL
-    window.location.href = `/${userLocale}/user`;  // Redirige en conservant la langue
-}
+    try {
+        const response = await fetch('/process-payment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(Object.fromEntries(formData.entries())),
+        });
 
-                     else {
-                        const errorData = await response.json();
-                        console.error('Payment error:', errorData.error);
-                        alert('Payment failed. Please try again.');
-                    }
-                } catch (error) {
-                    console.error('Payment processing error:', error);
-                    alert('Payment processing failed. Please try again.');
-                }
-            });
+        if (response.ok) {
+            const data = await response.json();
+            alert('Payment successful!');
+            const userLocale = window.location.pathname.split('/')[1]; 
+            window.location.href = `/${userLocale}/user`;
+        } else {
+            const errorData = await response.json();
+            console.error('Payment error:', errorData.error);
+            alert('Payment failed. Please try again.');
+        }
+    } catch (error) {
+        console.error('Payment processing error:', error);
+        alert('Payment processing failed. Please try again.');
+    }
+});
+
         }
 
         document.addEventListener('DOMContentLoaded', initializeStripe);
