@@ -703,26 +703,20 @@ progress {
                 </tr>
             </thead>
           <tbody id="properties-list">
-<% if (properties.length > 0) { %>
-    <div class="properties-list">
-        <% properties.forEach(property => { %>
-            <div class="property-item">
-                <h3><%= property.city %>, <%= property.country %></h3>
-                <p>Surface: <%= property.surface %> m²</p>
-                <p>Prix: <%= property.price.toLocaleString('fr-FR') %> €</p>
-                <p>Type: <%= property.propertyType %></p>
+<% if (properties && properties.length > 0) { %>
+    <% properties.forEach(property => { %>
+        <div class="action-icons">
+            <!-- Icône pour copier l'URL -->
+            <i class="bi bi-clipboard" onclick="copyURL('<%= property.url %>')" title="Copier l'URL"></i>
 
-                <!-- Icône pour copier l'URL -->
-                <i class="bi bi-clipboard" onclick="copyURL('<%= property.url %>')" title="Copier l'URL"></i>
-
-                <!-- Icône pour modifier la page -->
-                <i class="fa fa-pencil-alt" onclick="editProperty('<%= property._id %>')" title="Modifier"></i>
-            </div>
-        <% }); %>
-    </div>
+            <!-- Icône pour modifier la page -->
+            <i class="fa fa-pencil-alt" onclick="editProperty('<%= property._id %>')" title="Modifier"></i>
+        </div>
+    <% }) %>
 <% } else { %>
     <p>Aucune propriété trouvée.</p>
 <% } %>
+
 
 </tbody>
 
