@@ -571,7 +571,7 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         res.render('user', {
             locale,
             user,
-            properties,
+            properties, // Assure-toi que cette variable est bien transmise
             orders,
             i18n: userTranslations
         });
@@ -580,6 +580,7 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         res.status(500).send("Erreur lors du chargement de la page utilisateur.");
     }
 });
+
 
 
 
