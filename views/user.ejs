@@ -451,6 +451,37 @@ progress {
                                 <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
                             </div>
                         </div>
+<h2>Vos Commandes</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Commande</th>
+            <th>Montant</th>
+            <th>Statut</th>
+            <th>Page</th>
+            <th>Facture</th>
+        </tr>
+    </thead>
+    <tbody>
+        <% orders.forEach(order => { %>
+            <tr>
+                <td><%= order.orderId %></td>
+                <td><%= (order.amount / 100).toFixed(2) %> €</td>
+                <td><%= order.status %></td>
+                <td>
+                    <% if (order.propertyId) { %>
+                        <a href="/property/<%= order.propertyId %>" target="_blank">Voir</a>
+                    <% } else { %>
+                        Non disponible
+                    <% } %>
+                </td>
+                <td>
+                    <a href="/download-invoice/<%= order._id %>" class="btn btn-sm btn-primary">Télécharger</a>
+                </td>
+            </tr>
+        <% }); %>
+    </tbody>
+</table>
 
                         <!-- Section Reset Password -->
                         <div id="reset-password" class="card" style="display: none;">
