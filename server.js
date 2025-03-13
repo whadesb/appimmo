@@ -582,10 +582,11 @@ app.get('/:locale/logout', (req, res, next) => {
 app.get('/:locale/user', isAuthenticated, async (req, res) => {
     const { locale } = req.params;
     const user = req.user;
+
     if (!user) {
         return res.redirect(`/${locale}/login`);
     }
-    
+
     const userTranslationsPath = `./locales/${locale}/user.json`;
     let userTranslations = {};
 
@@ -596,12 +597,22 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    res.render('user', {
-        locale,
-        user,
-        i18n: userTranslations
-    });
+    try {
+        // Récupérer les commandes de l'utilisateur
+        const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
+
+        res.render('user', {
+            locale,
+            user,
+            orders, // Ajout des commandes
+            i18n: userTranslations
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des commandes:', error);
+        return res.status(500).send('Erreur interne du serveur.');
+    }
 });
+
 
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
