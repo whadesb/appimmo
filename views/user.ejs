@@ -963,29 +963,49 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 <script>
 async function loadOrders() {
-  const response = await fetch('/user/orders');
-  const orders = await response.json();
+  try {
+    const response = await fetch('/user/orders');
+    
+    if (!response.ok) {
+      throw new Error(`Erreur HTTP: ${response.status}`);
+    }
+    
+    const orders = await response.json();
 
-  const ordersList = document.getElementById('orders-list');
-  ordersList.innerHTML = '';
+    const ordersList = document.getElementById('orders-list');
 
-  orders.forEach(order => {
-    const row = document.createElement('tr');
-    row.innerHTML = `
-      <td>${order.orderId}</td>
-      <td><a href="${order.propertyId.url}" target="_blank">${order.propertyId.city}, ${order.propertyId.country}</a></td>
-      <td>${order.amount.toLocaleString()}€</td>
-      <td>${order.status}</td>
-      <td>
-        ${order.status === 'paid' ? `<a href="/download-invoice/${order.orderId}" class="btn btn-sm btn-primary">Télécharger</a>` : 'Non disponible'}
-      </td>
-    `;
-    ordersList.appendChild(row);
-  });
+    if (!ordersList) {
+      console.warn("⚠️ Élément 'orders-list' introuvable dans le DOM.");
+      return; // Empêche l'exécution si la liste des commandes n'est pas présente
+    }
+
+    ordersList.innerHTML = '';
+
+    orders.forEach(order => {
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td>${order.orderId}</td>
+        <td>
+          ${order.propertyId && order.propertyId.url ? `<a href="${order.propertyId.url}" target="_blank">${order.propertyId.city}, ${order.propertyId.country}</a>` : 'Non disponible'}
+        </td>
+        <td>${order.amount.toLocaleString()}€</td>
+        <td>${order.status}</td>
+        <td>
+          ${order.status === 'paid' ? `<a href="/download-invoice/${order.orderId}" class="btn btn-sm btn-primary">Télécharger</a>` : 'Non disponible'}
+        </td>
+      `;
+      ordersList.appendChild(row);
+    });
+
+  } catch (error) {
+    console.error("❌ Erreur lors du chargement des commandes :", error);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadOrders();
+  if (document.getElementById('orders-list')) {
+    loadOrders();
+  }
 });
 </script>
 </body>
