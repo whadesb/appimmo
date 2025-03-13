@@ -466,6 +466,23 @@ progress {
                                 </form>
                             </div>
                         </div>
+<div id="orders-section" class="card" style="display: none;">
+  <div class="card-body">
+    <h5 class="card-title">Commandes</h5>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Annonce</th>
+          <th>Montant</th>
+          <th>Statut</th>
+          <th>Facture</th>
+        </tr>
+      </thead>
+      <tbody id="orders-list"></tbody>
+    </table>
+  </div>
+</div>
 
                         <!-- Section Landing Page -->
                         <div id="landing" class="card" style="display: none;">
@@ -927,6 +944,32 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
+<script>
+async function loadOrders() {
+  const response = await fetch('/user/orders');
+  const orders = await response.json();
 
+  const ordersList = document.getElementById('orders-list');
+  ordersList.innerHTML = '';
+
+  orders.forEach(order => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${order.orderId}</td>
+      <td><a href="${order.propertyId.url}" target="_blank">${order.propertyId.city}, ${order.propertyId.country}</a></td>
+      <td>${order.amount.toLocaleString()}€</td>
+      <td>${order.status}</td>
+      <td>
+        ${order.status === 'paid' ? `<a href="/download-invoice/${order.orderId}" class="btn btn-sm btn-primary">Télécharger</a>` : 'Non disponible'}
+      </td>
+    `;
+    ordersList.appendChild(row);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadOrders();
+});
+</script>
 </body>
 </html>
