@@ -149,6 +149,20 @@ app.get('/config', (req, res) => {
     res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
 });
 
+app.get('/property/:id', async (req, res) => {
+    try {
+        const property = await Property.findById(req.params.id);
+        if (!property) {
+            return res.status(404).send('Propriété introuvable');
+        }
+        res.render('property', { property });
+    } catch (error) {
+        console.error('Erreur lors de la récupération de la propriété:', error);
+        res.status(500).send('Erreur interne du serveur');
+    }
+});
+
+
 app.get('/user/orders', isAuthenticated, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.user._id })
@@ -161,6 +175,18 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
+app.get('/dashboard', isAuthenticated, async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+
+        res.render('dashboard', { user: req.user, orders });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des commandes:', error);
+        res.status(500).send('Erreur interne du serveur');
+    }
+});
+
 
 app.get('/download-invoice/:orderId', isAuthenticated, async (req, res) => {
   const { orderId } = req.params;
