@@ -459,15 +459,12 @@ progress {
                 <thead>
                   <tbody id="order-history-table-body">
     <% if (!orders || orders.length === 0) { %>
-        <tr>
-            <td colspan="5" class="text-center">Aucune commande trouvée.</td>
-        </tr>
+        <tr><td colspan="5" class="text-center">Aucune commande trouvée.</td></tr>
     <% } else { %>
         <% orders.forEach(order => { %>
             <tr>
                 <td><%= new Date(order.createdAt).toLocaleDateString('fr-FR') %></td>
-                <td><%= new Date(order.createdAt).toLocaleTimeString('fr-FR') %></td>
-                <td><%= (order.amount / 100).toFixed(2) %> €</td>
+                <td><%= (order.amount).toFixed(2) %> €</td>
                 <td><%= order.status %></td>
                 <td>
                     <% if (order.pageUrl) { %>
@@ -480,8 +477,6 @@ progress {
         <% }) %>
     <% } %>
 </tbody>
-
-
 
                 <tbody>
                     <!-- Les commandes seront insérées ici -->
