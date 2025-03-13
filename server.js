@@ -886,19 +886,29 @@ app.post('/process-payment', async (req, res) => {
     try {
         const { propertyId, stripeToken, amount } = req.body;
 
+        if (!propertyId || !stripeToken || !amount) {
+            return res.status(400).json({ error: "Données manquantes : propertyId, stripeToken ou amount" });
+        }
+
+        console.log(`✅ Données reçues : propertyId=${propertyId}, amount=${amount}`);
+
         // Vérifier si la propriété existe et récupérer son URL
         const property = await Property.findById(propertyId);
         if (!property) {
             return res.status(404).json({ error: "Propriété introuvable" });
         }
 
-        // Traitement du paiement via Stripe (exemple)
+        console.log(`✅ Propriété trouvée : ${property.city}, ${property.country}`);
+
+        // Traitement du paiement via Stripe
         const paymentIntent = await stripe.paymentIntents.create({
-            amount,
+            amount: amount,
             currency: "eur",
             payment_method: stripeToken,
             confirm: true
         });
+
+        console.log(`✅ Paiement réussi : ${paymentIntent.id}`);
 
         // Création de la commande avec l'URL de la propriété
         const newOrder = new Order({
@@ -908,19 +918,17 @@ app.post('/process-payment', async (req, res) => {
             stripePaymentIntent: paymentIntent.id,
             amount,
             status: 'paid',
-            propertyUrl: property.url // 🔥 Ajout de l'URL ici
+            propertyUrl: property.url
         });
 
         await newOrder.save();
         res.json({ success: true, message: "Paiement réussi", orderId: newOrder.orderId });
 
     } catch (error) {
-        console.error("Erreur de paiement :", error);
-        res.status(500).json({ error: "Erreur lors du paiement" });
+        console.error("❌ Erreur de paiement :", error);
+        res.status(500).json({ error: "Erreur lors du paiement", details: error.message });
     }
 });
-
-
 
 async function generateLandingPage(property) {
     const GTM_ID = 'GTM-TF7HSC3N'; 
