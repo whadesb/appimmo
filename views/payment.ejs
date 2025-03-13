@@ -337,25 +337,18 @@
             const form = document.getElementById('payment-form');
            form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    
+
     const { token, error } = await stripe.createToken(cardElement);
     if (error) {
-        console.error('Error creating payment token:', error);
+        console.error('Erreur lors de la création du token Stripe:', error);
+        alert("Erreur lors du paiement. Vérifiez votre carte.");
         return;
     }
 
     const formData = new FormData(event.target);
     formData.append('stripeToken', token.id);
-    formData.append('amount', 50000); // Montant en centimes pour 500€
-    
-    // Vérifier si propertyId est bien défini
-    const propertyId = "<%= propertyId %>"; 
-    if (!propertyId) {
-        console.error('Property ID is missing');
-        alert('Erreur: ID de la propriété manquant.');
-        return;
-    }
-    formData.append('propertyId', propertyId);
+    formData.append('amount', 50000); // 🔥 Vérifie si amount est bien en centimes
+    formData.append('propertyId', "<%= propertyId %>"); // 🔥 Ajoute l'ID de la propriété
 
     try {
         const response = await fetch('/process-payment', {
@@ -366,19 +359,17 @@
             body: JSON.stringify(Object.fromEntries(formData.entries())),
         });
 
+        const data = await response.json();
         if (response.ok) {
-            const data = await response.json();
-            alert('Payment successful!');
-            const userLocale = window.location.pathname.split('/')[1]; 
-            window.location.href = `/${userLocale}/user`;
+            alert('✅ Paiement réussi !');
+            window.location.href = `/<%= locale %>/user`;
         } else {
-            const errorData = await response.json();
-            console.error('Payment error:', errorData.error);
-            alert('Payment failed. Please try again.');
+            console.error('❌ Erreur de paiement:', data.error);
+            alert('Échec du paiement : ' + data.error);
         }
     } catch (error) {
-        console.error('Payment processing error:', error);
-        alert('Payment processing failed. Please try again.');
+        console.error('❌ Erreur de requête:', error);
+        alert('Une erreur est survenue. Vérifie ta connexion.');
     }
 });
 
