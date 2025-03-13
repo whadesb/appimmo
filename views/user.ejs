@@ -1016,7 +1016,29 @@ function loadOrderHistory() {
 
 
 </script>
+<script>
+async function createOrder(propertyId, amount, pageUrl) {
+    try {
+        const response = await fetch('/create-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId: "<%= user._id %>", amount, pageUrl })
+        });
 
+        const data = await response.json();
+        if (data.order) {
+            // Rediriger vers la page de paiement
+            window.location.href = `/payment?orderId=${data.order._id}`;
+        } else {
+            alert("Erreur lors de la création de la commande.");
+        }
+    } catch (error) {
+        console.error("Erreur :", error);
+    }
+}
+</script>
 
 </body>
 </html>
