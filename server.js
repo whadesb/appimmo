@@ -526,16 +526,19 @@ app.get('/:locale/logout', (req, res, next) => {
         });
     });
 });
-app.get('/user', async (req, res) => {
-    try {
-        // Récupération des propriétés de l'utilisateur connecté
-        const userId = req.user.id; // Vérifie que l'utilisateur est bien authentifié
-        const properties = await Property.find({ owner: userId }); // Remplace par ton modèle
+app.get('/user', isAuthenticated, async (req, res) => {
+    if (!req.user) {
+        return res.redirect('/login');
+    }
 
-        res.render('user', { properties }); // Vérifie que les données sont bien passées
+    try {
+        const userId = req.user.id;
+        const properties = await Property.find({ createdBy: userId });
+
+        res.render('user', { properties });
     } catch (error) {
-        console.error(error);
-        res.render('user', { properties: [] }); // Évite une erreur si aucune donnée n'est trouvée
+        console.error('Erreur lors de la récupération des propriétés :', error);
+        res.render('user', { properties: [] });
     }
 });
 
@@ -549,24 +552,26 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     }
 
     try {
-        // ✅ Récupérer toutes les propriétés de l'utilisateur
-        const properties = await Property.find({ createdBy: user._id }) || [];
-        const orders = await Order.find({ userId: user._id }).sort({ createdAt: -1 });
+        // Récupération des propriétés et commandes de l'utilisateur
+        const [properties, orders] = await Promise.all([
+            Property.find({ createdBy: user._id }),
+            Order.find({ userId: user._id }).sort({ createdAt: -1 })
+        ]);
 
+        // Chargement des traductions
         const userTranslationsPath = `./locales/${locale}/user.json`;
         let userTranslations = {};
 
-        try {
+        if (fs.existsSync(userTranslationsPath)) {
             userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-        } catch (error) {
-            console.error(`Erreur lors du chargement des traductions : ${error}`);
-            return res.status(500).send('Erreur lors du chargement des traductions.');
+        } else {
+            console.warn(`Fichier de traduction manquant pour la locale ${locale}`);
         }
 
         res.render('user', {
             locale,
             user,
-            properties,  // ✅ Toutes les propriétés sont bien envoyées ici
+            properties,
             orders,
             i18n: userTranslations
         });
