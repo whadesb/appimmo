@@ -338,9 +338,11 @@
         });
         cardElement.mount('#card-element');
 
-        const form = document.getElementById('payment-form');
-        form.addEventListener('submit', async (event) => {
+      const form = document.getElementById('payment-form');
+form.addEventListener('submit', async (event) => {
     event.preventDefault();
+
+    console.log("🔍 Order ID récupéré depuis le formulaire:", document.getElementById('orderId').value);
 
     const { token, error } = await stripe.createToken(cardElement);
     if (error) {
@@ -350,11 +352,10 @@
     }
 
     const formData = new FormData(event.target);
-formData.append('stripeToken', token.id);
-formData.append('amount', 50000);
-formData.append('orderId', document.getElementById('orderId').value); // ✅ Ajout du numéro de commande
-formData.append('pageUrl', document.getElementById('pageUrl').value);
-
+    formData.append('stripeToken', token.id);
+    formData.append('amount', 50000);
+    formData.append('orderId', document.getElementById('orderId').value);
+    formData.append('pageUrl', document.getElementById('pageUrl').value);
 
     try {
         const response = await fetch('/process-payment', {
@@ -368,7 +369,7 @@ formData.append('pageUrl', document.getElementById('pageUrl').value);
         const data = await response.json();
         if (data.success) {
             alert('✅ Paiement réussi !');
-            window.location.href = data.redirectUrl; // ✅ Redirection vers l'URL stockée
+            window.location.href = data.redirectUrl;
         } else {
             alert('Échec du paiement. Veuillez réessayer.');
         }
