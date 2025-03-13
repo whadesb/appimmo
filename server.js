@@ -526,6 +526,18 @@ app.get('/:locale/logout', (req, res, next) => {
         });
     });
 });
+app.get('/user', async (req, res) => {
+    try {
+        // Récupération des propriétés de l'utilisateur connecté
+        const userId = req.user.id; // Vérifie que l'utilisateur est bien authentifié
+        const properties = await Property.find({ owner: userId }); // Remplace par ton modèle
+
+        res.render('user', { properties }); // Vérifie que les données sont bien passées
+    } catch (error) {
+        console.error(error);
+        res.render('user', { properties: [] }); // Évite une erreur si aucune donnée n'est trouvée
+    }
+});
 
 // Route pour la page utilisateur avec locale et récupération des propriétés
 app.get('/:locale/user', isAuthenticated, async (req, res) => {
