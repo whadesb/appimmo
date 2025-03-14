@@ -2,20 +2,18 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const propertySchema = new Schema({
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-    createdAt: { type: Date, default: Date.now },
     rooms: { type: Number, required: true },
     bedrooms: { type: Number, required: true },
     surface: { type: Number, required: true },
     price: { type: Number, required: true },
     city: { type: String, required: true },
     country: { type: String, required: true },
-    description: { type: String, required: true, maxlength: 820 },
-    yearBuilt: { type: Number },
+    description: { type: String, required: true, maxlength: 820 }, // Description ajoutée
+    yearBuilt: { type: Number, required: false },
     pool: { type: Boolean, default: false },
     propertyType: { type: String, required: true },
-    bathrooms: { type: Number },
-    toilets: { type: Number },
+    bathrooms: { type: Number, required: false },
+    toilets: { type: Number, required: false },
     elevator: { type: Boolean, default: false },
     fireplace: { type: Boolean, default: false },
     internet: { type: Boolean, default: false },
@@ -27,9 +25,11 @@ const propertySchema = new Schema({
     caretakerHouse: { type: Boolean, default: false },
     electricShutters: { type: Boolean, default: false },
     outdoorLighting: { type: Boolean, default: false },
-    url: { type: String },
+    url: { type: String, required: false },
+    createdAt: { type: Date, default: Date.now },
     views: { type: Number, default: 0 },
-    photos: [{ type: String }]
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+    photos: [String]
 });
 
 const Property = mongoose.model('Property', propertySchema);
