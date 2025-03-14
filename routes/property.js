@@ -19,21 +19,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Fonction pour générer la landing page
+// Fonction pour générer la landing page
 async function generateLandingPage(property) {
-    const GTM_ID = 'GTM-TF7HSC3N'; 
-    const template = `
+  const template = `
     <!DOCTYPE html>
     <html lang="fr">
     <head>
- <!-- Google Tag Manager -->
-        <script>
-          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','${GTM_ID}');
-        </script>
-        <!-- Fin Google Tag Manager -->
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -41,8 +33,8 @@ async function generateLandingPage(property) {
 
         <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet">
 
-         <style>
-             * {
+        <style>
+            * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
@@ -208,19 +200,9 @@ async function generateLandingPage(property) {
             }
 
             @media screen and (max-width: 768px) {
-       
-.container {
+                .container {
                     flex-direction: column;
-height: auto;
                 }
-                .slider {
-        height: 250px; /* Ajuster la hauteur */
-        margin-top: 20px; /* Ajoute une marge propre au-dessus du slider */
-    }
-
-    .slides img {
-        height: 250px; /* Même hauteur que le slider */
-    }
 
                 .property-details {
                     grid-template-columns: repeat(2, 1fr);
@@ -231,31 +213,24 @@ height: auto;
                 }
 
                 .property-info h1 {
-                    font-size: 1.8rem;
+                    font-size: 2.4rem;
                 }
 
                 .property-info h2 {
-                    font-size: 1.2rem;
+                    font-size: 1.4rem;
                 }
 
                 .price {
-                    font-size: 1.2rem;
+                    font-size: 1.3rem;
                     width: 100%;
                     padding: 10px;
                     text-align: center;
-align-self: center;
                 }
 
                 .property-description {
                     font-size: 0.9rem;
                 }
             }
-@media screen and (max-width: 500px) {
-    .property-details {
-        grid-template-columns: 1fr; /* Une seule colonne */
-        gap: 5px; /* Moins d’espace entre les éléments */
-    }
-}
 
             @media screen and (min-width: 769px) {
                 body {
@@ -273,12 +248,6 @@ align-self: center;
         </style>
     </head>
     <body>
-<!-- Google Tag Manager (noscript) -->
-        <noscript>
-          <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" 
-          height="0" width="0" style="display:none;visibility:hidden"></iframe>
-        </noscript>
-        <!-- Fin Google Tag Manager (noscript) -->
 
         <div class="container">
             <!-- Slider de la propriété -->
@@ -333,7 +302,7 @@ align-self: center;
                     ${property.description || 'Aucune description fournie.'}
                 </div>
 
-               <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
+                <div class="price">Prix: ${property.price} €</div>
             </div>
         </div>
 
@@ -477,29 +446,5 @@ router.get('/payment', async (req, res) => {
         res.status(500).json({ error: 'Une erreur est survenue lors de la récupération de la propriété.' });
     }
 });
-
-// Route pour récupérer les landing pages de l'utilisateur connecté
-router.get('/user/landing-pages', authMiddleware, async (req, res) => {
-    try {
-        const properties = await Property.find({ createdBy: req.user._id }).sort({ createdAt: -1 });
-
-        const landingPages = properties.map(property => ({
-            _id: property._id,
-            createdAt: property.createdAt,
-            rooms: property.rooms,
-            surface: property.surface,
-            price: property.price,
-            city: property.city,
-            country: property.country,
-            url: property.url
-        }));
-
-        res.json(landingPages);
-    } catch (error) {
-        console.error("Erreur lors de la récupération des landing pages:", error);
-        res.status(500).json({ message: "Erreur serveur" });
-    }
-});
-
 
 module.exports = router;
