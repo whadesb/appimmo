@@ -110,6 +110,17 @@ app.use((req, res, next) => {
 app.get('/config', (req, res) => {
   res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
 });
+router.get('/landing-pages', async (req, res) => {
+    try {
+        console.log('Requête reçue pour /landing-pages');
+        const properties = await Property.find();
+        console.log('Données récupérées :', properties);
+        res.status(200).json(properties);
+    } catch (error) {
+        console.error('Erreur lors du chargement des propriétés:', error);
+        res.status(500).json({ message: 'Erreur interne du serveur', error });
+    }
+});
 
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
