@@ -379,14 +379,8 @@ progress {
                     <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
                 </li>
                 <li class="nav-item sidebar-mobile-links sidebar-links">
-    <a class="nav-link click-scroll" href="#" onclick="showSection('created-landing-pages')">
-        <i class="fa fa-file-alt"></i> Mes Landing Pages
-    </a>
-</li>
-<a href="#" title="Mes Landing Pages" onclick="showSection('created-landing-pages')">
-    <i class="fa fa-file-alt"></i>
-</a>
-
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> <%= i18n.created_pages %></a>
+                </li>
                 <li class="nav-item sidebar-mobile-links sidebar-links">
                     <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
                 </li>
@@ -684,35 +678,31 @@ progress {
 </div>
 
                         <!-- Section Created Pages -->
-                       <!-- Section Created Landing Pages -->
-<div id="created-landing-pages" class="card" style="display: none;">
+                        <div id="created-pages" class="card" style="display: none;">
     <div class="card-body">
-        <h5 class="card-title">Mes Landing Pages</h5>
-        <p class="card-text">Liste des landing pages créées</p>
+        <h5 class="card-title"><%= i18n.created_pages %></h5>
+        <p class="card-text"><%= i18n.created_pages_info %></p>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th>Date</th>
-                    <th>Heure</th>
-                    <th>Pièces</th>
-                    <th>Surface</th>
-                    <th>Prix</th>
-                    <th>Ville</th>
-                    <th>Pays</th>
-                    <th>URL</th>
-                    <th>Actions</th>
+                    <th scope="col"><%= i18n.rooms %></th>
+                    <th scope="col"><%= i18n.surface %></th>
+                    <th scope="col"><%= i18n.price %></th>
+                    <th scope="col"><%= i18n.city %></th>
+                    <th scope="col"><%= i18n.country %></th>
+                    <th scope="col">URL</th>
+                    <th scope="col"><%= i18n.actions %></th>
                 </tr>
             </thead>
-            <tbody id="landing-pages-list">
-                <!-- Les landing pages seront chargées ici -->
-            </tbody>
-        </table>
-        <div id="no-landing-pages-message" style="display: none;" class="text-center">
-            <p>Aucune landing page trouvée.</p>
-        </div>
-    </div>
-</div>
-
+            <tbody id="properties-list">
+                                        <!-- Propriétés de l'utilisateur ici -->
+                                    </tbody>
+                                </table>
+                                <div id="no-properties-message" style="display: none;" class="text-center">
+                                    <p><%= i18n.no_properties_message %></p>
+                                </div>
+                            </div>
+                        </div>
                     </div> <!-- Fin de main-section -->
                 </div>
             </div>
@@ -765,7 +755,7 @@ progress {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
     function showSection(sectionId) {
-        const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password', 'orders'];
+        const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
         sections.forEach(id => {
             const sectionElement = document.getElementById(id);
             if (sectionElement) {
@@ -778,61 +768,48 @@ progress {
         }
     }
 
-   async function loadLandingPages() {
+    async function loadProperties() {
     try {
-        const response = await fetch('/user/landing-pages'); // API qui retourne les pages créées
+        const response = await fetch('/user/properties');
         if (response.ok) {
-            const landingPages = await response.json();
-            const landingPagesList = document.getElementById('landing-pages-list');
-            landingPagesList.innerHTML = '';
+            const properties = await response.json();
+            const propertiesList = document.getElementById('properties-list');
+            propertiesList.innerHTML = '';
 
-            const noLandingPagesMessage = document.getElementById('no-landing-pages-message');
-            if (landingPages.length === 0) {
-                noLandingPagesMessage.style.display = 'block';
+            const noPropertiesMessage = document.getElementById('no-properties-message');
+            if (properties.length === 0) {
+                noPropertiesMessage.style.display = 'block';
             } else {
-                noLandingPagesMessage.style.display = 'none';
-                landingPages.forEach(page => {
+                noPropertiesMessage.style.display = 'none';
+                properties.forEach(property => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${new Date(page.createdAt).toLocaleDateString('fr-FR')}</td>
-                        <td>${new Date(page.createdAt).toLocaleTimeString('fr-FR')}</td>
-                        <td>${page.rooms}</td>
-                        <td>${page.surface} m²</td>
-                        <td>${page.price.toLocaleString('fr-FR')} €</td>
-                        <td>${page.city}</td>
-                        <td>${page.country}</td>
-                        <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+                        <td>${property.rooms}</td>
+                        <td>${property.surface}</td>
+                        <td>${property.price.toLocaleString('fr-FR')} €</td>
+                        <td>${property.city}</td>
+                        <td>${property.country}</td>
+                        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
                         <td>
-                            <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
-                            <button class="btn btn-dark btn-sm" onclick="window.open('${page.url}', '_blank')">Voir</button>
+                            <div class="action-icons">
+                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
+                            </div>
                         </td>
                     `;
-                    landingPagesList.appendChild(row);
+                    propertiesList.appendChild(row);
                 });
             }
         } else {
-            document.getElementById('landing-pages-list').innerHTML = '<tr><td colspan="9" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
+            const propertiesList = document.getElementById('properties-list');
+            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
         }
     } catch (error) {
-        document.getElementById('landing-pages-list').innerHTML = '<tr><td colspan="9" class="text-center">Une erreur est survenue.</td></tr>';
+        const propertiesList = document.getElementById('properties-list');
+        propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
     }
 }
-
-// Mettre à jour showSection pour inclure la nouvelle section
-function showSection(sectionId) {
-    const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders', 'created-landing-pages'];
-    sections.forEach(id => {
-        const sectionElement = document.getElementById(id);
-        if (sectionElement) {
-            sectionElement.style.display = id === sectionId ? 'block' : 'none';
-        }
-    });
-
-    if (sectionId === 'created-landing-pages') {
-        loadLandingPages();
-    }
-}
-
 
 
     function copyURL(url) {
@@ -1021,6 +998,17 @@ async function loadOrders() {
   }
 }
 
+// Charger les commandes quand on affiche la section
+function showSection(sectionId) {
+  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
+  sections.forEach(id => {
+    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+  });
+
+  if (sectionId === 'orders') {
+    loadOrders();
+  }
+}
 
 // Fonction pour copier l'URL de la propriété
 function copyURL(url) {
