@@ -119,20 +119,6 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
-app.post("/create-order", async (req, res) => {
-    let { amount } = req.body;
-
-    if (amount >= 100) {
-        finalAmount = amount; // Déjà en centimes
-    } else {
-        finalAmount = amount * 100; // Conversion
-    }
-
-    console.log("Montant après correction :", finalAmount);
-
-    // Ensuite, traitement avec Stripe et insertion en DB...
-});
-
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -161,85 +147,6 @@ const upload = multer({
 // Route spécifique pour la configuration Stripe (évite "Not Found")
 app.get('/config', (req, res) => {
     res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
-});
-
-app.get('/property/:id', async (req, res) => {
-    try {
-        const property = await Property.findById(req.params.id);
-        if (!property) {
-            return res.status(404).send('Propriété introuvable');
-        }
-        res.render('property', { property });
-    } catch (error) {
-        console.error('Erreur lors de la récupération de la propriété:', error);
-        res.status(500).send('Erreur interne du serveur');
-    }
-});
-
-
-
-app.get('/user/orders', isAuthenticated, async (req, res) => {
-  try {
-    const orders = await Order.find({ userId: req.user._id })
-      .populate('propertyId')
-      .sort({ createdAt: -1 });
-
-    res.json(orders);
-  } catch (error) {
-    console.error('Erreur lors de la récupération des commandes:', error);
-    res.status(500).json({ error: 'Erreur serveur' });
-  }
-});
-app.get("/dashboard", async (req, res) => {
-  try {
-    const orders = await Order.find().lean(); // Récupérer toutes les commandes
-    const updatedOrders = orders.map(order => ({
-      ...order,
-      landingPageUrl: `https://uap.immo/landing-pages/${order.propertyId}.html`
-    }));
-
-    res.render("dashboard", { orders: updatedOrders }); // Passer les données à EJS
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Erreur serveur");
-  }
-});
-
-
-app.get('/download-invoice/:orderId', isAuthenticated, async (req, res) => {
-  const { orderId } = req.params;
-
-  try {
-    const order = await Order.findOne({ orderId, userId: req.user._id }).populate('propertyId');
-
-    if (!order || order.status !== 'paid') {
-      return res.status(404).send('Facture non disponible.');
-    }
-
-    const invoiceContent = `
-      <h1>Facture UAP Immo</h1>
-      <p>Commande: ${order.orderId}</p>
-      <p>Utilisateur: ${req.user.firstName} ${req.user.lastName}</p>
-      <p>Montant: ${order.amount}€</p>
-      <p>Statut: ${order.status}</p>
-      <p>Annonce: ${order.propertyId.city}, ${order.propertyId.country}</p>
-    `;
-
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="facture-${orderId}.pdf"`);
-
-    const pdf = require('html-pdf');
-    pdf.create(invoiceContent).toStream((err, stream) => {
-      if (err) {
-        return res.status(500).send('Erreur lors de la génération de la facture.');
-      }
-      stream.pipe(res);
-    });
-
-  } catch (error) {
-    console.error('Erreur lors de la génération de la facture:', error);
-    res.status(500).json({ error: 'Erreur serveur' });
-  }
 });
 
 
@@ -603,10 +510,10 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     if (!user) {
         return res.redirect(`/${locale}/login`);
     }
-
-    // Charger les traductions
+    
     const userTranslationsPath = `./locales/${locale}/user.json`;
     let userTranslations = {};
+
     try {
         userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
     } catch (error) {
@@ -614,22 +521,12 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    try {
-        // 🔥 Charger les commandes avec l'URL de la propriété
-        const orders = await Order.find({ userId: user._id }).lean();
-
-        res.render('user', {
-            locale,
-            user,
-            orders, // 👈 Ajouter les commandes
-            i18n: userTranslations
-        });
-    } catch (error) {
-        console.error("Erreur lors de la récupération des commandes :", error);
-        res.status(500).send('Erreur lors du chargement des commandes.');
-    }
+    res.render('user', {
+        locale,
+        user,
+        i18n: userTranslations
+    });
 });
-
 
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
@@ -874,21 +771,6 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
   }
 });
 
-app.get('/payment', isAuthenticated, async (req, res) => {
-    const { propertyId } = req.query;
-
-    if (!propertyId) {
-        return res.status(400).send('Property ID is required');
-    }
-
-    res.render('payment', { 
-        propertyId, 
-        user: req.user,
-        i18n 
-    });
-});
-
-
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ createdBy: req.user._id });
@@ -899,62 +781,36 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/process-payment', async (req, res) => {
-    try {
-        const { propertyId, stripeToken, amount } = req.body;
+app.post('/process-payment', isAuthenticated, async (req, res) => {
+  const { stripeToken, amount, propertyId } = req.body;
+  const userId = req.user._id;
 
-        // Vérifier si les valeurs sont bien présentes
-        if (!propertyId || !stripeToken || !amount) {
-            console.error("⚠️ Paramètres manquants :", { propertyId, stripeToken, amount });
-            return res.status(400).json({ error: "Données de paiement invalides." });
-        }
+  if (isNaN(amount)) {
+    return res.status(400).json({ error: 'Invalid amount' });
+  }
 
-        // Vérifier si la propriété existe
-        const property = await Property.findById(propertyId);
-        if (!property) {
-            console.error("❌ Propriété introuvable :", propertyId);
-            return res.status(404).json({ error: "Propriété introuvable." });
-        }
+  try {
+    const charge = await stripe.charges.create({
+      amount: parseInt(amount, 10),
+      currency: 'eur',
+      source: stripeToken,
+      description: `Payment for property ${propertyId}`,
+    });
 
-        // Assurer que le montant est bien en centimes
-        const amountInCents = parseInt(amount * 100, 10); // Convertir en centimes
-        if (isNaN(amountInCents) || amountInCents <= 0) {
-            console.error("❌ Montant invalide :", amount);
-            return res.status(400).json({ error: "Montant invalide." });
-        }
-
-        // Création du paiement Stripe
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount: amountInCents,  // Assurez-vous que c'est bien en centimes
-            currency: "eur",
-            payment_method_types: ["card"],
-            payment_method: stripeToken,
-            confirm: true
-        });
-
-        // Enregistrement de la commande
-const newOrder = new Order({
-  userId: req.user._id,
-  propertyId,
-  orderId: `ORD-${Date.now()}`,
-  stripePaymentIntent: paymentIntent.id,
-  amount: amountInCents / 100, // 🔥 Corrigé ici
-  status: 'paid',
-  propertyUrl: property.url  
+    const order = new Order({
+      userId,
+      amount: parseInt(amount, 10),
+      status: 'paid'
+    });
+    await order.save();
+    res.status(200).json({ message: 'Payment successful' });
+  } catch (error) {
+    console.error('Error processing payment:', error);
+    res.status(500).json({ error: 'Payment failed' });
+  }
 });
 
-await newOrder.save();
 
-
-        console.log("✅ Paiement réussi :", paymentIntent.id);
-        const locale = req.cookies.locale || 'fr'; // Utilise la langue du cookie ou 'fr' par défaut
-res.json({ success: true, message: "Paiement réussi", orderId: newOrder.orderId, redirectUrl: `/${locale}/user` });
-
-    } catch (error) {
-        console.error("❌ Erreur de paiement :", error);
-        res.status(500).json({ error: "Erreur lors du paiement." });
-    }
-});
 
 async function generateLandingPage(property) {
     const GTM_ID = 'GTM-TF7HSC3N'; 
@@ -1327,57 +1183,6 @@ async function sendAccountCreationEmail(email) {
 
   await sendEmail(mailOptions);
 }
-
-app.post('/stripe-webhook', express.raw({ type: 'application/json' }), async (req, res) => {
-  const sig = req.headers['stripe-signature'];
-  let event;
-
-  try {
-    event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
-  } catch (err) {
-    console.error('⚠️ Erreur Webhook:', err.message);
-    return res.status(400).send(`Webhook Error: ${err.message}`);
-  }
-
-  if (event.type === 'payment_intent.succeeded') {
-    const paymentIntent = event.data.object;
-
-    await Order.findOneAndUpdate(
-      { stripePaymentIntent: paymentIntent.id },
-      { status: 'paid' }
-    );
-
-    console.log('✅ Paiement confirmé pour:', paymentIntent.id);
-  }
-
-  if (event.type === 'payment_intent.payment_failed') {
-    const paymentIntent = event.data.object;
-
-    await Order.findOneAndUpdate(
-      { stripePaymentIntent: paymentIntent.id },
-      { status: 'failed' }
-    );
-
-    console.log('❌ Paiement échoué pour:', paymentIntent.id);
-  }
-
-  res.json({ received: true });
-});
-app.get("/api/orders", async (req, res) => {
-  try {
-    const orders = await Order.find().lean(); // lean() pour un objet plus léger
-    const updatedOrders = orders.map(order => ({
-      ...order,
-      landingPageUrl: `https://uap.immo/landing-pages/${order.propertyId}.html`,
-    }));
-    
-    res.json(updatedOrders);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Erreur serveur" });
-  }
-});
-
 
 app.post('/send-contact', async (req, res) => {
   const { firstName, lastName, email, message, type } = req.body;
