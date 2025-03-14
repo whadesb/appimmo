@@ -935,7 +935,7 @@ const newOrder = new Order({
   propertyId,
   orderId: `ORD-${Date.now()}`,
   stripePaymentIntent: paymentIntent.id,
-  amount: amount, // Change ceci
+  amount: amountInCents / 100, // 🔥 Corrigé ici
   status: 'paid',
   propertyUrl: property.url  
 });
