@@ -452,9 +452,6 @@ progress {
                             </div>
                         </div>
 
-
-
-
                         <!-- Section Reset Password -->
                         <div id="reset-password" class="card" style="display: none;">
                             <div class="card-body">
@@ -469,45 +466,6 @@ progress {
                                 </form>
                             </div>
                         </div>
-<h2>Vos Commandes</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Commande</th>
-            <th>Montant</th>
-            <th>Statut</th>
-            <th>Page</th>
-            <th>Facture</th>
-        </tr>
-    </thead>
-    <tbody>
-        <% orders.forEach(order => { %>
-            <tr>
-                <td><%= order.orderId %></td>
-                <td><%= (Number(order.amount) / 100).toFixed(2) %> €</td>
-               <td>
-  <% if (order.status === 'paid') { %>
-    <a href="/download-invoice/<%= order._id %>" class="btn btn-sm btn-primary">Télécharger</a>
-  <% } else { %>
-    Paiement en attente
-  <% } %>
-</td>
-
-               <td>
-  <% if (order.propertyUrl) { %>
-    <a href="<%= order.propertyUrl %>" target="_blank">Voir l'annonce</a>
-  <% } else { %>
-    Non disponible
-  <% } %>
-</td>
-
-                <td>
-                    <a href="/download-invoice/<%= order._id %>" class="btn btn-sm btn-primary">Télécharger</a>
-                </td>
-            </tr>
-        <% }); %>
-    </tbody>
-</table>
 
                         <!-- Section Landing Page -->
                         <div id="landing" class="card" style="display: none;">
@@ -794,7 +752,7 @@ progress {
                 noPropertiesMessage.style.display = 'none';
                 properties.forEach(property => {
                     const row = document.createElement('tr');
-                    row.innerHTML = 
+                    row.innerHTML = `
                         <td>${property.rooms}</td>
                         <td>${property.surface}</td>
                         <td>${property.price.toLocaleString('fr-FR')} €</td>
@@ -808,7 +766,7 @@ progress {
                                 <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
                             </div>
                         </td>
-                    ;
+                    `;
                     propertiesList.appendChild(row);
                 });
             }
@@ -824,7 +782,7 @@ progress {
 
 
     function copyURL(url) {
-        const fullUrl = https://uap.immo${url};
+        const fullUrl = `https://uap.immo${url}`;
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 showCopyMessage();
@@ -850,14 +808,14 @@ function testURL(propertyId) {
 
     // Vérifier que currentLang est bien 'en' ou 'fr', sinon rediriger sans préfixe de langue
     if (currentLang === 'en' || currentLang === 'fr') {
-        window.location.href = /${currentLang}/payment?propertyId=${propertyId};
+        window.location.href = `/${currentLang}/payment?propertyId=${propertyId}`;
     } else {
-        window.location.href = /payment?propertyId=${propertyId};
+        window.location.href = `/payment?propertyId=${propertyId}`;
     }
 }
 
     function editProperty(propertyId) {
-        window.location.href = /property/edit/${propertyId};
+        window.location.href = `/property/edit/${propertyId}`;
     }
 document.getElementById('add-property-form').addEventListener('submit', async function(event) {
   event.preventDefault();
@@ -888,7 +846,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
 
     function logout() {
     const locale = document.documentElement.lang || 'fr'; // Récupère la langue de la page
-    window.location.href = /${locale}/login;
+    window.location.href = `/${locale}/login`;
 }
 
     window.onload = resetTimer;
@@ -902,7 +860,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
   const charCount = document.getElementById('charCount');
 
   descriptionInput.addEventListener('input', function() {
-    charCount.textContent = ${descriptionInput.value.length}/820 caractères;
+    charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
   });
 </script>
 <script>
@@ -969,52 +927,6 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 </script>
-<script>
-async function loadOrders() {
-  try {
-    const response = await fetch('/user/orders');
-    
-    if (!response.ok) {
-      throw new Error(Erreur HTTP: ${response.status});
-    }
-    
-    const orders = await response.json();
 
-    const ordersList = document.getElementById('orders-list');
-
-    if (!ordersList) {
-      console.warn("⚠️ Élément 'orders-list' introuvable dans le DOM.");
-      return; // Empêche l'exécution si la liste des commandes n'est pas présente
-    }
-
-    ordersList.innerHTML = '';
-
-    orders.forEach(order => {
-      const row = document.createElement('tr');
-      row.innerHTML = 
-        <td>${order.orderId}</td>
-        <td>
-          ${order.propertyId && order.propertyId.url ? <a href="${order.propertyId.url}" target="_blank">${order.propertyId.city}, ${order.propertyId.country}</a> : 'Non disponible'}
-        </td>
-        <td>${order.amount.toLocaleString()}€</td>
-        <td>${order.status}</td>
-        <td>
-          ${order.status === 'paid' ? <a href="/download-invoice/${order.orderId}" class="btn btn-sm btn-primary">Télécharger</a> : 'Non disponible'}
-        </td>
-      ;
-      ordersList.appendChild(row);
-    });
-
-  } catch (error) {
-    console.error("❌ Erreur lors du chargement des commandes :", error);
-  }
-}
-
-document.addEventListener('DOMContentLoaded', () => {
-  if (document.getElementById('orders-list')) {
-    loadOrders();
-  }
-});
-</script>
 </body>
 </html>
