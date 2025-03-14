@@ -119,6 +119,20 @@ function isAuthenticated(req, res, next) {
   res.redirect('/login');
 }
 
+app.post("/create-order", async (req, res) => {
+    let { amount } = req.body;
+
+    if (amount >= 100) {
+        finalAmount = amount; // Déjà en centimes
+    } else {
+        finalAmount = amount * 100; // Conversion
+    }
+
+    console.log("Montant après correction :", finalAmount);
+
+    // Ensuite, traitement avec Stripe et insertion en DB...
+});
+
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
