@@ -1360,6 +1360,20 @@ app.post('/stripe-webhook', express.raw({ type: 'application/json' }), async (re
 
   res.json({ received: true });
 });
+app.get("/api/orders", async (req, res) => {
+  try {
+    const orders = await Order.find().lean(); // lean() pour un objet plus léger
+    const updatedOrders = orders.map(order => ({
+      ...order,
+      landingPageUrl: `https://uap.immo/landing-pages/${order.propertyId}.html`,
+    }));
+    
+    res.json(updatedOrders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Erreur serveur" });
+  }
+});
 
 
 app.post('/send-contact', async (req, res) => {
