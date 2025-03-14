@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const propertySchema = new Schema({
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     createdAt: { type: Date, default: Date.now },
     rooms: { type: Number, required: true },
     bedrooms: { type: Number, required: true },
@@ -10,12 +10,12 @@ const propertySchema = new Schema({
     price: { type: Number, required: true },
     city: { type: String, required: true },
     country: { type: String, required: true },
-    description: { type: String, required: true, maxlength: 820 }, // Description ajoutée
-    yearBuilt: { type: Number, required: false },
+    description: { type: String, required: true, maxlength: 820 },
+    yearBuilt: { type: Number },
     pool: { type: Boolean, default: false },
     propertyType: { type: String, required: true },
-    bathrooms: { type: Number, required: false },
-    toilets: { type: Number, required: false },
+    bathrooms: { type: Number },
+    toilets: { type: Number },
     elevator: { type: Boolean, default: false },
     fireplace: { type: Boolean, default: false },
     internet: { type: Boolean, default: false },
@@ -27,11 +27,9 @@ const propertySchema = new Schema({
     caretakerHouse: { type: Boolean, default: false },
     electricShutters: { type: Boolean, default: false },
     outdoorLighting: { type: Boolean, default: false },
-    url: { type: String, required: false },
-    createdAt: { type: Date, default: Date.now },
+    url: { type: String },
     views: { type: Number, default: 0 },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    photos: [String]
+    photos: [{ type: String }]
 });
 
 const Property = mongoose.model('Property', propertySchema);
