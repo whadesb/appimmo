@@ -1,6 +1,5 @@
 require('dotenv').config();
-console.log("Stripe Public Key:", process.env.STRIPE_PUBLIC_KEY);
-
+// Gérer les erreurs non capturées
 process.on('uncaughtException', function (err) {
   console.error('Uncaught Exception:', err);
 });
@@ -32,10 +31,6 @@ const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
-const invalidLocales = [
-    'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
-    'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py'
-];
 
 const app = express();
 
@@ -93,33 +88,15 @@ app.use((req, res, next) => {
           return next(err);
         }
         res.clearCookie('connect.sid');
-
-        // Détecter la langue du cookie, sinon utiliser 'fr' par défaut
-        const locale = req.cookies.locale || req.acceptsLanguages('en', 'fr') || 'fr';
-
-        // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
-        const validLocale = ['fr', 'en'].includes(locale) ? locale : 'fr';
-
-        res.redirect(`/${validLocale}/login`);
+        
+        // Vérifier si la langue est définie dans les cookies
+        const locale = req.cookies.locale || 'fr';  // Utiliser 'fr' comme langue par défaut
+        res.redirect(`/${locale}/login`);
       });
     });
   } else {
     next();
   }
-});
-app.get('/config', (req, res) => {
-  res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
-});
-router.get('/landing-pages', async (req, res) => {
-    try {
-        console.log('Requête reçue pour /landing-pages');
-        const properties = await Property.find();
-        console.log('Données récupérées :', properties);
-        res.status(200).json(properties);
-    } catch (error) {
-        console.error('Erreur lors du chargement des propriétés:', error);
-        res.status(500).json({ message: 'Erreur interne du serveur', error });
-    }
 });
 
 // Middleware d'authentification
@@ -155,10 +132,6 @@ const upload = multer({
   }
 });
 
-// Route spécifique pour la configuration Stripe (évite "Not Found")
-app.get('/config', (req, res) => {
-    res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
-});
 
 
 app.get('/', (req, res) => {
@@ -173,127 +146,62 @@ app.get('/', (req, res) => {
     }
 });
 
-app.get('/:locale/payment', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;  // Récupérer la langue depuis l'URL
-    const { propertyId } = req.query;
 
-    try {
-        const property = await Property.findById(propertyId);
-        if (!property) {
-            return res.status(404).send('Property not found');
-        }
+app.get('/:locale', (req, res) => {
+  const locale = req.params.locale || 'fr';
 
-        // Charger les traductions spécifiques à la langue
-        const translationsPath = `./locales/${locale}/payment.json`;
-        let i18n = {};
+  // Liste des fichiers qui ne doivent pas être interprétés comme des traductions
+  const excludedFiles = ['favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php'];
 
-        try {
-            i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-        } catch (error) {
-            console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-            return res.status(500).send('Erreur lors du chargement des traductions.');
-        }
+  if (excludedFiles.includes(locale)) {
+    return res.sendStatus(404); // Ne pas tenter de charger des traductions pour ces fichiers
+  }
 
-        res.render('payment', {
-            locale,
-            i18n,
-            propertyId: property._id,
-            rooms: property.rooms,
-            surface: property.surface,
-            price: property.price,
-            city: property.city,
-            country: property.country,
-            url: property.url
-        });
-    } catch (error) {
-        console.error('Error fetching property:', error);
-        res.status(500).send('Error fetching property');
-    }
+  const translationsPath = `./locales/${locale}/index.json`;
+  let translations = {};
+
+  try {
+    translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
+
+  res.render('index', {
+    locale: locale,
+    i18n: translations
+  });
 });
 
-app.get('/:locale', (req, res, next) => {
-    const locale = req.params.locale;
 
-    // Liste des routes qui ne doivent PAS être interprétées comme des locales
-    const excludedPaths = [
-        'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
-        'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py',
-        'login', 'register', 'user', 'forgot-password', 'reset-password', 'contact', 'politique-confidentialite'
-    ];
 
-    // Si la route est exclue, on passe au middleware suivant
-    if (excludedPaths.includes(locale)) {
-        return next();
-    }
 
-    // Vérifier si la locale est bien 'fr' ou 'en', sinon rediriger vers 'fr'
-    const validLocales = ['fr', 'en'];
-    if (!validLocales.includes(locale)) {
-        console.warn(`🔍 Valeur de locale invalide : ${locale}, utilisation de 'fr' par défaut.`);
-        return res.redirect('/fr');
-    }
+// Route dynamique pour la page de connexion avec gestion de la langue
+app.get('/:lang/login', (req, res) => {
+    const locale = req.params.lang; // Récupérer la langue depuis l'URL
+    const loginTranslationsPath = `./locales/${locale}/login.json`; // Chemin vers les traductions de cette page
 
-    // Charger les traductions
-    const translationsPath = `./locales/${locale}/index.json`;
-    let translations = {};
+    let loginTranslations = {};
 
     try {
-        translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+        loginTranslations = JSON.parse(fs.readFileSync(loginTranslationsPath, 'utf8'));
     } catch (error) {
         console.error(`Erreur lors du chargement des traductions : ${error}`);
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    // Affichage de la page index avec la langue correcte
-    res.render('index', {
-        locale: locale,
-        i18n: translations
+    // Rendre la page avec les traductions de la langue choisie
+    res.render('login', {
+        title: loginTranslations.title,
+        locale: locale,  // Passer la langue active pour les balises HTML
+        i18n: loginTranslations // Passer les traductions spécifiques à la page
     });
 });
-
-
-
-// Route dynamique pour la page de connexion avec gestion de la langue
-app.get('/', (req, res) => {
-    const excludedPaths = ['config', 'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php'];
-    
-    // Vérifier si la requête concerne une route spécifique (ex: /config)
-    if (excludedPaths.includes(req.path.replace('/', ''))) {
-        return res.sendStatus(404);
-    }
-
-    const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
-    const defaultLocale = 'fr'; // Langue par défaut
-
-    // Vérifier si l'utilisateur préfère l'anglais
-    if (acceptedLanguages.includes('en')) {
-        res.redirect('/en');
-    } else {
-        res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
-    }
-});
-
 
 // Redirection vers la langue par défaut (ex: français) si aucune langue n'est spécifiée
-app.get('/:locale/login', (req, res) => {
-    const locale = req.params.locale || 'fr';
-    const translationsPath = `./locales/${locale}/login.json`;
-    let i18n = {};
-
-    try {
-        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
-
-    res.render('login', {
-        locale: locale,
-        i18n: i18n,
-        messages: req.flash()
-    });
+app.get('/login', (req, res) => {
+    res.redirect('/fr/login');  // Rediriger vers la version française par défaut
 });
-
 
 
 app.get('/:lang/forgot-password', (req, res) => {
@@ -516,15 +424,17 @@ app.get('/:locale/logout', (req, res, next) => {
 
 // Route pour la page utilisateur avec locale et récupération des propriétés
 app.get('/:locale/user', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;
-    const user = req.user;
+    const { locale } = req.params;  // Récupérer la langue depuis l'URL
+    const user = req.user;  // Utilisateur authentifié
+
+    // Rediriger si l'utilisateur n'est pas connecté
     if (!user) {
         return res.redirect(`/${locale}/login`);
     }
-    
+
+    // Charger les traductions spécifiques à la page utilisateur
     const userTranslationsPath = `./locales/${locale}/user.json`;
     let userTranslations = {};
-
     try {
         userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
     } catch (error) {
@@ -532,11 +442,21 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    res.render('user', {
-        locale,
-        user,
-        i18n: userTranslations
-    });
+    // Récupérer les propriétés de l'utilisateur connecté
+    try {
+        const properties = await Property.find({ createdBy: user._id });
+
+        // Afficher la page utilisateur avec les propriétés et traductions
+        res.render('user', {
+            locale: locale,  // Passer la langue active
+            user: user,  // Utilisateur connecté
+            i18n: userTranslations,  // Traductions spécifiques
+            properties: properties  // Propriétés de l'utilisateur
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des propriétés :', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des propriétés.' });
+    }
 });
 
 app.get('/faq', (req, res) => {
@@ -574,6 +494,7 @@ app.get('/:lang/contact', (req, res) => {
     });
 });
 
+
 app.post('/send-contact', async (req, res) => {
     const { firstName, lastName, email, message, type } = req.body;
 
@@ -593,16 +514,35 @@ app.post('/send-contact', async (req, res) => {
     try {
         // Envoyer l'email avec le transporteur
         await sendEmail(mailOptions);
-        const locale = req.cookies.locale || 'fr';
-res.redirect(`/${locale}/contact?messageEnvoye=true`);
+        res.redirect('/contact?messageEnvoye=true'); // Redirection après envoi du message
     } catch (error) {
         console.error('Erreur lors de l\'envoi de l\'email :', error);
         res.status(500).send('Erreur lors de l\'envoi de l\'email.');
     }
 });
-app.get('/:locale/register', (req, res) => {
-    const { locale } = req.params;
-    res.render('register', { locale });
+
+app.get('/payment', isAuthenticated, async (req, res) => {
+  const { propertyId } = req.query;
+
+  try {
+    const property = await Property.findById(propertyId);
+    if (!property) {
+      return res.status(404).send('Property not found');
+    }
+
+    res.render('payment', {
+      propertyId: property._id,
+      rooms: property.rooms,
+      surface: property.surface,
+      price: property.price,
+      city: property.city,
+      country: property.country,
+      url: property.url
+    });
+  } catch (error) {
+    console.error('Error fetching property', error);
+    res.status(500).send('Error fetching property');
+  }
 });
 
 app.get('/:lang/register', (req, res) => {
@@ -630,16 +570,6 @@ app.get('/:lang/register', (req, res) => {
 // Redirection par défaut
 app.get('/register', (req, res) => {
   res.redirect('/fr/register');
-});
-app.get('/user/landing-pages', async (req, res) => {
-    try {
-        const userId = req.user._id; // Assure-toi que l'utilisateur est bien authentifié
-        const landingPages = await LandingPage.find({ userId }).sort({ createdAt: -1 }); // Récupère les landing pages de l'utilisateur
-        res.json(landingPages);
-    } catch (error) {
-        console.error("Erreur lors de la récupération des landing pages:", error);
-        res.status(500).json({ message: "Erreur serveur" });
-    }
 });
 
 
@@ -672,7 +602,6 @@ app.post('/register', async (req, res) => {
     res.redirect('/register');
   }
 });
-
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
@@ -682,10 +611,10 @@ app.post('/add-property', isAuthenticated, upload.fields([
       rooms: req.body.rooms,
       bedrooms: req.body.bedrooms,
       surface: req.body.surface,
-      price: parseFloat(req.body.price), // ✅ Convertir en nombre avant d'enregistrer
+      price: req.body.price,
       city: req.body.city,
       country: req.body.country,
-      description: req.body.description,
+      description: req.body.description, // Description ajoutée
       yearBuilt: req.body.yearBuilt || null,
       pool: req.body.pool === 'true',
       propertyType: req.body.propertyType,
@@ -812,45 +741,32 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
 
   try {
     const charge = await stripe.charges.create({
-      amount: parseInt(amount, 10) * 100, // Stripe prend les montants en centimes
+      amount: parseInt(amount, 10),
       currency: 'eur',
       source: stripeToken,
       description: `Payment for property ${propertyId}`,
     });
 
-    // Création d'un nouvel order avec le statut "paid"
     const order = new Order({
       userId,
-      propertyId,
       amount: parseInt(amount, 10),
       status: 'paid'
     });
-
     await order.save();
-
-    res.status(200).json({ message: 'Payment successful', orderId: order._id });
+    res.status(200).json({ message: 'Payment successful' });
   } catch (error) {
     console.error('Error processing payment:', error);
     res.status(500).json({ error: 'Payment failed' });
   }
 });
 
-app.get('/user/orders', isAuthenticated, async (req, res) => {
-  try {
-    const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
-    res.json(orders);
-  } catch (error) {
-    console.error('Erreur lors de la récupération des commandes :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des commandes' });
-  }
+app.get('/config', (req, res) => {
+  res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
 });
 
-
-
+// Fonction pour générer la landing page
 async function generateLandingPage(property) {
-    const GTM_ID = 'GTM-TF7HSC3N'; 
-
-    const template = `
+  const template = `
     <!DOCTYPE html>
     <html lang="fr">
     <head>
@@ -859,18 +775,10 @@ async function generateLandingPage(property) {
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Propriété à ${property.city}, ${property.country}</title>
 
-        <!-- Google Tag Manager -->
-        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'}); 
-        var f=d.getElementsByTagName(s)[0], j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:''; 
-        j.async=true; j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl; 
-        f.parentNode.insertBefore(j,f); 
-        })(window,document,'script','dataLayer','${GTM_ID}');</script>
-        <!-- End Google Tag Manager -->
-
         <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet">
-        
+
         <style>
-             * {
+            * {
                 margin: 0;
                 padding: 0;
                 box-sizing: border-box;
@@ -1036,19 +944,9 @@ async function generateLandingPage(property) {
             }
 
             @media screen and (max-width: 768px) {
-       
- .container {
+                .container {
                     flex-direction: column;
-height: auto;
                 }
-                .slider {
-        height: 250px; /* Ajuster la hauteur */
-        margin-top: 20px; /* Ajoute une marge propre au-dessus du slider */
-    }
-
-    .slides img {
-        height: 250px; /* Même hauteur que le slider */
-    }
 
                 .property-details {
                     grid-template-columns: repeat(2, 1fr);
@@ -1059,31 +957,24 @@ height: auto;
                 }
 
                 .property-info h1 {
-                    font-size: 1.8rem;
+                    font-size: 2.4rem;
                 }
 
                 .property-info h2 {
-                    font-size: 1.2rem;
+                    font-size: 1.4rem;
                 }
 
                 .price {
-                    font-size: 1.2rem;
+                    font-size: 1.3rem;
                     width: 100%;
                     padding: 10px;
                     text-align: center;
-align-self: center;
                 }
 
                 .property-description {
                     font-size: 0.9rem;
                 }
             }
-@media screen and (max-width: 500px) {
-    .property-details {
-        grid-template-columns: 1fr; /* Une seule colonne */
-        gap: 5px; /* Moins d’espace entre les éléments */
-    }
-}
 
             @media screen and (min-width: 769px) {
                 body {
@@ -1101,10 +992,6 @@ align-self: center;
         </style>
     </head>
     <body>
-
-        <!-- Google Tag Manager (noscript) -->
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-        <!-- End Google Tag Manager (noscript) -->
 
         <div class="container">
             <!-- Slider de la propriété -->
@@ -1158,19 +1045,20 @@ align-self: center;
                     <div class="section-title">Visite guidée</div>
                     ${property.description || 'Aucune description fournie.'}
                 </div>
-                <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
+
+                <div class="price">Prix: ${property.price} €</div>
             </div>
         </div>
 
     </body>
     </html>`;
 
-    
-    const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
-    fs.writeFileSync(filePath, template);
+  const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
+  fs.writeFileSync(filePath, template);
 
-    return `/landing-pages/${property._id}.html`;
+  return `/landing-pages/${property._id}.html`;
 }
+
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.ionos.fr',
