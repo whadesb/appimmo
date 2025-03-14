@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const propertySchema = new Schema({
     rooms: { type: Number, required: true },
+createdAt: { type: Date, default: Date.now },
     bedrooms: { type: Number, required: true },
     surface: { type: Number, required: true },
     price: { type: Number, required: true },
@@ -29,7 +30,8 @@ const propertySchema = new Schema({
     createdAt: { type: Date, default: Date.now },
     views: { type: Number, default: 0 },
     createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    photos: [String]
+    photos: [String],
+url: { type: String, required: false }
 });
 
 const Property = mongoose.model('Property', propertySchema);
