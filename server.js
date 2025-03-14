@@ -791,22 +791,36 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
 
   try {
     const charge = await stripe.charges.create({
-      amount: parseInt(amount, 10),
+      amount: parseInt(amount, 10) * 100, // Stripe prend les montants en centimes
       currency: 'eur',
       source: stripeToken,
       description: `Payment for property ${propertyId}`,
     });
 
+    // Création d'un nouvel order avec le statut "paid"
     const order = new Order({
       userId,
+      propertyId,
       amount: parseInt(amount, 10),
       status: 'paid'
     });
+
     await order.save();
-    res.status(200).json({ message: 'Payment successful' });
+
+    res.status(200).json({ message: 'Payment successful', orderId: order._id });
   } catch (error) {
     console.error('Error processing payment:', error);
     res.status(500).json({ error: 'Payment failed' });
+  }
+});
+
+app.get('/user/orders', isAuthenticated, async (req, res) => {
+  try {
+    const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
+    res.json(orders);
+  } catch (error) {
+    console.error('Erreur lors de la récupération des commandes :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des commandes' });
   }
 });
 
