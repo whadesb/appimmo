@@ -2,15 +2,6 @@
 <html lang="<%= locale %>">
 <head>
     <meta charset="utf-8">
-<!-- Google Tag Manager -->
-<script>
-  (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-  'https://www.googletagmanager.com/gtm.js?id=GTM-TF7HSC3N'+dl;f.parentNode.insertBefore(j,f);
-  })(window,document,'script','dataLayer','GTM-TF7HSC3N');
-</script>
-<!-- Fin Google Tag Manager -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#C4B990">
     <title>UAP Immo | <%= i18n.my_profile %></title>
@@ -83,13 +74,13 @@
             padding: 20px 0;
         }
         .btn-custom {
-            background-color: #8f97c4;
-            color: #000;
+            background-color: #333;
+            color: #fff;
             border: none;
         }
         .btn-custom:hover {
-            background-color: #8f97c4;
-            color: #000;
+            background-color: #000;
+            color: #fff;
         }
         .btn-custom i {
             font-size: 24px;
@@ -144,52 +135,6 @@
             margin-bottom: 0.2rem;
             line-height: 1.6rem;
         }
-.hidden {
-    display: none;
-}
-
-progress {
-    width: 100%;
-    height: 10px;
-    margin-top: 5px;
-}
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    color: #333;
-    display: block;
-    margin-bottom: 5px;
-}
-
-.form-control {
-    width: 50%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #8f97c4;
-    border-radius: 5px;
-    transition: border 0.3s ease-in-out;
-}
-
-/* Effet focus */
-.form-control:focus {
-    border-color: #8f97c4; /* Bleu */
-    outline: none;
-    box-shadow: 0 0 5px rgba(143, 151, 196, 0.5);
-}
-
-
-
-
         @media (max-width: 767px) {
             .container-fluid {
                 padding-left: 0;
@@ -272,24 +217,6 @@ input[type="number"] {
                 margin-bottom: 0.2rem;
                 line-height: 1.2rem;
             }
-.hidden {
-    display: none;
-}
-
-progress {
-    width: 100%;
-    height: 10px;
-    margin-top: 5px;
-}
-input[type="number"]::-webkit-inner-spin-button,
-input[type="number"]::-webkit-outer-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-}
-input[type="number"] {
-    -moz-appearance: textfield;
-}
-
         }
         @media (min-width: 768px) {
             .sidebar-links {
@@ -305,37 +232,12 @@ input[type="number"] {
                 line-height: 1.6rem;
                 letter-spacing: 0.4px;
             }
-.hidden {
-    display: none;
-}
-
-progress {
-    width: 100%;
-    height: 10px;
-    margin-top: 5px;
-}
         }
     </style>
 </head>
 <body id="top">
-<script>
-  window.dataLayer = window.dataLayer || [];
-  window.dataLayer.push({
-    'event': 'userLogin',
-    'userID': "<%= user ? user._id : 'Guest' %>",
-    'pageTitle': document.title
-  });
-</script>
- <!-- Google Tag Manager (noscript) -->
-    <noscript>
-      <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N" 
-      height="0" width="0" style="display:none;visibility:hidden"></iframe>
-    </noscript>
-    <!-- Fin Google Tag Manager (noscript) -->
     <main>
-      <body id="top">
-    <main>
-       <nav class="navbar navbar-expand-lg fixed-top">
+        <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
         <a class="navbar-brand" href="/">
             <span>UAP Immo</span>
@@ -364,7 +266,15 @@ progress {
                 <li class="nav-item">
                     <a class="nav-link click-scroll" href="/"><%= i18n.menu.home %></a>
                 </li>
-              
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#fonctionnement"><%= i18n.menu.fonctionnement %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#processus"><%= i18n.menu.processus %></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#faq"><%= i18n.menu.faq %></a>
+                </li>
                 <li class="nav-item">
                     <a class="nav-link click-scroll" href="/#contact"><%= i18n.menu.contact %></a>
                 </li>
@@ -381,12 +291,6 @@ progress {
                 <li class="nav-item sidebar-mobile-links sidebar-links">
                     <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> <%= i18n.created_pages %></a>
                 </li>
-                <li class="nav-item sidebar-mobile-links sidebar-links">
-                    <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
-                </li>
-
-
-
             </ul>
             <div class="d-none d-lg-block">
                 <% if (user) { %>
@@ -422,7 +326,6 @@ progress {
         </div>
     </div>
 </nav>
-
 <section class="contact-section section-padding section-bg" id="section_5">
     <div class="container">
         <h5 class="text-black mobile-margin">
@@ -440,9 +343,6 @@ progress {
                         <a href="#" title="<%= i18n.add_property %>" onclick="showSection('landing')"><i class="fa fa-file-alt"></i></a>
                         <a href="#" title="<%= i18n.stats %>" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
                         <a href="#" title="<%= i18n.created_pages %>" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i></a>
-<a href="#" title="Mes Landing Pages" onclick="showSection('landing-pages-section')">
-    <i class="bi bi-layers"></i></a>
-<a href="#" title="Mes commandes" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
                     </div>
                 </div>
                 <div class="col">
@@ -475,35 +375,6 @@ progress {
                                 </form>
                             </div>
                         </div>
-<section id="landing-pages-section" class="card mt-4">
-    <div class="card-header">
-        <h5>Mes Landing Pages</h5>
-    </div>
-    <div class="card-body">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Date de création</th>
-                    <th>Pièces</th>
-                    <th>Surface</th>
-                    <th>Prix</th>
-                    <th>Ville</th>
-                    <th>Pays</th>
-                    <th>URL</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="landing-pages-list">
-                <!-- Les landing pages seront affichées ici -->
-            </tbody>
-        </table>
-        <div id="no-landing-pages-message" style="display: none;" class="text-center">
-            <p>Aucune landing page trouvée.</p>
-        </div>
-    </div>
-</section>
-
-
 
                         <!-- Section Landing Page -->
                         <div id="landing" class="card" style="display: none;">
@@ -522,23 +393,21 @@ progress {
     <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
   </div>
   <div class="form-group">
-    <label for="surface"><%= i18n.surface %> :</label>
+    <label for="surface"><%= i18n.surface %></label>
     <input type="number" class="form-control" id="surface" name="surface" required>
   </div>
   <div class="form-group">
-    <label for="price"><%= i18n.price %> :</label>
+    <label for="price"><%= i18n.price %></label>
     <input type="number" class="form-control" id="price" name="price" required>
   </div>
-   <div class="form-group">
-    <label for="country"><%= i18n.country %> :</label>
-    <input type="text" class="form-control" id="country" name="country" required>
-  </div>
-
   <div class="form-group">
-    <label for="city"><%= i18n.city %> :</label>
+    <label for="city"><%= i18n.city %></label>
     <input type="text" class="form-control" id="city" name="city" required>
   </div>
-
+  <div class="form-group">
+    <label for="country"><%= i18n.country %></label>
+    <input type="text" class="form-control" id="country" name="country" required>
+  </div>
   <!-- Année de construction -->
   <div class="form-group">
     <label for="yearBuilt">Année de construction</label>
@@ -554,15 +423,14 @@ progress {
   </div>
   <!-- Type de bien -->
   <div class="form-group">
-    <label for="propertyType"><%= i18n.propertyType %>Type de bien :</label>
+    <label for="propertyType">Type de bien</label>
     <select class="form-control" id="propertyType" name="propertyType" required>
-      
-      <option value="Propriété"><%= i18n.property %>Propriété</option>
-      <option value="Villa"><%= i18n.villa %>Villa</option>
-      <option value="Hôtel particulier"><%= i18n.hotel_particulier %>Hotel particulier</option>
-      <option value="Appartement"><%= i18n.apartment %>Appartement</option>
-      <option value="Chateau"><%= i18n.chateau %>Chateau</option>
-      <option value="Maison"><%= i18n.house %>Maison de ville</option>
+      <option value="Propriété">Propriété</option>
+      <option value="Villa">Villa</option>
+      <option value="Hôtel particulier">Hôtel particulier</option>
+      <option value="Appartement">Appartement</option>
+      <option value="Chateau">Château</option>
+      <option value="Maison">Maison</option>
     </select>
   </div>
 <div class="form-group">
@@ -650,24 +518,18 @@ progress {
       <option value="true">Oui</option>
     </select>
   </div>
- <div class="form-group">
+  <div class="form-group">
     <label for="photo1"><%= i18n.photo_1 %></label>
     <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-    <progress id="progress1" value="0" max="100" class="hidden"></progress>
-    <span id="status1" class="hidden">Chargement...</span>
-</div>
-
-<div class="form-group">
+  </div>
+  <div class="form-group">
     <label for="photo2"><%= i18n.photo_2 %></label>
     <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-    <progress id="progress2" value="0" max="100" class="hidden"></progress>
-    <span id="status2" class="hidden">Chargement...</span>
-</div>
-
+  </div>
 <div class="form-group">
-    <label for="description"><%= i18n.description %> (max. 820 caractères)</label>
+    <label for="description">Description (max. 820 caractères)</label>
     <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
-    <small id="charCount">0/820 <%= i18n.characters %></small>
+    <small id="charCount">0/820 caractères</small>
   </div>
   <button type="submit" class="btn btn-custom"><%= i18n.save %></button>
 </form>
@@ -683,33 +545,6 @@ progress {
                                 <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.</p>
                             </div>
                         </div>
-<div id="orders" class="card" style="display: none;">
-  <div class="card-body">
-    <h5 class="card-title">Mes commandes</h5>
-    <p class="card-text">Liste des commandes passées</p>
-    <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Statut</th>
-          <th>Pièces</th>
-          <th>Surface</th>
-          <th>Prix</th>
-          <th>Ville</th>
-          <th>Pays</th>
-          <th>URL</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="orders-list">
-        <!-- Les commandes seront chargées ici -->
-      </tbody>
-    </table>
-    <div id="no-orders-message" style="display: none;" class="text-center">
-      <p>Aucune commande trouvée.</p>
-    </div>
-  </div>
-</div>
 
                         <!-- Section Created Pages -->
                         <div id="created-pages" class="card" style="display: none;">
@@ -803,48 +638,47 @@ progress {
     }
 
     async function loadProperties() {
-    try {
-        const response = await fetch('/user/properties');
-        if (response.ok) {
-            const properties = await response.json();
-            const propertiesList = document.getElementById('properties-list');
-            propertiesList.innerHTML = '';
+        try {
+            const response = await fetch('/user/properties');
+            if (response.ok) {
+                const properties = await response.json();
+                const propertiesList = document.getElementById('properties-list');
+                propertiesList.innerHTML = '';
 
-            const noPropertiesMessage = document.getElementById('no-properties-message');
-            if (properties.length === 0) {
-                noPropertiesMessage.style.display = 'block';
+                const noPropertiesMessage = document.getElementById('no-properties-message');
+                if (properties.length === 0) {
+                    noPropertiesMessage.style.display = 'block';
+                } else {
+                    noPropertiesMessage.style.display = 'none';
+                    properties.forEach(property => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${property.rooms}</td>
+                            <td>${property.surface}</td>
+                            <td>${property.price}</td>
+                            <td>${property.city}</td>
+                            <td>${property.country}</td>
+                            <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+                            <td>
+                                <div class="action-icons">
+                                    <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                    <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                    <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
+                                </div>
+                            </td>
+                        `;
+                        propertiesList.appendChild(row);
+                    });
+                }
             } else {
-                noPropertiesMessage.style.display = 'none';
-                properties.forEach(property => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${property.rooms}</td>
-                        <td>${property.surface}</td>
-                        <td>${property.price.toLocaleString('fr-FR')} €</td>
-                        <td>${property.city}</td>
-                        <td>${property.country}</td>
-                        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
-                        <td>
-                            <div class="action-icons">
-                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
-                            </div>
-                        </td>
-                    `;
-                    propertiesList.appendChild(row);
-                });
+                const propertiesList = document.getElementById('properties-list');
+                propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
             }
-        } else {
+        } catch (error) {
             const propertiesList = document.getElementById('properties-list');
-            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
+            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
         }
-    } catch (error) {
-        const propertiesList = document.getElementById('properties-list');
-        propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
     }
-}
-
 
     function copyURL(url) {
         const fullUrl = `https://uap.immo${url}`;
@@ -865,19 +699,9 @@ progress {
         }, 2000);
     }
 
-function testURL(propertyId) {
-    console.log("🔍 ID de la propriété cliqué :", propertyId);
-
-    // Récupération de la langue à partir de l'URL actuelle
-    const currentLang = window.location.pathname.split('/')[1]; // 'en' ou 'fr'
-
-    // Vérifier que currentLang est bien 'en' ou 'fr', sinon rediriger sans préfixe de langue
-    if (currentLang === 'en' || currentLang === 'fr') {
-        window.location.href = `/${currentLang}/payment?propertyId=${propertyId}`;
-    } else {
+    function testURL(propertyId) {
         window.location.href = `/payment?propertyId=${propertyId}`;
     }
-}
 
     function editProperty(propertyId) {
         window.location.href = `/property/edit/${propertyId}`;
@@ -910,9 +734,8 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     }
 
     function logout() {
-    const locale = document.documentElement.lang || 'fr'; // Récupère la langue de la page
-    window.location.href = `/${locale}/login`;
-}
+        window.location.href = '/login';
+    }
 
     window.onload = resetTimer;
     document.onmousemove = resetTimer;
@@ -928,189 +751,5 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
   });
 </script>
-<script>
-  document.getElementById('add-property-form').addEventListener('submit', function(event) {
-      let missingFields = [];
-      const requiredFields = ['price', 'surface', 'country', 'city', 'propertyType', 'description'];
-      
-      requiredFields.forEach(field => {
-          const input = document.getElementById(field);
-          if (!input.value.trim()) {
-              missingFields.push(field);
-              input.style.border = "2px solid red";  // Mets en rouge les champs vides
-          } else {
-              input.style.border = "";  // Remets la bordure normale si rempli
-          }
-      });
-
-      if (missingFields.length > 0) {
-          event.preventDefault(); // Empêche l'envoi du formulaire
-          alert("Veuillez remplir tous les champs obligatoires avant de soumettre le formulaire.");
-      }
-  });
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    function handleFileUpload(input, progressId, statusId) {
-        const file = input.files[0];
-
-        if (file) {
-            const progressBar = document.getElementById(progressId);
-            const status = document.getElementById(statusId);
-
-            // Réinitialisation
-            progressBar.value = 0;
-            progressBar.classList.remove("hidden");
-            status.classList.remove("hidden");
-            status.textContent = "Chargement en cours...";
-
-            // Simulation d'upload progressif (remplace ça par une vraie requête si besoin)
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 10;
-                progressBar.value = progress;
-
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    status.textContent = "✅ Image chargée avec succès !";
-                    setTimeout(() => {
-                        progressBar.classList.add("hidden");
-                        status.classList.add("hidden");
-                    }, 2000); // Cache après 2 secondes
-                }
-            }, 200);
-        }
-    }
-
-    // Événements sur les inputs file
-    document.getElementById("photo1").addEventListener("change", function () {
-        handleFileUpload(this, "progress1", "status1");
-    });
-
-    document.getElementById("photo2").addEventListener("change", function () {
-        handleFileUpload(this, "progress2", "status2");
-    });
-});
-</script>
-<script>
-async function loadOrders() {
-  try {
-    const response = await fetch('/user/orders');
-    if (response.ok) {
-      const orders = await response.json();
-      const ordersList = document.getElementById('orders-list');
-      ordersList.innerHTML = '';
-
-      const noOrdersMessage = document.getElementById('no-orders-message');
-      if (orders.length === 0) {
-        noOrdersMessage.style.display = 'block';
-      } else {
-        noOrdersMessage.style.display = 'none';
-        orders.forEach(order => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${new Date(order.createdAt).toLocaleString('fr-FR')}</td>
-            <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-            <td>${order.propertyId.rooms}</td>
-            <td>${order.propertyId.surface} m²</td>
-            <td>${order.propertyId.price.toLocaleString('fr-FR')} €</td>
-            <td>${order.propertyId.city}</td>
-            <td>${order.propertyId.country}</td>
-            <td>
-              <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
-              <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
-            </td>
-          `;
-          ordersList.appendChild(row);
-        });
-      }
-    } else {
-      document.getElementById('orders-list').innerHTML = '<tr><td colspan="8" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
-    }
-  } catch (error) {
-    document.getElementById('orders-list').innerHTML = '<tr><td colspan="8" class="text-center">Une erreur est survenue.</td></tr>';
-  }
-}
-
-// Charger les commandes quand on affiche la section
-function showSection(sectionId) {
-  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
-  sections.forEach(id => {
-    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
-  });
-
-  if (sectionId === 'orders') {
-    loadOrders();
-  }
-}
-
-// Fonction pour copier l'URL de la propriété
-function copyURL(url) {
-  const fullUrl = `https://uap.immo${url}`;
-  navigator.clipboard.writeText(fullUrl).then(() => {
-    alert("URL copiée !");
-  }).catch(err => console.error('Impossible de copier l\'URL : ', err));
-}
-</script>
-<script>
-   async function loadLandingPages() {
-    try {
-        const response = await fetch('/user/landing-pages');
-        if (!response.ok) throw new Error("Erreur lors du chargement des données");
-
-        const landingPages = await response.json();
-        const landingPagesList = document.getElementById('landing-pages-list');
-        landingPagesList.innerHTML = '';
-
-        const noLandingPagesMessage = document.getElementById('no-landing-pages-message');
-        if (landingPages.length === 0) {
-            noLandingPagesMessage.style.display = 'block';
-        } else {
-            noLandingPagesMessage.style.display = 'none';
-            landingPages.forEach(page => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${new Date(page.createdAt).toLocaleString('fr-FR')}</td>
-                    <td>${page.rooms}</td>
-                    <td>${page.surface} m²</td>
-                    <td>${page.price.toLocaleString('fr-FR')} €</td>
-                    <td>${page.city}</td>
-                    <td>${page.country}</td>
-                    <td><a href="${page.url}" target="_blank">Voir</a></td>
-                    <td>
-                        <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
-                        <button class="btn btn-dark btn-sm" onclick="redirectToPayment('${page._id}')">Commander</button>
-                        <button class="btn btn-primary btn-sm" onclick="openLandingPage('${page.url}')">Voir</button>
-                    </td>
-                `;
-                landingPagesList.appendChild(row);
-            });
-        }
-    } catch (error) {
-        console.error("Erreur dans loadLandingPages :", error);
-        document.getElementById('landing-pages-list').innerHTML = '<tr><td colspan="8" class="text-center">Une erreur est survenue.</td></tr>';
-    }
-}
-
-// Charge les landing pages quand la page est chargée
-document.addEventListener('DOMContentLoaded', loadLandingPages);
-
-    function copyURL(url) {
-        navigator.clipboard.writeText(url).then(() => {
-            alert("URL copiée !");
-        }).catch(err => console.error("Impossible de copier l'URL : ", err));
-    }
-
-    function redirectToPayment(pageId) {
-        window.location.href = `/payment?propertyId=${pageId}`;
-    }
-
-    function openLandingPage(url) {
-        window.open(url, '_blank');
-    }
-
-
-</script>
-
 </body>
 </html>
