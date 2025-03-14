@@ -620,6 +620,16 @@ app.get('/:lang/register', (req, res) => {
 app.get('/register', (req, res) => {
   res.redirect('/fr/register');
 });
+app.get('/user/landing-pages', async (req, res) => {
+    try {
+        const userId = req.user._id; // Assure-toi que l'utilisateur est bien authentifié
+        const landingPages = await LandingPage.find({ userId }).sort({ createdAt: -1 }); // Récupère les landing pages de l'utilisateur
+        res.json(landingPages);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des landing pages:", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+});
 
 
 app.post('/register', async (req, res) => {
