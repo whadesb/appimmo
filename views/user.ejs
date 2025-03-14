@@ -386,10 +386,11 @@ progress {
                 </li>
 <li class="nav-item">
     <a class="nav-link" href="#landing-pages-section">
-        <i class="bi bi-layers"></i> <!-- Icône Bootstrap pour représenter les landing pages -->
+        <i class="bi bi-layers"></i> <!-- Icône Bootstrap pour symboliser les landing pages -->
         Mes Landing Pages
     </a>
 </li>
+
 
             </ul>
             <div class="d-none d-lg-block">
@@ -496,7 +497,7 @@ progress {
                 </tr>
             </thead>
             <tbody id="landing-pages-list">
-                <!-- Les landing pages seront insérées ici dynamiquement -->
+                <!-- Les landing pages seront affichées ici -->
             </tbody>
         </table>
         <div id="no-landing-pages-message" style="display: none;" class="text-center">
@@ -504,6 +505,7 @@ progress {
         </div>
     </div>
 </section>
+
 
                         <!-- Section Landing Page -->
                         <div id="landing" class="card" style="display: none;">
@@ -1055,7 +1057,7 @@ function copyURL(url) {
 <script>
     async function loadLandingPages() {
         try {
-            const response = await fetch('/user/landing-pages'); // Requête vers le serveur
+            const response = await fetch('/user/landing-pages'); // Appel à l'API
             if (!response.ok) throw new Error("Erreur lors du chargement des données");
 
             const landingPages = await response.json();
@@ -1098,12 +1100,7 @@ function copyURL(url) {
     }
 
     function redirectToPayment(pageId) {
-        const currentLang = window.location.pathname.split('/')[1];
-        if (currentLang === 'en' || currentLang === 'fr') {
-            window.location.href = `/${currentLang}/payment?propertyId=${pageId}`;
-        } else {
-            window.location.href = `/payment?propertyId=${pageId}`;
-        }
+        window.location.href = `/payment?propertyId=${pageId}`;
     }
 
     function openLandingPage(url) {
@@ -1112,7 +1109,6 @@ function copyURL(url) {
 
     document.addEventListener('DOMContentLoaded', loadLandingPages);
 </script>
-
 
 </body>
 </html>
