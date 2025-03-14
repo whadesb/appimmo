@@ -470,52 +470,35 @@ progress {
                             </div>
                         </div>
 <h2>Vos Commandes</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Commande</th>
-            <th>Montant</th>
-            <th>Statut</th>
-            <th>Page</th>
-            <th>Facture</th>
-        </tr>
-    </thead>
-    <tbody>
+<table>
+  <thead>
+    <tr>
+      <th>Numéro de Commande</th>
+      <th>Montant</th>
+      <th>Statut</th>
+      <th>Landing Page</th>
+    </tr>
+  </thead>
+  <tbody>
     <% orders.forEach(order => { %>
-        <tr>
-            <td><%= order.orderId %></td>
-            <td><%= (Number(order.amount) / 100).toFixed(2) %> €</td>
-            
-            <!-- Correction du statut -->
-            <td>
-                <% if (order.status === 'paid') { %>
-                    Payé
-                <% } else { %>
-                    Paiement en attente
-                <% } %>
-            </td>
-
-            <!-- Correction de la colonne "Page" -->
-            <td>
-                <% if (order.propertyUrl) { %>
-                    <a href="<%= order.propertyUrl %>" target="_blank" class="btn btn-sm btn-info">Voir</a>
-                <% } else { %>
-                    Non disponible
-                <% } %>
-            </td>
-
-            <td>
-                <% if (order.status === 'paid') { %>
-                    <a href="/download-invoice/<%= order._id %>" class="btn btn-sm btn-primary">Télécharger</a>
-                <% } else { %>
-                    Facture indisponible
-                <% } %>
-            </td>
-        </tr>
+      <tr>
+        <td><%= order.orderId %></td>
+        <td><%= (order.amount / 100).toFixed(2) %> €</td>
+        <td><%= order.status %></td>
+        <td>
+          <% if (order.landingPageUrl) { %>
+            <a href="<%= order.landingPageUrl %>" target="_blank">
+              <button>Voir la Landing Page</button>
+            </a>
+          <% } else { %>
+            <span>Non disponible</span>
+          <% } %>
+        </td>
+      </tr>
     <% }); %>
-</tbody>
-
+  </tbody>
 </table>
+
 
                         <!-- Section Landing Page -->
                         <div id="landing" class="card" style="display: none;">
