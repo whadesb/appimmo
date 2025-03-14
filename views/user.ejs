@@ -678,31 +678,35 @@ progress {
 </div>
 
                         <!-- Section Created Pages -->
-                        <div id="created-pages" class="card" style="display: none;">
+                       <!-- Section Created Landing Pages -->
+<div id="created-landing-pages" class="card" style="display: none;">
     <div class="card-body">
-        <h5 class="card-title"><%= i18n.created_pages %></h5>
-        <p class="card-text"><%= i18n.created_pages_info %></p>
+        <h5 class="card-title">Mes Landing Pages</h5>
+        <p class="card-text">Liste des landing pages créées</p>
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col"><%= i18n.rooms %></th>
-                    <th scope="col"><%= i18n.surface %></th>
-                    <th scope="col"><%= i18n.price %></th>
-                    <th scope="col"><%= i18n.city %></th>
-                    <th scope="col"><%= i18n.country %></th>
-                    <th scope="col">URL</th>
-                    <th scope="col"><%= i18n.actions %></th>
+                    <th>Date</th>
+                    <th>Heure</th>
+                    <th>Pièces</th>
+                    <th>Surface</th>
+                    <th>Prix</th>
+                    <th>Ville</th>
+                    <th>Pays</th>
+                    <th>URL</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
-            <tbody id="properties-list">
-                                        <!-- Propriétés de l'utilisateur ici -->
-                                    </tbody>
-                                </table>
-                                <div id="no-properties-message" style="display: none;" class="text-center">
-                                    <p><%= i18n.no_properties_message %></p>
-                                </div>
-                            </div>
-                        </div>
+            <tbody id="landing-pages-list">
+                <!-- Les landing pages seront chargées ici -->
+            </tbody>
+        </table>
+        <div id="no-landing-pages-message" style="display: none;" class="text-center">
+            <p>Aucune landing page trouvée.</p>
+        </div>
+    </div>
+</div>
+
                     </div> <!-- Fin de main-section -->
                 </div>
             </div>
@@ -768,48 +772,61 @@ progress {
         }
     }
 
-    async function loadProperties() {
+   async function loadLandingPages() {
     try {
-        const response = await fetch('/user/properties');
+        const response = await fetch('/user/landing-pages'); // API qui retourne les pages créées
         if (response.ok) {
-            const properties = await response.json();
-            const propertiesList = document.getElementById('properties-list');
-            propertiesList.innerHTML = '';
+            const landingPages = await response.json();
+            const landingPagesList = document.getElementById('landing-pages-list');
+            landingPagesList.innerHTML = '';
 
-            const noPropertiesMessage = document.getElementById('no-properties-message');
-            if (properties.length === 0) {
-                noPropertiesMessage.style.display = 'block';
+            const noLandingPagesMessage = document.getElementById('no-landing-pages-message');
+            if (landingPages.length === 0) {
+                noLandingPagesMessage.style.display = 'block';
             } else {
-                noPropertiesMessage.style.display = 'none';
-                properties.forEach(property => {
+                noLandingPagesMessage.style.display = 'none';
+                landingPages.forEach(page => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${property.rooms}</td>
-                        <td>${property.surface}</td>
-                        <td>${property.price.toLocaleString('fr-FR')} €</td>
-                        <td>${property.city}</td>
-                        <td>${property.country}</td>
-                        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+                        <td>${new Date(page.createdAt).toLocaleDateString('fr-FR')}</td>
+                        <td>${new Date(page.createdAt).toLocaleTimeString('fr-FR')}</td>
+                        <td>${page.rooms}</td>
+                        <td>${page.surface} m²</td>
+                        <td>${page.price.toLocaleString('fr-FR')} €</td>
+                        <td>${page.city}</td>
+                        <td>${page.country}</td>
+                        <td><a href="${page.url}" target="_blank">${page.url}</a></td>
                         <td>
-                            <div class="action-icons">
-                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
-                            </div>
+                            <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
+                            <button class="btn btn-dark btn-sm" onclick="window.open('${page.url}', '_blank')">Voir</button>
                         </td>
                     `;
-                    propertiesList.appendChild(row);
+                    landingPagesList.appendChild(row);
                 });
             }
         } else {
-            const propertiesList = document.getElementById('properties-list');
-            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
+            document.getElementById('landing-pages-list').innerHTML = '<tr><td colspan="9" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
         }
     } catch (error) {
-        const propertiesList = document.getElementById('properties-list');
-        propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
+        document.getElementById('landing-pages-list').innerHTML = '<tr><td colspan="9" class="text-center">Une erreur est survenue.</td></tr>';
     }
 }
+
+// Mettre à jour showSection pour inclure la nouvelle section
+function showSection(sectionId) {
+    const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders', 'created-landing-pages'];
+    sections.forEach(id => {
+        const sectionElement = document.getElementById(id);
+        if (sectionElement) {
+            sectionElement.style.display = id === sectionId ? 'block' : 'none';
+        }
+    });
+
+    if (sectionId === 'created-landing-pages') {
+        loadLandingPages();
+    }
+}
+
 
 
     function copyURL(url) {
@@ -998,17 +1015,6 @@ async function loadOrders() {
   }
 }
 
-// Charger les commandes quand on affiche la section
-function showSection(sectionId) {
-  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
-  sections.forEach(id => {
-    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
-  });
-
-  if (sectionId === 'orders') {
-    loadOrders();
-  }
-}
 
 // Fonction pour copier l'URL de la propriété
 function copyURL(url) {
