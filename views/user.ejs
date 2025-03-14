@@ -434,6 +434,7 @@ progress {
                         <a href="#" title="<%= i18n.add_property %>" onclick="showSection('landing')"><i class="fa fa-file-alt"></i></a>
                         <a href="#" title="<%= i18n.stats %>" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
                         <a href="#" title="<%= i18n.created_pages %>" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i></a>
+<a href="#" title="Mes commandes" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
                     </div>
                 </div>
                 <div class="col">
@@ -645,6 +646,33 @@ progress {
                                 <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.</p>
                             </div>
                         </div>
+<div id="orders" class="card" style="display: none;">
+  <div class="card-body">
+    <h5 class="card-title">Mes commandes</h5>
+    <p class="card-text">Liste des commandes passées</p>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Statut</th>
+          <th>Pièces</th>
+          <th>Surface</th>
+          <th>Prix</th>
+          <th>Ville</th>
+          <th>Pays</th>
+          <th>URL</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="orders-list">
+        <!-- Les commandes seront chargées ici -->
+      </tbody>
+    </table>
+    <div id="no-orders-message" style="display: none;" class="text-center">
+      <p>Aucune commande trouvée.</p>
+    </div>
+  </div>
+</div>
 
                         <!-- Section Created Pages -->
                         <div id="created-pages" class="card" style="display: none;">
@@ -926,6 +954,66 @@ document.addEventListener("DOMContentLoaded", function () {
         handleFileUpload(this, "progress2", "status2");
     });
 });
+</script>
+<script>
+async function loadOrders() {
+  try {
+    const response = await fetch('/user/orders');
+    if (response.ok) {
+      const orders = await response.json();
+      const ordersList = document.getElementById('orders-list');
+      ordersList.innerHTML = '';
+
+      const noOrdersMessage = document.getElementById('no-orders-message');
+      if (orders.length === 0) {
+        noOrdersMessage.style.display = 'block';
+      } else {
+        noOrdersMessage.style.display = 'none';
+        orders.forEach(order => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${new Date(order.createdAt).toLocaleString('fr-FR')}</td>
+            <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
+            <td>${order.propertyId.rooms}</td>
+            <td>${order.propertyId.surface} m²</td>
+            <td>${order.propertyId.price.toLocaleString('fr-FR')} €</td>
+            <td>${order.propertyId.city}</td>
+            <td>${order.propertyId.country}</td>
+            <td>
+              <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
+              <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
+            </td>
+          `;
+          ordersList.appendChild(row);
+        });
+      }
+    } else {
+      document.getElementById('orders-list').innerHTML = '<tr><td colspan="8" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
+    }
+  } catch (error) {
+    document.getElementById('orders-list').innerHTML = '<tr><td colspan="8" class="text-center">Une erreur est survenue.</td></tr>';
+  }
+}
+
+// Charger les commandes quand on affiche la section
+function showSection(sectionId) {
+  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
+  sections.forEach(id => {
+    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+  });
+
+  if (sectionId === 'orders') {
+    loadOrders();
+  }
+}
+
+// Fonction pour copier l'URL de la propriété
+function copyURL(url) {
+  const fullUrl = `https://uap.immo${url}`;
+  navigator.clipboard.writeText(fullUrl).then(() => {
+    alert("URL copiée !");
+  }).catch(err => console.error('Impossible de copier l\'URL : ', err));
+}
 </script>
 
 </body>
