@@ -900,7 +900,7 @@ app.post('/process-payment', async (req, res) => {
         }
 
         // Assurer que le montant est bien en centimes
-        const amountInCents = parseInt(amount * 100, 10); // 💰 Convertir en centimes
+        const amountInCents = parseInt(amount * 100, 10); // Convertir en centimes
         if (isNaN(amountInCents) || amountInCents <= 0) {
             console.error("❌ Montant invalide :", amount);
             return res.status(400).json({ error: "Montant invalide." });
