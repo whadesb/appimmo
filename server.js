@@ -908,7 +908,7 @@ app.post('/process-payment', async (req, res) => {
 
         // Création du paiement Stripe
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: amountInCents,  // ⚠️ Assurez-vous que c'est bien en centimes
+            amount: amountInCents,  // Assurez-vous que c'est bien en centimes
             currency: "eur",
             payment_method_types: ["card"],
             payment_method: stripeToken,
