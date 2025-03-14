@@ -384,12 +384,7 @@ progress {
                 <li class="nav-item sidebar-mobile-links sidebar-links">
                     <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
                 </li>
-<li class="nav-item">
-    <a class="nav-link" href="#landing-pages-section">
-        <i class="bi bi-layers"></i> <!-- Icône Bootstrap pour symboliser les landing pages -->
-        Mes Landing Pages
-    </a>
-</li>
+
 
 
             </ul>
@@ -445,6 +440,8 @@ progress {
                         <a href="#" title="<%= i18n.add_property %>" onclick="showSection('landing')"><i class="fa fa-file-alt"></i></a>
                         <a href="#" title="<%= i18n.stats %>" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
                         <a href="#" title="<%= i18n.created_pages %>" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i></a>
+<a href="#" title="Mes Landing Pages" onclick="showSection('landing-pages-section')">
+    <i class="bi bi-layers"></i></a>
 <a href="#" title="Mes commandes" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
                     </div>
                 </div>
