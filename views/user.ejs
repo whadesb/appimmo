@@ -481,32 +481,40 @@ progress {
         </tr>
     </thead>
     <tbody>
-        <% orders.forEach(order => { %>
-            <tr>
-                <td><%= order.orderId %></td>
-                <td><%= (Number(order.amount) / 100).toFixed(2) %> €</td>
-               <td>
-  <% if (order.status === 'paid') { %>
-    <a href="/download-invoice/<%= order._id %>" class="btn btn-sm btn-primary">Télécharger</a>
-  <% } else { %>
-    Paiement en attente
-  <% } %>
-</td>
+    <% orders.forEach(order => { %>
+        <tr>
+            <td><%= order.orderId %></td>
+            <td><%= (Number(order.amount) / 100).toFixed(2) %> €</td>
+            
+            <!-- Correction du statut -->
+            <td>
+                <% if (order.status === 'paid') { %>
+                    Payé
+                <% } else { %>
+                    Paiement en attente
+                <% } %>
+            </td>
 
-               <td>
-  <% if (order.propertyUrl) { %>
-    <a href="<%= order.propertyUrl %>" target="_blank">Voir l'annonce</a>
-  <% } else { %>
-    Non disponible
-  <% } %>
-</td>
+            <!-- Correction de la colonne "Page" -->
+            <td>
+                <% if (order.propertyUrl) { %>
+                    <a href="<%= order.propertyUrl %>" target="_blank" class="btn btn-sm btn-info">Voir</a>
+                <% } else { %>
+                    Non disponible
+                <% } %>
+            </td>
 
-                <td>
+            <td>
+                <% if (order.status === 'paid') { %>
                     <a href="/download-invoice/<%= order._id %>" class="btn btn-sm btn-primary">Télécharger</a>
-                </td>
-            </tr>
-        <% }); %>
-    </tbody>
+                <% } else { %>
+                    Facture indisponible
+                <% } %>
+            </td>
+        </tr>
+    <% }); %>
+</tbody>
+
 </table>
 
                         <!-- Section Landing Page -->
