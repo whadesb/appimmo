@@ -1056,7 +1056,7 @@ function copyURL(url) {
 <script>
     async function loadLandingPages() {
         try {
-            const response = await fetch('/user/landing-pages'); // Requête vers l'API backend
+            const response = await fetch('/property/user/landing-pages'); // Requête vers l'API backend
             if (!response.ok) throw new Error("Erreur lors du chargement des données");
 
             const landingPages = await response.json();
