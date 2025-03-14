@@ -384,6 +384,13 @@ progress {
                 <li class="nav-item sidebar-mobile-links sidebar-links">
                     <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
                 </li>
+<li class="nav-item">
+    <a class="nav-link" href="#landing-pages-section">
+        <i class="bi bi-layers"></i> <!-- Icône Bootstrap pour représenter les landing pages -->
+        Mes Landing Pages
+    </a>
+</li>
+
             </ul>
             <div class="d-none d-lg-block">
                 <% if (user) { %>
@@ -470,6 +477,33 @@ progress {
                                 </form>
                             </div>
                         </div>
+<section id="landing-pages-section" class="card mt-4">
+    <div class="card-header">
+        <h5>Mes Landing Pages</h5>
+    </div>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Date de création</th>
+                    <th>Pièces</th>
+                    <th>Surface</th>
+                    <th>Prix</th>
+                    <th>Ville</th>
+                    <th>Pays</th>
+                    <th>URL</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="landing-pages-list">
+                <!-- Les landing pages seront insérées ici dynamiquement -->
+            </tbody>
+        </table>
+        <div id="no-landing-pages-message" style="display: none;" class="text-center">
+            <p>Aucune landing page trouvée.</p>
+        </div>
+    </div>
+</section>
 
                         <!-- Section Landing Page -->
                         <div id="landing" class="card" style="display: none;">
@@ -1018,6 +1052,67 @@ function copyURL(url) {
   }).catch(err => console.error('Impossible de copier l\'URL : ', err));
 }
 </script>
+<script>
+    async function loadLandingPages() {
+        try {
+            const response = await fetch('/user/landing-pages'); // Requête vers le serveur
+            if (!response.ok) throw new Error("Erreur lors du chargement des données");
+
+            const landingPages = await response.json();
+            const landingPagesList = document.getElementById('landing-pages-list');
+            landingPagesList.innerHTML = '';
+
+            const noLandingPagesMessage = document.getElementById('no-landing-pages-message');
+            if (landingPages.length === 0) {
+                noLandingPagesMessage.style.display = 'block';
+            } else {
+                noLandingPagesMessage.style.display = 'none';
+                landingPages.forEach(page => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${new Date(page.createdAt).toLocaleString('fr-FR')}</td>
+                        <td>${page.rooms}</td>
+                        <td>${page.surface} m²</td>
+                        <td>${page.price.toLocaleString('fr-FR')} €</td>
+                        <td>${page.city}</td>
+                        <td>${page.country}</td>
+                        <td><a href="${page.url}" target="_blank">Voir</a></td>
+                        <td>
+                            <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
+                            <button class="btn btn-dark btn-sm" onclick="redirectToPayment('${page._id}')">Commander</button>
+                            <button class="btn btn-primary btn-sm" onclick="openLandingPage('${page.url}')">Voir</button>
+                        </td>
+                    `;
+                    landingPagesList.appendChild(row);
+                });
+            }
+        } catch (error) {
+            document.getElementById('landing-pages-list').innerHTML = '<tr><td colspan="8" class="text-center">Une erreur est survenue.</td></tr>';
+        }
+    }
+
+    function copyURL(url) {
+        navigator.clipboard.writeText(url).then(() => {
+            alert("URL copiée !");
+        }).catch(err => console.error("Impossible de copier l'URL : ", err));
+    }
+
+    function redirectToPayment(pageId) {
+        const currentLang = window.location.pathname.split('/')[1];
+        if (currentLang === 'en' || currentLang === 'fr') {
+            window.location.href = `/${currentLang}/payment?propertyId=${pageId}`;
+        } else {
+            window.location.href = `/payment?propertyId=${pageId}`;
+        }
+    }
+
+    function openLandingPage(url) {
+        window.open(url, '_blank');
+    }
+
+    document.addEventListener('DOMContentLoaded', loadLandingPages);
+</script>
+
 
 </body>
 </html>
