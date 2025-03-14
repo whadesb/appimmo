@@ -478,4 +478,28 @@ router.get('/payment', async (req, res) => {
     }
 });
 
+// Route pour récupérer les landing pages de l'utilisateur connecté
+router.get('/user/landing-pages', authMiddleware, async (req, res) => {
+    try {
+        const properties = await Property.find({ createdBy: req.user._id }).sort({ createdAt: -1 });
+
+        const landingPages = properties.map(property => ({
+            _id: property._id,
+            createdAt: property.createdAt,
+            rooms: property.rooms,
+            surface: property.surface,
+            price: property.price,
+            city: property.city,
+            country: property.country,
+            url: property.url
+        }));
+
+        res.json(landingPages);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des landing pages:", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+});
+
+
 module.exports = router;
