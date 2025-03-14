@@ -478,30 +478,24 @@ router.get('/payment', async (req, res) => {
     }
 });
 // Route pour récupérer les landing pages de l'utilisateur connecté
-router.get('/user/landing-pages', authMiddleware, async (req, res) => {
+router.get('/user/landing-pages', async (req, res) => {
     try {
-        console.log("🔍 Chargement des landing pages pour l'utilisateur:", req.user._id);
-        
-        const properties = await Property.find({ createdBy: req.user._id }).sort({ createdAt: -1 });
+        console.log("Requête reçue : /property/user/landing-pages");
+        console.log("Utilisateur connecté :", req.user ? req.user._id : "Non connecté");
 
-        if (!properties.length) {
-            console.log("⚠️ Aucun bien trouvé pour cet utilisateur.");
+        if (!req.user) {
+            return res.status(401).json({ error: "Non autorisé" });
         }
 
-        res.json(properties.map(property => ({
-            _id: property._id,
-            createdAt: property.createdAt,
-            rooms: property.rooms,
-            surface: property.surface,
-            price: property.price,
-            city: property.city,
-            country: property.country,
-            url: property.url
-        })));
+        const landingPages = await Property.find({ createdBy: req.user._id });
+
+        console.log("Landing Pages trouvées :", landingPages);
+        res.json(landingPages);
     } catch (error) {
-        console.error("❌ Erreur lors de la récupération des landing pages:", error);
-        res.status(500).json({ message: "Erreur serveur" });
+        console.error("Erreur lors du chargement des landing pages :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
     }
 });
+
 
 module.exports = router;
