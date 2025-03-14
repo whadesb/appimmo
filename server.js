@@ -717,6 +717,17 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
     res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
   }
 });
+app.get('/user/landing-pages', async (req, res) => {
+    try {
+        const userId = req.user._id; // Assurez-vous que l'utilisateur est authentifié
+        const landingPages = await LandingPage.find({ userId }).sort({ createdAt: -1 });
+
+        res.json(landingPages);
+    } catch (error) {
+        console.error('Erreur lors du chargement des landing pages:', error);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
 
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
