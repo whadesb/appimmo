@@ -190,16 +190,19 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: 'Erreur serveur' });
   }
 });
-app.get('/dashboard', isAuthenticated, async (req, res) => {
-    try {
-        const userId = req.user._id;
-        const orders = await Order.find({ userId }).sort({ createdAt: -1 });
+app.get("/dashboard", async (req, res) => {
+  try {
+    const orders = await Order.find().lean(); // Récupérer toutes les commandes
+    const updatedOrders = orders.map(order => ({
+      ...order,
+      landingPageUrl: `https://uap.immo/landing-pages/${order.propertyId}.html`
+    }));
 
-        res.render('dashboard', { user: req.user, orders });
-    } catch (error) {
-        console.error('Erreur lors de la récupération des commandes:', error);
-        res.status(500).send('Erreur interne du serveur');
-    }
+    res.render("dashboard", { orders: updatedOrders }); // Passer les données à EJS
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Erreur serveur");
+  }
 });
 
 
