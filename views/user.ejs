@@ -1052,43 +1052,47 @@ function copyURL(url) {
 }
 </script>
 <script>
-    async function loadLandingPages() {
-        try {
-            const response = await fetch('/user/landing-pages'); // Appel à l'API
-            if (!response.ok) throw new Error("Erreur lors du chargement des données");
+   async function loadLandingPages() {
+    try {
+        const response = await fetch('/user/landing-pages');
+        if (!response.ok) throw new Error("Erreur lors du chargement des données");
 
-            const landingPages = await response.json();
-            const landingPagesList = document.getElementById('landing-pages-list');
-            landingPagesList.innerHTML = '';
+        const landingPages = await response.json();
+        const landingPagesList = document.getElementById('landing-pages-list');
+        landingPagesList.innerHTML = '';
 
-            const noLandingPagesMessage = document.getElementById('no-landing-pages-message');
-            if (landingPages.length === 0) {
-                noLandingPagesMessage.style.display = 'block';
-            } else {
-                noLandingPagesMessage.style.display = 'none';
-                landingPages.forEach(page => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${new Date(page.createdAt).toLocaleString('fr-FR')}</td>
-                        <td>${page.rooms}</td>
-                        <td>${page.surface} m²</td>
-                        <td>${page.price.toLocaleString('fr-FR')} €</td>
-                        <td>${page.city}</td>
-                        <td>${page.country}</td>
-                        <td><a href="${page.url}" target="_blank">Voir</a></td>
-                        <td>
-                            <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
-                            <button class="btn btn-dark btn-sm" onclick="redirectToPayment('${page._id}')">Commander</button>
-                            <button class="btn btn-primary btn-sm" onclick="openLandingPage('${page.url}')">Voir</button>
-                        </td>
-                    `;
-                    landingPagesList.appendChild(row);
-                });
-            }
-        } catch (error) {
-            document.getElementById('landing-pages-list').innerHTML = '<tr><td colspan="8" class="text-center">Une erreur est survenue.</td></tr>';
+        const noLandingPagesMessage = document.getElementById('no-landing-pages-message');
+        if (landingPages.length === 0) {
+            noLandingPagesMessage.style.display = 'block';
+        } else {
+            noLandingPagesMessage.style.display = 'none';
+            landingPages.forEach(page => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(page.createdAt).toLocaleString('fr-FR')}</td>
+                    <td>${page.rooms}</td>
+                    <td>${page.surface} m²</td>
+                    <td>${page.price.toLocaleString('fr-FR')} €</td>
+                    <td>${page.city}</td>
+                    <td>${page.country}</td>
+                    <td><a href="${page.url}" target="_blank">Voir</a></td>
+                    <td>
+                        <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
+                        <button class="btn btn-dark btn-sm" onclick="redirectToPayment('${page._id}')">Commander</button>
+                        <button class="btn btn-primary btn-sm" onclick="openLandingPage('${page.url}')">Voir</button>
+                    </td>
+                `;
+                landingPagesList.appendChild(row);
+            });
         }
+    } catch (error) {
+        console.error("Erreur dans loadLandingPages :", error);
+        document.getElementById('landing-pages-list').innerHTML = '<tr><td colspan="8" class="text-center">Une erreur est survenue.</td></tr>';
     }
+}
+
+// Charge les landing pages quand la page est chargée
+document.addEventListener('DOMContentLoaded', loadLandingPages);
 
     function copyURL(url) {
         navigator.clipboard.writeText(url).then(() => {
@@ -1104,7 +1108,7 @@ function copyURL(url) {
         window.open(url, '_blank');
     }
 
-    document.addEventListener('DOMContentLoaded', loadLandingPages);
+
 </script>
 
 </body>
