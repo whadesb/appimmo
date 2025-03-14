@@ -6,27 +6,13 @@ const orderSchema = new mongoose.Schema({
     ref: 'User',
     required: true
   },
-  propertyId: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Property',
-    required: true
-  },
-  orderId: {
-    type: String,
-    unique: true,
-    required: true
-  },
-  stripePaymentIntent: {
-    type: String,
-    required: true
-  },
   amount: {
     type: Number,
     required: true
   },
   status: {
     type: String,
-    enum: ['pending', 'paid', 'failed'],
+    enum: ['pending', 'paid'],
     default: 'pending'
   },
   createdAt: {
