@@ -38,6 +38,19 @@ const invalidLocales = [
 ];
 
 const app = express();
+const isAuthenticated = (req, res, next) => {
+  console.log("🔍 Vérification de l'authentification...");
+  console.log("Headers Authorization :", req.headers.authorization);
+  
+  if (!req.user) {
+    console.log("❌ Utilisateur non connecté !");
+    return res.status(401).json({ error: "Non authentifié" });
+  }
+
+  console.log("✅ Utilisateur authentifié :", req.user);
+  next();
+};
+
 
 // Middleware
 app.use(compression());
