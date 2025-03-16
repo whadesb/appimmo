@@ -311,7 +311,7 @@
     <script src="/js/custom.js"></script>
     <script src="https://js.stripe.com/v3/"></script>
     <script>
-        async function initializeStripe() {
+      async function initializeStripe() {
     const response = await fetch('/config');
     const { publicKey } = await response.json();
     const stripe = Stripe(publicKey);
@@ -349,8 +349,8 @@
 
         const formData = {
             propertyId: "<%= propertyId %>",
-            stripeToken: paymentMethod.id,  // ✅ Utilisation de paymentMethod.id au lieu de stripeToken
-            amount: 50000  // Montant en centimes (500€)
+            stripeToken: paymentMethod.id,
+            amount: 50000 // Montant en centimes (500€)
         };
 
         try {
@@ -363,7 +363,7 @@
             if (response.ok) {
                 const data = await response.json();
                 alert('✅ Paiement réussi !');
-               window.location.href = data.redirectUrl;
+                window.location.href = data.redirectUrl;
             } else {
                 const errorData = await response.json();
                 console.error('❌ Erreur paiement:', errorData.error);
