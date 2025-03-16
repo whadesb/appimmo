@@ -655,22 +655,22 @@ progress {
     <h5 class="card-title">Mes commandes</h5>
     <p class="card-text">Liste des commandes passées</p>
     <table class="table table-striped">
-      <thead>
-        <tr>
-          <th>Date</th>
-          <th>Statut</th>
-          <th>Pièces</th>
-          <th>Surface</th>
-          <th>Prix</th>
-          <th>Ville</th>
-          <th>Pays</th>
-          <th>URL</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-      <tbody id="orders-list">
-        <!-- Les commandes seront chargées ici -->
-      </tbody>
+     <thead>
+  <tr>
+    <th>Date</th>
+    <th>Statut</th>
+    <th>Pièces</th>
+    <th>Surface</th>
+    <th>Prix</th>
+    <th>Ville</th>
+    <th>Pays</th>
+    <th>Jours restants</th> <!-- Nouvelle colonne -->
+    <th>Actions</th>
+  </tr>
+</thead>
+<tbody id="orders-list">
+  <!-- Contenu dynamique chargé via JS -->
+</tbody>
     </table>
     <div id="no-orders-message" style="display: none;" class="text-center">
       <p>Aucune commande trouvée.</p>
@@ -1078,6 +1078,28 @@ function copyURL(url) {
         loadLandingPages();
     });
 </script>
+<script>
+async function renewOrder(orderId) {
+  try {
+    const response = await fetch('/user/orders/renew', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ orderId })
+    });
 
+    const result = await response.json();
+    if (response.ok) {
+      alert('Commande renouvelée avec succès !');
+      loadOrders(); // Recharger la liste des commandes
+    } else {
+      alert(result.error || 'Erreur lors du renouvellement de la commande.');
+    }
+  } catch (error) {
+    console.error('Erreur lors du renouvellement :', error);
+    alert('Une erreur est survenue.');
+  }
+}
+
+</script>
 </body>
 </html>
