@@ -857,6 +857,7 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
 
     const today = new Date();
     orders.forEach(order => {
+ console.log(`🔹 Order ID: ${order._id}, Expiry Date: ${order.expiryDate}, Days Remaining: ${order.daysRemaining}`);
       const orderDate = new Date(order.createdAt);
       const expirationDate = new Date(orderDate);
       expirationDate.setDate(orderDate.getDate() + 90);
