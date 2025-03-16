@@ -1048,7 +1048,7 @@ function copyURL(url) {
                         <td><a href="${page.url}" target="_blank">${page.url}</a></td>
                         <td>
                             <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
-                            <button class="btn btn-primary btn-sm" onclick="redirectToPayment('${page.url}')">Diffuser</button>
+                            <button class="btn btn-primary btn-sm" onclick="redirectToPayment('${page._id}')">Diffuser</button>
                         </td>
                     `;
                     landingPagesList.appendChild(row);
@@ -1069,8 +1069,9 @@ function copyURL(url) {
             .catch(err => console.error('Impossible de copier l\'URL : ', err));
     }
 
-    function redirectToPayment(url) {
-        window.location.href = `/payment?landingPage=${encodeURIComponent(url)}`;
+    function redirectToPayment(propertyId) {
+        const locale = document.documentElement.lang || 'fr';
+        window.location.href = `/${locale}/payment?propertyId=${encodeURIComponent(propertyId)}`;
     }
 
     document.addEventListener("DOMContentLoaded", function () {
