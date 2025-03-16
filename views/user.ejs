@@ -1056,58 +1056,52 @@ function copyURL(url) {
 <script>
     async function loadLandingPages() {
         try {
-            const response = await fetch('/property/user/landing-pages'); // Requête vers l'API backend
+            const response = await fetch('/user/landing-pages');
             if (!response.ok) throw new Error("Erreur lors du chargement des données");
 
             const landingPages = await response.json();
-            const landingPagesList = document.getElementById('landing-pages-list');
+            const landingPagesList = document.getElementById('properties-list');
             landingPagesList.innerHTML = '';
 
-            const noLandingPagesMessage = document.getElementById('no-landing-pages-message');
+            const noPropertiesMessage = document.getElementById('no-properties-message');
             if (landingPages.length === 0) {
-                noLandingPagesMessage.style.display = 'block';
+                noPropertiesMessage.style.display = 'block';
             } else {
-                noLandingPagesMessage.style.display = 'none';
+                noPropertiesMessage.style.display = 'none';
                 landingPages.forEach(page => {
                     const row = document.createElement('tr');
                     row.innerHTML = `
-                        <td>${new Date(page.createdAt).toLocaleString('fr-FR')}</td>
                         <td>${page.rooms}</td>
                         <td>${page.surface} m²</td>
                         <td>${page.price.toLocaleString('fr-FR')} €</td>
                         <td>${page.city}</td>
                         <td>${page.country}</td>
-                        <td><a href="${page.url}" target="_blank">Voir</a></td>
+                        <td><a href="${page.url}" target="_blank">${page.url}</a></td>
                         <td>
                             <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
-                            <button class="btn btn-dark btn-sm" onclick="redirectToPayment('${page._id}')">Commander</button>
-                            <button class="btn btn-primary btn-sm" onclick="openLandingPage('${page.url}')">Voir</button>
                         </td>
                     `;
                     landingPagesList.appendChild(row);
                 });
             }
         } catch (error) {
-            console.error('Erreur dans loadLandingPages :', error);
-            document.getElementById('landing-pages-list').innerHTML = '<tr><td colspan="8" class="text-center">Une erreur est survenue.</td></tr>';
+            console.error("Erreur lors du chargement des landing pages :", error);
+            document.getElementById('properties-list').innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
         }
     }
 
     function copyURL(url) {
-        navigator.clipboard.writeText(url).then(() => {
-            alert("URL copiée !");
-        }).catch(err => console.error("Impossible de copier l'URL : ", err));
+        const fullUrl = `https://uap.immo${url}`;
+        navigator.clipboard.writeText(fullUrl)
+            .then(() => {
+                alert("URL copiée !");
+            })
+            .catch(err => console.error('Impossible de copier l\'URL : ', err));
     }
 
-    function redirectToPayment(pageId) {
-        window.location.href = `/payment?propertyId=${pageId}`;
-    }
-
-    function openLandingPage(url) {
-        window.open(url, '_blank');
-    }
-
-    document.addEventListener('DOMContentLoaded', loadLandingPages);
+    document.addEventListener("DOMContentLoaded", function () {
+        loadLandingPages();
+    });
 </script>
 
 </body>
