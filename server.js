@@ -1247,6 +1247,39 @@ async function sendAccountCreationEmail(email) {
   await sendEmail(mailOptions);
 }
 
+app.post('/user/orders/renew', isAuthenticated, async (req, res) => {
+  try {
+    const { orderId } = req.body;
+    const existingOrder = await Order.findById(orderId);
+
+    if (!existingOrder) {
+      return res.status(404).json({ error: 'Commande non trouvée' });
+    }
+
+    const orderDate = new Date(existingOrder.createdAt);
+    const expirationDate = new Date(orderDate);
+    expirationDate.setDate(orderDate.getDate() + 90);
+
+    if (new Date() < expirationDate) {
+      return res.status(400).json({ error: 'Cette commande n\'est pas encore expirée.' });
+    }
+
+    const newOrder = new Order({
+      userId: existingOrder.userId,
+      propertyId: existingOrder.propertyId,
+      amount: existingOrder.amount,
+      status: 'pending'
+    });
+
+    await newOrder.save();
+    res.json({ message: 'Commande renouvelée avec succès.', orderId: newOrder._id });
+  } catch (error) {
+    console.error('Erreur lors du renouvellement de la commande :', error);
+    res.status(500).json({ error: 'Erreur lors du renouvellement de la commande' });
+  }
+});
+
+
 app.post('/send-contact', async (req, res) => {
   const { firstName, lastName, email, message, type } = req.body;
 
