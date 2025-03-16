@@ -816,16 +816,21 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
             return res.status(400).json({ error: 'Données manquantes' });
         }
 
-        const charge = await stripe.paymentIntents.create({
+        const paymentIntent = await stripe.paymentIntents.create({
             amount: parseInt(amount, 10) * 100, // Stripe prend les montants en centimes
             currency: 'eur',
             payment_method: stripeToken,
             confirm: true,
+            return_url: `https://uap.immo/payment-success?propertyId=${propertyId}`, // ✅ Ajout du return_url
+            automatic_payment_methods: {
+                enabled: true,
+                allow_redirects: "always" // ou "never" si tu veux forcer sans redirection
+            }
         });
 
-        console.log("✅ Paiement réussi:", charge);
+        console.log("✅ Paiement réussi:", paymentIntent);
 
-        // Création d'une commande
+        // Création de la commande
         const order = new Order({
             userId,
             propertyId,
@@ -841,6 +846,7 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
         res.status(500).json({ error: error.message || 'Erreur de paiement' });
     }
 });
+
 
 
 app.get('/user/orders', isAuthenticated, async (req, res) => {
