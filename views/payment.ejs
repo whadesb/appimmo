@@ -228,14 +228,15 @@
                                 <label for="city" class="form-label"><%= i18n.city %></label>
                                 <input type="text" class="form-control" id="city" name="city" autocomplete="off" required>
                             </div>
+   <div class="mb-3">
+                                <label for="zip" class="form-label"><%= i18n.zip %></label>
+                                <input type="text" class="form-control" id="zip" name="zip" autocomplete="off" required>
+                            </div>
                             <div class="mb-3">
                                 <label for="country" class="form-label"><%= i18n.country %></label>
                                 <input type="text" class="form-control" id="country" name="country" autocomplete="off" required>
                             </div>
-                            <div class="mb-3">
-                                <label for="zip" class="form-label"><%= i18n.zip %></label>
-                                <input type="text" class="form-control" id="zip" name="zip" autocomplete="off" required>
-                            </div>
+                         
                             <div class="mb-3">
                                 <label for="card-element" class="form-label"><%= i18n.card_number %></label>
                                 <div id="card-element" class="form-control card-number" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="0">
@@ -245,6 +246,13 @@
                             <button type="submit" class="btn btn-primary btn-block"><%= i18n.pay_now %></button>
                         </form>
                     </div>
+<div id="payment-success-message" class="alert alert-success d-none text-center mt-3" style="display: none;">
+    <h4>Paiement réussi !</h4>
+    <p>Votre paiement a été validé avec succès.</p>
+    <p>Vous allez être redirigé vers votre <b>espace utilisateur</b> dans quelques secondes.</p>
+    <p>Le statut de votre commande et ses détails sont accessibles dans <b>“Mes Commandes”</b> et vous recevrez un e-mail de confirmation.</p>
+</div>
+
                 </div>
            <div class="col-lg-6 col-12">
                     <div class="formunr-container">
