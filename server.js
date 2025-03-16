@@ -801,37 +801,47 @@ app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
 
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
-  const { stripeToken, amount, propertyId } = req.body;
-  const userId = req.user._id;
+    try {
+        const { stripeToken, amount, propertyId } = req.body;
+        const userId = req.user._id;
 
-  if (isNaN(amount)) {
-    return res.status(400).json({ error: 'Invalid amount' });
-  }
+        console.log("🔍 Paiement en cours...");
+        console.log("Stripe Token:", stripeToken);
+        console.log("Amount:", amount);
+        console.log("Property ID:", propertyId);
+        console.log("User ID:", userId);
 
-  try {
-    const charge = await stripe.charges.create({
-      amount: parseInt(amount, 10) * 100, // Stripe prend les montants en centimes
-      currency: 'eur',
-      source: stripeToken,
-      description: `Payment for property ${propertyId}`,
-    });
+        if (!stripeToken || !amount || !propertyId) {
+            console.error("❌ Données manquantes pour le paiement.");
+            return res.status(400).json({ error: 'Données manquantes' });
+        }
 
-    // Création d'un nouvel order avec le statut "paid"
-    const order = new Order({
-      userId,
-      propertyId,
-      amount: parseInt(amount, 10),
-      status: 'paid'
-    });
+        const charge = await stripe.paymentIntents.create({
+            amount: parseInt(amount, 10) * 100, // Stripe prend les montants en centimes
+            currency: 'eur',
+            payment_method: stripeToken,
+            confirm: true,
+        });
 
-    await order.save();
+        console.log("✅ Paiement réussi:", charge);
 
-    res.status(200).json({ message: 'Payment successful', orderId: order._id });
-  } catch (error) {
-    console.error('Error processing payment:', error);
-    res.status(500).json({ error: 'Payment failed' });
-  }
+        // Création d'une commande
+        const order = new Order({
+            userId,
+            propertyId,
+            amount: parseInt(amount, 10),
+            status: 'paid'
+        });
+
+        await order.save();
+
+        res.status(200).json({ message: 'Paiement réussi', orderId: order._id, redirectUrl: `/confirmation?orderId=${order._id}` });
+    } catch (error) {
+        console.error("❌ Erreur lors du paiement :", error);
+        res.status(500).json({ error: error.message || 'Erreur de paiement' });
+    }
 });
+
 
 app.get('/user/orders', isAuthenticated, async (req, res) => {
   try {
