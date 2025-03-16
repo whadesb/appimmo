@@ -977,22 +977,24 @@ async function loadOrders() {
       } else {
         noOrdersMessage.style.display = 'none';
         orders.forEach(order => {
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${new Date(order.createdAt).toLocaleString('fr-FR')}</td>
-            <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-            <td>${order.propertyId.rooms}</td>
-            <td>${order.propertyId.surface} m²</td>
-            <td>${order.propertyId.price.toLocaleString('fr-FR')} €</td>
-            <td>${order.propertyId.city}</td>
-            <td>${order.propertyId.country}</td>
-            <td>
-              <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
-              <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
-            </td>
-          `;
-          ordersList.appendChild(row);
-        });
+    const daysRemaining = order.daysRemaining !== undefined ? `${order.daysRemaining} jours` : "Non disponible";
+    const row = document.createElement('tr');
+    row.innerHTML = `
+        <td>${new Date(order.createdAt).toLocaleString('fr-FR')}</td>
+        <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
+        <td>${order.propertyId.rooms}</td>
+        <td>${order.propertyId.surface} m²</td>
+        <td>${order.propertyId.price.toLocaleString('fr-FR')} €</td>
+        <td>${order.propertyId.city}</td>
+        <td>${order.propertyId.country}</td>
+        <td>${daysRemaining}</td>
+        <td>
+            <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
+            <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
+        </td>
+    `;
+    ordersList.appendChild(row);
+});
       }
     } else {
       document.getElementById('orders-list').innerHTML = '<tr><td colspan="8" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
