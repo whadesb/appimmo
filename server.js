@@ -799,7 +799,6 @@ app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
     }
 });
 
-
 app.post('/process-payment', isAuthenticated, async (req, res) => {
     try {
         const { stripeToken, amount, propertyId } = req.body;
@@ -817,20 +816,19 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
         }
 
         const paymentIntent = await stripe.paymentIntents.create({
-            amount: parseInt(amount, 10) * 100, // Stripe prend les montants en centimes
+            amount: parseInt(amount, 10) * 100,
             currency: 'eur',
             payment_method: stripeToken,
             confirm: true,
-            return_url: `https://uap.immo/payment-success?propertyId=${propertyId}`, // ✅ Ajout du return_url
+            return_url: `https://uap.immo/payment-success?propertyId=${propertyId}`,
             automatic_payment_methods: {
                 enabled: true,
-                allow_redirects: "always" // ou "never" si tu veux forcer sans redirection
+                allow_redirects: "always"
             }
         });
 
         console.log("✅ Paiement réussi:", paymentIntent);
 
-        // Création de la commande
         const order = new Order({
             userId,
             propertyId,
@@ -840,7 +838,11 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
 
         await order.save();
 
-        res.status(200).json({ message: 'Paiement réussi', orderId: order._id, redirectUrl: `/confirmation?orderId=${order._id}` });
+        res.status(200).json({ 
+            message: 'Paiement réussi', 
+            orderId: order._id, 
+            redirectUrl: '/user' // ✅ Redirection vers /user après paiement
+        });
     } catch (error) {
         console.error("❌ Erreur lors du paiement :", error);
         res.status(500).json({ error: error.message || 'Erreur de paiement' });
