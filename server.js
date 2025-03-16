@@ -774,13 +774,19 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
 
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
+    console.log("🔍 Requête reçue pour /user/properties, utilisateur :", req.user);
+    
     const properties = await Property.find({ createdBy: req.user._id });
+    
+    console.log("✅ Propriétés récupérées :", properties);
+
     res.json(properties);
   } catch (error) {
-    console.error('Error fetching user properties', error);
-    res.status(500).json({ error: 'Une erreur est survenue lors de la récupération des propriétés.' });
+    console.error("❌ Erreur lors de la récupération des propriétés :", error);
+    res.status(500).json({ error: "Une erreur est survenue lors de la récupération des propriétés." });
   }
 });
+
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
   const { stripeToken, amount, propertyId } = req.body;
