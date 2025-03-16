@@ -787,6 +787,18 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
   }
 });
 
+app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
+    try {
+        // Récupère les propriétés créées par l'utilisateur connecté
+        const landingPages = await Property.find({ createdBy: req.user._id });
+
+        res.json(landingPages);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des landing pages :", error);
+        res.status(500).json({ error: "Une erreur est survenue lors de la récupération des landing pages." });
+    }
+});
+
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
   const { stripeToken, amount, propertyId } = req.body;
