@@ -690,24 +690,25 @@ progress {
         <h5 class="card-title"><%= i18n.created_pages %></h5>
         <p class="card-text"><%= i18n.created_pages_info %></p>
         <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th scope="col"><%= i18n.rooms %></th>
-                    <th scope="col"><%= i18n.surface %></th>
-                    <th scope="col"><%= i18n.price %></th>
-                    <th scope="col"><%= i18n.city %></th>
-                    <th scope="col"><%= i18n.country %></th>
-                    <th scope="col">URL</th>
-                    <th scope="col"><%= i18n.actions %></th>
-                </tr>
-            </thead>
-            <tbody id="properties-list">
-                                        <!-- Propriétés de l'utilisateur ici -->
-                                    </tbody>
-                                </table>
-                                <div id="no-properties-message" style="display: none;" class="text-center">
-                                    <p><%= i18n.no_properties_message %></p>
-                                </div>
+    <thead>
+        <tr>
+            <th scope="col">Pièces</th>
+            <th scope="col">Surface</th>
+            <th scope="col">Prix</th>
+            <th scope="col">Ville</th>
+            <th scope="col">Pays</th>
+            <th scope="col">URL</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="properties-list">
+        <!-- Les propriétés créées par l'utilisateur seront affichées ici -->
+    </tbody>
+</table>
+<div id="no-properties-message" style="display: none;" class="text-center">
+    <p>Aucune landing page trouvée.</p>
+</div>
+
                             </div>
                         </div>
 <section id="landing-pages-section" class="card mt-4">
