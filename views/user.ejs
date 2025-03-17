@@ -1030,9 +1030,20 @@ async function loadOrders() {
 <td>
   <div class="progress-container">
     <div class="progress-bar">
-      <div class="progress-bar-fill" style="width: <%= progress %>%; background-color: <%= progressBarColor %>;">
-        <span class="progress-text"><%= daysRemaining %> jours restants</span>
-      </div>
+      <% orders.forEach(order => { %>
+<tr>
+    <td>
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-bar-fill" style="width: <%= order.progress %>%; background-color: <%= order.progressBarColor %>;">
+                    <span class="progress-text"><%= order.daysRemaining %> jours restants</span>
+                </div>
+            </div>
+        </div>
+    </td>
+</tr>
+<% }); %>
+
     </div>
   </div>
 </td>
