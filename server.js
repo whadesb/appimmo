@@ -869,9 +869,11 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
                 console.log("🔹 Date d'expiration:", expirationDate);
                 console.log("🔹 Date actuelle:", today);
 
+                orderObj.expiryDateFormatted = expirationDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
                 orderObj.daysRemaining = Math.max(0, Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24)));
             } else {
                 console.error("❌ expiryDate non défini pour la commande :", order._id);
+                orderObj.expiryDateFormatted = "Indisponible";
                 orderObj.daysRemaining = "Indisponible";
             }
 
@@ -884,6 +886,7 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la récupération des commandes' });
     }
 });
+
 
 async function generateLandingPage(property) {
     const GTM_ID = 'GTM-TF7HSC3N'; 
