@@ -862,20 +862,21 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
         const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
 
         const today = new Date();
-        orders.forEach(order => {
-            console.log("📌 Commande récupérée :", order);
+       orders.forEach(order => {
+    if (order.expiryDate) {
+        const expirationDate = new Date(order.expiryDate);
+        const today = new Date();
+        
+        console.log("🔹 Date d'expiration:", expirationDate);
+        console.log("🔹 Date actuelle:", today);
 
-            if (order.expiryDate) {
-                const expirationDate = new Date(order.expiryDate);
-                console.log("🔹 Date d'expiration:", expirationDate);
-                console.log("🔹 Date actuelle:", today);
+        order.daysRemaining = Math.max(0, Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24)));
+    } else {
+        console.error("❌ expiryDate non défini pour la commande :", order._id);
+        order.daysRemaining = "Indisponible";
+    }
+});
 
-                order.daysRemaining = Math.max(0, Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24)));
-            } else {
-                console.error("❌ expiryDate non défini pour la commande :", order._id);
-                order.daysRemaining = "Indisponible";
-            }
-        });
 
         res.json(orders);
     } catch (error) {
