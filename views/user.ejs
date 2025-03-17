@@ -193,18 +193,15 @@
 .hidden {
     display: none;
 }
-
-.progress {
-    width: 100%;
-    background-color: #ddd;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
 .progress-bar {
-    height: 10px;
-    transition: width 0.5s ease-in-out;
+    background-color: #8BC34A !important; /* ✅ Couleur par défaut (vert) */
 }
+
+/* Couleurs dynamiques selon les jours restants */
+.progress-bar.green { background-color: #8BC34A !important; }  /* ✅ Vert */
+.progress-bar.orange { background-color: #FFC107 !important; } /* ✅ Orange */
+.progress-bar.red { background-color: #FF5722 !important; }    /* ✅ Rouge */
+
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -1039,42 +1036,32 @@ async function loadOrders() {
 
         orders.forEach(order => {
           const orderDate = new Date(order.createdAt);
-          const daysRemaining = order.daysRemaining; // ✅ Utiliser la valeur du backend
-          const progress = Math.min(((90 - daysRemaining) / 90) * 100, 100); // ✅ Correction du calcul de progression
+          const daysRemaining = order.daysRemaining; 
+          const progress = Math.min(((90 - daysRemaining) / 90) * 100, 100);
 
-          // Définition de la couleur en fonction des jours restants
-          let progressBarColor;
-          if (daysRemaining > 30) {
-            progressBarColor = "#8BC34A"; // ✅ Vert clair
-          } else if (daysRemaining > 15) {
-            progressBarColor = "#FFC107"; // ✅ Orange clair
-          } else {
-            progressBarColor = "#FF5722"; // ✅ Rouge clair
-          }
+          // Déterminer la classe de couleur en fonction des jours restants
+          let progressBarClass = 'green'; 
+          if (daysRemaining <= 30) progressBarClass = 'orange';
+          if (daysRemaining <= 15) progressBarClass = 'red';
 
           const row = document.createElement('tr');
-row.innerHTML = `
-    <td>${order.orderId}</td>
-    <td>${orderDate.toLocaleDateString('fr-FR')}</td>
-    <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-   <td>${daysRemaining} jours restants
-    <div class="progress" style="height: 10px; margin-top: 5px;">
-        <div class="progress-bar" role="progressbar" 
-            style="width: ${Math.min(((90 - daysRemaining) / 90) * 100, 100)}%; 
-                   background-color: ${daysRemaining > 60 ? '#8BC34A' : daysRemaining > 45 ? '#FFC107' : '#FF5722'};">
-        </div>
-    </div>
-</td>
-
-
-   <td>${formatDate(order.expiryDateFormatted)}</td>
-    <td>
-      <button class="btn btn-outline-dark btn-sm" style="border-color: #000000; color: #000000; background-color: transparent;" onclick="copyURL('/landing-pages/67d34cbd22d48feecc15c35f.html')">Copier</button>
-      <button class="btn btn-dark btn-sm" style="background-color: #000000; color :fff; border: none;" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
-    </td>
-`;
-ordersList.appendChild(row);
-
+          row.innerHTML = `
+            <td>${order.orderId}</td>
+            <td>${orderDate.toLocaleDateString('fr-FR')}</td>
+            <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
+            <td>${daysRemaining} jours restants
+              <div class="progress" style="height: 10px; margin-top: 5px;">
+                <div class="progress-bar ${progressBarClass}" role="progressbar" 
+                     style="width: ${progress}%;"></div>
+              </div>
+            </td>
+            <td>${formatDate(order.expiryDateFormatted)}</td>
+            <td>
+              <button class="btn btn-outline-dark btn-sm" style="border-color: #000000; color: #000000; background-color: transparent;" onclick="copyURL('/landing-pages/67d34cbd22d48feecc15c35f.html')">Copier</button>
+              <button class="btn btn-dark btn-sm" style="background-color: #000000; color: #fff; border: none;" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
+            </td>
+          `;
+          ordersList.appendChild(row);
         });
       }
     } else {
