@@ -989,7 +989,7 @@ async function loadOrders() {
             <td>${order.propertyId.price.toLocaleString('fr-FR')} €</td>
             <td>${order.propertyId.city}</td>
             <td>${order.propertyId.country}</td>
-            <td>${daysRemaining}</td> <!-- Affichage des jours restants -->
+            <td>${daysRemaining !== undefined ? daysRemaining + " jours" : "Non disponible"}</td>
             <td>
               <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
               <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
