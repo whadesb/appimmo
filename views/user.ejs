@@ -148,7 +148,11 @@
     display: none;
 }
 
-
+progress {
+    width: 100%;
+    height: 10px;
+    margin-top: 5px;
+}
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -272,31 +276,10 @@ input[type="number"] {
     display: none;
 }
 
-.progress {
+progress {
     width: 100%;
-    height: 20px;
-    background-color: #e0e0e0;
-    border-radius: 10px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    text-align: center;
-    color: white;
-    font-weight: bold;
-    transition: width 0.4s ease-in-out;
-}
-
-
-.progress-text {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    font-size: 12px; /* Aligné avec "status" */
-    color: white;
-    top: 50%;
-    transform: translateY(-50%);
+    height: 10px;
+    margin-top: 5px;
 }
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -1014,35 +997,16 @@ async function loadOrders() {
             <td>${order.orderId}</td>
             <td>${orderDate.toLocaleDateString('fr-FR')}</td>
             <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-          <td>
-<td>
-  <div class="progress-container">
-    <div class="progress-bar">
-      <% orders.forEach(order => { %>
-<tr>
-    <td>
-        <div class="progress-container">
-            <div class="progress-bar">
-                <div class="progress-bar-fill" 
-                    style="width: <%= order.progress %>%; background-color: <%= order.progressBarColor %>;" 
-                    role="progressbar" 
-                    aria-valuenow="<%= order.progress %>" 
-                    aria-valuemin="0" 
-                    aria-valuemax="100">
-                    <span class="progress-text"><%= order.daysRemaining %> jours restants</span>
+            <td>
+              <div style="position: relative; width: 150px;">
+                <span style="font-size: 14px; position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: black;">
+                  ${daysRemaining} jours restants
+                </span>
+                <div style="background-color: #ddd; border-radius: 10px; height: 12px; width: 100%;">
+                  <div style="width: ${progress}%; height: 100%; border-radius: 10px; background-color: ${progressBarColor};"></div>
                 </div>
-            </div>
-        </div>
-    </td>
-</tr>
-<% }) %>
-
-
-    </div>
-  </div>
-</td>
-
-
+              </div>
+            </td>
             <td>
               <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
               <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
