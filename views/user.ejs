@@ -148,11 +148,18 @@
     display: none;
 }
 
-progress {
+.progress {
     width: 100%;
-    height: 10px;
-    margin-top: 5px;
+    background-color: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
 }
+
+.progress-bar {
+    height: 10px;
+    transition: width 0.5s ease-in-out;
+}
+
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
     -webkit-appearance: none;
@@ -995,7 +1002,16 @@ row.innerHTML = `
     <td>${order.orderId}</td>
     <td>${orderDate.toLocaleDateString('fr-FR')}</td>
     <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-    <td>${daysRemaining} jours restants</td> <!-- ✅ Jours restants sont maintenant corrects -->
+   <td>
+    ${daysRemaining} jours restants
+    <div class="progress" style="height: 10px; margin-top: 5px;">
+        <div class="progress-bar" role="progressbar" 
+            style="width: ${Math.min(((90 - daysRemaining) / 90) * 100, 100)}%; 
+                   background-color: ${daysRemaining > 60 ? '#8BC34A' : daysRemaining > 45 ? '#FFC107' : '#FF5722'};">
+        </div>
+    </div>
+</td>
+
     <td>${order.expiryDateFormatted}</td> <!-- ✅ Expiration Date est bien affichée ici -->
     <td>
       <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
