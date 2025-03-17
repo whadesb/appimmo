@@ -124,10 +124,24 @@
 
         <!-- Icône de profil en version mobile -->
         <div class="d-lg-none ms-auto d-inline-block me-2">
-            <a href="/<%= locale %>/login" style="position: relative;">
-                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                <span class="visually-hidden">Login</span>
-            </a>
+         <div class="d-none d-lg-flex align-items-center">
+    <% if (user) { %> 
+        <!-- Si l'utilisateur est connecté, affiche "Déconnexion" -->
+        <a href="/<%= locale %>/user" class="me-3" style="position: relative;">
+            <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+            <span class="visually-hidden">Mon compte</span>
+        </a>
+        <a href="/<%= locale %>/logout" class="btn btn-outline-dark ms-3">Déconnexion</a>
+    <% } else { %>
+        <!-- Si l'utilisateur n'est pas connecté, affiche "Connexion" et "Inscription" -->
+        <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
+            <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+            <span class="visually-hidden">Connexion</span>
+        </a>
+        <a href="/<%= locale %>/register" class="btn btn-primary ms-3">Inscription</a>
+    <% } %>
+</div>
+
         </div>
 
         <!-- Bouton de changement de langue en version mobile et desktop -->
