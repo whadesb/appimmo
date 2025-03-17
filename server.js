@@ -830,12 +830,11 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
         console.log("✅ Paiement réussi:", paymentIntent);
 
         const order = new Order({
-    orderId: new mongoose.Types.ObjectId().toHexString(),
     userId,
     propertyId,
     amount: parseInt(amount, 10),
     status: 'paid',
-    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // ✅ Vérification
+    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
 });
 
 console.log("🔍 Nouvelle commande enregistrée :", order);
