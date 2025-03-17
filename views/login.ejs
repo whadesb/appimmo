@@ -94,11 +94,21 @@
         <a class="navbar-brand" href="/<%= locale %>">
             <span>UAP Immo</span>
         </a>
-        <div class="d-lg-none ms-auto me-4">
-            <a href="/<%= locale %>/login" style="position: relative;">
-                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                <span class="visually-hidden">Login</span>
-            </a>
+         <div class="d-lg-none ms-auto me-4">
+            <% if (user) { %>
+                <form action="/<%= locale %>/logout" method="POST" class="d-inline" onsubmit="event.preventDefault(); window.location.href = '/<%= locale %>/login';">
+    <button type="submit" style="background: none; border: none; position: relative;">
+        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+        <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
+        <span class="visually-hidden"><%= i18n.menu.logout %></span>
+    </button>
+</form>
+            <% } else { %>
+                <a href="/login" style="position: relative;">
+                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                    <span class="visually-hidden"><%= i18n.menu.login %></span>
+                </a>
+            <% } %>
         </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
