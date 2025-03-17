@@ -56,6 +56,10 @@ app.use((req, res, next) => {
   }
   next();
 });
+app.use((req, res, next) => {
+    res.locals.user = req.user || null; // Rendre l'utilisateur accessible dans toutes les vues
+    next();
+});
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
