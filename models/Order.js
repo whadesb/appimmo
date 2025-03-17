@@ -5,7 +5,10 @@ const orderSchema = new mongoose.Schema({
     type: String, 
     unique: true, 
     required: true, 
-    default: () => `ORD-${Date.now()}`
+    default: () => `ORD-${Date.now()}`,
+    set: function(value) {
+      return value.startsWith('ORD-') ? value : `ORD-${value}`;
+    }
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
