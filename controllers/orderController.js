@@ -1,4 +1,5 @@
 const Order = require("../models/Order");
+const getNextOrderId = require("../utils/getNextOrderId"); // 🔹 Import de la fonction pour générer l'Order ID
 
 const createOrder = async (req, res) => {
     try {
@@ -8,10 +9,14 @@ const createOrder = async (req, res) => {
             return res.status(400).json({ error: "userId et amount sont requis." });
         }
 
+        // 🔹 Génération d'un Order ID unique
+        const orderId = await getNextOrderId();
+
         const newOrder = new Order({
+            orderId,  // 🔹 Ajout de l'Order ID formaté ex: "ORD-1001"
             userId,
             amount,
-            pageUrl, // 🔹 Vérifier que pageUrl est bien stocké
+            pageUrl, // 🔹 Stocke correctement pageUrl
             status: "pending"
         });
 
