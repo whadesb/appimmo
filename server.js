@@ -536,6 +536,9 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
+app.get('/:locale/contact', (req, res) => {
+    res.render('contact', { locale: req.params.locale });
+});
 
 app.get('/:lang/contact', (req, res) => {
     // Récupérer la langue depuis l'URL
