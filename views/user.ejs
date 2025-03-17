@@ -658,12 +658,18 @@ progress {
      <thead>
   <tr>
     <th>Order ID</th>
-            <th>Date</th>
-            <th>Status</th>
-            <th>Jours restants</th>
-            <th>Actions</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th>Pièces</th>
+    <th>Surface</th>
+    <th>Prix</th>
+    <th>Ville</th>
+    <th>Pays</th>
+    <th>Jours restants</th>
+    <th>Actions</th>
   </tr>
 </thead>
+
 <tbody id="orders-list">
   <!-- Contenu dynamique chargé via JS -->
 </tbody>
@@ -1119,27 +1125,11 @@ async function loadOrders() {
         noOrdersMessage.style.display = 'none';
 
         orders.forEach(order => {
-          const daysRemaining = order.daysRemaining;
-          let colorClass = '';
-
-          if (daysRemaining > 60) {
-            colorClass = 'bg-success text-white'; // Vert
-          } else if (daysRemaining > 20) {
-            colorClass = 'bg-warning text-dark'; // Orange
-          } else {
-            colorClass = 'bg-danger text-white'; // Rouge
-          }
-
-          // Barre de progression
-          const progressBar = `
-            <div class="progress" style="height: 15px;">
-              <div class="progress-bar ${colorClass}" role="progressbar" style="width: ${daysRemaining / 90 * 100}%;" 
-              aria-valuenow="${daysRemaining}" aria-valuemin="0" aria-valuemax="90">${daysRemaining} jours</div>
-            </div>
-          `;
+          const daysRemaining = order.daysRemaining !== undefined ? `${order.daysRemaining} jours` : "Non disponible";
 
           const row = document.createElement('tr');
           row.innerHTML = `
+            <td>${order.orderId}</td> <!-- Ajout de l'ID de la commande -->
             <td>${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
             <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
             <td>${order.propertyId.rooms}</td>
@@ -1147,23 +1137,23 @@ async function loadOrders() {
             <td>${order.propertyId.price.toLocaleString('fr-FR')} €</td>
             <td>${order.propertyId.city}</td>
             <td>${order.propertyId.country}</td>
-            <td>${progressBar}</td> <!-- Affichage de la barre de progression -->
+            <td>${daysRemaining}</td> 
             <td>
               <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
               <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
-              ${daysRemaining === 0 ? `<button class="btn btn-primary btn-sm" onclick="renewOrder('${order._id}')">Renouveler</button>` : ''}
             </td>
           `;
           ordersList.appendChild(row);
         });
       }
     } else {
-      document.getElementById('orders-list').innerHTML = '<tr><td colspan="9" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
+      document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Erreur lors du chargement des commandes.</td></tr>'; 
     }
   } catch (error) {
-    document.getElementById('orders-list').innerHTML = '<tr><td colspan="9" class="text-center">Une erreur est survenue.</td></tr>';
+    document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Une erreur est survenue.</td></tr>'; 
   }
 }
+
 
 </script>
 </body>
