@@ -975,18 +975,38 @@ async function loadOrders() {
         noOrdersMessage.style.display = 'none';
 
         orders.forEach(order => {
-          const daysRemaining = order.daysRemaining !== undefined ? `${order.daysRemaining} jours` : "Non disponible";
+          const orderDate = new Date(order.createdAt);
+          const today = new Date();
+          const diffTime = Math.abs(today - orderDate);
+          const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+          const daysRemaining = Math.max(90 - daysPassed, 0);
+          const progress = Math.min((daysPassed / 90) * 100, 100);
+
+          // Définition de la couleur en fonction des jours restants
+          let progressBarColor;
+          if (daysRemaining > 30) {
+            progressBarColor = "#8BC34A"; // Vert clair
+          } else if (daysRemaining > 15) {
+            progressBarColor = "#FFC107"; // Orange clair
+          } else {
+            progressBarColor = "#FF5722"; // Rouge clair
+          }
 
           const row = document.createElement('tr');
           row.innerHTML = `
-            <td>${new Date(order.createdAt).toLocaleDateString('fr-FR')}</td>
+            <td>${order.orderId}</td>
+            <td>${orderDate.toLocaleDateString('fr-FR')}</td>
             <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-            <td>${order.propertyId.rooms}</td>
-            <td>${order.propertyId.surface} m²</td>
-            <td>${order.propertyId.price.toLocaleString('fr-FR')} €</td>
-            <td>${order.propertyId.city}</td>
-            <td>${order.propertyId.country}</td>
-            <td>${daysRemaining}</td> <!-- Correction ici -->
+            <td>
+              <div style="position: relative; width: 150px;">
+                <span style="font-size: 14px; position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: black;">
+                  ${daysRemaining} jours restants
+                </span>
+                <div style="background-color: #ddd; border-radius: 10px; height: 12px; width: 100%;">
+                  <div style="width: ${progress}%; height: 100%; border-radius: 10px; background-color: ${progressBarColor};"></div>
+                </div>
+              </div>
+            </td>
             <td>
               <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
               <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
@@ -996,16 +1016,14 @@ async function loadOrders() {
         });
       }
     } else {
-      document.getElementById('orders-list').innerHTML = '<tr><td colspan="9" class="text-center">Erreur lors du chargement des commandes.</td></tr>'; // Correction ici
+      document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
     }
   } catch (error) {
-    document.getElementById('orders-list').innerHTML = '<tr><td colspan="9" class="text-center">Une erreur est survenue.</td></tr>'; // Correction ici
+    document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Une erreur est survenue.</td></tr>';
   }
 }
 
-
-
-// Charger les commandes quand on affiche la section
+// Charger les commandes quand on affiche la section "orders"
 function showSection(sectionId) {
   const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
   sections.forEach(id => {
@@ -1016,7 +1034,6 @@ function showSection(sectionId) {
     loadOrders();
   }
 }
-
 // Fonction pour copier l'URL de la propriété
 function copyURL(url) {
   const fullUrl = `https://uap.immo${url}`;
@@ -1103,84 +1120,6 @@ async function renewOrder(orderId) {
 }
 
 </script>
-<script>
-<script>
-async function loadOrders() {
-  try {
-    const response = await fetch('/user/orders');
-    if (response.ok) {
-      const orders = await response.json();
-      const ordersList = document.getElementById('orders-list');
-      ordersList.innerHTML = '';
 
-      const noOrdersMessage = document.getElementById('no-orders-message');
-      if (orders.length === 0) {
-        noOrdersMessage.style.display = 'block';
-      } else {
-        noOrdersMessage.style.display = 'none';
-
-        orders.forEach(order => {
-          const orderDate = new Date(order.createdAt);
-          const today = new Date();
-          const diffTime = Math.abs(today - orderDate);
-          const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-          const daysRemaining = Math.max(90 - daysPassed, 0);
-          const progress = Math.min((daysPassed / 90) * 100, 100);
-
-          // Définition de la couleur en fonction des jours restants
-          let progressBarColor;
-          if (daysRemaining > 30) {
-            progressBarColor = "#8BC34A"; // Vert clair
-          } else if (daysRemaining > 15) {
-            progressBarColor = "#FFC107"; // Orange clair
-          } else {
-            progressBarColor = "#FF5722"; // Rouge clair
-          }
-
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${order.orderId}</td>
-            <td>${orderDate.toLocaleDateString('fr-FR')}</td>
-            <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-            <td>
-              <div style="position: relative; width: 150px;">
-                <span style="font-size: 14px; position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: black;">
-                  ${daysRemaining} jours restants
-                </span>
-                <div style="background-color: #ddd; border-radius: 10px; height: 12px; width: 100%;">
-                  <div style="width: ${progress}%; height: 100%; border-radius: 10px; background-color: ${progressBarColor};"></div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
-              <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
-            </td>
-          `;
-          ordersList.appendChild(row);
-        });
-      }
-    } else {
-      document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
-    }
-  } catch (error) {
-    document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Une erreur est survenue.</td></tr>';
-  }
-}
-
-// Charger les commandes quand on affiche la section "orders"
-function showSection(sectionId) {
-  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
-  sections.forEach(id => {
-    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
-  });
-
-  if (sectionId === 'orders') {
-    loadOrders();
-  }
-}
-
-
-</script>
 </body>
 </html>
