@@ -862,20 +862,30 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
         const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
 
         const today = new Date();
-       orders.forEach(order => {
-    if (order.expiryDate) {
-        const expirationDate = new Date(order.expiryDate);
-        const today = new Date();
-        
-        console.log("🔹 Date d'expiration:", expirationDate);
-        console.log("🔹 Date actuelle:", today);
+        const ordersWithDaysRemaining = orders.map(order => {
+            const orderObj = order.toObject(); // Convertir en objet JS standard
+            if (order.expiryDate) {
+                const expirationDate = new Date(order.expiryDate);
+                
+                console.log("🔹 Date d'expiration:", expirationDate);
+                console.log("🔹 Date actuelle:", today);
 
-        order.daysRemaining = Math.max(0, Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24)));
-    } else {
-        console.error("❌ expiryDate non défini pour la commande :", order._id);
-        order.daysRemaining = "Indisponible";
+                orderObj.daysRemaining = Math.max(0, Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24)));
+            } else {
+                console.error("❌ expiryDate non défini pour la commande :", order._id);
+                orderObj.daysRemaining = "Indisponible";
+            }
+
+            return orderObj;
+        });
+
+        res.json(ordersWithDaysRemaining);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des commandes :', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des commandes' });
     }
 });
+
 
 
         res.json(orders);
