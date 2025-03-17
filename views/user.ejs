@@ -1098,27 +1098,27 @@ function copyURL(url) {
         loadLandingPages();
     });
 </script>
-async function renewOrder(orderId) {
-  try {
-    const response = await fetch('/user/orders/renew', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ orderId })
+<script>
+async function renewOrder(orderId) { 
+  try { 
+    const response = await fetch('/user/orders/renew', { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ orderId }) 
     });
 
     const result = await response.json();
-    if (response.ok) {
-      alert('Commande renouvelée avec succès !');
-      loadOrders(); // Recharger la liste des commandes
-    } else {
-      alert(result.error || 'Erreur lors du renouvellement de la commande.');
+    if (response.ok) { 
+      alert('Commande renouvelée avec succès !'); 
+      loadOrders(); // Recharger la liste des commandes 
+    } else { 
+      alert(result.error || 'Erreur lors du renouvellement de la commande.'); 
     }
-  } catch (error) {
-    console.error('Erreur lors du renouvellement :', error);
-    alert('Une erreur est survenue.');
+  } catch (error) { 
+    console.error('Erreur lors du renouvellement :', error); 
+    alert('Une erreur est survenue.'); 
   }
 }
-
 </script>
 
 </body>
