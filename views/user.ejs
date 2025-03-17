@@ -997,16 +997,21 @@ async function loadOrders() {
             <td>${order.orderId}</td>
             <td>${orderDate.toLocaleDateString('fr-FR')}</td>
             <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-            <td>
-              <div style="position: relative; width: 150px;">
-                <span style="font-size: 14px; position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: black;">
-                  ${daysRemaining} jours restants
-                </span>
-                <div style="background-color: #ddd; border-radius: 10px; height: 12px; width: 100%;">
-                  <div style="width: ${progress}%; height: 100%; border-radius: 10px; background-color: ${progressBarColor};"></div>
-                </div>
-              </div>
-            </td>
+          <td>
+  <div style="position: relative; width: 150px;">
+    <span style="font-size: 14px; position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: black;">
+      ${daysRemaining} jours restants
+    </span>
+    <div style="background-color: #ddd; border-radius: 10px; height: 12px; width: 100%; position: relative;">
+      <div style="width: ${progress}%; height: 100%; border-radius: 10px; background-color: ${progressBarColor}; position: relative;">
+        <span style="position: absolute; width: 100%; text-align: center; font-size: 12px; color: white; top: 50%; transform: translateY(-50%);">
+          ${daysRemaining} jours restants
+        </span>
+      </div>
+    </div>
+  </div>
+</td>
+
             <td>
               <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
               <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
