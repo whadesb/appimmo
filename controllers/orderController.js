@@ -9,14 +9,23 @@ const createOrder = async (req, res) => {
             return res.status(400).json({ error: "userId et amount sont requis." });
         }
 
-        // 🔹 Génération d'un Order ID unique
-        const orderId = await getNextOrderId();
+        let orderId;
+        let isUnique = false;
+
+        // 🔹 Vérification d'unicité avant d'enregistrer
+        while (!isUnique) {
+            orderId = getNextOrderId(); // Génère un nouvel Order ID
+            const existingOrder = await Order.findOne({ orderId });
+            if (!existingOrder) {
+                isUnique = true;
+            }
+        }
 
         const newOrder = new Order({
-            orderId,  // 🔹 Ajout de l'Order ID formaté ex: "ORD-1001"
+            orderId,  // 🔹 Order ID unique
             userId,
             amount,
-            pageUrl, // 🔹 Stocke correctement pageUrl
+            pageUrl,
             status: "pending"
         });
 
