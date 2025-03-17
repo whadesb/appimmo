@@ -5,7 +5,7 @@ const orderSchema = new mongoose.Schema({
     type: String, 
     unique: true, 
     required: true, 
-    default: () => new mongoose.Types.ObjectId().toHexString() 
+    default: () => `ORD-${Date.now()}`
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -30,7 +30,7 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  expiryDate: {  // 🆕 Ajout du champ expiryDate
+  expiryDate: {  
     type: Date,
     required: true,
     default: function () {
@@ -38,5 +38,6 @@ const orderSchema = new mongoose.Schema({
     }
   }
 });
+
 
 module.exports = mongoose.model('Order', orderSchema);
