@@ -855,30 +855,27 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
     }
 });
 
-
-
-
 app.get('/user/orders', isAuthenticated, async (req, res) => {
-  try {
-    const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
+    try {
+        const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
 
-    const today = new Date();
-    orders.forEach(order => {
- console.log(`🔹 Order ID: ${order._id}, Expiry Date: ${order.expiryDate}, Days Remaining: ${order.daysRemaining}`);
-      const orderDate = new Date(order.createdAt);
-      const expirationDate = new Date(orderDate);
-      expirationDate.setDate(orderDate.getDate() + 90);
+        const today = new Date();
+        orders.forEach(order => {
+            if (order.expiryDate) {
+                const expirationDate = new Date(order.expiryDate);
+                order.daysRemaining = Math.max(0, Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24)));
+            } else {
+                order.daysRemaining = "Non disponible"; // ✅ Correction pour éviter `undefined`
+            }
+        });
 
-      const daysRemaining = Math.max(0, Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24)));
-      order.daysRemaining = daysRemaining;
-    });
-
-    res.json(orders);
-  } catch (error) {
-    console.error('Erreur lors de la récupération des commandes :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des commandes' });
-  }
+        res.json(orders);
+    } catch (error) {
+        console.error('Erreur lors de la récupération des commandes :', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des commandes' });
+    }
 });
+
 
 
 
