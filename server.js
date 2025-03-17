@@ -830,13 +830,14 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
         console.log("✅ Paiement réussi:", paymentIntent);
 
         const order = new Order({
-            userId,
-            propertyId,
-            amount: parseInt(amount, 10),
-            status: 'paid'
-        });
+  orderId: new mongoose.Types.ObjectId().toHexString(), // 🔹 Ajout de orderId
+  userId,
+  propertyId,
+  amount: parseInt(amount, 10),
+  status: 'paid'
+});
 
-        await order.save();
+await order.save();
 
         res.status(200).json({ 
             message: 'Paiement réussi', 
