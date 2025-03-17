@@ -23,6 +23,13 @@ const orderSchema = new mongoose.Schema({
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  expiryDate: {  // 🆕 Ajout du champ expiryDate
+    type: Date,
+    required: true,
+    default: function () {
+      return new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)); // Expire dans 30 jours
+    }
   }
 });
 
