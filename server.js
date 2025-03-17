@@ -64,11 +64,6 @@ app.use(session({
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
 }));
-app.use((req, res, next) => {
-  res.locals.user = req.user; // Permet de rendre l'utilisateur accessible dans toutes les vues EJS
-  next();
-});
-
 app.use('/property', require('./routes/property'));
 
 app.use(passport.initialize());
