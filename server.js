@@ -830,25 +830,31 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
         console.log("✅ Paiement réussi:", paymentIntent);
 
         const order = new Order({
-  orderId: new mongoose.Types.ObjectId().toHexString(), // 🔹 Ajout de orderId
-  userId,
-  propertyId,
-  amount: parseInt(amount, 10),
-  status: 'paid'
-});
+            orderId: new mongoose.Types.ObjectId().toHexString(),
+            userId,
+            propertyId,
+            amount: parseInt(amount, 10),
+            status: 'paid',
+            expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // Ajout de la date d'expiration
+        });
 
-await order.save();
+        await order.save();
 
-        res.status(200).json({ 
-            message: 'Paiement réussi', 
-            orderId: order._id, 
-            redirectUrl: '/user' // ✅ Redirection vers /user après paiement
+        // Déterminer la redirection en fonction de la langue
+        const locale = req.cookies.locale || 'fr';
+        const redirectUrl = `/${locale}/user#`;
+
+        res.status(200).json({
+            message: 'Paiement réussi',
+            orderId: order._id,
+            redirectUrl // ✅ Correction de la redirection
         });
     } catch (error) {
         console.error("❌ Erreur lors du paiement :", error);
         res.status(500).json({ error: error.message || 'Erreur de paiement' });
     }
 });
+
 
 
 
