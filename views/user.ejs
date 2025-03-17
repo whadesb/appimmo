@@ -991,27 +991,19 @@ async function loadOrders() {
           }
 
           const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${order.orderId}</td>
-            <td>${orderDate.toLocaleDateString('fr-FR')}</td>
-            <td>${order.expiryDateFormatted}</td> <!-- ✅ Affichage correct de la date -->
-            <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-            <td>
-              <div style="position: relative; width: 150px;">
-                <span style="font-size: 14px; position: absolute; left: 50%; top: 0; transform: translateX(-50%); color: black;">
-                  ${daysRemaining} jours restants
-                </span>
-                <div style="background-color: #ddd; border-radius: 10px; height: 12px; width: 100%;">
-                  <div style="width: ${progress}%; height: 100%; border-radius: 10px; background-color: ${progressBarColor};"></div>
-                </div>
-              </div>
-            </td>
-            <td>
-              <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
-              <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
-            </td>
-          `;
-          ordersList.appendChild(row);
+row.innerHTML = `
+    <td>${order.orderId}</td>
+    <td>${orderDate.toLocaleDateString('fr-FR')}</td>
+    <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
+    <td>${daysRemaining} jours restants</td> <!-- ✅ Jours restants sont maintenant corrects -->
+    <td>${order.expiryDateFormatted}</td> <!-- ✅ Expiration Date est bien affichée ici -->
+    <td>
+      <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
+      <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
+    </td>
+`;
+ordersList.appendChild(row);
+
         });
       }
     } else {
