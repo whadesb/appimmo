@@ -854,18 +854,23 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
         res.status(500).json({ error: error.message || 'Erreur de paiement' });
     }
 });
-
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
 
         const today = new Date();
         orders.forEach(order => {
+            console.log("📌 Commande récupérée :", order);
+
             if (order.expiryDate) {
                 const expirationDate = new Date(order.expiryDate);
+                console.log("🔹 Date d'expiration:", expirationDate);
+                console.log("🔹 Date actuelle:", today);
+
                 order.daysRemaining = Math.max(0, Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24)));
             } else {
-                order.daysRemaining = "Non disponible"; // ✅ Correction pour éviter `undefined`
+                console.error("❌ expiryDate non défini pour la commande :", order._id);
+                order.daysRemaining = "Indisponible";
             }
         });
 
@@ -875,6 +880,7 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la récupération des commandes' });
     }
 });
+
 
 
 
