@@ -37,10 +37,9 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     required: true,
     default: function () {
-      return new Date(Date.now() + (30 * 24 * 60 * 60 * 1000)); // Expire dans 30 jours
+      return new Date(Date.now() + (90 * 24 * 60 * 60 * 1000)); // ✅ Expiration à 90 jours
     }
   }
 });
-
 
 module.exports = mongoose.model('Order', orderSchema);
