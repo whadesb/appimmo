@@ -56,10 +56,6 @@ app.use((req, res, next) => {
   }
   next();
 });
-app.use((req, res, next) => {
-    res.locals.user = req.user || null; // Rendre l'utilisateur accessible dans toutes les vues
-    next();
-});
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -535,9 +531,6 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
 
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
-});
-app.get('/:locale/contact', (req, res) => {
-    res.render('contact', { locale: req.params.locale });
 });
 
 app.get('/:lang/contact', (req, res) => {
