@@ -108,49 +108,6 @@ app.use((req, res, next) => {
     next();
   }
 });
-
-app.get('/user', isAuthenticated, async (req, res) => {
-    try {
-        const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
-
-        const ordersWithProgress = orders.map(order => {
-            const orderDate = new Date(order.createdAt);
-            const today = new Date();
-            const diffTime = Math.abs(today - orderDate);
-            const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-            const daysRemaining = Math.max(90 - daysPassed, 0);
-            const progress = Math.min((daysPassed / 90) * 100, 100);
-
-            // Définition de la couleur de la barre
-            let progressBarColor;
-            if (daysRemaining > 30) {
-                progressBarColor = "#8BC34A"; // Vert clair
-            } else if (daysRemaining > 15) {
-                progressBarColor = "#FFC107"; // Orange clair
-            } else {
-                progressBarColor = "#FF5722"; // Rouge clair
-            }
-
-            return {
-                ...order.toObject(),  // Convertir en objet JS si ce n'est pas déjà fait
-                progress,
-                progressBarColor,
-                daysRemaining
-            };
-        });
-
-        res.render('user', {
-            user: req.user,
-            orders: ordersWithProgress
-        });
-
-    } catch (error) {
-        console.error("Erreur lors du chargement des commandes :", error);
-        res.status(500).send("Erreur interne du serveur");
-    }
-});
-
-
 app.get('/config', (req, res) => {
   res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
 });
