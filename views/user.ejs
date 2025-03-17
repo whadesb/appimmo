@@ -1057,11 +1057,7 @@ row.innerHTML = `
     <td>${order.orderId}</td>
     <td>${orderDate.toLocaleDateString('fr-FR')}</td>
     <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-   <td>
-    <span class="tooltip-container">
-        ${daysRemaining} jours restants
-        <span class="tooltip-text">Le pack de diffusion a une durée de 3 mois, soit 90 jours.</span>
-    </span>
+   <td>${daysRemaining} jours restants
     <div class="progress" style="height: 10px; margin-top: 5px;">
         <div class="progress-bar" role="progressbar" 
             style="width: ${Math.min(((90 - daysRemaining) / 90) * 100, 100)}%; 
