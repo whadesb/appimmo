@@ -1006,8 +1006,10 @@ row.innerHTML = `
     ${daysRemaining} jours restants
     <div class="progress" style="height: 10px; margin-top: 5px;">
         <div class="progress-bar" role="progressbar" 
-            style="width: ${Math.min(((90 - daysRemaining) / 90) * 100, 100)}%; 
-                   background-color: ${daysRemaining > 60 ? '#8BC34A' : daysRemaining > 45 ? '#FFC107' : '#FF5722'};">
+            style="width: ${Math.min(((daysRemaining) / 90) * 100, 100)}%; 
+                   background-color: ${daysRemaining <= 90 && daysRemaining > 60 ? '#8BC34A' : 
+                                      daysRemaining <= 60 && daysRemaining > 45 ? '#FFC107' : 
+                                      '#FF5722'};">
         </div>
     </div>
 </td>
