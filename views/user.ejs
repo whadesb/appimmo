@@ -968,6 +968,15 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 <script>
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0'); // Jour à 2 chiffres
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mois à 2 chiffres
+    const year = date.getFullYear(); // Année complète
+
+    return `${day}-${month}-${year}`;
+}
+
 async function loadOrders() {
   try {
     const response = await fetch('/user/orders');
@@ -1014,7 +1023,7 @@ row.innerHTML = `
     </div>
 </td>
 
-    <td>${order.expiryDateFormatted}</td> <!-- ✅ Expiration Date est bien affichée ici -->
+   <td>${formatDate(order.expiryDateFormatted)}</td>
     <td>
       <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyId.url}')">Copier</button>
       <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
