@@ -977,26 +977,24 @@ async function loadOrders() {
 
         orders.forEach(order => {
           const orderDate = new Date(order.createdAt);
-          const today = new Date();
-          const diffTime = Math.abs(today - orderDate);
-          const daysPassed = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-          const daysRemaining = Math.max(90 - daysPassed, 0);
-          const progress = Math.min((daysPassed / 90) * 100, 100);
+          const daysRemaining = order.daysRemaining; // ✅ Utiliser la valeur du backend
+          const progress = Math.min(((90 - daysRemaining) / 90) * 100, 100); // ✅ Correction du calcul de progression
 
           // Définition de la couleur en fonction des jours restants
           let progressBarColor;
           if (daysRemaining > 30) {
-            progressBarColor = "#8BC34A"; // Vert clair
+            progressBarColor = "#8BC34A"; // ✅ Vert clair
           } else if (daysRemaining > 15) {
-            progressBarColor = "#FFC107"; // Orange clair
+            progressBarColor = "#FFC107"; // ✅ Orange clair
           } else {
-            progressBarColor = "#FF5722"; // Rouge clair
+            progressBarColor = "#FF5722"; // ✅ Rouge clair
           }
 
           const row = document.createElement('tr');
           row.innerHTML = `
             <td>${order.orderId}</td>
             <td>${orderDate.toLocaleDateString('fr-FR')}</td>
+            <td>${order.expiryDateFormatted}</td> <!-- ✅ Affichage correct de la date -->
             <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
             <td>
               <div style="position: relative; width: 150px;">
@@ -1023,6 +1021,7 @@ async function loadOrders() {
     document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Une erreur est survenue.</td></tr>';
   }
 }
+
 
 // Charger les commandes quand on affiche la section "orders"
 function showSection(sectionId) {
