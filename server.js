@@ -164,16 +164,30 @@ app.get('/', (req, res) => {
     }
 });
 app.get('/api/stats/:id', async (req, res) => {
-  const pageId = req.params.id;
-  const pagePath = `/landing-pages/${pageId}.html`;
+    const pagePath = `/landing-pages/${req.params.id}.html`;
 
-  try {
-    const views = await getPageViews(pagePath);
-    res.json({ page: pagePath, views });
-  } catch (error) {
-    res.status(500).json({ error: 'Erreur API Analytics' });
-  }
+    try {
+        const [response] = await analyticsDataClient.runReport({
+            property: `properties/TON_ID_GA4`,
+            dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+            dimensions: [{ name: 'pagePath' }],
+            metrics: [{ name: 'screenPageViews' }],
+            dimensionFilter: {
+                filter: {
+                    fieldName: 'pagePath',
+                    stringFilter: { value: pagePath }
+                }
+            }
+        });
+
+        const views = response.rows?.[0]?.metricValues?.[0]?.value || 0;
+        res.json({ page: pagePath, views });
+    } catch (error) {
+        console.error('Erreur API Analytics:', error);
+        res.status(500).json({ error: 'Erreur API Analytics' });
+    }
 });
+
 
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
