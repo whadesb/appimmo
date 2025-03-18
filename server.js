@@ -164,29 +164,29 @@ app.get('/', (req, res) => {
     }
 });
 app.get('/api/stats/:id', async (req, res) => {
-    const pagePath = `/landing-pages/${req.params.id}.html`;
-
     try {
-        const [response] = await analyticsDataClient.runReport({
-            property: `properties/TON_ID_GA4`,
-            dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-            dimensions: [{ name: 'pagePath' }],
-            metrics: [{ name: 'screenPageViews' }],
-            dimensionFilter: {
-                filter: {
-                    fieldName: 'pagePath',
-                    stringFilter: { value: pagePath }
-                }
-            }
-        });
+        const pageId = req.params.id;
+        console.log(`🔍 Recherche des stats pour la page ID : ${pageId}`);
 
-        const views = response.rows?.[0]?.metricValues?.[0]?.value || 0;
-        res.json({ page: pagePath, views });
+        // Vérifier si la page existe
+        const page = await Page.findById(pageId);
+        if (!page) {
+            console.log(`❌ Page non trouvée pour ID : ${pageId}`);
+            return res.status(404).json({ error: 'Page non trouvée' });
+        }
+
+        console.log(`✅ Page trouvée : ${page.url}, Vues : ${page.views}`);
+
+        res.json({
+            page: page.url,
+            views: page.views ?? 0
+        });
     } catch (error) {
-        console.error('Erreur API Analytics:', error);
-        res.status(500).json({ error: 'Erreur API Analytics' });
+        console.error(`❌ Erreur API /api/stats/${req.params.id} :`, error);
+        res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
+
 
 
 
