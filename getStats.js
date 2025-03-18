@@ -2,11 +2,11 @@ const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const path = require('path');
 
 // 🔹 Remplace par ton ID Google Analytics
-const GA4_PROPERTY_ID = '123456789';
+const GA4_PROPERTY_ID = '448283789';
 
 // 🔹 Initialise le client API
 const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: path.join(__dirname, 'google-service-account.json') // Clé API
+  keyFilename: path.join(__dirname, 'service-account.json') // Clé API
 });
 
 // 🔹 Fonction pour récupérer les stats d'une page spécifique
