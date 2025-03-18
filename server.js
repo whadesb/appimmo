@@ -163,6 +163,18 @@ app.get('/', (req, res) => {
         res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
     }
 });
+app.get('/api/stats/:id', async (req, res) => {
+  const pageId = req.params.id;
+  const pagePath = `/landing-pages/${pageId}.html`;
+
+  try {
+    const views = await getPageViews(pagePath);
+    res.json({ page: pagePath, views });
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur API Analytics' });
+  }
+});
+
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;  // Récupérer la langue depuis l'URL
