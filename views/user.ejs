@@ -1021,59 +1021,67 @@ function formatDate(dateString) {
 }
 
 async function loadOrders() {
-  try {
-    const response = await fetch('/user/orders');
-    if (response.ok) {
-      const orders = await response.json();
-      const ordersList = document.getElementById('orders-list');
-      ordersList.innerHTML = '';
+    try {
+        const response = await fetch('/user/orders');
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement des commandes.');
+        }
 
-      const noOrdersMessage = document.getElementById('no-orders-message');
-      if (orders.length === 0) {
-        noOrdersMessage.style.display = 'block';
-      } else {
-        noOrdersMessage.style.display = 'none';
+        const orders = await response.json();
+        const ordersList = document.getElementById('orders-list');
+        ordersList.innerHTML = '';
 
-        orders.forEach(order => {
-          const orderDate = new Date(order.createdAt);
-          const daysRemaining = order.daysRemaining; 
-          const progress = Math.min(((90 - daysRemaining) / 90) * 100, 100);
+        const noOrdersMessage = document.getElementById('no-orders-message');
+        if (orders.length === 0) {
+            noOrdersMessage.style.display = 'block';
+        } else {
+            noOrdersMessage.style.display = 'none';
 
-          // Déterminer la classe de couleur en fonction des jours restants
-          let progressBarClass = 'green'; 
-          if (daysRemaining <= 30) progressBarClass = 'orange';
-          if (daysRemaining <= 15) progressBarClass = 'red';
+            orders.forEach(order => {
+                const orderDate = new Date(order.createdAt); // Date de création de la commande
+                const expiryDate = new Date(order.expiryDateFormatted); // Date d'expiration
+                const today = new Date(); // Date actuelle
+                const timeDiff = expiryDate - today;
+                const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convertir en jours
 
-          const row = document.createElement('tr');
-          row.innerHTML = `
-            <td>${order.orderId}</td>
-            <td>${orderDate.toLocaleDateString('fr-FR')}</td>
-            <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-            <td>
-    ${daysRemaining} jours restants
-    <div class="progress" style="height: 10px; margin-top: 5px;">
-        <div class="progress-bar" role="progressbar" 
-            style="width: ${Math.min(((90 - daysRemaining) / 90) * 100, 100)}%; 
-                   background-color: ${daysRemaining > 60 ? '#8BC34A' : daysRemaining > 45 ? '#FFC107' : '#FF5722'};">
-        </div>
-    </div>
-</td>
-            <td>${formatDate(order.expiryDateFormatted)}</td>
-            <td>
-              <button class="btn btn-outline-dark btn-sm" style="border-color: #000000; color: #000000; background-color: transparent;" onclick="copyURL('/landing-pages/67d34cbd22d48feecc15c35f.html')">Copier</button>
-              <button class="btn btn-dark btn-sm" style="background-color: #000000; color: #fff; border: none;" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
-            </td>
-          `;
-          ordersList.appendChild(row);
-        });
-      }
-    } else {
-      document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
+                // Éviter un affichage de jours restants négatif
+                const adjustedDaysRemaining = daysRemaining >= 0 ? daysRemaining : 0;
+                const progress = Math.min(((90 - adjustedDaysRemaining) / 90) * 100, 100);
+
+                // Déterminer la couleur de la barre de progression
+                let progressBarColor = '#8BC34A'; // 🟢 Vert (par défaut)
+                if (adjustedDaysRemaining <= 30) progressBarColor = '#FFC107'; // 🟠 Orange
+                if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722'; // 🔴 Rouge
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.orderId}</td>
+                    <td>${orderDate.toLocaleDateString('fr-FR')}</td>
+                    <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
+                    <td>
+                        ${adjustedDaysRemaining} jours restants
+                        <div class="progress" style="height: 10px; margin-top: 5px;">
+                            <div class="progress-bar" role="progressbar" 
+                                style="width: ${progress}%; background-color: ${progressBarColor};">
+                            </div>
+                        </div>
+                    </td>
+                    <td>${expiryDate.toLocaleDateString('fr-FR')}</td>
+                    <td>
+                        <button class="btn btn-outline-dark btn-sm" onclick="copyURL('/landing-pages/67d34cbd22d48feecc15c35f.html')">Copier</button>
+                        <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
+                    </td>
+                `;
+                ordersList.appendChild(row);
+            });
+        }
+    } catch (error) {
+        document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
     }
-  } catch (error) {
-    document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Une erreur est survenue.</td></tr>';
-  }
 }
+
+// Charger la liste des commandes au chargement de la page
+document.addEventListener('DOMContentLoaded', loadOrders);
 
 
 // Charger les commandes quand on affiche la section "orders"
