@@ -443,6 +443,19 @@ app.post('/reset-password/:token', async (req, res) => {
   }
 });
 
+app.get('/api/stats/:id', async (req, res) => {
+  const pageId = req.params.id;
+  const pagePath = `/landing-pages/${pageId}.html`;
+
+  try {
+    const views = await getPageViews(pagePath);
+    res.json({ page: pagePath, views });
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur API Analytics' });
+  }
+});
+
+
 app.post('/:locale/login', (req, res, next) => {
     const locale = req.params.locale || 'fr';  // Récupérer la langue dans l'URL ou 'fr' par défaut
 
