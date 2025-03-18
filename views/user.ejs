@@ -1202,19 +1202,23 @@ async function renewOrder(orderId) {
 <script>
 async function loadStats() {
     try {
-        const response = await fetch('/user/landing-pages'); // Récupère les landing pages créées
+        const response = await fetch('/user/landing-pages'); // Récupère les pages générées
         const pages = await response.json();
         const statsList = document.getElementById('stats-list');
         statsList.innerHTML = '';
 
         for (const page of pages) {
-            const res = await fetch(`/stats${page.url}`);
+            // Extraire l'ID depuis l'URL de la landing page
+            const pageId = page.url.split('/').pop().replace('.html', ''); 
+
+            // Récupérer les statistiques avec l'ID correct
+            const res = await fetch(`/api/stats/${pageId}`);
             const data = await res.json();
 
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><a href="${page.url}" target="_blank">${page.url}</a></td>
-                <td>${data.views}</td>
+                <td>${data.views || 'Erreur'}</td>
             `;
             statsList.appendChild(row);
         }
@@ -1223,11 +1227,13 @@ async function loadStats() {
     }
 }
 
+// Charger les statistiques lors du chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('donnees')) {
         loadStats();
     }
 });
+
 </script>
 <script>
 async function loadStats() {
