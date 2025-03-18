@@ -31,6 +31,7 @@ const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 const crypto = require('crypto');
+const { getPageViews } = require('./analytics');
 const nodemailer = require('nodemailer');
 const invalidLocales = [
     'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
@@ -284,7 +285,11 @@ app.get('/:locale/login', (req, res) => {
     });
 });
 
-
+app.get('/stats/:urlPath', async (req, res) => {
+    const urlPath = '/' + req.params.urlPath; // Exemple : "/landing-pages/page123.html"
+    const views = await getPageViews(urlPath);
+    res.json({ views });
+});
 
 app.get('/:lang/forgot-password', (req, res) => {
   const locale = req.params.lang;
