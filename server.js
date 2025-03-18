@@ -32,6 +32,7 @@ const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 const crypto = require('crypto');
 const { getPageViews } = require('./analytics');
+const Page = require('./models/Page');
 const nodemailer = require('nodemailer');
 const invalidLocales = [
     'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
@@ -168,7 +169,13 @@ app.get('/api/stats/:id', async (req, res) => {
         const pageId = req.params.id;
         console.log(`🔍 Recherche des stats pour la page ID : ${pageId}`);
 
-        // Vérifier si la page existe
+        // Vérifier si l'ID est au bon format MongoDB
+        if (!mongoose.Types.ObjectId.isValid(pageId)) {
+            console.log(`❌ ID invalide : ${pageId}`);
+            return res.status(400).json({ error: 'ID invalide' });
+        }
+
+        // Rechercher la page en base de données
         const page = await Page.findById(pageId);
         if (!page) {
             console.log(`❌ Page non trouvée pour ID : ${pageId}`);
@@ -177,6 +184,7 @@ app.get('/api/stats/:id', async (req, res) => {
 
         console.log(`✅ Page trouvée : ${page.url}, Vues : ${page.views}`);
 
+        // Renvoyer les statistiques
         res.json({
             page: page.url,
             views: page.views ?? 0
@@ -186,7 +194,6 @@ app.get('/api/stats/:id', async (req, res) => {
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
-
 
 
 
