@@ -1,16 +1,21 @@
 const { google } = require('googleapis');
 const path = require('path');
-const analyticsData = google.analyticsdata('v1');
 require('dotenv').config();
 
 // Authentification avec Service Account
 const auth = new google.auth.GoogleAuth({
-    keyFile: path.join(__dirname, 'service-account.json'), // Fichier JSON du compte de service
+    keyFile: path.join(__dirname, 'service-account.json'), // Assure-toi que ce fichier est bien présent
     scopes: ['https://www.googleapis.com/auth/analytics.readonly'],
 });
 
-// ID de ta propriété Google Analytics (GA4)
-const GA_PROPERTY_ID = 'XXXXXXXX'; // Remplace par ton propre ID de propriété GA4
+// Instancier analyticsData avec authentification
+const analyticsData = google.analyticsdata({
+    version: 'v1',
+    auth
+});
+
+// ID de la propriété GA4
+const GA_PROPERTY_ID = 'XXXXXXXXX'; // Remplace par ton vrai ID de propriété GA4
 
 // Fonction pour récupérer les statistiques d'une URL spécifique
 async function getPageViews(urlPath) {
