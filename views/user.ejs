@@ -1230,20 +1230,32 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <script>
-async function loadStats(pageId) {
-    const response = await fetch(`/api/stats/${pageId}`);
-    const data = await response.json();
-    
-    if (data.views !== undefined) {
-        document.getElementById('stats').innerText = `Visites : ${data.views}`;
-    } else {
-        console.error('Erreur lors de la récupération des stats');
+async function loadStats() {
+    try {
+        const response = await fetch('/user/landing-pages'); // Récupère les pages générées
+        const pages = await response.json();
+        const statsList = document.getElementById('stats-list');
+        statsList.innerHTML = '';
+
+        for (const page of pages) {
+            // Extraire l'ID depuis l'URL de la landing page
+            const pageId = page.url.split('/').pop().replace('.html', ''); 
+            
+            const res = await fetch(`/api/stats/${pageId}`);
+            const data = await res.json();
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+                <td>${data.views || 'Erreur'}</td>
+            `;
+            statsList.appendChild(row);
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des statistiques:', error);
     }
 }
 
-// Appeler la fonction avec l'ID de la page
-const pageId = '67d2085553a03b9b2ce4a939';  // ID de la page actuelle
-loadStats(pageId);
 </string>
 </body>
 </html>
