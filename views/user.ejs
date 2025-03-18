@@ -1229,5 +1229,21 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 </script>
+<script>
+async function loadStats(pageId) {
+    const response = await fetch(`/api/stats/${pageId}`);
+    const data = await response.json();
+    
+    if (data.views !== undefined) {
+        document.getElementById('stats').innerText = `Visites : ${data.views}`;
+    } else {
+        console.error('Erreur lors de la récupération des stats');
+    }
+}
+
+// Appeler la fonction avec l'ID de la page
+const pageId = '67d2085553a03b9b2ce4a939';  // ID de la page actuelle
+loadStats(pageId);
+</string>
 </body>
 </html>
