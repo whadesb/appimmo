@@ -1382,7 +1382,7 @@ async function getPageStats(pagePath) {
         }
     });
 
-/ Convertir les résultats en un format plus lisible
+// Convertir les résultats en un format plus lisible
     const stats = response.rows.map(row => ({
         pagePath: row.dimensionValues[0].value,
         sessionSource: row.dimensionValues[1]?.value || "N/A",
