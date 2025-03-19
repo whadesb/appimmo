@@ -851,7 +851,7 @@ progress {
                 noPropertiesMessage.style.display = 'none';
                 properties.forEach(property => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `
+                    row.innerHTML = 
                         <td>${property.rooms}</td>
                         <td>${property.surface}</td>
                         <td>${property.price.toLocaleString('fr-FR')} €</td>
@@ -865,7 +865,7 @@ progress {
                                 <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
                             </div>
                         </td>
-                    `;
+                    ;
                     propertiesList.appendChild(row);
                 });
             }
@@ -880,8 +880,8 @@ progress {
 }
 
 
-function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
+    function copyURL(url) {
+        const fullUrl = https://uap.immo${url};
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 showCopyMessage();
@@ -1070,7 +1070,7 @@ async function loadOrders() {
                 if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722'; // 🔴 Rouge
 
                 const row = document.createElement('tr');
-                row.innerHTML = `
+                row.innerHTML = 
                     <td>${order.orderId}</td>
                     <td>${orderDate.toLocaleDateString('fr-FR')}</td>
                     <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
@@ -1087,7 +1087,7 @@ async function loadOrders() {
                         <button class="btn btn-outline-dark btn-sm" onclick="copyURL('/landing-pages/67d34cbd22d48feecc15c35f.html')">Copier</button>
                         <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
                     </td>
-                `;
+                ;
                 ordersList.appendChild(row);
             });
         }
@@ -1098,7 +1098,6 @@ async function loadOrders() {
 
 // Charger la liste des commandes au chargement de la page
 document.addEventListener('DOMContentLoaded', loadOrders);
-
 
 
 // Charger les commandes quand on affiche la section "orders"
@@ -1114,7 +1113,7 @@ function showSection(sectionId) {
 }
 // Fonction pour copier l'URL de la propriété
 function copyURL(url) {
-  const fullUrl = `https://uap.immo${url}`;
+  const fullUrl = https://uap.immo${url};
   navigator.clipboard.writeText(fullUrl).then(() => {
     alert("URL copiée !");
   }).catch(err => console.error('Impossible de copier l\'URL : ', err));
@@ -1137,7 +1136,7 @@ function copyURL(url) {
                 noPropertiesMessage.style.display = 'none';
                 landingPages.forEach(page => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `
+                    row.innerHTML = 
                         <td>${page.rooms}</td>
                         <td>${page.surface} m²</td>
                         <td>${page.price.toLocaleString('fr-FR')} €</td>
@@ -1148,7 +1147,7 @@ function copyURL(url) {
                             <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
                             <button class="btn btn-primary btn-sm" onclick="redirectToPayment('${page._id}')">Diffuser</button>
                         </td>
-                    `;
+                    ;
                     landingPagesList.appendChild(row);
                 });
             }
@@ -1159,27 +1158,17 @@ function copyURL(url) {
     }
 
     function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
+        const fullUrl = https://uap.immo${url};
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
-                showCopyMessage();
+                alert("URL copiée !");
             })
-            .catch(err => {
-                console.error('Impossible de copier l\'URL : ', err);
-            });
-    }
-
-    function showCopyMessage() {
-        const copyMessage = document.getElementById('copyMessage');
-        copyMessage.style.display = 'block';
-        setTimeout(() => {
-            copyMessage.style.display = 'none';
-        }, 2000);
+            .catch(err => console.error('Impossible de copier l\'URL : ', err));
     }
 
     function redirectToPayment(propertyId) {
         const locale = document.documentElement.lang || 'fr';
-        window.location.href = `/${locale}/payment?propertyId=${encodeURIComponent(propertyId)}`;
+        window.location.href = /${locale}/payment?propertyId=${encodeURIComponent(propertyId)};
     }
 
     document.addEventListener("DOMContentLoaded", function () {
