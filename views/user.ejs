@@ -1168,7 +1168,7 @@ function copyURL(url) {
 
     function redirectToPayment(propertyId) {
         const locale = document.documentElement.lang || 'fr';
-        window.location.href = /${locale}/payment?propertyId=${encodeURIComponent(propertyId)};
+        window.location.href = `/${locale}/payment?propertyId=${encodeURIComponent(propertyId)}`;
     }
 
     document.addEventListener("DOMContentLoaded", function () {
