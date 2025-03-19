@@ -1207,77 +1207,13 @@ async function loadStats() {
         statsList.innerHTML = '';
 
         for (const page of pages) {
-            // Extraire l'ID depuis l'URL de la landing page
-            const pageId = page.url.split('/').pop().replace('.html', ''); 
-
-            // Récupérer les statistiques avec l'ID correct
-            const res = await fetch(`/api/stats/${pageId}`);
-            const data = await res.json();
-
-            const row = document.createElement('tr');
-            row.innerHTML = 
-                <td><a href="${page.url}" target="_blank">${page.url}</a></td>
-                <td>${data.views || 'Erreur'}</td>
-            ;
-            statsList.appendChild(row);
-        }
-    } catch (error) {
-        console.error('Erreur lors du chargement des statistiques:', error);
-    }
-}
-
-// Charger les statistiques lors du chargement de la page
-document.addEventListener('DOMContentLoaded', () => {
-    if (document.getElementById('donnees')) {
-        loadStats();
-    }
-});
-
-</script>
-<script>
-async function loadStats() {
-    try {
-        const response = await fetch('/user/landing-pages'); // Récupère les pages générées
-        const pages = await response.json();
-        const statsList = document.getElementById('stats-list');
-        statsList.innerHTML = '';
-
-        for (const page of pages) {
-            // Extraire l'ID depuis l'URL de la landing page
-            const pageId = page.url.split('/').pop().replace('.html', ''); 
-            
-            const res = await fetch(/api/stats/${pageId});
-            const data = await res.json();
-
-            const row = document.createElement('tr');
-            row.innerHTML = 
-                <td><a href="${page.url}" target="_blank">${page.url}</a></td>
-                <td>${data.views || 'Erreur'}</td>
-            ;
-            statsList.appendChild(row);
-        }
-    } catch (error) {
-        console.error('Erreur lors du chargement des statistiques:', error);
-    }
-}
-
-</script>
-<script>
-async function loadStats() {
-    try {
-        const response = await fetch('/user/landing-pages'); // Récupère les pages générées
-        const pages = await response.json();
-        const statsList = document.getElementById('stats-list');
-        statsList.innerHTML = '';
-
-        for (const page of pages) {
             const pageId = page.url.split('/').pop().replace('.html', '');
-            const res = await fetch(/api/stats/${pageId});
+            const res = await fetch(`/api/stats/${pageId}`);
             const data = await res.json();
 
             data.forEach(stat => {
                 const row = document.createElement('tr');
-                row.innerHTML = 
+                row.innerHTML = `
                     <td><a href="${page.url}" target="_blank">${page.url}</a></td>
                     <td>${stat.views || 0}</td>
                     <td>${stat.users || 0}</td>
@@ -1286,7 +1222,7 @@ async function loadStats() {
                     <td>${stat.country || "N/A"}</td>
                     <td>${stat.city || "N/A"}</td>
                     <td>${stat.deviceCategory || "N/A"}</td>
-                ;
+                `;
                 statsList.appendChild(row);
             });
         }
@@ -1299,6 +1235,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadStats();
 });
 </script>
+
 
 </body>
 </html>
