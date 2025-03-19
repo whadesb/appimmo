@@ -1353,7 +1353,7 @@ app.post('/send-contact', async (req, res) => {
 const analyticsDataClient = new BetaAnalyticsDataClient({
     credentials: {
         client_email: process.env.GA_CLIENT_EMAIL,
-        private_key: process.env.GA_PRIVATE_KEY.replace(/\\n/g, '\n'),
+        const privateKey = process.env.GA_PRIVATE_KEY.replace(/\\n/g, '\n'),
     }
 });
 
