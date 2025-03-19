@@ -34,6 +34,7 @@ const crypto = require('crypto');
 const { getPageViews } = require('./analytics');
 const Page = require('./models/Page');
 const nodemailer = require('nodemailer');
+const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const invalidLocales = [
     'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
     'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py'
@@ -1370,6 +1371,38 @@ app.post('/send-contact', async (req, res) => {
     res.status(500).send('Erreur lors de l\'envoi de l\'email.');
   }
 });
+
+const analyticsDataClient = new BetaAnalyticsDataClient({
+    credentials: {
+        client_email: process.env.GA_CLIENT_EMAIL,
+        private_key: process.env.GA_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    }
+});
+
+async function getPageStats(pagePath) {
+    try {
+        const [response] = await analyticsDataClient.runReport({
+            property: `properties/${process.env.GA_PROPERTY_ID}`,
+            dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+            dimensions: [{ name: 'pagePath' }],
+            metrics: [
+                { name: 'screenPageViews' },
+                { name: 'activeUsers' }
+            ],
+            dimensionFilter: {
+                filter: {
+                    fieldName: "pagePath",
+                    stringFilter: { value: pagePath }
+                }
+            }
+        });
+
+        return response.rows[0] || { metricValues: [{ value: 0 }, { value: 0 }] };
+    } catch (error) {
+        console.error('Erreur API Analytics:', error);
+        return { metricValues: [{ value: 0 }, { value: 0 }] };
+    }
+}
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
