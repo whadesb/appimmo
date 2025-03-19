@@ -174,7 +174,13 @@ app.get('/api/stats/:id', async (req, res) => {
             return res.status(400).json({ error: 'ID invalide' });
         }
 
-        const property = await Property.findById(propertyId);
+        // 🔥 Incrémenter les vues à chaque appel
+        const property = await Property.findByIdAndUpdate(
+            propertyId,
+            { $inc: { views: 1 } }, // 🔹 Ajoute +1 aux vues
+            { new: true } // Retourne le document mis à jour
+        );
+
         if (!property) {
             console.log(`❌ Propriété non trouvée pour ID : ${propertyId}`);
             return res.status(404).json({ error: 'Propriété non trouvée' });
@@ -184,7 +190,7 @@ app.get('/api/stats/:id', async (req, res) => {
 
         res.json({
             url: property.url,
-            views: property.views ?? 0 // Vérifie si la clé existe
+            views: property.views ?? 0 // Retourne toujours un nombre valide
         });
     } catch (error) {
         console.error(`❌ Erreur API /api/stats/${req.params.id} :`, error);
