@@ -169,23 +169,22 @@ app.get('/api/stats/:id', async (req, res) => {
         const propertyId = req.params.id;
         console.log(`🔍 Recherche des stats pour la propriété ID : ${propertyId}`);
 
-        // Vérifier si l'ID est bien un ObjectId valide
         if (!mongoose.Types.ObjectId.isValid(propertyId)) {
             console.log(`⚠️ ID invalide : ${propertyId}`);
             return res.status(400).json({ error: 'ID invalide' });
         }
 
-        // Vérifier si l'ID existe dans Property
         const property = await Property.findById(propertyId);
-
         if (!property) {
             console.log(`❌ Propriété non trouvée pour ID : ${propertyId}`);
             return res.status(404).json({ error: 'Propriété non trouvée' });
         }
 
+        console.log(`✅ Propriété trouvée :`, property);
+
         res.json({
             url: property.url,
-            views: property.views ?? 0
+            views: property.views ?? 0 // Vérifie si la clé existe
         });
     } catch (error) {
         console.error(`❌ Erreur API /api/stats/${req.params.id} :`, error);
