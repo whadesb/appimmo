@@ -169,22 +169,19 @@ app.get('/api/stats/:id', async (req, res) => {
         const pageId = req.params.id;
         console.log(`🔍 Recherche des stats pour la page ID : ${pageId}`);
 
-        // Vérifier si l'ID est au bon format MongoDB
+        // Vérifier si l'ID est bien un ObjectId valide
         if (!mongoose.Types.ObjectId.isValid(pageId)) {
-            console.log(`❌ ID invalide : ${pageId}`);
+            console.log(`⚠️ ID invalide : ${pageId}`);
             return res.status(400).json({ error: 'ID invalide' });
         }
 
-        // Rechercher la page en base de données
+        // Vérifier si l'ID existe en base de données
         const page = await Page.findById(pageId);
         if (!page) {
             console.log(`❌ Page non trouvée pour ID : ${pageId}`);
             return res.status(404).json({ error: 'Page non trouvée' });
         }
 
-        console.log(`✅ Page trouvée : ${page.url}, Vues : ${page.views}`);
-
-        // Renvoyer les statistiques
         res.json({
             page: page.url,
             views: page.views ?? 0
@@ -194,7 +191,6 @@ app.get('/api/stats/:id', async (req, res) => {
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
-
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;  // Récupérer la langue depuis l'URL
