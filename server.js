@@ -942,7 +942,8 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
 
 
 async function generateLandingPage(property) {
-    const GTM_ID = 'GTM-TF7HSC3N'; 
+     const GTM_ID = 'GTM-TF7HSC3N'; 
+    const GA_MEASUREMENT_ID = 'G-0LN60RQ12K'; 
 
     const template = `
     <!DOCTYPE html>
