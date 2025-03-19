@@ -165,18 +165,19 @@ app.get('/', (req, res) => {
         res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
     }
 });
-app.get('/api/stats/:pageId', async (req, res) => {
-    const pageId = req.params.pageId;
+// Route API pour récupérer les statistiques d'une page spécifique
+app.get('/api/stats/:id', async (req, res) => {
+    const pageId = req.params.id;
     const pagePath = `/landing-pages/${pageId}.html`;
 
-    const stats = await getPageStats(pagePath);
-
-    res.json({
-        views: stats.metricValues[0]?.value || 0,
-        users: stats.metricValues[1]?.value || 0
-    });
+    try {
+        const stats = await getPageStats(pagePath);
+        res.json(stats);
+    } catch (error) {
+        console.error('Erreur API Analytics:', error);
+        res.status(500).json({ error: 'Erreur API Analytics' });
+    }
 });
-
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;  // Récupérer la langue depuis l'URL
@@ -1358,29 +1359,44 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
 });
 
 async function getPageStats(pagePath) {
-    try {
-        const [response] = await analyticsDataClient.runReport({
-            property: `properties/${process.env.GA_PROPERTY_ID}`,
-            dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-            dimensions: [{ name: 'pagePath' }],
-            metrics: [
-                { name: 'screenPageViews' },
-                { name: 'activeUsers' }
-            ],
-            dimensionFilter: {
-                filter: {
-                    fieldName: "pagePath",
-                    stringFilter: { value: pagePath }
-                }
+    const [response] = await analyticsDataClient.runReport({
+        property: `properties/${process.env.GA_PROPERTY_ID}`,
+        dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+        dimensions: [
+            { name: 'pagePath' },
+            { name: 'sessionSource' }, // Source de trafic
+            { name: 'sessionMedium' }, // Medium de trafic
+            { name: 'city' }, // Ville
+            { name: 'country' }, // Pays
+            { name: 'deviceCategory' } // Type d'appareil
+        ],
+        metrics: [
+            { name: 'screenPageViews' }, // Vues
+            { name: 'activeUsers' } // Utilisateurs uniques
+        ],
+        dimensionFilter: {
+            filter: {
+                fieldName: 'pagePath',
+                stringFilter: { matchType: 'EXACT', value: pagePath }
             }
-        });
+        }
+    });
 
-        return response.rows[0] || { metricValues: [{ value: 0 }, { value: 0 }] };
-    } catch (error) {
-        console.error('Erreur API Analytics:', error);
-        return { metricValues: [{ value: 0 }, { value: 0 }] };
-    }
+/ Convertir les résultats en un format plus lisible
+    const stats = response.rows.map(row => ({
+        pagePath: row.dimensionValues[0].value,
+        sessionSource: row.dimensionValues[1]?.value || "N/A",
+        sessionMedium: row.dimensionValues[2]?.value || "N/A",
+        city: row.dimensionValues[3]?.value || "N/A",
+        country: row.dimensionValues[4]?.value || "N/A",
+        deviceCategory: row.dimensionValues[5]?.value || "N/A",
+        views: row.metricValues[0].value,
+        users: row.metricValues[1].value
+    }));
+
+    return stats;
 }
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
