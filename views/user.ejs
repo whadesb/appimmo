@@ -695,16 +695,17 @@ progress {
                                 <h5 class="card-title"><%= i18n.stats %></h5>
                                 <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.</p>
                             <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>URL</th>
-                    <th>Vues</th>
-                </tr>
-            </thead>
-            <tbody id="stats-list">
-                <!-- Les stats seront chargées ici -->
-            </tbody>
-        </table>
+    <thead>
+        <tr>
+            <th>Page</th>
+            <th>Vues</th>
+            <th>Utilisateurs</th>
+        </tr>
+    </thead>
+    <tbody id="stats-list">
+        <!-- Les stats seront chargées ici -->
+    </tbody>
+</table>
 
 
 </div>
@@ -1253,6 +1254,36 @@ async function loadStats() {
     }
 }
 
-</string>
+</script>
+<script>
+    async function loadStats() {
+        try {
+            const response = await fetch('/user/landing-pages');
+            const pages = await response.json();
+            const statsList = document.getElementById('stats-list');
+            statsList.innerHTML = '';
+
+            for (const page of pages) {
+                const pageId = page.url.split('/').pop().replace('.html', ''); 
+                const res = await fetch(`/api/stats/${pageId}`);
+                const data = await res.json();
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+                    <td>${data.views || 0}</td>
+                    <td>${data.users || 0}</td>
+                `;
+                statsList.appendChild(row);
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des statistiques:', error);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadStats();
+    });
+</script>
 </body>
 </html>
