@@ -700,12 +700,18 @@ progress {
             <th>Page</th>
             <th>Vues</th>
             <th>Utilisateurs</th>
+            <th>Source de trafic</th>
+            <th>Medium</th>
+            <th>Pays</th>
+            <th>Ville</th>
+            <th>Type d'appareil</th>
         </tr>
     </thead>
     <tbody id="stats-list">
         <!-- Les stats seront chargées ici -->
     </tbody>
 </table>
+
 
 
 </div>
@@ -1256,34 +1262,42 @@ async function loadStats() {
 
 </script>
 <script>
-    async function loadStats() {
-        try {
-            const response = await fetch('/user/landing-pages');
-            const pages = await response.json();
-            const statsList = document.getElementById('stats-list');
-            statsList.innerHTML = '';
+async function loadStats() {
+    try {
+        const response = await fetch('/user/landing-pages'); // Récupère les pages générées
+        const pages = await response.json();
+        const statsList = document.getElementById('stats-list');
+        statsList.innerHTML = '';
 
-            for (const page of pages) {
-                const pageId = page.url.split('/').pop().replace('.html', ''); 
-                const res = await fetch(`/api/stats/${pageId}`);
-                const data = await res.json();
+        for (const page of pages) {
+            const pageId = page.url.split('/').pop().replace('.html', '');
+            const res = await fetch(`/api/stats/${pageId}`);
+            const data = await res.json();
 
+            data.forEach(stat => {
                 const row = document.createElement('tr');
                 row.innerHTML = `
                     <td><a href="${page.url}" target="_blank">${page.url}</a></td>
-                    <td>${data.views || 0}</td>
-                    <td>${data.users || 0}</td>
+                    <td>${stat.views || 0}</td>
+                    <td>${stat.users || 0}</td>
+                    <td>${stat.sessionSource || "N/A"}</td>
+                    <td>${stat.sessionMedium || "N/A"}</td>
+                    <td>${stat.country || "N/A"}</td>
+                    <td>${stat.city || "N/A"}</td>
+                    <td>${stat.deviceCategory || "N/A"}</td>
                 `;
                 statsList.appendChild(row);
-            }
-        } catch (error) {
-            console.error('Erreur lors du chargement des statistiques:', error);
+            });
         }
+    } catch (error) {
+        console.error('Erreur lors du chargement des statistiques:', error);
     }
+}
 
-    document.addEventListener('DOMContentLoaded', () => {
-        loadStats();
-    });
+document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+});
 </script>
+
 </body>
 </html>
