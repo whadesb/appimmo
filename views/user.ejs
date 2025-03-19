@@ -851,7 +851,7 @@ progress {
                 noPropertiesMessage.style.display = 'none';
                 properties.forEach(property => {
                     const row = document.createElement('tr');
-                    row.innerHTML = 
+                    row.innerHTML = `
                         <td>${property.rooms}</td>
                         <td>${property.surface}</td>
                         <td>${property.price.toLocaleString('fr-FR')} €</td>
@@ -865,7 +865,7 @@ progress {
                                 <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
                             </div>
                         </td>
-                    ;
+                    `;
                     propertiesList.appendChild(row);
                 });
             }
@@ -881,7 +881,7 @@ progress {
 
 
     function copyURL(url) {
-        const fullUrl = https://uap.immo${url};
+        const fullUrl = `https://uap.immo${url}`;
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 showCopyMessage();
@@ -907,14 +907,14 @@ function testURL(propertyId) {
 
     // Vérifier que currentLang est bien 'en' ou 'fr', sinon rediriger sans préfixe de langue
     if (currentLang === 'en' || currentLang === 'fr') {
-        window.location.href = /${currentLang}/payment?propertyId=${propertyId};
+        window.location.href = `/${currentLang}/payment?propertyId=${propertyId}`;
     } else {
-        window.location.href = /payment?propertyId=${propertyId};
+        window.location.href = `/payment?propertyId=${propertyId}`;
     }
 }
 
     function editProperty(propertyId) {
-        window.location.href = /property/edit/${propertyId};
+        window.location.href = `/property/edit/${propertyId}`;
     }
 document.getElementById('add-property-form').addEventListener('submit', async function(event) {
   event.preventDefault();
@@ -959,7 +959,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
   const charCount = document.getElementById('charCount');
 
   descriptionInput.addEventListener('input', function() {
-    charCount.textContent = ${descriptionInput.value.length}/820 caractères;
+    charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
   });
 </script>
 <script>
@@ -1033,7 +1033,7 @@ function formatDate(dateString) {
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Mois à 2 chiffres
     const year = date.getFullYear(); // Année complète
 
-    return ${day}-${month}-${year};
+    return `${day}-${month}-${year}`;
 }
 
 async function loadOrders() {
@@ -1070,7 +1070,7 @@ async function loadOrders() {
                 if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722'; // 🔴 Rouge
 
                 const row = document.createElement('tr');
-                row.innerHTML = 
+                row.innerHTML = `
                     <td>${order.orderId}</td>
                     <td>${orderDate.toLocaleDateString('fr-FR')}</td>
                     <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
@@ -1087,7 +1087,7 @@ async function loadOrders() {
                         <button class="btn btn-outline-dark btn-sm" onclick="copyURL('/landing-pages/67d34cbd22d48feecc15c35f.html')">Copier</button>
                         <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
                     </td>
-                ;
+                `;
                 ordersList.appendChild(row);
             });
         }
@@ -1113,7 +1113,7 @@ function showSection(sectionId) {
 }
 // Fonction pour copier l'URL de la propriété
 function copyURL(url) {
-  const fullUrl = https://uap.immo${url};
+  const fullUrl = `https://uap.immo${url}`;
   navigator.clipboard.writeText(fullUrl).then(() => {
     alert("URL copiée !");
   }).catch(err => console.error('Impossible de copier l\'URL : ', err));
@@ -1136,7 +1136,7 @@ function copyURL(url) {
                 noPropertiesMessage.style.display = 'none';
                 landingPages.forEach(page => {
                     const row = document.createElement('tr');
-                    row.innerHTML = 
+                    row.innerHTML = `
                         <td>${page.rooms}</td>
                         <td>${page.surface} m²</td>
                         <td>${page.price.toLocaleString('fr-FR')} €</td>
@@ -1147,7 +1147,7 @@ function copyURL(url) {
                             <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
                             <button class="btn btn-primary btn-sm" onclick="redirectToPayment('${page._id}')">Diffuser</button>
                         </td>
-                    ;
+                    `;
                     landingPagesList.appendChild(row);
                 });
             }
@@ -1158,7 +1158,7 @@ function copyURL(url) {
     }
 
     function copyURL(url) {
-        const fullUrl = https://uap.immo${url};
+        const fullUrl = `https://uap.immo${url}`;
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 alert("URL copiée !");
