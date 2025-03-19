@@ -1211,7 +1211,7 @@ async function loadStats() {
             const pageId = page.url.split('/').pop().replace('.html', ''); 
 
             // Récupérer les statistiques avec l'ID correct
-            const res = await fetch(/api/stats/${pageId});
+            const res = await fetch(`/api/stats/${pageId}`);
             const data = await res.json();
 
             const row = document.createElement('tr');
