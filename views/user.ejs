@@ -943,9 +943,9 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
         timeout = setTimeout(logout, inactivityTime);
     }
 
-    function logout() {
+  function logout() {
     const locale = document.documentElement.lang || 'fr'; // Récupère la langue de la page
-    window.location.href = /${locale}/login;
+    window.location.href = `/${locale}/login`;
 }
 
     window.onload = resetTimer;
