@@ -1,3 +1,4 @@
+user.ejs : 
 <!doctype html>
 <html lang="<%= locale %>">
 <head>
@@ -851,7 +852,7 @@ progress {
                 noPropertiesMessage.style.display = 'none';
                 properties.forEach(property => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `
+                    row.innerHTML = 
                         <td>${property.rooms}</td>
                         <td>${property.surface}</td>
                         <td>${property.price.toLocaleString('fr-FR')} €</td>
@@ -865,7 +866,7 @@ progress {
                                 <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
                             </div>
                         </td>
-                    `;
+                    ;
                     propertiesList.appendChild(row);
                 });
             }
@@ -881,7 +882,7 @@ progress {
 
 
     function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
+        const fullUrl = https://uap.immo${url};
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 showCopyMessage();
@@ -907,14 +908,14 @@ function testURL(propertyId) {
 
     // Vérifier que currentLang est bien 'en' ou 'fr', sinon rediriger sans préfixe de langue
     if (currentLang === 'en' || currentLang === 'fr') {
-        window.location.href = `/${currentLang}/payment?propertyId=${propertyId}`;
+        window.location.href = /${currentLang}/payment?propertyId=${propertyId};
     } else {
-        window.location.href = `/payment?propertyId=${propertyId}`;
+        window.location.href = /payment?propertyId=${propertyId};
     }
 }
 
     function editProperty(propertyId) {
-        window.location.href = `/property/edit/${propertyId}`;
+        window.location.href = /property/edit/${propertyId};
     }
 document.getElementById('add-property-form').addEventListener('submit', async function(event) {
   event.preventDefault();
@@ -945,7 +946,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
 
     function logout() {
     const locale = document.documentElement.lang || 'fr'; // Récupère la langue de la page
-    window.location.href = `/${locale}/login`;
+    window.location.href = /${locale}/login;
 }
 
     window.onload = resetTimer;
@@ -959,7 +960,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
   const charCount = document.getElementById('charCount');
 
   descriptionInput.addEventListener('input', function() {
-    charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
+    charCount.textContent = ${descriptionInput.value.length}/820 caractères;
   });
 </script>
 <script>
@@ -1033,7 +1034,7 @@ function formatDate(dateString) {
     const month = String(date.getMonth() + 1).padStart(2, '0'); // Mois à 2 chiffres
     const year = date.getFullYear(); // Année complète
 
-    return `${day}-${month}-${year}`;
+    return ${day}-${month}-${year};
 }
 
 async function loadOrders() {
@@ -1070,7 +1071,7 @@ async function loadOrders() {
                 if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722'; // 🔴 Rouge
 
                 const row = document.createElement('tr');
-                row.innerHTML = `
+                row.innerHTML = 
                     <td>${order.orderId}</td>
                     <td>${orderDate.toLocaleDateString('fr-FR')}</td>
                     <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
@@ -1087,7 +1088,7 @@ async function loadOrders() {
                         <button class="btn btn-outline-dark btn-sm" onclick="copyURL('/landing-pages/67d34cbd22d48feecc15c35f.html')">Copier</button>
                         <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
                     </td>
-                `;
+                ;
                 ordersList.appendChild(row);
             });
         }
@@ -1113,7 +1114,7 @@ function showSection(sectionId) {
 }
 // Fonction pour copier l'URL de la propriété
 function copyURL(url) {
-  const fullUrl = `https://uap.immo${url}`;
+  const fullUrl = https://uap.immo${url};
   navigator.clipboard.writeText(fullUrl).then(() => {
     alert("URL copiée !");
   }).catch(err => console.error('Impossible de copier l\'URL : ', err));
@@ -1136,7 +1137,7 @@ function copyURL(url) {
                 noPropertiesMessage.style.display = 'none';
                 landingPages.forEach(page => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `
+                    row.innerHTML = 
                         <td>${page.rooms}</td>
                         <td>${page.surface} m²</td>
                         <td>${page.price.toLocaleString('fr-FR')} €</td>
@@ -1147,7 +1148,7 @@ function copyURL(url) {
                             <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
                             <button class="btn btn-primary btn-sm" onclick="redirectToPayment('${page._id}')">Diffuser</button>
                         </td>
-                    `;
+                    ;
                     landingPagesList.appendChild(row);
                 });
             }
@@ -1158,7 +1159,7 @@ function copyURL(url) {
     }
 
     function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
+        const fullUrl = https://uap.immo${url};
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 alert("URL copiée !");
@@ -1168,7 +1169,7 @@ function copyURL(url) {
 
     function redirectToPayment(propertyId) {
         const locale = document.documentElement.lang || 'fr';
-        window.location.href = `/${locale}/payment?propertyId=${encodeURIComponent(propertyId)}`;
+        window.location.href = /${locale}/payment?propertyId=${encodeURIComponent(propertyId)};
     }
 
     document.addEventListener("DOMContentLoaded", function () {
@@ -1210,14 +1211,14 @@ async function loadStats() {
             const pageId = page.url.split('/').pop().replace('.html', ''); 
 
             // Récupérer les statistiques avec l'ID correct
-            const res = await fetch(`/api/stats/${pageId}`);
+            const res = await fetch(/api/stats/${pageId});
             const data = await res.json();
 
             const row = document.createElement('tr');
-            row.innerHTML = `
+            row.innerHTML = 
                 <td><a href="${page.url}" target="_blank">${page.url}</a></td>
                 <td>${data.views || 'Erreur'}</td>
-            `;
+            ;
             statsList.appendChild(row);
         }
     } catch (error) {
@@ -1245,14 +1246,14 @@ async function loadStats() {
             // Extraire l'ID depuis l'URL de la landing page
             const pageId = page.url.split('/').pop().replace('.html', ''); 
             
-            const res = await fetch(`/api/stats/${pageId}`);
+            const res = await fetch(/api/stats/${pageId});
             const data = await res.json();
 
             const row = document.createElement('tr');
-            row.innerHTML = `
+            row.innerHTML = 
                 <td><a href="${page.url}" target="_blank">${page.url}</a></td>
                 <td>${data.views || 'Erreur'}</td>
-            `;
+            ;
             statsList.appendChild(row);
         }
     } catch (error) {
@@ -1269,61 +1270,34 @@ async function loadStats() {
         const statsList = document.getElementById('stats-list');
         statsList.innerHTML = '';
 
-        let consolidatedStats = {};
-
         for (const page of pages) {
             const pageId = page.url.split('/').pop().replace('.html', '');
-            const res = await fetch(`/api/stats/${pageId}`);
+            const res = await fetch(/api/stats/${pageId});
             const data = await res.json();
 
             data.forEach(stat => {
-                const key = `${page.url}-${stat.deviceCategory}-${stat.city}`; // Clé unique par URL et appareil
-
-                if (!consolidatedStats[key]) {
-                    consolidatedStats[key] = {
-                        url: page.url,
-                        views: 0,
-                        users: 0,
-                        sessionSource: stat.sessionSource || "N/A",
-                        sessionMedium: stat.sessionMedium || "N/A",
-                        country: stat.country || "N/A",
-                        city: stat.city || "N/A",
-                        deviceCategory: stat.deviceCategory || "N/A"
-                    };
-                }
-
-                consolidatedStats[key].views += stat.views || 0;
-                consolidatedStats[key].users += stat.users || 0;
+                const row = document.createElement('tr');
+                row.innerHTML = 
+                    <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+                    <td>${stat.views || 0}</td>
+                    <td>${stat.users || 0}</td>
+                    <td>${stat.sessionSource || "N/A"}</td>
+                    <td>${stat.sessionMedium || "N/A"}</td>
+                    <td>${stat.country || "N/A"}</td>
+                    <td>${stat.city || "N/A"}</td>
+                    <td>${stat.deviceCategory || "N/A"}</td>
+                ;
+                statsList.appendChild(row);
             });
         }
-
-        // Afficher les statistiques consolidées
-        Object.values(consolidatedStats).forEach(stat => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><a href="${stat.url}" target="_blank">${stat.url}</a></td>
-                <td>${stat.views}</td>
-                <td>${stat.users}</td>
-                <td>${stat.sessionSource}</td>
-                <td>${stat.sessionMedium}</td>
-                <td>${stat.country}</td>
-                <td>${stat.city}</td>
-                <td>${stat.deviceCategory}</td>
-            `;
-            statsList.appendChild(row);
-        });
-
     } catch (error) {
         console.error('Erreur lors du chargement des statistiques:', error);
-        document.getElementById('stats-list').innerHTML = '<tr><td colspan="8" class="text-center">Erreur lors du chargement des statistiques.</td></tr>';
     }
 }
 
-// Charger les statistiques lors du chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
 });
-
 </script>
 
 </body>
