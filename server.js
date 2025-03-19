@@ -165,38 +165,16 @@ app.get('/', (req, res) => {
         res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
     }
 });
-app.get('/api/stats/:id', async (req, res) => {
-    try {
-        const propertyId = req.params.id;
-        console.log(`🔍 Recherche des stats pour la propriété ID : ${propertyId}`);
+app.get('/api/stats/:pageId', async (req, res) => {
+    const pageId = req.params.pageId;
+    const pagePath = `/landing-pages/${pageId}.html`;
 
-        if (!mongoose.Types.ObjectId.isValid(propertyId)) {
-            console.log(`⚠️ ID invalide : ${propertyId}`);
-            return res.status(400).json({ error: 'ID invalide' });
-        }
+    const stats = await getPageStats(pagePath);
 
-        // 🔥 Incrémenter les vues à chaque appel
-        const property = await Property.findByIdAndUpdate(
-            propertyId,
-            { $inc: { views: 1 } }, // 🔹 Ajoute +1 aux vues
-            { new: true } // Retourne le document mis à jour
-        );
-
-        if (!property) {
-            console.log(`❌ Propriété non trouvée pour ID : ${propertyId}`);
-            return res.status(404).json({ error: 'Propriété non trouvée' });
-        }
-
-        console.log(`✅ Propriété trouvée :`, property);
-
-        res.json({
-            url: property.url,
-            views: property.views ?? 0 // Retourne toujours un nombre valide
-        });
-    } catch (error) {
-        console.error(`❌ Erreur API /api/stats/${req.params.id} :`, error);
-        res.status(500).json({ error: 'Erreur interne du serveur' });
-    }
+    res.json({
+        views: stats.metricValues[0]?.value || 0,
+        users: stats.metricValues[1]?.value || 0
+    });
 });
 
 
