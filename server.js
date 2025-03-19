@@ -196,7 +196,6 @@ app.get('/api/stats/:id', async (req, res) => {
 });
 
 
-
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;  // Récupérer la langue depuis l'URL
     const { propertyId } = req.query;
