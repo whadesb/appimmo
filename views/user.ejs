@@ -86,7 +86,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .tooltip-container {
     position: relative;
     display: inline-block;
-    cursor: pointer;
+    cursor: help;
 }
 
 .tooltip-text {
@@ -99,7 +99,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border-radius: 5px;
     position: absolute;
     z-index: 10;
-    bottom: 130%; /* Positionne l'infobulle au-dessus du texte */
+    bottom: 120%;
     left: 50%;
     transform: translateX(-50%);
     opacity: 0;
@@ -109,11 +109,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     white-space: nowrap;
 }
 
-/* Flèche pour pointer l'infobulle */
+/* Flèche sous l'infobulle */
 .tooltip-text::after {
     content: "";
     position: absolute;
-    top: 100%; /* Position sous l'infobulle */
+    top: 100%;
     left: 50%;
     transform: translateX(-50%);
     border-width: 5px;
@@ -121,12 +121,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
 }
 
-/* Effet au survol */
+/* Affichage de l'infobulle au survol */
 .tooltip-container:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
     transform: translateX(-50%) translateY(-5px);
 }
+
 
         .footer {
             background-color: #343a40;
@@ -721,16 +722,20 @@ progress {
     <h5 class="card-title">Mes commandes</h5>
     <p class="card-text">Liste des commandes passées</p>
     <table class="table table-striped">
-     <thead>
+    <thead>
   <tr>
     <th>Order ID</th>
     <th>Date</th>
     <th>Status</th>
-    <th>Jours restants</th>
+    <th class="tooltip-container">
+      Jours restants
+      <span class="tooltip-text">Durée restante de validité du pack</span>
+    </th>
     <th>Expiration Date</th>
     <th>Actions</th>
   </tr>
 </thead>
+
 
 <tbody id="orders-list">
   <!-- Contenu dynamique chargé via JS -->
