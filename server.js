@@ -166,31 +166,33 @@ app.get('/', (req, res) => {
 });
 app.get('/api/stats/:id', async (req, res) => {
     try {
-        const pageId = req.params.id;
-        console.log(`🔍 Recherche des stats pour la page ID : ${pageId}`);
+        const propertyId = req.params.id;
+        console.log(`🔍 Recherche des stats pour la propriété ID : ${propertyId}`);
 
         // Vérifier si l'ID est bien un ObjectId valide
-        if (!mongoose.Types.ObjectId.isValid(pageId)) {
-            console.log(`⚠️ ID invalide : ${pageId}`);
+        if (!mongoose.Types.ObjectId.isValid(propertyId)) {
+            console.log(`⚠️ ID invalide : ${propertyId}`);
             return res.status(400).json({ error: 'ID invalide' });
         }
 
-        // Vérifier si l'ID existe en base de données
-        const page = await Page.findById(pageId);
-        if (!page) {
-            console.log(`❌ Page non trouvée pour ID : ${pageId}`);
-            return res.status(404).json({ error: 'Page non trouvée' });
+        // Vérifier si l'ID existe dans Property
+        const property = await Property.findById(propertyId);
+
+        if (!property) {
+            console.log(`❌ Propriété non trouvée pour ID : ${propertyId}`);
+            return res.status(404).json({ error: 'Propriété non trouvée' });
         }
 
         res.json({
-            page: page.url,
-            views: page.views ?? 0
+            url: property.url,
+            views: property.views ?? 0
         });
     } catch (error) {
         console.error(`❌ Erreur API /api/stats/${req.params.id} :`, error);
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
+
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;  // Récupérer la langue depuis l'URL
