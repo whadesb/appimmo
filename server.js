@@ -629,8 +629,22 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
     }
 });
 app.get('/:locale/register', (req, res) => {
-    const { locale } = req.params;
-    res.render('register', { locale });
+    const locale = req.params.locale || 'fr'; // Récupérer la langue dans l'URL ou 'fr' par défaut
+    const translationsPath = path.join(__dirname, 'locales', locale, 'register.json');
+    let i18n = {};
+
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8')); // Charger les traductions
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    res.render('register', {
+        locale: locale,
+        i18n: i18n,
+        messages: req.flash() // Pour afficher d'éventuelles erreurs d'inscription
+    });
 });
 
 const fs = require('fs');
