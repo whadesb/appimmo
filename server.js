@@ -648,12 +648,12 @@ app.get('/:locale/register', (req, res) => {
 });
 
 app.get('/:locale/register', (req, res) => {
-    const locale = req.params.locale || 'fr'; // Récupérer la langue ou mettre 'fr' par défaut
+    const locale = req.params.locale || 'fr'; // Récupérer la langue dans l'URL ou 'fr' par défaut
     const translationsPath = path.join(__dirname, 'locales', locale, 'register.json');
     let i18n = {};
 
     try {
-        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8')); // Charger les traductions
     } catch (error) {
         console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
         return res.status(500).send('Erreur lors du chargement des traductions.');
@@ -662,24 +662,9 @@ app.get('/:locale/register', (req, res) => {
     res.render('register', {
         locale: locale,
         i18n: i18n,
-        messages: req.flash() // Pour afficher des messages d'erreur si nécessaire
+        messages: req.flash() // Pour afficher d'éventuelles erreurs d'inscription
     });
 });
-
-  // Rendre la page avec les traductions spécifiques à la langue choisie
-  res.render('register', {
-    title: registerTranslations.title,
-    locale: locale,  // Langue active
-    i18n: registerTranslations,  // Traductions spécifiques
-    messages: req.flash()
-  });
-});
-
-// Redirection par défaut
-app.get('/register', (req, res) => {
-  res.redirect('/fr/register');
-});
-
 
 app.post('/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword } = req.body;
