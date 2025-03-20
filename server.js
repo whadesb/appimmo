@@ -1376,19 +1376,19 @@ async function getGAStats(propertyId) {
     }));
 }
 
-// Convertir les résultats en un format plus lisible
-    const stats = response.rows.map(row => ({
-        pagePath: row.dimensionValues[0].value,
-        sessionSource: row.dimensionValues[1]?.value || "N/A",
-        sessionMedium: row.dimensionValues[2]?.value || "N/A",
-        city: row.dimensionValues[3]?.value || "N/A",
-        country: row.dimensionValues[4]?.value || "N/A",
-        deviceCategory: row.dimensionValues[5]?.value || "N/A",
-        views: row.metricValues[0].value,
-        users: row.metricValues[1].value
-    }));
+   // Convertir les résultats en un format plus lisible
+const stats = response.rows.map(row => ({
+    pagePath: row.dimensionValues[0].value,
+    sessionSource: row.dimensionValues[1]?.value || "N/A",
+    sessionMedium: row.dimensionValues[2]?.value || "N/A",
+    city: row.dimensionValues[3]?.value || "N/A",
+    country: row.dimensionValues[4]?.value || "N/A",
+    deviceCategory: row.dimensionValues[5]?.value || "N/A",
+    views: row.metricValues[0].value,
+    users: row.metricValues[1].value
+}));
 
-    return stats;
+return stats;
 
 
 const port = process.env.PORT || 3000;
