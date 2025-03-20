@@ -24,9 +24,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
 #error-message {
-    margin-bottom: 15px;
+    font-size: 16px;
     font-weight: bold;
+    padding: 10px;
+    border-radius: 5px;
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
 }
+
 
         .form-container {
             max-width: 600px;
@@ -151,9 +157,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div class="container">
         <div class="row">
           <div class="col-12 col-lg-8 mx-auto">
-<div id="error-message" class="alert alert-danger text-center d-none" role="alert">
-    <i class="bi bi-exclamation-triangle-fill"></i> Identifiants incorrects. Veuillez réessayer.
-</div>
+<% if (messages.error) { %>
+    <div id="error-message" class="alert alert-danger text-center">
+        <i class="bi bi-exclamation-triangle-fill"></i> <%= messages.error %>
+    </div>
+<% } %>
+
 
             <div class="form-container">
               <h2 class="text-center"><%= i18n.heading %></h2>
