@@ -23,6 +23,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
+#error-message {
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
         .form-container {
             max-width: 600px;
             margin: 110px auto;
@@ -241,5 +246,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 this.classList.toggle('bi-eye-slash-fill');
             });
         </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has("error")) {
+        const errorMessage = document.getElementById("error-message");
+        if (errorMessage) {
+            errorMessage.classList.remove("d-none"); // Afficher le message d'erreur
+        }
+    }
+});
+</script>
+
     </body>
 </html>
