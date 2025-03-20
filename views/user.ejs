@@ -1210,34 +1210,67 @@ async function loadStats() {
         const statsList = document.getElementById('stats-list');
         statsList.innerHTML = '';
 
+        let statsMap = new Map();
+
         for (const page of pages) {
             const pageId = page.url.split('/').pop().replace('.html', '');
             const res = await fetch(`/api/stats/${pageId}`);
             const data = await res.json();
 
             data.forEach(stat => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><a href="${page.url}" target="_blank">${page.url}</a></td>
-                    <td>${stat.views || 0}</td>
-                    <td>${stat.users || 0}</td>
-                    <td>${stat.sessionSource || "N/A"}</td>
-                    <td>${stat.sessionMedium || "N/A"}</td>
-                    <td>${stat.country || "N/A"}</td>
-                    <td>${stat.city || "N/A"}</td>
-                    <td>${stat.deviceCategory || "N/A"}</td>
-                `;
-                statsList.appendChild(row);
+                let pageUrl = page.url;
+                
+                if (!statsMap.has(pageUrl)) {
+                    statsMap.set(pageUrl, {
+                        views: 0,
+                        users: 0,
+                        sources: new Set(),
+                        mediums: new Set(),
+                        countries: new Set(),
+                        cities: new Set(),
+                        devices: new Set()
+                    });
+                }
+
+                let statsEntry = statsMap.get(pageUrl);
+                statsEntry.views += stat.views || 0;
+                statsEntry.users += stat.users || 0;
+                statsEntry.sources.add(stat.sessionSource || "N/A");
+                statsEntry.mediums.add(stat.sessionMedium || "N/A");
+                statsEntry.countries.add(stat.country || "N/A");
+                statsEntry.cities.add(stat.city || "N/A");
+                statsEntry.devices.add(stat.deviceCategory || "N/A");
+
+                statsMap.set(pageUrl, statsEntry);
             });
         }
+
+        // Affichage des statistiques regroupées
+        statsMap.forEach((stats, pageUrl) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
+                <td>${stats.views}</td>
+                <td>${stats.users}</td>
+                <td>${Array.from(stats.sources).join(', ')}</td>
+                <td>${Array.from(stats.mediums).join(', ')}</td>
+                <td>${Array.from(stats.countries).join(', ')}</td>
+                <td>${Array.from(stats.cities).join(', ')}</td>
+                <td>${Array.from(stats.devices).join(', ')}</td>
+            `;
+            statsList.appendChild(row);
+        });
+
     } catch (error) {
         console.error('Erreur lors du chargement des statistiques:', error);
     }
 }
 
+// Charger les statistiques après le chargement de la page
 document.addEventListener('DOMContentLoaded', () => {
     loadStats();
 });
+
 </script>
 
 
