@@ -184,6 +184,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
                 <button type="submit" class="btn btn-primary w-100"><%= i18n.login_button %></button>
               </form>
+
+<% if (messages.error) { %>
+    <div id="error-message" class="alert alert-danger text-center mt-3">
+        <i class="bi bi-exclamation-triangle-fill"></i> <%= messages.error %>
+    </div>
+<% } %>
               <div class="mt-3 text-center">
                 <a href="/forgot-password"><%= i18n.forgot_password %></a>
               </div>
@@ -194,11 +200,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <span><%= i18n.register_prompt %> <a href="/<%= locale %>/register"><%= i18n.register_link %></a></span>
 </div>
 
-<% if (messages.error) { %>
-    <div id="error-message" class="alert alert-danger text-center mt-3">
-        <i class="bi bi-exclamation-triangle-fill"></i> <%= messages.error %>
-    </div>
-<% } %>
 
 
             </div>
