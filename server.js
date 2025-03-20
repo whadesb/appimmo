@@ -1369,17 +1369,10 @@ async function getPageStats(pagePath) {
         const [response] = await analyticsDataClient.runReport({
             property: `properties/${process.env.GA_PROPERTY_ID}`,
             dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-            dimensions: [
-                { name: 'pagePath' },
-                { name: 'sessionSource' }, // 🔹 Source du trafic (ex: Google, Facebook)
-                { name: 'sessionMedium' }, // 🔹 Medium (ex: cpc, organic, referral)
-                { name: 'geoCountry' }, // 🔹 Pays
-                { name: 'geoCity' }, // 🔹 Ville
-                { name: 'deviceCategory' } // 🔹 Type d'appareil (mobile, desktop, tablet)
-            ],
+            dimensions: [{ name: 'pagePath' }],
             metrics: [
-                { name: 'screenPageViews' }, // 🔹 Nombre de vues
-                { name: 'totalUsers' } // 🔹 Nombre d'utilisateurs uniques
+                { name: 'screenPageViews' },  // Nombre de vues
+                { name: 'totalUsers' }        // Nombre d'utilisateurs uniques
             ],
             dimensionFilter: {
                 filter: {
@@ -1390,25 +1383,29 @@ async function getPageStats(pagePath) {
         });
 
         if (!response.rows.length) {
-            return [{ pagePath, views: 0, users: 0, sessionSource: "N/A", sessionMedium: "N/A", country: "N/A", city: "N/A", deviceCategory: "N/A" }];
+            return [{ pagePath, views: 0, users: 0 }];
         }
 
-        return response.rows.map(row => ({
-            pagePath: row.dimensionValues[0]?.value || "N/A",
+        // ✅ Déplacer cette partie DANS la fonction
+        const stats = response.rows.map(row => ({
+            pagePath: row.dimensionValues[0].value,
             sessionSource: row.dimensionValues[1]?.value || "N/A",
             sessionMedium: row.dimensionValues[2]?.value || "N/A",
-            country: row.dimensionValues[3]?.value || "N/A",
-            city: row.dimensionValues[4]?.value || "N/A",
+            city: row.dimensionValues[3]?.value || "N/A",
+            country: row.dimensionValues[4]?.value || "N/A",
             deviceCategory: row.dimensionValues[5]?.value || "N/A",
-            views: parseInt(row.metricValues[0]?.value, 10) || 0,
-            users: parseInt(row.metricValues[1]?.value, 10) || 0
+            views: row.metricValues[0].value,
+            users: row.metricValues[1].value
         }));
+
+        return stats;
 
     } catch (error) {
         console.error('Erreur lors de la récupération des stats Google Analytics:', error);
-        return [{ pagePath, views: 0, users: 0, sessionSource: "N/A", sessionMedium: "N/A", country: "N/A", city: "N/A", deviceCategory: "N/A" }];
+        return [{ pagePath, views: 0, users: 0 }];
     }
 }
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
