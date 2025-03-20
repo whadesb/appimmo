@@ -56,7 +56,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             box-shadow: none;
         }
 .progress {
-    background-color: #d7d7d7; !important; 
+    background-color: #d7d7d7 !important; 
     width: 7.6rem;
 }
 
@@ -1205,59 +1205,39 @@ async function renewOrder(orderId) {
 <script>
 async function loadStats() {
     try {
-        const response = await fetch('/user/landing-pages');
+        const response = await fetch('/user/landing-pages'); // Récupère les pages générées
         const pages = await response.json();
         const statsList = document.getElementById('stats-list');
         statsList.innerHTML = '';
 
-        let statsMap = new Map();
-
         for (const page of pages) {
             const pageId = page.url.split('/').pop().replace('.html', '');
-            
-            // Récupération des stats Google Analytics
-            const res = await fetch(`/api/stats/${pageId}`); 
+            const res = await fetch(`/api/stats/${pageId}`);
             const data = await res.json();
 
-            // Si les données internes ne correspondent pas, récupérer depuis GA
-            const gaRes = await fetch(`/api/ga-stats/${pageId}`);
-            const gaData = await gaRes.json();
-
-            let totalViews = 0, totalUsers = 0;
-
-            if (data.length > 0) {
-                totalViews += data.reduce((sum, stat) => sum + (stat.views || 0), 0);
-                totalUsers += data.reduce((sum, stat) => sum + (stat.users || 0), 0);
-            }
-
-            if (gaData.length > 0) {
-                totalViews = gaData[0].views;  // Remplacer par les données GA
-                totalUsers = gaData[0].users;
-            }
-
-            statsMap.set(page.url, {
-                views: totalViews,
-                users: totalUsers
+            data.forEach(stat => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+                    <td>${stat.views || 0}</td>
+                    <td>${stat.users || 0}</td>
+                    <td>${stat.sessionSource || "N/A"}</td>
+                    <td>${stat.sessionMedium || "N/A"}</td>
+                    <td>${stat.country || "N/A"}</td>
+                    <td>${stat.city || "N/A"}</td>
+                    <td>${stat.deviceCategory || "N/A"}</td>
+                `;
+                statsList.appendChild(row);
             });
         }
-
-        statsMap.forEach((stats, pageUrl) => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
-                <td>${stats.views}</td>
-                <td>${stats.users}</td>
-            `;
-            statsList.appendChild(row);
-        });
-
     } catch (error) {
         console.error('Erreur lors du chargement des statistiques:', error);
     }
 }
 
-
-
+document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+});
 </script>
 
 
