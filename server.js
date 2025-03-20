@@ -633,18 +633,27 @@ app.get('/:locale/register', (req, res) => {
     res.render('register', { locale });
 });
 
-app.get('/:lang/register', (req, res) => {
-  const locale = req.params.lang;
-  const registerTranslationsPath = `./locales/${locale}/register.json`;
+const fs = require('fs');
+const path = require('path');
 
-  let registerTranslations = {};
+app.get('/:locale/register', (req, res) => {
+    const locale = req.params.locale || 'fr'; // Récupérer la langue ou mettre 'fr' par défaut
+    const translationsPath = path.join(__dirname, 'locales', locale, 'register.json');
+    let i18n = {};
 
-  try {
-    registerTranslations = JSON.parse(fs.readFileSync(registerTranslationsPath, 'utf8'));
-  } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    res.render('register', {
+        locale: locale,
+        i18n: i18n,
+        messages: req.flash() // Pour afficher des messages d'erreur si nécessaire
+    });
+});
 
   // Rendre la page avec les traductions spécifiques à la langue choisie
   res.render('register', {
