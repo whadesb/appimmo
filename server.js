@@ -10,7 +10,7 @@ process.on('unhandledRejection', function (err, promise) {
   console.error('Unhandled Rejection:', err);
 });
 
-const express = require('express')
+const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
 const session = require('express-session');
@@ -1358,22 +1358,45 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
     }
 });
 
-async function getGAStats(propertyId) {
-    const analyticsDataClient = new BetaAnalyticsDataClient();
-
+async function getPageStats(pagePath) {
     const [response] = await analyticsDataClient.runReport({
-        property: `properties/${propertyId}`,
-        dateRanges: [{ startDate: "7daysAgo", endDate: "today" }],
-        metrics: [{ name: "screenPageViews" }, { name: "totalUsers" }],
-        dimensions: [{ name: "pagePath" }],
+        property: `properties/${process.env.GA_PROPERTY_ID}`,
+        dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+        dimensions: [
+            { name: 'pagePath' },
+            { name: 'sessionSource' }, // Source de trafic
+            { name: 'sessionMedium' }, // Medium de trafic
+            { name: 'city' }, // Ville
+            { name: 'country' }, // Pays
+            { name: 'deviceCategory' } // Type d'appareil
+        ],
+        metrics: [
+            { name: 'screenPageViews' }, // Vues
+            { name: 'activeUsers' } // Utilisateurs uniques
+        ],
+        dimensionFilter: {
+            filter: {
+                fieldName: 'pagePath',
+                stringFilter: { matchType: 'EXACT', value: pagePath }
+            }
+        }
     });
 
-    return response.rows.map(row => ({
-        page: row.dimensionValues[0].value,
-        views: parseInt(row.metricValues[0].value, 10),
-        users: parseInt(row.metricValues[1].value, 10),
+// Convertir les résultats en un format plus lisible
+    const stats = response.rows.map(row => ({
+        pagePath: row.dimensionValues[0].value,
+        sessionSource: row.dimensionValues[1]?.value || "N/A",
+        sessionMedium: row.dimensionValues[2]?.value || "N/A",
+        city: row.dimensionValues[3]?.value || "N/A",
+        country: row.dimensionValues[4]?.value || "N/A",
+        deviceCategory: row.dimensionValues[5]?.value || "N/A",
+        views: row.metricValues[0].value,
+        users: row.metricValues[1].value
     }));
+
+    return stats;
 }
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
