@@ -1,1404 +1,1245 @@
-require('dotenv').config();
-console.log("Stripe Public Key:", process.env.STRIPE_PUBLIC_KEY);
-
-process.on('uncaughtException', function (err) {
-  console.error('Uncaught Exception:', err);
-});
-
-// Gérer les promesses rejetées non gérées
-process.on('unhandledRejection', function (err, promise) {
-  console.error('Unhandled Rejection:', err);
-});
-
-const express = require('express');
-const path = require('path');
-const mongoose = require('mongoose');
-const session = require('express-session');
-const MongoStore = require('connect-mongo');
-const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-const flash = require('express-flash');
-const User = require('./models/User');
-const Property = require('./models/Property');
-const Order = require('./models/Order');
-const fs = require('fs');
-const cookieParser = require('cookie-parser');
-const i18n = require('./i18n');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const compression = require('compression');
-const multer = require('multer');
-const sharp = require('sharp');
-const { v4: uuidv4 } = require('uuid');
-const validator = require('validator');
-const crypto = require('crypto');
-const { getPageViews } = require('./analytics');
-const Page = require('./models/Page');
-const nodemailer = require('nodemailer');
-const { BetaAnalyticsDataClient } = require('@google-analytics/data');
-const invalidLocales = [
-    'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
-    'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py'
-];
-
-const app = express();
-
-// Middleware
-app.use(compression());
-app.use(cookieParser());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(flash());
-app.use(i18n.init);
-
-app.use((req, res, next) => {
-  if (req.query.lang) {
-    res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
-    res.setLocale(req.query.lang);
-  } else if (req.cookies.locale) {
-    res.setLocale(req.cookies.locale);
-  }
-  next();
-});
-
-app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
-}));
-app.use('/property', require('./routes/property'));
-
-app.use(passport.initialize());
-app.use(passport.session());
-passport.use(new LocalStrategy({
-  usernameField: 'email'
-}, User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-app.set('view engine', 'ejs');
-app.use(express.static(path.join(__dirname, 'public')));
-
-mongoose.connect(process.env.MONGODB_URI).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('Error connecting to MongoDB', err);
-});
-
-// Middleware de déconnexion automatique après expiration de la session
-app.use((req, res, next) => {
-  if (req.session && req.session.cookie.expires < new Date()) {
-    req.logout((err) => {
-      if (err) {
-        return next(err);
-      }
-      req.session.destroy((err) => {
-        if (err) {
-          return next(err);
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+    <meta charset="utf-8">
+<!-- Google Tag Manager -->
+<script>
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id=' + i + dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TF7HSC3N');
+</script>
+<!-- Fin Google Tag Manager -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#C4B990">
+    <title>UAP Immo | <%= i18n.my_profile %></title>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preload" href="/css/styles-main.css" as="style">
+    <link rel="stylesheet" href="/css/styles-main.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <style>
+        html, body {
+            height: 100%;
         }
-        res.clearCookie('connect.sid');
-
-        // Détecter la langue du cookie, sinon utiliser 'fr' par défaut
-        const locale = req.cookies.locale || req.acceptsLanguages('en', 'fr') || 'fr';
-
-        // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
-        const validLocale = ['fr', 'en'].includes(locale) ? locale : 'fr';
-
-        res.redirect(`/${validLocale}/login`);
-      });
-    });
-  } else {
-    next();
-  }
-});
-app.get('/config', (req, res) => {
-  res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
-});
-
-// Middleware d'authentification
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
+        body {
+            display: flex;
+            flex-direction: column;
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            margin: 0;
+        }
+        h3 {
+            color: #000;
+            text-align: left;
+        }
+        .navbar {
+            background-color: #C4B990;
+            margin-bottom: 20px;
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+            color: #000;
+        }
+        .navbar .navbar-icon {
+            color: #000;
+        }
+        .main-section {
+            flex: 1;
+            padding: 20px;
+            background-color: #fff;
+            margin-left: 10px;
+            min-height: 500px;
+        }
+        .main-section .card {
+            border: none;
+            box-shadow: none;
+        }
+.progress {
+    background-color: #d7d7d7 !important; 
+    width: 7.6rem;
 }
 
-// Configuration de multer pour la gestion des fichiers uploadés
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/uploads');
-  },
-  filename: function (req, file, cb) {
-    cb(null, uuidv4() + path.extname(file.originalname));
-  }
-});
-const upload = multer({
-  storage: storage,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10 Mo par fichier
-  fileFilter: (req, file, cb) => {
-    const filetypes = /jpeg|jpg|png|gif|webp/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
-
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb(new Error('Seules les images sont autorisées !'));
-    }
-  }
-});
-
-// Route spécifique pour la configuration Stripe (évite "Not Found")
-app.get('/config', (req, res) => {
-    res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
-});
-
-
-app.get('/', (req, res) => {
-    const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
-    const defaultLocale = 'fr'; // Langue par défaut
-
-    // Vérifier si l'utilisateur préfère l'anglais
-    if (acceptedLanguages.includes('en')) {
-        res.redirect('/en');
-    } else {
-        res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
-    }
-});
-// Route API pour récupérer les statistiques d'une page spécifique
-app.get('/api/stats/:id', async (req, res) => {
-    const pageId = req.params.id;
-    const pagePath = `/landing-pages/${pageId}.html`;
-
-    try {
-        const stats = await getPageStats(pagePath);
-        res.json(stats);
-    } catch (error) {
-        console.error('Erreur API Analytics:', error);
-        res.status(500).json({ error: 'Erreur API Analytics' });
-    }
-});
-
-app.get('/:locale/payment', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;  // Récupérer la langue depuis l'URL
-    const { propertyId } = req.query;
-
-    try {
-        const property = await Property.findById(propertyId);
-        if (!property) {
-            return res.status(404).send('Property not found');
-        }
-
-        // Charger les traductions spécifiques à la langue
-        const translationsPath = `./locales/${locale}/payment.json`;
-        let i18n = {};
-
-        try {
-            i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-        } catch (error) {
-            console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-            return res.status(500).send('Erreur lors du chargement des traductions.');
-        }
-
-        res.render('payment', {
-            locale,
-            i18n,
-            propertyId: property._id,
-            rooms: property.rooms,
-            surface: property.surface,
-            price: property.price,
-            city: property.city,
-            country: property.country,
-            url: property.url
-        });
-    } catch (error) {
-        console.error('Error fetching property:', error);
-        res.status(500).send('Error fetching property');
-    }
-});
-
-app.get('/:locale', (req, res, next) => {
-    const locale = req.params.locale;
-
-    // Liste des routes qui ne doivent PAS être interprétées comme des locales
-    const excludedPaths = [
-        'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
-        'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py',
-        'login', 'register', 'user', 'forgot-password', 'reset-password', 'contact', 'politique-confidentialite'
-    ];
-
-    // Si la route est exclue, on passe au middleware suivant
-    if (excludedPaths.includes(locale)) {
-        return next();
-    }
-
-    // Vérifier si la locale est bien 'fr' ou 'en', sinon rediriger vers 'fr'
-    const validLocales = ['fr', 'en'];
-    if (!validLocales.includes(locale)) {
-        console.warn(`🔍 Valeur de locale invalide : ${locale}, utilisation de 'fr' par défaut.`);
-        return res.redirect('/fr');
-    }
-
-    // Charger les traductions
-    const translationsPath = `./locales/${locale}/index.json`;
-    let translations = {};
-
-    try {
-        translations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
-
-    // Affichage de la page index avec la langue correcte
-    res.render('index', {
-        locale: locale,
-        i18n: translations
-    });
-});
-
-
-
-// Route dynamique pour la page de connexion avec gestion de la langue
-app.get('/', (req, res) => {
-    const excludedPaths = ['config', 'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php'];
-    
-    // Vérifier si la requête concerne une route spécifique (ex: /config)
-    if (excludedPaths.includes(req.path.replace('/', ''))) {
-        return res.sendStatus(404);
-    }
-
-    const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
-    const defaultLocale = 'fr'; // Langue par défaut
-
-    // Vérifier si l'utilisateur préfère l'anglais
-    if (acceptedLanguages.includes('en')) {
-        res.redirect('/en');
-    } else {
-        res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
-    }
-});
-
-
-// Redirection vers la langue par défaut (ex: français) si aucune langue n'est spécifiée
-app.get('/:locale/login', (req, res) => {
-    const locale = req.params.locale || 'fr';
-    const translationsPath = `./locales/${locale}/login.json`;
-    let i18n = {};
-
-    try {
-        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
-
-    res.render('login', {
-        locale: locale,
-        i18n: i18n,
-        messages: req.flash()
-    });
-});
-
-app.get('/stats/:urlPath', async (req, res) => {
-    const urlPath = '/' + req.params.urlPath; // Exemple : "/landing-pages/page123.html"
-    const views = await getPageViews(urlPath);
-    res.json({ views });
-});
-
-app.get('/:lang/forgot-password', (req, res) => {
-  const locale = req.params.lang;
-  const passwordResetTranslationsPath = `./locales/${locale}/password-reset.json`;
-
-  let passwordResetTranslations = {};
-
-  try {
-    passwordResetTranslations = JSON.parse(fs.readFileSync(passwordResetTranslationsPath, 'utf8'));
-  } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
-
-  // Rendre la page avec les traductions spécifiques à la langue choisie
-  res.render('forgot-password', {
-    title: passwordResetTranslations.title,
-    locale: locale,  // Langue active
-    i18n: passwordResetTranslations,  // Traductions spécifiques
-    messages: req.flash()
-  });
-});
-
-// Redirection par défaut
-app.get('/forgot-password', (req, res) => {
-  res.redirect('/fr/forgot-password');
-});
-
-
-// Route pour la politique de confidentialité
-app.get('/politique-confidentialite', (req, res) => {
-  res.render('politique-confidentialite', { title: 'Politique de confidentialité' });
-});
-
-// Route pour gérer les cookies
-app.get('/gerer-cookies', (req, res) => {
-  res.render('gerer-cookies', { title: 'Gérer les cookies' });
-});
-
-app.post('/:lang/forgot-password', async (req, res) => {
-  const { email } = req.body;
-  const locale = req.params.lang;
-
-  try {
-    const user = await User.findOne({ email });
-    if (!user) {
-      req.flash('error', 'Aucun compte trouvé avec cette adresse email.');
-      return res.redirect(`/${locale}/forgot-password`);
-    }
-
-    const token = crypto.randomBytes(32).toString('hex');
-    user.resetPasswordToken = token;
-    user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
-    await user.save();
-
-    const resetUrl = `http://${req.headers.host}/${locale}/reset-password/${token}`;
-    const mailOptions = {
-      to: user.email,
-      from: process.env.EMAIL_USER,
-      subject: 'Réinitialisation du mot de passe',
-      html: `
-        <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-          <h2 style="color: #52566f;">Réinitialisation de votre mot de passe</h2>
-          <p>Bonjour,</p>
-          <p>Nous avons reçu une demande de réinitialisation du mot de passe associé à votre compte UAP Immo.</p>
-          
-          <p style="font-size: 16px; color: #52566f;">Que devez-vous faire ?</p>
-          <p>Pour réinitialiser votre mot de passe, veuillez cliquer sur le lien ci-dessous :</p>
-          <p><a href="${resetUrl}" style="color: #52566f; text-decoration: underline;">Réinitialiser mon mot de passe</a></p>
-    
-          <p>Ce lien est valide pendant 1 heure. Si vous n'avez pas fait cette demande, vous pouvez ignorer cet email en toute sécurité.</p>
-    
-          <p style="font-size: 16px; color: #52566f;">Besoin d'aide ?</p>
-          <p>Si vous avez des questions ou avez besoin d'aide, n'hésitez pas à nous contacter à <a href="mailto:support@uap.company" style="color: #52566f; text-decoration: underline;">support@uap.company</a>.</p>
-    
-          <p>Cordialement,</p>
-          <p>L'équipe UAP Immo</p>
-          
-          <hr>
-          <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company" style="color: #52566f; text-decoration: underline;">support@uap.company</a>.</p>
-        </div>
-      `
-    };
-    await sendEmail(mailOptions);
-
-    req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.');
-    return res.redirect(`/${locale}/forgot-password?emailSent=true`);
-  } catch (error) {
-    console.error('Erreur lors de la réinitialisation du mot de passe :', error);
-    req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
-    return res.redirect(`/${locale}/forgot-password`);
-  }
-});
-
-app.get('/reset-password/:token', async (req, res) => {
-  try {
-    const user = await User.findOne({
-      resetPasswordToken: req.params.token,
-      resetPasswordExpires: { $gt: Date.now() }
-    });
-
-    if (!user) {
-      req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
-      return res.redirect('/forgot-password');
-    }
-
-    res.render('reset-password', { token: req.params.token });
-  } catch (error) {
-    console.error('Erreur lors de la vérification du token :', error);
-    req.flash('error', 'Une erreur est survenue lors de la vérification du token.');
-    res.redirect('/forgot-password');
-  }
-});
-
-app.post('/reset-password/:token', async (req, res) => {
-  const { password, confirmPassword } = req.body;
-
-  if (password !== confirmPassword) {
-    req.flash('error', 'Les mots de passe ne correspondent pas.');
-    return res.redirect('back');
-  }
-
-  try {
-    const user = await User.findOne({
-      resetPasswordToken: req.params.token,
-      resetPasswordExpires: { $gt: Date.now() }
-    });
-
-    if (!user) {
-      req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
-      return res.redirect('/forgot-password');
-    }
-
-    user.setPassword(password, async (err) => {
-      if (err) {
-        req.flash('error', 'Erreur lors de la réinitialisation du mot de passe.');
-        return res.redirect('back');
-      }
-
-      user.resetPasswordToken = undefined;
-      user.resetPasswordExpires = undefined;
-      await user.save();
-
-      req.flash('success', 'Votre mot de passe a été mis à jour avec succès.');
-      res.redirect('/login');
-    });
-  } catch (error) {
-    console.error('Erreur lors de la mise à jour du mot de passe :', error);
-    req.flash('error', 'Une erreur est survenue lors de la mise à jour du mot de passe.');
-    res.redirect('/forgot-password');
-  }
-});
-
-app.get('/api/stats/:id', async (req, res) => {
-  const pageId = req.params.id;
-  const pagePath = `/landing-pages/${pageId}.html`;
-
-  try {
-    const views = await getPageViews(pagePath);
-    res.json({ page: pagePath, views });
-  } catch (error) {
-    res.status(500).json({ error: 'Erreur API Analytics' });
-  }
-});
-
-
-app.post('/:locale/login', (req, res, next) => {
-    const locale = req.params.locale || 'fr';  // Récupérer la langue dans l'URL ou 'fr' par défaut
-
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            return next(err);
-        }
-        if (!user) {
-            req.flash('error', 'Erreur d\'authentification.');
-            return res.redirect(`/${locale}/login`);  // Rediriger en cas d'erreur
-        }
-        req.logIn(user, (err) => {
-            if (err) {
-                return next(err);
-            }
-            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la langue
-        });
-    })(req, res, next);
-});
-
-// Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
-app.post('/set-cookie-consent', (req, res) => {
-    const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
-
-    // Définir la durée en jours
-    let maxAge;
-    switch(duration) {
-        case '3mois':
-            maxAge = 90 * 24 * 60 * 60 * 1000; // 3 mois
-            break;
-        case '6mois':
-            maxAge = 180 * 24 * 60 * 60 * 1000; // 6 mois
-            break;
-        case '2ans':
-            maxAge = 2 * 365 * 24 * 60 * 60 * 1000; // 2 ans
-            break;
-        case '3ans':
-            maxAge = 3 * 365 * 24 * 60 * 60 * 1000; // 3 ans
-            break;
-        case '1an':
-        default:
-            maxAge = 365 * 24 * 60 * 60 * 1000; // 1 an par défaut
-            break;
-    }
-
-    // Enregistrement du cookie pour la durée choisie
-    res.cookie('cookie_consent', 'accepted', { maxAge: maxAge, httpOnly: true });
-    res.json({ message: 'Consentement enregistré', maxAge: maxAge });
-});
-
-app.get('/:locale/logout', (req, res, next) => {
-    req.logout((err) => {
-        if (err) {
-            return next(err);
-        }
-        req.session.destroy((err) => {
-            if (err) {
-                return next(err);
-            }
-            res.clearCookie('connect.sid');
-            // Redirige vers la page de login avec la bonne langue
-            res.redirect(`/${req.params.locale}/login`);
-        });
-    });
-});
-
-// Route pour la page utilisateur avec locale et récupération des propriétés
-app.get('/:locale/user', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;
-    const user = req.user;
-    if (!user) {
-        return res.redirect(`/${locale}/login`);
-    }
-    
-    const userTranslationsPath = `./locales/${locale}/user.json`;
-    let userTranslations = {};
-
-    try {
-        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
-
-    res.render('user', {
-        locale,
-        user,
-        i18n: userTranslations
-    });
-});
-
-app.get('/faq', (req, res) => {
-  res.render('faq', { title: 'faq' });
-});
-
-app.get('/:lang/contact', (req, res) => {
-    // Récupérer la langue depuis l'URL
-    const locale = req.params.lang || 'en'; // 'en' par défaut si aucune langue n'est spécifiée
-    const messageEnvoye = req.query.messageEnvoye === 'true';
-
-    // Charger les traductions globales et spécifiques à la page
-    const globalTranslationsPath = `./locales/${locale}/global.json`;
-    const contactTranslationsPath = `./locales/${locale}/contact.json`;
-
-    let globalTranslations = {};
-    let contactTranslations = {};
-
-    try {
-        globalTranslations = JSON.parse(fs.readFileSync(globalTranslationsPath, 'utf8'));
-        contactTranslations = JSON.parse(fs.readFileSync(contactTranslationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
-
-    // Fusionner les traductions globales et spécifiques
-    const i18n = { ...globalTranslations, ...contactTranslations };
-
-    // Rendre la page contact avec les traductions
-    res.render('contact', {
-        title: contactTranslations.title,
-        i18n: i18n, // Passer les traductions fusionnées
-        messageEnvoye: messageEnvoye
-    });
-});
-
-app.post('/send-contact', async (req, res) => {
-    const { firstName, lastName, email, message, type } = req.body;
-
-    // Configurer les options d'email
-    const mailOptions = {
-        from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-        to: process.env.CONTACT_EMAIL,
-        subject: 'Nouveau message de contact',
-        html: `
-            <p><b>Nom :</b> ${firstName} ${lastName}</p>
-            <p><b>Email :</b> ${email}</p>
-            <p><b>Type :</b> ${type}</p>
-            <p><b>Message :</b><br>${message}</p>
-        `
-    };
-
-    try {
-        // Envoyer l'email avec le transporteur
-        await sendEmail(mailOptions);
-        const locale = req.cookies.locale || 'fr';
-res.redirect(`/${locale}/contact?messageEnvoye=true`);
-    } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'email :', error);
-        res.status(500).send('Erreur lors de l\'envoi de l\'email.');
-    }
-});
-app.get('/:locale/register', (req, res) => {
-    const { locale } = req.params;
-    res.render('register', { locale });
-});
-
-app.get('/:lang/register', (req, res) => {
-  const locale = req.params.lang;
-  const registerTranslationsPath = `./locales/${locale}/register.json`;
-
-  let registerTranslations = {};
-
-  try {
-    registerTranslations = JSON.parse(fs.readFileSync(registerTranslationsPath, 'utf8'));
-  } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
-
-  // Rendre la page avec les traductions spécifiques à la langue choisie
-  res.render('register', {
-    title: registerTranslations.title,
-    locale: locale,  // Langue active
-    i18n: registerTranslations,  // Traductions spécifiques
-    messages: req.flash()
-  });
-});
-
-// Redirection par défaut
-app.get('/register', (req, res) => {
-  res.redirect('/fr/register');
-});
-
-
-app.post('/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
-
-  if (!validator.isEmail(email)) {
-    req.flash('error', 'L\'adresse email n\'est pas valide.');
-    return res.redirect('/register');
-  }
-
-  if (password !== confirmPassword) {
-    req.flash('error', 'Les mots de passe ne correspondent pas.');
-    return res.redirect('/register');
-  }
-
-  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  if (!passwordRequirements.test(password)) {
-    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
-    return res.redirect('/register');
-  }
-
-  try {
-    const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
-    await sendAccountCreationEmail(newUser.email);
-    res.redirect('/login');
-  } catch (error) {
-    console.error('Erreur lors de l\'inscription :', error.message);
-    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
-    res.redirect('/register');
-  }
-});
-
-app.post('/add-property', isAuthenticated, upload.fields([
-  { name: 'photo1', maxCount: 1 },
-  { name: 'photo2', maxCount: 1 }
-]), async (req, res) => {
-  try {
-    const property = new Property({
-      rooms: req.body.rooms,
-      bedrooms: req.body.bedrooms,
-      surface: req.body.surface,
-      price: parseFloat(req.body.price), // ✅ Convertir en nombre avant d'enregistrer
-      city: req.body.city,
-      country: req.body.country,
-      description: req.body.description,
-      yearBuilt: req.body.yearBuilt || null,
-      pool: req.body.pool === 'true',
-      propertyType: req.body.propertyType,
-      bathrooms: req.body.bathrooms || null,
-      toilets: req.body.toilets || null,
-      elevator: req.body.elevator === 'true',
-      fireplace: req.body.fireplace === 'true',
-      internet: req.body.internet === 'true',
-      doubleGlazing: req.body.doubleGlazing === 'true',
-      wateringSystem: req.body.wateringSystem === 'true',
-      barbecue: req.body.barbecue === 'true',
-      carShelter: req.body.carShelter === 'true',
-      parking: req.body.parking === 'true',
-      caretakerHouse: req.body.caretakerHouse === 'true',
-      electricShutters: req.body.electricShutters === 'true',
-      outdoorLighting: req.body.outdoorLighting === 'true',
-      createdBy: req.user._id,
-      photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
-    });
-
-    await property.save();
-
-    const landingPageUrl = await generateLandingPage(property);
-    property.url = landingPageUrl;
-    await property.save();
-
-    const successMessage = `
-      <div class="alert alert-success" role="alert">
-        Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>
-      </div>
-    `;
-    res.send(successMessage);
-  } catch (error) {
-    console.error("Erreur lors de l'ajout de la propriété :", error);
-    res.status(500).send('Erreur lors de l\'ajout de la propriété.');
-  }
-});
-
-app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
-  try {
-    const property = await Property.findById(req.params.id);
-
-    if (!property || !property.createdBy.equals(req.user._id)) {
-      return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
-    }
-
-    res.render('edit-property', { property });
-  } catch (error) {
-    console.error('Erreur lors de la récupération de la propriété:', error);
-    res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
-  }
-});
-
-app.post('/property/update/:id', isAuthenticated, upload.fields([
-  { name: 'photo1', maxCount: 1 },
-  { name: 'photo2', maxCount: 1 }
-]), async (req, res) => {
-  try {
-    const property = await Property.findById(req.params.id);
-
-    if (!property || !property.createdBy.equals(req.user._id)) {
-      return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
-    }
-
-    const { rooms, surface, price, city, country } = req.body;
-
-    property.rooms = rooms;
-    property.surface = surface;
-    property.price = price;
-    property.city = city;
-    property.country = country;
-
-    if (req.files.photo1) {
-      const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
-      await sharp(req.files.photo1[0].path)
-        .resize(800)
-        .jpeg({ quality: 80 })
-        .toFile(photo1Path);
-      property.photos[0] = path.basename(photo1Path);
-      fs.unlinkSync(req.files.photo1[0].path);
-    }
-
-    if (req.files.photo2) {
-      const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
-      await sharp(req.files.photo2[0].path)
-        .resize(800)
-        .jpeg({ quality: 80 })
-        .toFile(photo2Path);
-      property.photos[1] = path.basename(photo2Path);
-      fs.unlinkSync(req.files.photo2[0].path);
-    }
-
-    await property.save();
-
-    const landingPageUrl = await generateLandingPage(property);
-
-    property.url = landingPageUrl;
-    await property.save();
-
-    res.redirect('/user');
-  } catch (error) {
-    console.error('Erreur lors de la mise à jour de la propriété : ', error);
-    res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de la propriété.' });
-  }
-});
-
-app.get('/user/properties', isAuthenticated, async (req, res) => {
-  try {
-    console.log("🔍 Requête reçue pour /user/properties, utilisateur :", req.user);
-    
-    const properties = await Property.find({ createdBy: req.user._id });
-    
-    console.log("✅ Propriétés récupérées :", properties);
-
-    res.json(properties);
-  } catch (error) {
-    console.error("❌ Erreur lors de la récupération des propriétés :", error);
-    res.status(500).json({ error: "Une erreur est survenue lors de la récupération des propriétés." });
-  }
-});
-
-app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
-    try {
-        // Récupère les propriétés créées par l'utilisateur connecté
-        const landingPages = await Property.find({ createdBy: req.user._id });
-
-        res.json(landingPages);
-    } catch (error) {
-        console.error("Erreur lors de la récupération des landing pages :", error);
-        res.status(500).json({ error: "Une erreur est survenue lors de la récupération des landing pages." });
-    }
-});
-
-app.post('/process-payment', isAuthenticated, async (req, res) => {
-    try {
-        const { stripeToken, amount, propertyId } = req.body;
-        const userId = req.user._id;
-
-        console.log("🔍 Paiement en cours...");
-        console.log("Stripe Token:", stripeToken);
-        console.log("Amount:", amount);
-        console.log("Property ID:", propertyId);
-        console.log("User ID:", userId);
-
-        if (!stripeToken || !amount || !propertyId) {
-            console.error("❌ Données manquantes pour le paiement.");
-            return res.status(400).json({ error: 'Données manquantes' });
-        }
-
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount: parseInt(amount, 10) * 100,
-            currency: 'eur',
-            payment_method: stripeToken,
-            confirm: true,
-            return_url: `https://uap.immo/payment-success?propertyId=${propertyId}`,
-            automatic_payment_methods: {
-                enabled: true,
-                allow_redirects: "always"
-            }
-        });
-
-        console.log("✅ Paiement réussi:", paymentIntent);
-
-        const order = new Order({
-    userId,
-    propertyId,
-    amount: parseInt(amount, 10),
-    status: 'paid',
-    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-});
-
-console.log("🔍 Nouvelle commande enregistrée :", order);
-
-await order.save();
-
-
-        // Déterminer la redirection en fonction de la langue
-        const locale = req.cookies.locale || 'fr';
-        const redirectUrl = `/${locale}/user#`;
-
-        res.status(200).json({
-            message: 'Paiement réussi',
-            orderId: order._id,
-            redirectUrl // ✅ Correction de la redirection
-        });
-    } catch (error) {
-        console.error("❌ Erreur lors du paiement :", error);
-        res.status(500).json({ error: error.message || 'Erreur de paiement' });
-    }
-});
-app.get('/user/orders', isAuthenticated, async (req, res) => {
-    try {
-        const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
-
-        const today = new Date();
-        const ordersWithDaysRemaining = orders.map(order => {
-            const orderObj = order.toObject(); // Convertir en objet JS standard
-            if (order.expiryDate) {
-                const expirationDate = new Date(order.expiryDate);
-                
-                console.log("🔹 Date d'expiration:", expirationDate);
-                console.log("🔹 Date actuelle:", today);
-
-                orderObj.expiryDateFormatted = expirationDate.toISOString().split('T')[0]; // Format YYYY-MM-DD
-                orderObj.daysRemaining = Math.max(0, Math.ceil((expirationDate - today) / (1000 * 60 * 60 * 24)));
-            } else {
-                console.error("❌ expiryDate non défini pour la commande :", order._id);
-                orderObj.expiryDateFormatted = "Indisponible";
-                orderObj.daysRemaining = "Indisponible";
-            }
-
-            return orderObj;
-        });
-
-        res.json(ordersWithDaysRemaining);
-    } catch (error) {
-        console.error('Erreur lors de la récupération des commandes :', error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des commandes' });
-    }
-});
-
-
-async function generateLandingPage(property) {
-     const GTM_ID = 'GTM-TF7HSC3N'; 
-    const GA_MEASUREMENT_ID = 'G-0LN60RQ12K'; 
-
-    const template = `
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Propriété à ${property.city}, ${property.country}</title>
-
-        <!-- Google Tag Manager -->
-        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'}); 
-        var f=d.getElementsByTagName(s)[0], j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:''; 
-        j.async=true; j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl; 
-        f.parentNode.insertBefore(j,f); 
-        })(window,document,'script','dataLayer','${GTM_ID}');</script>
-        <!-- End Google Tag Manager -->
-
-        <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet">
+   .sidebar {
+            background-color: #8f97c4;
+            border-radius: 60px;
+            box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.8);
+            padding: 20px;
+            width: 60px;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: sticky;
+            top: 20px;
         
-        <style>
-             * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
-
-            body {
-                font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-                background-color: #ffffff;
-                color: #3c3c3c;
-                line-height: 1.5;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-
-            .container {
-                max-width: 1400px;
-                width: 100%;
-                display: flex;
-                flex-direction: row;
-                background-color: white;
-                border-radius: 0;
-                overflow: hidden;
-                margin: 0 auto;
-                height: 100%; /* Assure que le container occupe toute la hauteur de l'écran */
-            }
-
-            .slider {
-                flex: 2;
-                overflow: hidden;
-                position: relative;
-                width: 100%;
-                height: 100%;
-            }
-
-            .slides {
-                display: flex;
-                position: absolute;
-                width: 100%;
-                height: 100%;
-            }
-
-            .slides img {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                opacity: 0;
-                animation: slide 10s infinite;
-            }
-
-            .slides img:nth-child(1) {
-                animation-delay: 0s;
-            }
-
-            .slides img:nth-child(2) {
-                animation-delay: 5s;
-            }
-
-            @keyframes slide {
-                0%, 50% {
-                    opacity: 1;
-                }
-                55%, 100% {
-                    opacity: 0;
-                }
-            }
-
-            .property-info {
-                flex: 0.8;
-                padding: 40px;
-                display: flex;
-                flex-direction: column;
-                justify-content:space-around;
-                height: 100%;
-            }
-
-            .property-lorem {
-                font-family: "Lora", serif;
-                font-size: 1.2rem;
-                margin-bottom: 1rem;
-                color: #3c3c3c;
-                border-bottom: 1px solid #C4B990;
-                padding-bottom: 5px;
-            }
-
-            .property-info h1 {
-                font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-                line-height: 1.1;
-                margin-bottom: .5rem;
-                font-weight: 400;
-                color: #3c3c3c;
-                font-size: 2.5rem;
-            }
-
-            .property-info h2 {
-                font-size: 1.6rem;
-                color: #2c2c2c;
-                font-weight: 300;
-                margin-bottom: 30px;
-            }
-
-            .property-details {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                margin-bottom: 20px;
-            }
-
-            .detail {
-                display: flex;
-                align-items: center;
-            }
-
-            .detail i {
-                font-size: 1.3rem;
-                color: #C4B990;
-                margin-right: 8px;
-            }
-
-            .detail p {
-                font-size: 1rem;
-                color: #333;
-            }
-
-            .price {
-                background-color: #c4b9905f;
-                padding: 5px 15px;
-                font-size: 1.5rem;
-                font-weight: 400;
-                color: #212529;
-                text-align: center;
-                text-transform: uppercase;
-                margin-top: 30px;
-                width: fit-content;
-                align-self: flex-start;
-            }
-
-            .property-description {
-                margin-top: 20px;
-                padding: 15px;
-                background-color: #f7f7f7;
-                border: 1px solid #ddd;
-                font-size: 1rem;
-                color: #555;
-                text-align: justify;
-                line-height: 1.6;
-            }
-
-            .property-description .section-title {
-                font-size: 1.4rem;
-                font-weight: 400;
-                color: #3c3c3c;
-                margin-bottom: 10px;
-            }
-
-            .construction-year {
-                margin-top: 20px;
-                font-size: 1.2rem;
-                color: #3c3c3c;
-                font-weight: 300;
-            }
-
-            @media screen and (max-width: 768px) {
-       
- .container {
-                    flex-direction: column;
-height: auto;
-                }
-                .slider {
-        height: 250px; /* Ajuster la hauteur */
-        margin-top: 20px; /* Ajoute une marge propre au-dessus du slider */
-    }
-
-    .slides img {
-        height: 250px; /* Même hauteur que le slider */
-    }
-
-                .property-details {
-                    grid-template-columns: repeat(2, 1fr);
-                }
-
-                .property-info {
-                    padding: 20px;
-                }
-
-                .property-info h1 {
-                    font-size: 1.8rem;
-                }
-
-                .property-info h2 {
-                    font-size: 1.2rem;
-                }
-
-                .price {
-                    font-size: 1.2rem;
-                    width: 100%;
-                    padding: 10px;
-                    text-align: center;
-align-self: center;
-                }
-
-                .property-description {
-                    font-size: 0.9rem;
-                }
-            }
-@media screen and (max-width: 500px) {
-    .property-details {
-        grid-template-columns: 1fr; /* Une seule colonne */
-        gap: 5px; /* Moins d’espace entre les éléments */
-    }
+        }
+        .sidebar a {
+            margin: 10px 0;
+            color: #000;
+            font-size: 24px;
+            text-decoration: none;
+        }
+        .sidebar a:hover {
+            color: #000;
+        }
+.tooltip-container {
+    position: relative;
+    display: inline-block;
+    cursor: help;
 }
 
-            @media screen and (min-width: 769px) {
-                body {
-                    height: 100vh;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }
+.tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    text-align: center;
+    padding: 8px;
+    border-radius: 5px;
+    position: absolute;
+    z-index: 10;
+    bottom: 120%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: nowrap;
+}
 
-                .container {
-                    height: 80vh;
-                    align-items: center;
-                }
+/* Flèche sous l'infobulle */
+.tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.8) transparent transparent transparent;
+}
+
+/* Affichage de l'infobulle au survol */
+.tooltip-container:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+    transform: translateX(-50%) translateY(-5px);
+}
+
+
+        .footer {
+            background-color: #343a40;
+            color: #fff;
+            padding: 20px 0;
+        }
+        .btn-custom {
+            background-color: #8f97c4;
+            color: #000;
+            border: none;
+        }
+        .btn-custom:hover {
+            background-color: #8f97c4;
+            color: #000;
+        }
+        .btn-custom i {
+            font-size: 24px;
+        }
+        .tooltip {
+            position: absolute;
+            background-color: #ADD8E6;
+            color: #000;
+            padding: 5px 10px;
+            border-radius: 4px;
+            white-space: nowrap;
+            z-index: 1000;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .copy-message {
+            display: none;
+            background-color: #d1e7dd;
+            color: #0f5132;
+            padding: 10px;
+            border-radius: 5px;
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+        }
+        .action-icons i {
+            font-size: 24px;
+            cursor: pointer;
+            margin-right: 10px;
+            color: #333;
+        }
+        .short-column {
+            width: 10%;
+        }
+        .card-title {
+            font-weight: 400;
+            font-size: 1.6rem;
+            color: #000;
+            margin-bottom: 0.5rem;
+        }
+        .card-text {
+            font-size: 1.1rem;
+            line-height: 1.8rem;
+            color: #666;
+            margin-bottom: 1rem;
+            letter-spacing: 0.5px;
+        }
+        .card-body .user-info {
+            color: #333;
+            margin-bottom: 0.2rem;
+            line-height: 1.6rem;
+        }
+.hidden {
+    display: none;
+}
+
+
+/* Couleurs dynamiques selon les jours restants */
+.progress-bar.green { background-color: #8BC34A !important; }  /* ✅ Vert */
+.progress-bar.orange { background-color: #FFC107 !important; } /* ✅ Orange */
+.progress-bar.red { background-color: #FF5722 !important; }    /* ✅ Rouge */
+
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    color: #333;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.form-control {
+    width: 50%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #8f97c4;
+    border-radius: 5px;
+    transition: border 0.3s ease-in-out;
+}
+
+/* Effet focus */
+.form-control:focus {
+    border-color: #8f97c4; /* Bleu */
+    outline: none;
+    box-shadow: 0 0 5px rgba(143, 151, 196, 0.5);
+}
+
+
+
+
+        @media (max-width: 767px) {
+            .container-fluid {
+                padding-left: 0;
+                padding-right: 0;
             }
-        </style>
-    </head>
-    <body>
+            .container {
+                padding-left: 15px;
+                padding-right: 15px;
+            }
+            .row {
+                flex-direction: column;
+                align-items: center;
+            }
+            .main-section {
+                margin-left: 0;
+                margin-right: 0;
+                margin-top: 0;
+                width: 100%;
+                border-radius: 0;
+                box-shadow: none;
+                min-height: 300px;
+                overflow-x: auto;
+                padding-left: 0;
+                padding-right: 0;
+            }
+            .sidebar {
+                display: none;
+            }
+            .sidebar-mobile-links {
+                display: block !important;
+                margin-top: 10px;
+            }
+            .mobile-margin {
+                margin-top: 30px;
+            }
+            table {
+                width: 100%;
+                table-layout: auto;
+            }
+            th, td {
+                white-space: nowrap;
+                padding: 8px;
+                text-align: left;
+            }
+            .table-responsive {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+            }
+            #landing .form-group {
+                width: 100%;
+                padding: 5px;
+            }
+            #landing .form-control {
+                width: 100%;
+                padding: 10px;
+                font-size: 16px;
+            }
+            #landing button.btn-custom {
+                width: 100%;
+                padding: 10px;
+                font-size: 18px;
+            }
+            .card-title {
+                font-weight: 400;
+                font-size: 1.4rem;
+                color: #000;
+                margin-bottom: 0.5rem;
+            }
+            .card-text {
+                font-size: 1.1rem;
+                line-height: 1.8rem;
+                color: #666;
+                margin-bottom: 1rem;
+                letter-spacing: 0.5px;
+            }
+            .card-body .user-info {
+                color: #333;
+                margin-bottom: 0.2rem;
+                line-height: 1.2rem;
+            }
+.hidden {
+    display: none;
+}
 
-        <!-- Google Tag Manager (noscript) -->
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-        <!-- End Google Tag Manager (noscript) -->
 
-        <div class="container">
-            <!-- Slider de la propriété -->
-            <div class="slider">
-                <div class="slides">
-                    <img src="/uploads/${property.photos[0] || 'default.jpg'}" alt="Image 1">
-                    <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2">
-                </div>
+progress {
+    width: 100%;
+    height: 10px;
+    margin-top: 5px;
+background-color: #d9d9d9 !important;
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+input[type="number"] {
+    -moz-appearance: textfield;
+}
+
+        }
+        @media (min-width: 768px) {
+            .sidebar-links {
+                display: none;
+            }
+            .card-title {
+                font-size: 1.475rem;
+                font-weight: 400;
+                color: #000;
+            }
+            .card-text {
+                font-size: 1rem;
+                line-height: 1.6rem;
+                letter-spacing: 0.4px;
+            }
+.hidden {
+    display: none;
+}
+
+progress {
+    width: 100%;
+    height: 10px;
+    margin-top: 5px;
+}
+        }
+    </style>
+</head>
+<body id="top">
+
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+    <main>
+      <body id="top">
+    <main>
+       <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <span>UAP Immo</span>
+        </a>
+        <div class="d-lg-none ms-auto me-4">
+            <% if (user) { %>
+                <form action="/<%= locale %>/logout" method="POST" class="d-inline" onsubmit="event.preventDefault(); window.location.href = '/<%= locale %>/login';">
+    <button type="submit" style="background: none; border: none; position: relative;">
+        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+        <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
+        <span class="visually-hidden"><%= i18n.menu.logout %></span>
+    </button>
+</form>
+            <% } else { %>
+                <a href="/login" style="position: relative;">
+                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                    <span class="visually-hidden"><%= i18n.menu.login %></span>
+                </a>
+            <% } %>
+        </div>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-lg-5 me-lg-auto">
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/"><%= i18n.menu.home %></a>
+                </li>
+              
+                <li class="nav-item">
+                    <a class="nav-link click-scroll" href="/#contact"><%= i18n.menu.contact %></a>
+                </li>
+                <!-- Sidebar links for mobile -->
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-file-alt"></i> <%= i18n.add_property %></a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i> <%= i18n.created_pages %></a>
+                </li>
+                <li class="nav-item sidebar-mobile-links sidebar-links">
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
+                </li>
+
+            </ul>
+            <div class="d-none d-lg-block">
+                <% if (user) { %>
+                    <form action="/<%= locale %>/logout" method="POST" class="d-inline" onsubmit="event.preventDefault(); window.location.href = '/<%= locale %>/login';">
+    <button type="submit" style="background: none; border: none; position: relative;">
+        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+        <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
+        <span class="visually-hidden"><%= i18n.menu.logout %></span>
+    </button>
+</form>
+                <% } else { %>
+                    <a href="/login" style="position: relative;">
+                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+                        <span class="visually-hidden"><%= i18n.menu.login %></span>
+                    </a>
+                <% } %>
             </div>
-
-            <!-- Informations sur la propriété -->
-            <div class="property-info">
-                <p class="property-lorem">UAP Immo Annonce</p>
-
-                <h1>Propriété à ${property.city}, ${property.country}</h1>
-                <h2>Type de bien: ${property.propertyType}</h2>
-
-                <!-- Détails de la propriété avec pictogrammes -->
-                <div class="property-details">
-                    <div class="detail">
-                        <i class="fal fa-home"></i>
-                        <p>${property.rooms}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-bed"></i>
-                        <p>${property.bedrooms}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-ruler-combined"></i>
-                        <p>${property.surface} m²</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-shower"></i>
-                        <p>${property.bathrooms || 'Non renseigné'}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-toilet"></i>
-                        <p>${property.toilets || 'Non renseigné'}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-arrow-up"></i>
-                        <p>${property.elevator ? 'Oui' : 'Non'}</p>
-                    </div>
-                </div>
-
-                <!-- Année de construction -->
-                <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
-
-                <!-- Brève description sous les pictogrammes -->
-                <div class="property-description">
-                    <div class="section-title">Visite guidée</div>
-                    ${property.description || 'Aucune description fournie.'}
-                </div>
-                <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
+        <div class="dropdown d-none d-lg-block ms-3">
+                <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
+                    <%= locale === 'fr' ? 'FR' : 'EN' %>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                    <li>
+                        <a class="dropdown-item" href="/fr/login">FR</a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/en/login">EN</a>
+                    </li>
+                </ul>
             </div>
         </div>
+    </div>
+        </div>
+    </div>
+</nav>
 
-    </body>
-    </html>`;
+<section class="contact-section section-padding section-bg" id="section_5">
+    <div class="container">
+        <h5 class="text-black mobile-margin">
+            <% if (user) { %>
+                <%= i18n.welcome_user.replace('{lastName}', user.lastName).replace('{firstName}', user.firstName) %>
+            <% } else { %>
+                <%= i18n.welcome_guest %>
+            <% } %>
+        </h5>
+        <div class="container-fluid">
+            <div class="row mt-4">
+                <div class="col-auto p-0">
+                    <div class="sidebar">
+                        <a href="#" title="<%= i18n.my_profile %>" onclick="showSection('account')"><i class="fa fa-user"></i></a>
+                        <a href="#" title="<%= i18n.add_property %>" onclick="showSection('landing')"><i class="fa fa-file-alt"></i></a>
+                        <a href="#" title="<%= i18n.stats %>" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
+                        <a href="#" title="<%= i18n.created_pages %>" onclick="showSection('created-pages')"><i class="fa fa-wallet"></i></a>
+<a href="#" title="Mes commandes" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="main-section">
+                        <!-- Section Account -->
+                        <div id="account" class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= i18n.my_profile %></h5>
+                                <p class="card-text"><%= i18n.profile_info %></p>
+                                <p class="card-text user-info"><%= i18n.name %>: <%= user.firstName %></p>
+                                <p class="card-text user-info"><%= i18n.first_name %>: <%= user.lastName %></p>
+                                <p class="card-text user-info"><%= i18n.email %>: <%= user.email %></p>
 
-    
-    const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
-    fs.writeFileSync(filePath, template);
+                                <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
+                                <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
+                            </div>
+                        </div>
 
-    return `/landing-pages/${property._id}.html`;
-}
+                        <!-- Section Reset Password -->
+                        <div id="reset-password" class="card" style="display: none;">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= i18n.reset_password %></h5>
+                                <p class="card-text"><%= i18n.password_reset_instructions %></p>
+                                <form id="reset-password-form" action="/user/reset-password" method="POST">
+                                    <div class="form-group">
+                                        <label for="email"><%= i18n.email_label %></label>
+                                        <input type="email" class="form-control" id="email" name="email" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-outline-dark"><%= i18n.send_reset_link %></button>
+                                </form>
+                            </div>
+                        </div>
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.ionos.fr',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+                        <!-- Section Landing Page -->
+                        <div id="landing" class="card" style="display: none;">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= i18n.add_property %></h5>
+                                <p class="card-text"><%= i18n.property_details %></p>
+                                <h5 class="card-title"><%= i18n.add_property %></h5>
+                                <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+  <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
+  <div class="form-group">
+    <label for="rooms"><%= i18n.rooms %></label>
+    <input type="number" class="form-control" id="rooms" name="rooms" required>
+  </div>
+  <div class="form-group">
+    <label for="bedrooms">Nombre de chambres</label>
+    <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
+  </div>
+  <div class="form-group">
+    <label for="surface"><%= i18n.surface %> :</label>
+    <input type="number" class="form-control" id="surface" name="surface" required>
+  </div>
+  <div class="form-group">
+    <label for="price"><%= i18n.price %> :</label>
+    <input type="number" class="form-control" id="price" name="price" required>
+  </div>
+   <div class="form-group">
+    <label for="country"><%= i18n.country %> :</label>
+    <input type="text" class="form-control" id="country" name="country" required>
+  </div>
 
-async function sendEmail(mailOptions) {
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log('Email envoyé avec succès à :', mailOptions.to);
-  } catch (error) {
-    console.error('Erreur lors de l\'envoi de l\'email :', error);
-  }
-}
+  <div class="form-group">
+    <label for="city"><%= i18n.city %> :</label>
+    <input type="text" class="form-control" id="city" name="city" required>
+  </div>
 
-async function sendAccountCreationEmail(email) {
-  const mailOptions = {
-    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: 'Bienvenue chez UAP Immo',
-    html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2 style="color: #52566f;">Bienvenue chez UAP Immo!</h2>
-        <p>Bonjour,</p>
-        <p>Nous sommes ravis de vous compter parmi nos nouveaux utilisateurs. Votre compte a été créé avec succès !</p>
-        <p>Vous avez reçu cet email parce que vous vous êtes inscrit sur notre plateforme. Vous pouvez dès maintenant vous connecter en utilisant l'adresse email et le mot de passe que vous avez choisis lors de l'inscription.</p>
-        <p style="font-size: 16px;">Voici un récapitulatif :</p>
-        <ul style="font-size: 16px;">
-          <li><strong>Email :</strong> ${email}</li>
-          <li><strong>Plateforme :</strong> <a href="https://uap.immo/login" style="color: #52566f;">Se connecter à votre espace UAP Immo</a></li>
-        </ul>
-        <p>Si vous avez des questions ou besoin d'aide, n'hésitez pas à nous contacter à tout moment.</p>
-        <p>Cordialement,</p>
-        <p>L'équipe UAP Immo</p>
-        <hr>
-        <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company">support@uap.company</a>.</p>
-      </div>
-    `,
-  };
+  <!-- Année de construction -->
+  <div class="form-group">
+    <label for="yearBuilt">Année de construction</label>
+    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
+  </div>
+  <!-- Piscine -->
+  <div class="form-group">
+    <label for="pool">Piscine</label>
+    <select class="form-control" id="pool" name="pool">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <!-- Type de bien -->
+  <div class="form-group">
+    <label for="propertyType"><%= i18n.propertyType %>Type de bien :</label>
+    <select class="form-control" id="propertyType" name="propertyType" required>
+      
+      <option value="Propriété"><%= i18n.property %>Propriété</option>
+      <option value="Villa"><%= i18n.villa %>Villa</option>
+      <option value="Hôtel particulier"><%= i18n.hotel_particulier %>Hotel particulier</option>
+      <option value="Appartement"><%= i18n.apartment %>Appartement</option>
+      <option value="Chateau"><%= i18n.chateau %>Chateau</option>
+      <option value="Maison"><%= i18n.house %>Maison de ville</option>
+    </select>
+  </div>
+<div class="form-group">
+    <label for="bathrooms">Salles de douche</label>
+    <input type="number" class="form-control" id="bathrooms" name="bathrooms">
+  </div>
+  <div class="form-group">
+    <label for="toilets">Toilettes</label>
+    <input type="number" class="form-control" id="toilets" name="toilets">
+  </div>
+  <div class="form-group">
+    <label for="elevator">Ascenseur</label>
+    <select class="form-control" id="elevator" name="elevator">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="fireplace">Cheminée</label>
+    <select class="form-control" id="fireplace" name="fireplace">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="internet">Internet</label>
+    <select class="form-control" id="internet" name="internet">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="doubleGlazing">Double vitrage</label>
+    <select class="form-control" id="doubleGlazing" name="doubleGlazing">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="wateringSystem">Arrosage</label>
+    <select class="form-control" id="wateringSystem" name="wateringSystem">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="barbecue">Barbecue</label>
+    <select class="form-control" id="barbecue" name="barbecue">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="carShelter">Abri de voiture</label>
+    <select class="form-control" id="carShelter" name="carShelter">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="parking">Parking</label>
+    <select class="form-control" id="parking" name="parking">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="caretakerHouse">Maison de gardien</label>
+    <select class="form-control" id="caretakerHouse" name="caretakerHouse">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="electricShutters">Stores électriques</label>
+    <select class="form-control" id="electricShutters" name="electricShutters">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="outdoorLighting">Éclairage extérieur</label>
+    <select class="form-control" id="outdoorLighting" name="outdoorLighting">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+ <div class="form-group">
+    <label for="photo1"><%= i18n.photo_1 %></label>
+    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
+    <progress id="progress1" value="0" max="100" class="hidden"></progress>
+    <span id="status1" class="hidden">Chargement...</span>
+</div>
 
-  await sendEmail(mailOptions);
-}
+<div class="form-group">
+    <label for="photo2"><%= i18n.photo_2 %></label>
+    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
+    <progress id="progress2" value="0" max="100" class="hidden"></progress>
+    <span id="status2" class="hidden">Chargement...</span>
+</div>
 
-app.post('/user/orders/renew', isAuthenticated, async (req, res) => {
-  try {
-    const { orderId } = req.body;
-    const existingOrder = await Order.findById(orderId);
+<div class="form-group">
+    <label for="description"><%= i18n.description %> (max. 820 caractères)</label>
+    <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
+    <small id="charCount">0/820 <%= i18n.characters %></small>
+  </div>
+  <button type="submit" class="btn btn-custom"><%= i18n.save %></button>
+</form>
 
-    if (!existingOrder) {
-      return res.status(404).json({ error: 'Commande non trouvée' });
-    }
+                                <div id="generatedLink" class="mt-3"></div>
+                            </div>
+                        </div>
 
-    const orderDate = new Date(existingOrder.createdAt);
-    const expirationDate = new Date(orderDate);
-    expirationDate.setDate(orderDate.getDate() + 90);
+                        <!-- Section Données -->
+                        <div id="donnees" class="card" style="display: none;">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= i18n.stats %></h5>
+                                <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.</p>
+                            <table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Page</th>
+            <th>Vues</th>
+            <th>Utilisateurs</th>
+            <th>Source de trafic</th>
+            <th>Medium</th>
+            <th>Pays</th>
+            <th>Ville</th>
+            <th>Type d'appareil</th>
+        </tr>
+    </thead>
+    <tbody id="stats-list">
+        <!-- Les stats seront chargées ici -->
+    </tbody>
+</table>
 
-    if (new Date() < expirationDate) {
-      return res.status(400).json({ error: 'Cette commande n\'est pas encore expirée.' });
-    }
-
-    const newOrder = new Order({
-      userId: existingOrder.userId,
-      propertyId: existingOrder.propertyId,
-      amount: existingOrder.amount,
-      status: 'pending'
-    });
-
-    await newOrder.save();
-    res.json({ message: 'Commande renouvelée avec succès.', orderId: newOrder._id });
-  } catch (error) {
-    console.error('Erreur lors du renouvellement de la commande :', error);
-    res.status(500).json({ error: 'Erreur lors du renouvellement de la commande' });
-  }
-});
 
 
-app.post('/send-contact', async (req, res) => {
-  const { firstName, lastName, email, message, type } = req.body;
+</div>
+                        </div>
+<div id="orders" class="card" style="display: none;">
+  <div class="card-body">
+    <h5 class="card-title">Mes commandes</h5>
+    <p class="card-text">Liste des commandes passées</p>
+    <table class="table table-striped">
+    <thead>
+  <tr>
+    <th>Order ID</th>
+    <th>Date</th>
+    <th>Status</th>
+    <th class="tooltip-container">
+      Jours restants
+      <span class="tooltip-text">Durée restante de validité du pack</span>
+    </th>
+    <th>Expiration Date</th>
+    <th>Actions</th>
+  </tr>
+</thead>
 
-  const mailOptions = {
-    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-    to: process.env.CONTACT_EMAIL,
-    subject: 'Nouveau message de contact',
-    html: `
-      <p><b>Nom :</b> ${firstName} ${lastName}</p>
-      <p><b>Email :</b> ${email}</p>
-      <p><b>Type :</b> ${type}</p>
-      <p><b>Message :</b><br>${message}</p>
-    `
-  };
 
-  try {
-    await sendEmail(mailOptions);
-    res.redirect('/contact?messageEnvoye=true');
-  } catch (error) {
-    console.error('Erreur lors de l\'envoi de l\'email :', error);
-    res.status(500).send('Erreur lors de l\'envoi de l\'email.');
-  }
-});
+<tbody id="orders-list">
+  <!-- Contenu dynamique chargé via JS -->
+</tbody>
+    </table>
+    <div id="no-orders-message" style="display: none;" class="text-center">
+      <p>Aucune commande trouvée.</p>
+    </div>
+  </div>
+</div>
 
-const analyticsDataClient = new BetaAnalyticsDataClient({
-    credentials: {
-        client_email: process.env.GA_CLIENT_EMAIL,
-        private_key: process.env.GA_PRIVATE_KEY.replace(/\\n/g, '\n')
-    }
-});
+                        <!-- Section Created Pages -->
+                        <div id="created-pages" class="card" style="display: none;">
+    <div class="card-body">
+        <h5 class="card-title"><%= i18n.created_pages %></h5>
+        <p class="card-text"><%= i18n.created_pages_info %></p>
+       <table class="table table-striped">
+    <thead>
+        <tr>
+            <th scope="col">Pièces</th>
+            <th scope="col">Surface</th>
+            <th scope="col">Prix</th>
+            <th scope="col">Ville</th>
+            <th scope="col">Pays</th>
+            <th scope="col">URL</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+    <tbody id="properties-list">
+        <!-- Les propriétés créées par l'utilisateur seront affichées ici -->
+    </tbody>
+</table>
+<div id="no-properties-message" style="display: none;" class="text-center">
+    <p>Aucune landing page trouvée.</p>
+</div>
 
-async function getPageStats(pagePath) {
-    const [response] = await analyticsDataClient.runReport({
-        property: `properties/${process.env.GA_PROPERTY_ID}`,
-        dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-        dimensions: [
-            { name: 'pagePath' },
-            { name: 'sessionSource' }, // Source de trafic
-            { name: 'sessionMedium' }, // Medium de trafic
-            { name: 'city' }, // Ville
-            { name: 'country' }, // Pays
-            { name: 'deviceCategory' } // Type d'appareil
-        ],
-        metrics: [
-            { name: 'screenPageViews' }, // Vues
-            { name: 'activeUsers' } // Utilisateurs uniques
-        ],
-        dimensionFilter: {
-            filter: {
-                fieldName: 'pagePath',
-                stringFilter: { matchType: 'EXACT', value: pagePath }
+
+                            </div>
+                        </div>
+
+                    </div> <!-- Fin de main-section -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</main>
+    <footer class="site-footer section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-3 col-12 mb-4 pb-2">
+                    <a class="navbar-brand mb-2" href="/">
+                        <span>UAP Immo</span>
+                    </a>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3"><%= i18n.footer.information_title %></h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/" class="site-footer-link"><%= i18n.menu.home %></a></li>
+                        <li class="site-footer-link-item"><a href="/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-6">
+                    <h6 class="site-footer-title mb-3"><%= i18n.footer.access_title %></h6>
+                    <ul class="site-footer-links">
+                        <li class="site-footer-link-item"><a href="/contact" class="site-footer-link"><%= i18n.menu.contact %></a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false"></button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="/en/user">English</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="/fr/user">Français</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+<div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
+
+<!-- JavaScript -->
+<script src="/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+<script>
+    function showSection(sectionId) {
+        const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
+        sections.forEach(id => {
+            const sectionElement = document.getElementById(id);
+            if (sectionElement) {
+                sectionElement.style.display = id === sectionId ? 'block' : 'none';
             }
+        });
+
+        if (sectionId === 'created-pages') {
+            loadProperties();
         }
-    });
+    }
 
-// Convertir les résultats en un format plus lisible
-    const stats = response.rows.map(row => ({
-        pagePath: row.dimensionValues[0].value,
-        sessionSource: row.dimensionValues[1]?.value || "N/A",
-        sessionMedium: row.dimensionValues[2]?.value || "N/A",
-        city: row.dimensionValues[3]?.value || "N/A",
-        country: row.dimensionValues[4]?.value || "N/A",
-        deviceCategory: row.dimensionValues[5]?.value || "N/A",
-        views: row.metricValues[0].value,
-        users: row.metricValues[1].value
-    }));
+    async function loadProperties() {
+    try {
+        const response = await fetch('/user/properties');
+        if (response.ok) {
+            const properties = await response.json();
+            const propertiesList = document.getElementById('properties-list');
+            propertiesList.innerHTML = '';
 
-    return stats;
+            const noPropertiesMessage = document.getElementById('no-properties-message');
+            if (properties.length === 0) {
+                noPropertiesMessage.style.display = 'block';
+            } else {
+                noPropertiesMessage.style.display = 'none';
+                properties.forEach(property => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${property.rooms}</td>
+                        <td>${property.surface}</td>
+                        <td>${property.price.toLocaleString('fr-FR')} €</td>
+                        <td>${property.city}</td>
+                        <td>${property.country}</td>
+                        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+                        <td>
+                            <div class="action-icons">
+                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
+                            </div>
+                        </td>
+                    `;
+                    propertiesList.appendChild(row);
+                });
+            }
+        } else {
+            const propertiesList = document.getElementById('properties-list');
+            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
+        }
+    } catch (error) {
+        const propertiesList = document.getElementById('properties-list');
+        propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
+    }
 }
 
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+    function copyURL(url) {
+        const fullUrl = `https://uap.immo${url}`;
+        navigator.clipboard.writeText(fullUrl)
+            .then(() => {
+                showCopyMessage();
+            })
+            .catch(err => {
+                console.error('Impossible de copier l\'URL : ', err);
+            });
+    }
+
+    function showCopyMessage() {
+        const copyMessage = document.getElementById('copyMessage');
+        copyMessage.style.display = 'block';
+        setTimeout(() => {
+            copyMessage.style.display = 'none';
+        }, 2000);
+    }
+
+function testURL(propertyId) {
+    console.log("🔍 ID de la propriété cliqué :", propertyId);
+
+    // Récupération de la langue à partir de l'URL actuelle
+    const currentLang = window.location.pathname.split('/')[1]; // 'en' ou 'fr'
+
+    // Vérifier que currentLang est bien 'en' ou 'fr', sinon rediriger sans préfixe de langue
+    if (currentLang === 'en' || currentLang === 'fr') {
+        window.location.href = `/${currentLang}/payment?propertyId=${propertyId}`;
+    } else {
+        window.location.href = `/payment?propertyId=${propertyId}`;
+    }
+}
+
+    function editProperty(propertyId) {
+        window.location.href = `/property/edit/${propertyId}`;
+    }
+document.getElementById('add-property-form').addEventListener('submit', async function(event) {
+  event.preventDefault();
+  const formData = new FormData(this);
+
+  try {
+    const response = await fetch('/add-property', {
+      method: 'POST',
+      body: formData
+    });
+    
+    const result = await response.text();  // Récupérer la réponse sous forme de texte HTML
+    document.getElementById('generatedLink').innerHTML = result;  // Afficher le message sous le formulaire
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout de la propriété :', error);
+  }
 });
+
+
+    // Temps en millisecondes (5 minutes)
+    const inactivityTime = 5 * 60 * 1000;
+    let timeout;
+
+    function resetTimer() {
+        clearTimeout(timeout);
+        timeout = setTimeout(logout, inactivityTime);
+    }
+
+  function logout() {
+    const locale = document.documentElement.lang || 'fr'; // Récupère la langue de la page
+    window.location.href = `/${locale}/login`;
+}
+
+    window.onload = resetTimer;
+    document.onmousemove = resetTimer;
+    document.onkeypress = resetTimer;
+    document.onclick = resetTimer;
+    document.onscroll = resetTimer;
+</script>
+<script>
+  const descriptionInput = document.getElementById('description');
+  const charCount = document.getElementById('charCount');
+
+  descriptionInput.addEventListener('input', function() {
+    charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
+  });
+</script>
+<script>
+  document.getElementById('add-property-form').addEventListener('submit', function(event) {
+      let missingFields = [];
+      const requiredFields = ['price', 'surface', 'country', 'city', 'propertyType', 'description'];
+      
+      requiredFields.forEach(field => {
+          const input = document.getElementById(field);
+          if (!input.value.trim()) {
+              missingFields.push(field);
+              input.style.border = "2px solid red";  // Mets en rouge les champs vides
+          } else {
+              input.style.border = "";  // Remets la bordure normale si rempli
+          }
+      });
+
+      if (missingFields.length > 0) {
+          event.preventDefault(); // Empêche l'envoi du formulaire
+          alert("Veuillez remplir tous les champs obligatoires avant de soumettre le formulaire.");
+      }
+  });
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    function handleFileUpload(input, progressId, statusId) {
+        const file = input.files[0];
+
+        if (file) {
+            const progressBar = document.getElementById(progressId);
+            const status = document.getElementById(statusId);
+
+            // Réinitialisation
+            progressBar.value = 0;
+            progressBar.classList.remove("hidden");
+            status.classList.remove("hidden");
+            status.textContent = "Chargement en cours...";
+
+            // Simulation d'upload progressif (remplace ça par une vraie requête si besoin)
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                progressBar.value = progress;
+
+                if (progress >= 100) {
+                    clearInterval(interval);
+                    status.textContent = "✅ Image chargée avec succès !";
+                    setTimeout(() => {
+                        progressBar.classList.add("hidden");
+                        status.classList.add("hidden");
+                    }, 2000); // Cache après 2 secondes
+                }
+            }, 200);
+        }
+    }
+
+    // Événements sur les inputs file
+    document.getElementById("photo1").addEventListener("change", function () {
+        handleFileUpload(this, "progress1", "status1");
+    });
+
+    document.getElementById("photo2").addEventListener("change", function () {
+        handleFileUpload(this, "progress2", "status2");
+    });
+});
+</script>
+<script>
+function formatDate(dateString) {
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, '0'); // Jour à 2 chiffres
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mois à 2 chiffres
+    const year = date.getFullYear(); // Année complète
+
+    return `${day}-${month}-${year}`;
+}
+
+async function loadOrders() {
+    try {
+        const response = await fetch('/user/orders');
+        if (!response.ok) {
+            throw new Error('Erreur lors du chargement des commandes.');
+        }
+
+        const orders = await response.json();
+        const ordersList = document.getElementById('orders-list');
+        ordersList.innerHTML = '';
+
+        const noOrdersMessage = document.getElementById('no-orders-message');
+        if (orders.length === 0) {
+            noOrdersMessage.style.display = 'block';
+        } else {
+            noOrdersMessage.style.display = 'none';
+
+            orders.forEach(order => {
+                const orderDate = new Date(order.createdAt); // Date de création de la commande
+                const expiryDate = new Date(order.expiryDateFormatted); // Date d'expiration
+                const today = new Date(); // Date actuelle
+                const timeDiff = expiryDate - today;
+                const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convertir en jours
+
+                // Éviter un affichage de jours restants négatif
+                const adjustedDaysRemaining = daysRemaining >= 0 ? daysRemaining : 0;
+                const progress = Math.min(((90 - adjustedDaysRemaining) / 90) * 100, 100);
+
+                // Déterminer la couleur de la barre de progression
+                let progressBarColor = '#8BC34A'; // 🟢 Vert (par défaut)
+                if (adjustedDaysRemaining <= 30) progressBarColor = '#FFC107'; // 🟠 Orange
+                if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722'; // 🔴 Rouge
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${order.orderId}</td>
+                    <td>${orderDate.toLocaleDateString('fr-FR')}</td>
+                    <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
+                    <td>
+                        ${adjustedDaysRemaining} jours restants
+                        <div class="progress" style="height: 10px; margin-top: 5px;">
+                            <div class="progress-bar" role="progressbar" 
+                                style="width: ${progress}%; background-color: ${progressBarColor};">
+                            </div>
+                        </div>
+                    </td>
+                    <td>${expiryDate.toLocaleDateString('fr-FR')}</td>
+                    <td>
+                        <button class="btn btn-outline-dark btn-sm" onclick="copyURL('/landing-pages/67d34cbd22d48feecc15c35f.html')">Copier</button>
+                        <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
+                    </td>
+                `;
+                ordersList.appendChild(row);
+            });
+        }
+    } catch (error) {
+        document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
+    }
+}
+
+// Charger la liste des commandes au chargement de la page
+document.addEventListener('DOMContentLoaded', loadOrders);
+
+
+// Charger les commandes quand on affiche la section "orders"
+function showSection(sectionId) {
+  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
+  sections.forEach(id => {
+    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+  });
+
+  if (sectionId === 'orders') {
+    loadOrders();
+  }
+}
+// Fonction pour copier l'URL de la propriété
+function copyURL(url) {
+  const fullUrl = `https://uap.immo${url}`;
+  navigator.clipboard.writeText(fullUrl).then(() => {
+    alert("URL copiée !");
+  }).catch(err => console.error('Impossible de copier l\'URL : ', err));
+}
+</script>
+<script>
+    async function loadLandingPages() {
+        try {
+            const response = await fetch('/user/landing-pages');
+            if (!response.ok) throw new Error("Erreur lors du chargement des données");
+
+            const landingPages = await response.json();
+            const landingPagesList = document.getElementById('properties-list');
+            landingPagesList.innerHTML = '';
+
+            const noPropertiesMessage = document.getElementById('no-properties-message');
+            if (landingPages.length === 0) {
+                noPropertiesMessage.style.display = 'block';
+            } else {
+                noPropertiesMessage.style.display = 'none';
+                landingPages.forEach(page => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${page.rooms}</td>
+                        <td>${page.surface} m²</td>
+                        <td>${page.price.toLocaleString('fr-FR')} €</td>
+                        <td>${page.city}</td>
+                        <td>${page.country}</td>
+                        <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+                        <td>
+                            <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
+                            <button class="btn btn-primary btn-sm" onclick="redirectToPayment('${page._id}')">Diffuser</button>
+                        </td>
+                    `;
+                    landingPagesList.appendChild(row);
+                });
+            }
+        } catch (error) {
+            console.error("Erreur lors du chargement des landing pages :", error);
+            document.getElementById('properties-list').innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
+        }
+    }
+
+    function copyURL(url) {
+        const fullUrl = `https://uap.immo${url}`;
+        navigator.clipboard.writeText(fullUrl)
+            .then(() => {
+                alert("URL copiée !");
+            })
+            .catch(err => console.error('Impossible de copier l\'URL : ', err));
+    }
+
+    function redirectToPayment(propertyId) {
+        const locale = document.documentElement.lang || 'fr';
+        window.location.href = `/${locale}/payment?propertyId=${encodeURIComponent(propertyId)}`;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        loadLandingPages();
+    });
+</script>
+<script>
+async function renewOrder(orderId) { 
+  try { 
+    const response = await fetch('/user/orders/renew', { 
+      method: 'POST', 
+      headers: { 'Content-Type': 'application/json' }, 
+      body: JSON.stringify({ orderId }) 
+    });
+
+    const result = await response.json();
+    if (response.ok) { 
+      alert('Commande renouvelée avec succès !'); 
+      loadOrders(); // Recharger la liste des commandes 
+    } else { 
+      alert(result.error || 'Erreur lors du renouvellement de la commande.'); 
+    }
+  } catch (error) { 
+    console.error('Erreur lors du renouvellement :', error); 
+    alert('Une erreur est survenue.'); 
+  }
+}
+</script>
+<script>
+async function loadStats() {
+    try {
+        const response = await fetch('/user/landing-pages'); // Récupère les pages générées
+        const pages = await response.json();
+        const statsList = document.getElementById('stats-list');
+        statsList.innerHTML = '';
+
+        for (const page of pages) {
+            const pageId = page.url.split('/').pop().replace('.html', '');
+            const res = await fetch(`/api/stats/${pageId}`);
+            const data = await res.json();
+
+            data.forEach(stat => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+                    <td>${stat.views || 0}</td>
+                    <td>${stat.users || 0}</td>
+                    <td>${stat.sessionSource || "N/A"}</td>
+                    <td>${stat.sessionMedium || "N/A"}</td>
+                    <td>${stat.country || "N/A"}</td>
+                    <td>${stat.city || "N/A"}</td>
+                    <td>${stat.deviceCategory || "N/A"}</td>
+                `;
+                statsList.appendChild(row);
+            });
+        }
+    } catch (error) {
+        console.error('Erreur lors du chargement des statistiques:', error);
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+});
+</script>
+
+
+</body>
+</html>
