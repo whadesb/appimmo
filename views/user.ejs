@@ -1205,7 +1205,7 @@ async function renewOrder(orderId) {
 <script>
 async function loadStats() {
     try {
-        const response = await fetch('/user/landing-pages'); // Récupère les pages générées
+        const response = await fetch('/user/landing-pages');
         const pages = await response.json();
         const statsList = document.getElementById('stats-list');
         statsList.innerHTML = '';
@@ -1214,49 +1214,39 @@ async function loadStats() {
 
         for (const page of pages) {
             const pageId = page.url.split('/').pop().replace('.html', '');
-            const res = await fetch(`/api/stats/${pageId}`);
+            
+            // Récupération des stats Google Analytics
+            const res = await fetch(`/api/stats/${pageId}`); 
             const data = await res.json();
 
-            data.forEach(stat => {
-                let pageUrl = page.url;
-                
-                if (!statsMap.has(pageUrl)) {
-                    statsMap.set(pageUrl, {
-                        views: 0,
-                        users: 0,
-                        sources: new Set(),
-                        mediums: new Set(),
-                        countries: new Set(),
-                        cities: new Set(),
-                        devices: new Set()
-                    });
-                }
+            // Si les données internes ne correspondent pas, récupérer depuis GA
+            const gaRes = await fetch(`/api/ga-stats/${pageId}`);
+            const gaData = await gaRes.json();
 
-                let statsEntry = statsMap.get(pageUrl);
-                statsEntry.views += stat.views || 0;
-                statsEntry.users += stat.users || 0;
-                statsEntry.sources.add(stat.sessionSource || "N/A");
-                statsEntry.mediums.add(stat.sessionMedium || "N/A");
-                statsEntry.countries.add(stat.country || "N/A");
-                statsEntry.cities.add(stat.city || "N/A");
-                statsEntry.devices.add(stat.deviceCategory || "N/A");
+            let totalViews = 0, totalUsers = 0;
 
-                statsMap.set(pageUrl, statsEntry);
+            if (data.length > 0) {
+                totalViews += data.reduce((sum, stat) => sum + (stat.views || 0), 0);
+                totalUsers += data.reduce((sum, stat) => sum + (stat.users || 0), 0);
+            }
+
+            if (gaData.length > 0) {
+                totalViews = gaData[0].views;  // Remplacer par les données GA
+                totalUsers = gaData[0].users;
+            }
+
+            statsMap.set(page.url, {
+                views: totalViews,
+                users: totalUsers
             });
         }
 
-        // Affichage des statistiques regroupées
         statsMap.forEach((stats, pageUrl) => {
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
                 <td>${stats.views}</td>
                 <td>${stats.users}</td>
-                <td>${Array.from(stats.sources).join(', ')}</td>
-                <td>${Array.from(stats.mediums).join(', ')}</td>
-                <td>${Array.from(stats.countries).join(', ')}</td>
-                <td>${Array.from(stats.cities).join(', ')}</td>
-                <td>${Array.from(stats.devices).join(', ')}</td>
             `;
             statsList.appendChild(row);
         });
@@ -1266,10 +1256,6 @@ async function loadStats() {
     }
 }
 
-// Charger les statistiques après le chargement de la page
-document.addEventListener('DOMContentLoaded', () => {
-    loadStats();
-});
 
 </script>
 
