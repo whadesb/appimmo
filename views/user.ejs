@@ -1205,40 +1205,40 @@ async function renewOrder(orderId) {
 <script>
 async function loadStats() {
     try {
-        const response = await fetch('/user/landing-pages'); // Récupère les pages générées
+        const response = await fetch('/user/landing-pages');
         const pages = await response.json();
         const statsList = document.getElementById('stats-list');
         statsList.innerHTML = '';
 
         for (const page of pages) {
-            const pageId = page.url.split('/').pop().replace('.html', '');
+            const pageId = page._id;
+            const pageUrl = page.url;
+
+            // Récupération des statistiques depuis l'API
             const res = await fetch(`/api/stats/${pageId}`);
             const data = await res.json();
 
-            data.forEach(stat => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td><a href="${page.url}" target="_blank">${page.url}</a></td>
-                    <td>${stat.views || 0}</td>
-                    <td>${stat.users || 0}</td>
-                    <td>${stat.sessionSource || "N/A"}</td>
-                    <td>${stat.sessionMedium || "N/A"}</td>
-                    <td>${stat.country || "N/A"}</td>
-                    <td>${stat.city || "N/A"}</td>
-                    <td>${stat.deviceCategory || "N/A"}</td>
-                `;
-                statsList.appendChild(row);
-            });
+            const views = data.views || 0;
+            const users = data.users || 0;
+
+            // Ajout d'une ligne dans le tableau
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
+                <td>${views}</td>
+                <td>${users}</td>
+            `;
+            statsList.appendChild(row);
         }
     } catch (error) {
         console.error('Erreur lors du chargement des statistiques:', error);
     }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    loadStats();
-});
+// Charger les stats au chargement de la page
+document.addEventListener("DOMContentLoaded", loadStats);
 </script>
+
 
 
 </body>
