@@ -647,9 +647,6 @@ app.get('/:locale/register', (req, res) => {
     });
 });
 
-const fs = require('fs');
-const path = require('path');
-
 app.get('/:locale/register', (req, res) => {
     const locale = req.params.locale || 'fr'; // Récupérer la langue ou mettre 'fr' par défaut
     const translationsPath = path.join(__dirname, 'locales', locale, 'register.json');
