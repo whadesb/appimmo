@@ -1389,7 +1389,6 @@ async function getGAStats(propertyId) {
     }));
 
     return stats;
-}
 
 
 const port = process.env.PORT || 3000;
