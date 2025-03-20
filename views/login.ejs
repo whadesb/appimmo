@@ -26,12 +26,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 #error-message {
     font-size: 16px;
     font-weight: bold;
-    padding: 10px;
+    padding: 12px;
+    margin-top: 15px;
     border-radius: 5px;
-    background: #f8d7da;
-    color: #721c24;
+    background: #f8d7da; /* Rouge clair */
+    color: #721c24; /* Rouge foncé */
     border: 1px solid #f5c6cb;
+    width: 100%;
+    text-align: center;
 }
+
 
 
         .form-container {
@@ -157,11 +161,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <div class="container">
         <div class="row">
           <div class="col-12 col-lg-8 mx-auto">
-<% if (messages.error) { %>
-    <div id="error-message" class="alert alert-danger text-center">
-        <i class="bi bi-exclamation-triangle-fill"></i> <%= messages.error %>
-    </div>
-<% } %>
+
 
 
             <div class="form-container">
@@ -190,6 +190,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
            <div class="mt-3 text-center">
     <span><%= i18n.register_prompt %> <a href="/<%= locale %>/register"><%= i18n.register_link %></a></span>
 </div>
+<div class="mt-3 text-center">
+    <span><%= i18n.register_prompt %> <a href="/<%= locale %>/register"><%= i18n.register_link %></a></span>
+</div>
+
+<% if (messages.error) { %>
+    <div id="error-message" class="alert alert-danger text-center mt-3">
+        <i class="bi bi-exclamation-triangle-fill"></i> <%= messages.error %>
+    </div>
+<% } %>
+
 
             </div>
           </div>
