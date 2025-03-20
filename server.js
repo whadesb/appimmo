@@ -172,12 +172,18 @@ app.get('/api/stats/:id', async (req, res) => {
 
     try {
         const stats = await getPageStats(pagePath);
-        res.json(stats);
+
+        if (!stats.length) {
+            return res.json({ message: "Aucune donnée trouvée pour cette page.", views: 0, users: 0 });
+        }
+
+        res.json(stats[0]); // Renvoie uniquement la première ligne des stats
     } catch (error) {
         console.error('Erreur API Analytics:', error);
         res.status(500).json({ error: 'Erreur API Analytics' });
     }
 });
+
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
     const { locale } = req.params;  // Récupérer la langue depuis l'URL
@@ -1359,28 +1365,37 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
 });
 
 async function getPageStats(pagePath) {
-    const [response] = await analyticsDataClient.runReport({
-        property: `properties/${process.env.GA_PROPERTY_ID}`,
-        dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-        dimensions: [
-            { name: 'pagePath' },
-            { name: 'sessionSource' }, // Source de trafic
-            { name: 'sessionMedium' }, // Medium de trafic
-            { name: 'city' }, // Ville
-            { name: 'country' }, // Pays
-            { name: 'deviceCategory' } // Type d'appareil
-        ],
-        metrics: [
-            { name: 'screenPageViews' }, // Vues
-            { name: 'activeUsers' } // Utilisateurs uniques
-        ],
-        dimensionFilter: {
-            filter: {
-                fieldName: 'pagePath',
-                stringFilter: { matchType: 'EXACT', value: pagePath }
+    try {
+        const [response] = await analyticsDataClient.runReport({
+            property: `properties/${process.env.GA_PROPERTY_ID}`,
+            dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
+            dimensions: [{ name: 'pagePath' }],
+            metrics: [
+                { name: 'screenPageViews' },  // Nombre de vues
+                { name: 'totalUsers' }        // Nombre d'utilisateurs uniques
+            ],
+            dimensionFilter: {
+                filter: {
+                    fieldName: 'pagePath',
+                    stringFilter: { matchType: 'EXACT', value: pagePath }
+                }
             }
+        });
+
+        if (!response.rows.length) {
+            return [{ pagePath, views: 0, users: 0 }];
         }
-    });
+
+        return response.rows.map(row => ({
+            pagePath: row.dimensionValues[0].value,
+            views: parseInt(row.metricValues[0].value, 10),
+            users: parseInt(row.metricValues[1].value, 10)
+        }));
+    } catch (error) {
+        console.error('Erreur lors de la récupération des stats Google Analytics:', error);
+        return [{ pagePath, views: 0, users: 0 }];
+    }
+}
 
 // Convertir les résultats en un format plus lisible
     const stats = response.rows.map(row => ({
