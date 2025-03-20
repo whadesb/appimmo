@@ -1358,7 +1358,6 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
     }
 });
 
-const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
 async function getGAStats(propertyId) {
     const analyticsDataClient = new BetaAnalyticsDataClient();
