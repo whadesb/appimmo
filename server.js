@@ -302,10 +302,9 @@ app.get('/:locale/login', (req, res) => {
     res.render('login', {
         locale: locale,
         i18n: i18n,
-        messages: req.flash()
+        messages: req.flash()  // Transmet les messages flash à la vue
     });
 });
-
 app.get('/stats/:urlPath', async (req, res) => {
     const urlPath = '/' + req.params.urlPath; // Exemple : "/landing-pages/page123.html"
     const views = await getPageViews(urlPath);
