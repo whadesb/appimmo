@@ -1358,7 +1358,6 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
     }
 });
 
-
 async function getGAStats(propertyId) {
     const analyticsDataClient = new BetaAnalyticsDataClient();
 
@@ -1366,24 +1365,35 @@ async function getGAStats(propertyId) {
         property: `properties/${propertyId}`,
         dateRanges: [{ startDate: "7daysAgo", endDate: "today" }],
         metrics: [{ name: "screenPageViews" }, { name: "totalUsers" }],
-        dimensions: [{ name: "pagePath" }]
+        dimensions: [
+            { name: "pagePath" },
+            { name: "sessionSource" },
+            { name: "sessionMedium" },
+            { name: "city" },
+            { name: "country" },
+            { name: "deviceCategory" }
+        ]
     });
+
+    if (!response.rows) {
+        console.error("❌ Erreur : Aucune donnée reçue de Google Analytics");
+        return [];
+    }
 
     // Convertir les résultats en un format plus lisible
     const stats = response.rows.map(row => ({
-        pagePath: row.dimensionValues[0].value,
+        pagePath: row.dimensionValues[0]?.value || "N/A",
         sessionSource: row.dimensionValues[1]?.value || "N/A",
         sessionMedium: row.dimensionValues[2]?.value || "N/A",
         city: row.dimensionValues[3]?.value || "N/A",
         country: row.dimensionValues[4]?.value || "N/A",
         deviceCategory: row.dimensionValues[5]?.value || "N/A",
-        views: row.metricValues[0].value,
-        users: row.metricValues[1].value
+        views: row.metricValues[0]?.value || 0,
+        users: row.metricValues[1]?.value || 0
     }));
 
     return stats;
 }
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
