@@ -485,7 +485,7 @@ app.post('/:locale/login', (req, res, next) => {
             return next(err);
         }
         if (!user) {
-            req.flash('error', 'Erreur d\'authentification.');
+            req.flash('error', 'Identifiants incorrects. Veuillez réessayer.');
             return res.redirect(`/${locale}/login`);  // Rediriger en cas d'erreur
         }
         req.logIn(user, (err) => {
