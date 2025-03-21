@@ -75,12 +75,14 @@ router.post('/:locale/2fa', async (req, res, next) => {
 router.post('/disable-2fa', isAuthenticated, async (req, res) => {
     try {
         const user = req.user;
-        user.twoFactorSecret = null;
         user.twoFactorEnabled = false;
+        user.twoFactorSecret = undefined;
         await user.save();
-        res.redirect('/user');
-    } catch (error) {
-        res.status(500).send('Erreur désactivation 2FA');
+
+        res.status(200).json({ message: "2FA désactivée" });
+    } catch (err) {
+        console.error("Erreur désactivation 2FA :", err);
+        res.status(500).json({ error: "Erreur serveur lors de la désactivation de la 2FA." });
     }
 });
 
