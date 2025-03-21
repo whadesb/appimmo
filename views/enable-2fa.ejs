@@ -128,10 +128,16 @@
               <h2><%= i18n.instruction %></h2>
               <img src="<%= qrCode %>" alt="<%= i18n.qrCode %>" class="img-fluid my-3">
               <p><strong><%= i18n.secret %></strong> <%= user.twoFactorSecret %></p>
-              
+              <% if (messages.error && messages.error.length > 0) { %>
+  <p style="color: red;"><%= messages.error[0] %></p>
+<% } %>
+<% if (messages.success && messages.success.length > 0) { %>
+  <p style="color: green;"><%= messages.success[0] %></p>
+<% } %>
+
               <form action="/<%= locale %>/verify-2fa" method="POST">
                 <div class="form-group">
-                  <input type="text" class="form-control" name="token" placeholder="<%= i18n.verify %>" required>
+                  <input type="text" class="form-control" name="code" placeholder="<%= i18n.verify %>" required>
                 </div>
                 <button type="submit" class="btn btn-primary btn-block mt-3"><%= i18n.verify %></button>
               </form>
