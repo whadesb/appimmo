@@ -1228,41 +1228,49 @@ async function renewOrder(orderId) {
 </script>
 <script>
 async function loadStats() {
-    try {
-        const response = await fetch('/user/landing-pages');
-        const pages = await response.json();
-        const statsList = document.querySelector('#statsTable tbody');
-        statsList.innerHTML = '';
+  try {
+    const response = await fetch('/user/landing-pages');
+    const pages = await response.json();
+    const statsList = document.querySelector('#statsTable tbody'); // ✅ correction ici
+    statsList.innerHTML = '';
 
-        for (const page of pages) {
-            const pageId = page._id;
-            const pageUrl = page.url;
+    for (const page of pages) {
+      const pageId = page._id;
+      const pageUrl = page.url;
 
-            // Récupération des statistiques depuis l'API
-            const res = await fetch(`/api/stats/${pageId}`);
-            const data = await res.json();
+      const res = await fetch(`/api/stats/${pageId}`);
 
-            const views = data.views || 0;
-            const users = data.users || 0;
+      // Vérification si la réponse est au format JSON
+      const contentType = res.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await res.text();
+        console.error("Réponse non JSON :", text);
+        continue;
+      }
 
-            // Ajout d'une ligne dans le tableau
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
-                <td>${views}</td>
-                <td>${users}</td>
-            `;
-            statsList.appendChild(row);
-        }
-    } catch (error) {
-        console.error('Erreur lors du chargement des statistiques:', error);
+      const data = await res.json();
+
+      const views = data.views || 0;
+      const users = data.users || 0;
+      const source = data.source || 'N/A';
+
+      const row = document.createElement('tr');
+      row.innerHTML = `
+        <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
+        <td>${views}</td>
+        <td>${users}</td>
+        <td>${source}</td>
+      `;
+      statsList.appendChild(row);
     }
+  } catch (error) {
+    console.error('Erreur lors du chargement des statistiques:', error);
+    const statsList = document.querySelector('#statsTable tbody');
+    statsList.innerHTML = '<tr><td colspan="4">❌ Erreur lors du chargement des statistiques.</td></tr>';
+  }
 }
-
-// Charger les stats au chargement de la page
-document.addEventListener("DOMContentLoaded", loadStats);
-
 </script>
+
 <script>
   document.getElementById('disable2FABtn')?.addEventListener('click', async () => {
     if (!confirm('Souhaitez-vous vraiment désactiver la 2FA ?')) return;
