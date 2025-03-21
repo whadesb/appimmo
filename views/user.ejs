@@ -500,10 +500,12 @@ progress {
                                 <p class="card-text user-info"><%= i18n.email %>: <%= user.email %></p>
 <div>
   <h3>Authentification à deux facteurs (2FA)</h3>
-  <% if (user.twoFactorEnabled) { %>
-    <p>2FA : <span style="color:green;">Activée ✅</span></p>
-    <button id="disable2FABtn" class="btn btn-danger">Désactiver 2FA</button>
-  <% } else { %>
+ <% if (!user.twoFactorEnabled) { %>
+  <a href="/<%= locale %>/enable-2fa" class="btn btn-warning">Activer 2FA</a>
+<% } else { %>
+  <span class="badge bg-success">2FA activé</span>
+<% } %>
+
     <p>2FA : <span style="color:red;">Désactivée ❌</span></p>
     <a href="/<%= locale %>/enable-2fa" class="btn btn-primary">Activer 2FA</a>
   <% } %>
