@@ -289,6 +289,21 @@ app.get('/:locale/verify-2fa', async (req, res) => {
     error: 'Code invalide. Veuillez réessayer.' // ← affiché dans la vue
 });
 });
+app.post('/disable-2fa', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    user.twoFactorEnabled = false;
+    user.twoFactorSecret = undefined;
+    await user.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Erreur lors de la désactivation 2FA :", err);
+    res.status(500).json({ success: false, error: 'Erreur serveur' });
+  }
+});
 
 // Route dynamique pour la page de connexion avec gestion de la langue
 app.get('/', (req, res) => {
