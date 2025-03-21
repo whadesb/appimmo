@@ -630,7 +630,7 @@ app.post('/:locale/verify-2fa', async (req, res) => {
     const locale = req.params.locale || 'fr';
     const { token } = req.body;
 
-    if (!req.session.tempUserId) {
+    if (!req.session.tmpUserId) {
         req.flash('error', 'Session expirée. Veuillez vous reconnecter.');
         return res.redirect(`/${locale}/login`);
     }
