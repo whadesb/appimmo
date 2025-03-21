@@ -41,6 +41,7 @@ const invalidLocales = [
     'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
     'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py'
 ];
+const tempAuthStore = {}; // { sessionId: user }
 
 const app = express();
 
@@ -479,24 +480,28 @@ app.get('/api/stats/:id', async (req, res) => {
 
 
 app.post('/:locale/login', (req, res, next) => {
-    const locale = req.params.locale || 'fr';  // Récupérer la langue dans l'URL ou 'fr' par défaut
+  const locale = req.params.locale || 'fr';
 
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            return next(err);
-        }
-        if (!user) {
-            req.flash('error', 'Identifiants incorrects. Veuillez réessayer.');
-            return res.redirect(`/${locale}/login`);  // Rediriger en cas d'erreur
-        }
-        req.logIn(user, (err) => {
-            if (err) {
-                return next(err);
-            }
-            return res.redirect(`/${locale}/user`);  // Rediriger vers la page utilisateur avec la langue
-        });
-    })(req, res, next);
+  passport.authenticate('local', async (err, user, info) => {
+    if (err) return next(err);
+    if (!user) {
+      req.flash('error', 'Identifiants incorrects. Veuillez réessayer.');
+      return res.redirect(`/${locale}/login`);
+    }
+
+    if (user.twoFactorEnabled) {
+      // Stocke l’utilisateur en attente de validation 2FA
+      req.session.tempUserId = user._id;
+      return res.redirect(`/${locale}/2fa`);
+    } else {
+      req.logIn(user, (err) => {
+        if (err) return next(err);
+        return res.redirect(`/${locale}/user`);
+      });
+    }
+  })(req, res, next);
 });
+
 
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
@@ -749,17 +754,20 @@ app.post('/:locale/register', async (req, res) => {
   }
 });
 
-app.get('/:locale/2fa', (req, res) => {
+app.get('/:locale/2fa', async (req, res) => {
   const locale = req.params.locale || 'fr';
   const translationsPath = `./locales/${locale}/2fa.json`;
-
   let i18n = {};
 
   try {
     i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
   } catch (error) {
-    console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+    console.error('Erreur lors du chargement des traductions 2FA :', error);
     return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
+
+  if (!req.session.tempUserId) {
+    return res.redirect(`/${locale}/login`);
   }
 
   res.render('2fa', {
@@ -767,6 +775,47 @@ app.get('/:locale/2fa', (req, res) => {
     i18n,
     messages: req.flash()
   });
+});
+
+app.post('/:locale/2fa', async (req, res) => {
+  const { token } = req.body;
+  const locale = req.params.locale || 'fr';
+
+  if (!req.session.tempUserId) {
+    return res.redirect(`/${locale}/login`);
+  }
+
+  try {
+    const user = await User.findById(req.session.tempUserId);
+    if (!user || !user.twoFactorSecret) {
+      req.flash('error', 'Erreur d’authentification 2FA.');
+      return res.redirect(`/${locale}/login`);
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: token
+    });
+
+    if (verified) {
+      req.logIn(user, (err) => {
+        if (err) {
+          req.flash('error', 'Erreur lors de la connexion.');
+          return res.redirect(`/${locale}/login`);
+        }
+        delete req.session.tempUserId;
+        return res.redirect(`/${locale}/user`);
+      });
+    } else {
+      req.flash('error', 'Code incorrect. Veuillez réessayer.');
+      return res.redirect(`/${locale}/2fa`);
+    }
+  } catch (error) {
+    console.error('Erreur 2FA:', error);
+    req.flash('error', 'Erreur interne.');
+    res.redirect(`/${locale}/login`);
+  }
 });
 
 
