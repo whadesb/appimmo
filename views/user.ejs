@@ -498,16 +498,17 @@ progress {
                                 <p class="card-text user-info"><%= i18n.name %>: <%= user.firstName %></p>
                                 <p class="card-text user-info"><%= i18n.first_name %>: <%= user.lastName %></p>
                                 <p class="card-text user-info"><%= i18n.email %>: <%= user.email %></p>
-<% if (user.twoFactorEnabled) { %>
-  <p>🔒 2FA activée</p>
- <button id="disable-2fa-btn" class="btn btn-outline-danger btn-sm">Désactiver la 2FA</button>
-
-  <a href="/reset-2fa" class="btn btn-outline-secondary btn-sm">Réinitialiser la 2FA</a>
-<% } else { %>
-  <p>🔓 2FA non activée</p>
-  <a href="/enable-2fa" class="btn btn-outline-primary btn-sm">Activer la 2FA</a>
-<% } %>
-
+<div>
+  <h3>Authentification à deux facteurs (2FA)</h3>
+  <% if (user.twoFactorEnabled) { %>
+    <p>2FA : <span style="color:green;">Activée ✅</span></p>
+    <button id="disable2FABtn" class="btn btn-danger">Désactiver 2FA</button>
+  <% } else { %>
+    <p>2FA : <span style="color:red;">Désactivée ❌</span></p>
+    <a href="/<%= locale %>/enable-2fa" class="btn btn-primary">Activer 2FA</a>
+  <% } %>
+  <div id="2fa-message"></div>
+</div>
                                 <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
                                 <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
 <div id="disable-2fa-message" class="alert alert-success" style="display: none;"></div>
@@ -1247,44 +1248,20 @@ async function loadStats() {
 
 // Charger les stats au chargement de la page
 document.addEventListener("DOMContentLoaded", loadStats);
-</script>
-
 <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("disable-2fa-btn");
-    const messageBox = document.getElementById("disable-2fa-message");
+  document.getElementById('disable2FABtn')?.addEventListener('click', async () => {
+    if (!confirm('Souhaitez-vous vraiment désactiver la 2FA ?')) return;
 
-    if (btn && messageBox) {
-        btn.addEventListener("click", async function () {
-            const confirmation = confirm("Es-tu sûr de vouloir désactiver la 2FA ?");
-            if (!confirmation) return;
+    const res = await fetch('/disable-2fa', { method: 'POST' });
+    const result = await res.json();
 
-            try {
-                const response = await fetch("/disable-2fa", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" }
-                });
-
-                if (response.ok) {
-                    const result = await response.json();
-                    messageBox.textContent = result.message || "2FA désactivée avec succès.";
-                    messageBox.style.display = "block";
-
-                    setTimeout(() => {
-                        messageBox.style.display = "none";
-                        window.location.reload();
-                    }, 2000);
-                } else {
-                    const res = await response.json();
-                    alert(res.error || "Erreur lors de la désactivation de la 2FA.");
-                }
-            } catch (err) {
-                console.error("Erreur :", err);
-                alert("Une erreur est survenue.");
-            }
-        });
+    if (result.success) {
+      document.getElementById('2fa-message').innerHTML = '<div class="alert alert-success">✅ 2FA désactivée avec succès</div>';
+      setTimeout(() => location.reload(), 2000);
+    } else {
+      document.getElementById('2fa-message').innerHTML = '<div class="alert alert-danger">❌ Erreur : ' + result.error + '</div>';
     }
-});
+  });
 </script>
 
 
