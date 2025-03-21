@@ -288,6 +288,7 @@ app.get('/:locale/verify-2fa', async (req, res) => {
     i18n,
     error: 'Code invalide. Veuillez réessayer.' // ← affiché dans la vue
 });
+});
 
 // Route dynamique pour la page de connexion avec gestion de la langue
 app.get('/', (req, res) => {
