@@ -279,7 +279,7 @@ app.get('/:locale/verify-2fa', async (req, res) => {
         return res.status(500).send('Erreur chargement traductions');
     }
 
-    if (!req.session.tempUserId) {
+    if (!req.session.tmpUserId) {
         return res.redirect(`/${locale}/login`);
     }
 
