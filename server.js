@@ -267,6 +267,28 @@ app.get('/:locale', (req, res, next) => {
 });
 
 
+app.get('/:locale/verify-2fa', async (req, res) => {
+    const locale = req.params.locale || 'fr';
+    const translationsPath = `./locales/${locale}/2fa.json`;
+    let i18n = {};
+
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur chargement traductions 2FA:`, error);
+        return res.status(500).send('Erreur chargement traductions');
+    }
+
+    if (!req.session.tempUserId) {
+        return res.redirect(`/${locale}/login`);
+    }
+
+    res.render('2fa', {
+        locale,
+        i18n,
+        messages: req.flash()
+    });
+});
 
 // Route dynamique pour la page de connexion avec gestion de la langue
 app.get('/', (req, res) => {
@@ -480,27 +502,28 @@ app.get('/api/stats/:id', async (req, res) => {
 
 
 app.post('/:locale/login', (req, res, next) => {
-  const locale = req.params.locale || 'fr';
+    const locale = req.params.locale || 'fr';
 
-  passport.authenticate('local', async (err, user, info) => {
-    if (err) return next(err);
-    if (!user) {
-      req.flash('error', 'Identifiants incorrects. Veuillez réessayer.');
-      return res.redirect(`/${locale}/login`);
-    }
-
-    if (user.twoFactorEnabled) {
-      // Stocke l’utilisateur en attente de validation 2FA
-      req.session.tempUserId = user._id;
-      return res.redirect(`/${locale}/2fa`);
-    } else {
-      req.logIn(user, (err) => {
+    passport.authenticate('local', (err, user, info) => {
         if (err) return next(err);
-        return res.redirect(`/${locale}/user`);
-      });
-    }
-  })(req, res, next);
+        if (!user) {
+            req.flash('error', 'Identifiants incorrects.');
+            return res.redirect(`/${locale}/login`);
+        }
+
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+
+            if (user.twoFactorEnabled) {
+                req.session.tempUserId = user._id; // stocke l'ID temporairement
+                return res.redirect(`/${locale}/verify-2fa`);
+            }
+
+            return res.redirect(`/${locale}/user`);
+        });
+    })(req, res, next);
 });
+
 
 
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
@@ -601,24 +624,44 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
 });
 
 app.post('/:locale/verify-2fa', async (req, res) => {
-  const { token } = req.body;
-  const locale = req.params.locale;
-  const user = req.user;
+    const locale = req.params.locale || 'fr';
+    const { token } = req.body;
 
-  const verified = speakeasy.totp.verify({
-    secret: user.twoFactorSecret,
-    encoding: 'base32',
-    token
-  });
+    if (!req.session.tempUserId) {
+        req.flash('error', 'Session expirée. Veuillez vous reconnecter.');
+        return res.redirect(`/${locale}/login`);
+    }
 
-  if (verified) {
-    user.isTwoFactorEnabled = true;
-    await user.save();
-    return res.redirect(`/${locale}/login`);
-  } else {
-    req.flash('error', 'Code invalide.');
-    return res.redirect(`/${locale}/enable-2fa`);
-  }
+    try {
+        const user = await User.findById(req.session.tempUserId);
+
+        const verified = speakeasy.totp.verify({
+            secret: user.twoFactorSecret,
+            encoding: 'base32',
+            token: token
+        });
+
+        if (!verified) {
+            req.flash('error', 'Code invalide. Veuillez réessayer.');
+            return res.redirect(`/${locale}/verify-2fa`);
+        }
+
+        // Authentification réussie
+        req.login(user, (err) => {
+            if (err) {
+                req.flash('error', 'Erreur lors de la connexion.');
+                return res.redirect(`/${locale}/login`);
+            }
+
+            delete req.session.tempUserId; // Nettoyage
+            res.redirect(`/${locale}/user`);
+        });
+
+    } catch (error) {
+        console.error('Erreur 2FA:', error);
+        req.flash('error', 'Une erreur est survenue.');
+        res.redirect(`/${locale}/verify-2fa`);
+    }
 });
 
 
