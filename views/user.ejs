@@ -500,9 +500,8 @@ progress {
                                 <p class="card-text user-info"><%= i18n.email %>: <%= user.email %></p>
 <% if (user.twoFactorEnabled) { %>
   <p>🔒 2FA activée</p>
-  <form action="/disable-2fa" method="POST">
-    <button class="btn btn-outline-danger btn-sm">Désactiver la 2FA</button>
-  </form>
+ <button id="disable-2fa-btn" class="btn btn-outline-danger btn-sm">Désactiver la 2FA</button>
+
   <a href="/reset-2fa" class="btn btn-outline-secondary btn-sm">Réinitialiser la 2FA</a>
 <% } else { %>
   <p>🔓 2FA non activée</p>
@@ -1249,6 +1248,35 @@ async function loadStats() {
 document.addEventListener("DOMContentLoaded", loadStats);
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("disable-2fa-btn");
+    if (btn) {
+        btn.addEventListener("click", async function () {
+            const confirmation = confirm("Es-tu sûr de vouloir désactiver la 2FA ?");
+            if (!confirmation) return;
+
+            try {
+                const response = await fetch("/disable-2fa", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" }
+                });
+
+                if (response.ok) {
+                    alert("2FA désactivée avec succès.");
+                    window.location.reload();
+                } else {
+                    const res = await response.json();
+                    alert(res.error || "Erreur lors de la désactivation de la 2FA.");
+                }
+            } catch (err) {
+                console.error("Erreur :", err);
+                alert("Une erreur est survenue.");
+            }
+        });
+    }
+});
+</script>
 
 
 </body>
