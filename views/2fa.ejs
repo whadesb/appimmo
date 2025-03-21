@@ -148,11 +148,11 @@
                 <button type="submit" class="btn btn-primary btn-block"><%= i18n.submit_button %></button>
               </form>
 
-              <% if (typeof error !== 'undefined') { %>
-                <div class="alert alert-danger mt-4">
-                  <%= i18n.error_message %>
-                </div>
-              <% } %>
+             <% if (typeof error !== 'undefined') { %>
+  <div class="alert alert-danger mt-4">
+    <%= error %>
+  </div>
+<% } %>
 
               <!-- Lien pour se déconnecter -->
               <div class="text-center mt-3">
