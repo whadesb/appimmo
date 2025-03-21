@@ -700,7 +700,23 @@ app.post('/:locale/register', async (req, res) => {
 });
 
 app.get('/:locale/2fa', (req, res) => {
-  res.render('2fa', { locale: req.params.locale });
+  const locale = req.params.locale || 'fr';
+  const translationsPath = `./locales/${locale}/2fa.json`;
+
+  let i18n = {};
+
+  try {
+    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
+
+  res.render('2fa', {
+    locale,
+    i18n,
+    messages: req.flash()
+  });
 });
 
 
