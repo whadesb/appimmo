@@ -488,44 +488,58 @@ progress {
 <a href="#" title="Mes commandes" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="main-section">
-                        <!-- Section Account -->
-                        <div id="account" class="card">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= i18n.my_profile %></h5>
-                                <p class="card-text"><%= i18n.profile_info %></p>
-                                <p class="card-text user-info"><%= i18n.name %>: <%= user.firstName %></p>
-                                <p class="card-text user-info"><%= i18n.first_name %>: <%= user.lastName %></p>
-                                <p class="card-text user-info"><%= i18n.email %>: <%= user.email %></p>
-<div>
-  <h3>Authentification à deux facteurs (2FA)</h3>
- <% if (!user.twoFactorEnabled) { %>
-  <a href="/<%= locale %>/enable-2fa" class="btn btn-warning">Activer 2FA</a>
-<% } else { %>
-  <span class="badge bg-success">2FA activé</span>
-<% } %>
+          <div class="col">
+  <div class="main-section">
+    <!-- Section Account -->
+    <div id="account" class="card">
+      <div class="card-body">
+        <h5 class="card-title"><%= i18n.my_profile %></h5>
+        <p class="card-text"><%= i18n.profile_info %></p>
 
-                                <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
-                                <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
-<div id="disable-2fa-message" class="alert alert-success" style="display: none;"></div>
-                            </div>
-                        </div>
+        <!-- Infos utilisateur sur une ligne -->
+        <p class="card-text user-info">
+          <strong><%= i18n.name %>:</strong> <%= user.firstName %> &nbsp; | &nbsp;
+          <strong><%= i18n.first_name %>:</strong> <%= user.lastName %> &nbsp; | &nbsp;
+          <strong><%= i18n.email %>:</strong> <%= user.email %>
+        </p>
 
-                        <!-- Section Reset Password -->
-                        <div id="reset-password" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= i18n.reset_password %></h5>
-                                <p class="card-text"><%= i18n.password_reset_instructions %></p>
-                                <form id="reset-password-form" action="/user/reset-password" method="POST">
-                                    <div class="form-group">
-                                        <label for="email"><%= i18n.email_label %></label>
-                                        <input type="email" class="form-control" id="email" name="email" required>
-                                    </div>
-                                    <button type="submit" class="btn btn-outline-dark"><%= i18n.send_reset_link %></button>
-                                </form>
-                            </div>
-                        </div>
+        <!-- 2FA sur une ligne -->
+        <p class="card-text user-info">
+          <strong>Authentification à deux facteurs (2FA):</strong>
+          <% if (!user.twoFactorEnabled) { %>
+            <a href="/<%= locale %>/enable-2fa" class="btn btn-sm btn-warning ms-2">Activer 2FA</a>
+          <% } else { %>
+            <span class="badge bg-success ms-2">2FA activé</span>
+          <% } %>
+        </p>
+
+        <!-- Bouton Réinitialiser mot de passe -->
+        <p class="card-text user-info">
+          <strong>Mot de passe:</strong>
+          <button type="button" class="btn btn-sm btn-outline-dark ms-2" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
+        </p>
+
+        <div id="disable-2fa-message" class="alert alert-success" style="display: none;"></div>
+      </div>
+    </div>
+
+    <!-- Section Reset Password -->
+    <div id="reset-password" class="card mt-3" style="display: none;">
+      <div class="card-body">
+        <h5 class="card-title"><%= i18n.reset_password %></h5>
+        <p class="card-text"><%= i18n.password_reset_instructions %></p>
+        <form id="reset-password-form" action="/user/reset-password" method="POST">
+          <div class="form-group">
+            <label for="email"><%= i18n.email_label %></label>
+            <input type="email" class="form-control" id="email" name="email" required>
+          </div>
+          <button type="submit" class="btn btn-outline-dark mt-2"><%= i18n.send_reset_link %></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
                         <!-- Section Landing Page -->
                         <div id="landing" class="card" style="display: none;">
