@@ -642,47 +642,29 @@ app.post('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   }
 });
 
+app.post('/:locale/verify-2fa', isAuthenticated, async (req, res) => {
+  const { code } = req.body;
+  const locale = req.params.locale || 'fr';
+  const user = await User.findById(req.user._id);
 
-app.post('/:locale/verify-2fa', async (req, res) => {
-    const locale = req.params.locale || 'fr';
-    const { token } = req.body;
+  const verified = speakeasy.totp.verify({
+    secret: user.twoFactorSecret,
+    encoding: 'base32',
+    token: code
+  });
 
-    if (!req.session.tmpUserId) {
-        req.flash('error', 'Session expirée. Veuillez vous reconnecter.');
-        return res.redirect(`/${locale}/login`);
-    }
+  if (!verified) {
+    req.flash('error', 'Code invalide. Veuillez réessayer.');
+    return res.redirect(`/${locale}/enable-2fa`);
+  }
 
-    try {
-        const user = await User.findById(req.session.tempUserId);
+  user.twoFactorEnabled = true;
+  await user.save();
 
-        const verified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,
-            encoding: 'base32',
-            token: token
-        });
-
-        if (!verified) {
-            req.flash('error', 'Code invalide. Veuillez réessayer.');
-            return res.redirect(`/${locale}/verify-2fa`);
-        }
-
-        // Authentification réussie
-        req.login(user, (err) => {
-            if (err) {
-                req.flash('error', 'Erreur lors de la connexion.');
-                return res.redirect(`/${locale}/login`);
-            }
-
-            delete req.session.tempUserId; // Nettoyage
-            res.redirect(`/${locale}/user`);
-        });
-
-    } catch (error) {
-        console.error('Erreur 2FA:', error);
-        req.flash('error', 'Une erreur est survenue.');
-        res.redirect(`/${locale}/verify-2fa`);
-    }
+  req.flash('success', '2FA activée avec succès.');
+  res.redirect(`/${locale}/user`);
 });
+
 
 
 app.get('/faq', (req, res) => {
