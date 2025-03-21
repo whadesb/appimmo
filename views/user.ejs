@@ -1120,15 +1120,22 @@ document.addEventListener('DOMContentLoaded', loadOrders);
 
 // Charger les commandes quand on affiche la section "orders"
 function showSection(sectionId) {
-  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
-  sections.forEach(id => {
-    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
-  });
+    const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
+    sections.forEach(id => {
+        document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+    });
 
-  if (sectionId === 'orders') {
-    loadOrders();
-  }
+    if (sectionId === 'orders') {
+        loadOrders();
+    }
+    if (sectionId === 'created-pages') {
+        loadLandingPages();
+    }
+    if (sectionId === 'donnees') {
+        loadStats();
+    }
 }
+
 // Fonction pour copier l'URL de la propriété
 function copyURL(url) {
   const fullUrl = `https://uap.immo${url}`;
