@@ -512,15 +512,18 @@ app.post('/:locale/login', (req, res, next) => {
         }
 
         req.logIn(user, (err) => {
-            if (err) return next(err);
+    if (err) {
+        return next(err);
+    }
 
-            if (user.twoFactorEnabled) {
-                req.session.tempUserId = user._id; // stocke l'ID temporairement
-                return res.redirect(`/${locale}/verify-2fa`);
-            }
+    // Si l'utilisateur a activé la 2FA, rediriger vers la page 2FA
+    if (user.twoFactorEnabled) {
+        req.session.tmpUserId = user._id; // Stocke temporairement l'utilisateur
+        return res.redirect(`/${locale}/2fa`);
+    }
 
-            return res.redirect(`/${locale}/user`);
-        });
+    return res.redirect(`/${locale}/user`);
+});
     })(req, res, next);
 });
 
@@ -797,68 +800,74 @@ app.post('/:locale/register', async (req, res) => {
   }
 });
 
-app.get('/:locale/2fa', async (req, res) => {
-  const locale = req.params.locale || 'fr';
-  const translationsPath = `./locales/${locale}/2fa.json`;
-  let i18n = {};
+app.get('/:locale/2fa', (req, res) => {
+    const { locale } = req.params;
 
-  try {
-    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-  } catch (error) {
-    console.error('Erreur lors du chargement des traductions 2FA :', error);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
+    if (!req.session.tmpUserId) {
+        return res.redirect(`/${locale}/login`);
+    }
 
-  if (!req.session.tempUserId) {
-    return res.redirect(`/${locale}/login`);
-  }
+    const translationsPath = `./locales/${locale}/2fa.json`;
+    let i18n = {};
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
 
-  res.render('2fa', {
-    locale,
-    i18n,
-    messages: req.flash()
-  });
+    res.render('2fa', {
+        locale,
+        i18n,
+        messages: req.flash()
+    });
 });
 
+
 app.post('/:locale/2fa', async (req, res) => {
-  const { token } = req.body;
-  const locale = req.params.locale || 'fr';
+    const { locale } = req.params;
+    const { code } = req.body;
+    const tmpUserId = req.session.tmpUserId;
 
-  if (!req.session.tempUserId) {
-    return res.redirect(`/${locale}/login`);
-  }
-
-  try {
-    const user = await User.findById(req.session.tempUserId);
-    if (!user || !user.twoFactorSecret) {
-      req.flash('error', 'Erreur d’authentification 2FA.');
-      return res.redirect(`/${locale}/login`);
+    if (!tmpUserId) {
+        return res.redirect(`/${locale}/login`);
     }
 
-    const verified = speakeasy.totp.verify({
-      secret: user.twoFactorSecret,
-      encoding: 'base32',
-      token: token
-    });
-
-    if (verified) {
-      req.logIn(user, (err) => {
-        if (err) {
-          req.flash('error', 'Erreur lors de la connexion.');
-          return res.redirect(`/${locale}/login`);
+    try {
+        const user = await User.findById(tmpUserId);
+        if (!user || !user.twoFactorSecret) {
+            req.flash('error', 'Erreur de validation 2FA.');
+            return res.redirect(`/${locale}/login`);
         }
-        delete req.session.tempUserId;
-        return res.redirect(`/${locale}/user`);
-      });
-    } else {
-      req.flash('error', 'Code incorrect. Veuillez réessayer.');
-      return res.redirect(`/${locale}/2fa`);
+
+        const verified = speakeasy.totp.verify({
+            secret: user.twoFactorSecret,
+            encoding: 'base32',
+            token: code,
+            window: 1
+        });
+
+        if (!verified) {
+            req.flash('error', 'Code 2FA invalide.');
+            return res.redirect(`/${locale}/2fa`);
+        }
+
+        // Authentification réussie, supprimer tmpUserId
+        delete req.session.tmpUserId;
+
+        // Log in manuellement avec Passport si ce n'est pas déjà le cas
+        req.login(user, (err) => {
+            if (err) {
+                req.flash('error', 'Erreur de connexion.');
+                return res.redirect(`/${locale}/login`);
+            }
+            return res.redirect(`/${locale}/user`);
+        });
+    } catch (err) {
+        console.error('Erreur lors de la vérification 2FA :', err);
+        req.flash('error', 'Une erreur est survenue.');
+        res.redirect(`/${locale}/login`);
     }
-  } catch (error) {
-    console.error('Erreur 2FA:', error);
-    req.flash('error', 'Erreur interne.');
-    res.redirect(`/${locale}/login`);
-  }
 });
 
 
