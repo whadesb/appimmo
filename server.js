@@ -612,12 +612,57 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     });
 });
 
+app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
+  const locale = req.params.locale || 'fr';
+
+  try {
+    const user = await User.findById(req.user._id);
+
+    // Si l'utilisateur a déjà un secret, on ne le régénère pas
+    if (!user.twoFactorSecret) {
+      const secret = speakeasy.generateSecret({ name: `UAP Immo (${user.email})` });
+      user.twoFactorSecret = secret.base32;
+      await user.save();
+    }
+
+    const otpAuthUrl = speakeasy.otpauthURL({
+      secret: user.twoFactorSecret,
+      label: `UAP Immo (${user.email})`,
+      issuer: 'UAP Immo',
+      encoding: 'base32'
+    });
+
+    const qrCode = await QRCode.toDataURL(otpAuthUrl);
+
+    const translationsPath = `./locales/${locale}/enable-2fa.json`;
+    const i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+
+    res.render('enable-2fa', {
+      locale,
+      i18n,
+      user,
+      qrCode,
+      messages: req.flash()
+    });
+  } catch (error) {
+    console.error("Erreur dans GET /enable-2fa :", error);
+    req.flash('error', 'Erreur lors de la génération du code QR.');
+    res.redirect(`/${locale}/user`);
+  }
+});
+
+
 app.post('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   const locale = req.params.locale || 'fr';
   const { code } = req.body;
 
   try {
     const user = await User.findById(req.user._id);
+
+    if (!user.twoFactorSecret) {
+      req.flash('error', 'Secret 2FA manquant. Rechargez la page.');
+      return res.redirect(`/${locale}/enable-2fa`);
+    }
 
     const verified = speakeasy.totp.verify({
       secret: user.twoFactorSecret,
@@ -636,34 +681,12 @@ app.post('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
     req.flash('success', '2FA activée avec succès.');
     res.redirect(`/${locale}/user`);
   } catch (err) {
-    console.error("Erreur lors de l'activation 2FA :", err);
+    console.error("Erreur POST enable-2fa :", err);
     req.flash('error', 'Une erreur est survenue.');
     res.redirect(`/${locale}/enable-2fa`);
   }
 });
 
-app.post('/:locale/verify-2fa', isAuthenticated, async (req, res) => {
-  const { code } = req.body;
-  const locale = req.params.locale || 'fr';
-  const user = await User.findById(req.user._id);
-
-  const verified = speakeasy.totp.verify({
-    secret: user.twoFactorSecret,
-    encoding: 'base32',
-    token: code
-  });
-
-  if (!verified) {
-    req.flash('error', 'Code invalide. Veuillez réessayer.');
-    return res.redirect(`/${locale}/enable-2fa`);
-  }
-
-  user.twoFactorEnabled = true;
-  await user.save();
-
-  req.flash('success', '2FA activée avec succès.');
-  res.redirect(`/${locale}/user`);
-});
 
 
 
