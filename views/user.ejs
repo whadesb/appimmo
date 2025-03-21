@@ -498,6 +498,16 @@ progress {
                                 <p class="card-text user-info"><%= i18n.name %>: <%= user.firstName %></p>
                                 <p class="card-text user-info"><%= i18n.first_name %>: <%= user.lastName %></p>
                                 <p class="card-text user-info"><%= i18n.email %>: <%= user.email %></p>
+<% if (user.twoFactorEnabled) { %>
+  <p>🔒 2FA activée</p>
+  <form action="/disable-2fa" method="POST">
+    <button class="btn btn-outline-danger btn-sm">Désactiver la 2FA</button>
+  </form>
+  <a href="/reset-2fa" class="btn btn-outline-secondary btn-sm">Réinitialiser la 2FA</a>
+<% } else { %>
+  <p>🔓 2FA non activée</p>
+  <a href="/enable-2fa" class="btn btn-outline-primary btn-sm">Activer la 2FA</a>
+<% } %>
 
                                 <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
                                 <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
