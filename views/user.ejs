@@ -711,22 +711,26 @@ progress {
                                 <h5 class="card-title"><%= i18n.stats %></h5>
                                 <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.</p>
                             <table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Page</th>
-            <th>Vues</th>
-            <th>Utilisateurs</th>
-            <th>Source de trafic</th>
-            <th>Medium</th>
-            <th>Pays</th>
-            <th>Ville</th>
-            <th>Type d'appareil</th>
-        </tr>
-    </thead>
-    <tbody id="stats-list">
-        <!-- Les stats seront chargées ici -->
-    </tbody>
+    <form id="statsFilter">
+  <label>Période :
+    <input type="date" name="startDate" required>
+    <input type="date" name="endDate" required>
+    <button type="submit">Filtrer</button>
+  </label>
+</form>
+
+<table id="statsTable">
+  <thead>
+    <tr>
+      <th>Page</th>
+      <th>Vues</th>
+      <th>Utilisateurs</th>
+      <th>Source</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
 </table>
+
 
 
 
@@ -1273,7 +1277,30 @@ document.addEventListener("DOMContentLoaded", loadStats);
   });
 </script>
 
+<script>
+document.getElementById('statsFilter').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const startDate = e.target.startDate.value;
+  const endDate = e.target.endDate.value;
 
+  const res = await fetch(`/api/stats/<%= user._id %>?startDate=${startDate}&endDate=${endDate}`);
+  const stats = await res.json();
+
+  const tbody = document.querySelector('#statsTable tbody');
+  tbody.innerHTML = '';
+
+  stats.forEach(stat => {
+    const row = `
+      <tr>
+        <td>${stat.pageTitle}</td>
+        <td>${stat.views}</td>
+        <td>${stat.users}</td>
+        <td>${stat.source}</td>
+      </tr>`;
+    tbody.insertAdjacentHTML('beforeend', row);
+  });
+});
+</script>
 
 </body>
 </html>
