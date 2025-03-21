@@ -135,12 +135,12 @@
   <p style="color: green;"><%= messages.success[0] %></p>
 <% } %>
 
-              <form action="/<%= locale %>/verify-2fa" method="POST">
-                <div class="form-group">
-                  <input type="text" class="form-control" name="code" placeholder="<%= i18n.verify %>" required>
-                </div>
-                <button type="submit" class="btn btn-primary btn-block mt-3"><%= i18n.verify %></button>
-              </form>
+              <form action="/<%= locale %>/enable-2fa" method="POST">
+  <label for="code"><%= i18n.codeLabel %></label>
+  <input type="text" class="form-control" name="code" id="code" required maxlength="6" pattern="\d{6}">
+  <button type="submit" class="btn btn-primary mt-3"><%= i18n.verify %></button>
+</form>
+
             </div>
           </div>
         </div>
