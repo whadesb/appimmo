@@ -10,7 +10,7 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
 async function getPageStats(pagePath) {
   const [response] = await analyticsDataClient.runReport({
     property: `properties/${GA4_PROPERTY_ID}`,
-    dateRanges: [{ startDate: '7daysAgo', endDate: 'yesterday' }],
+   dateRanges: [{ startDate: '365daysAgo', endDate: 'yesterday' }],
     dimensions: [
       { name: 'pagePath' },
       { name: 'sessionSource' },
