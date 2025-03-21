@@ -496,38 +496,38 @@ progress {
         <h5 class="card-title"><%= i18n.my_profile %></h5>
         <p class="card-text"><%= i18n.profile_info %></p>
 
-        <!-- Infos utilisateur en ligne sur desktop, en colonne sur mobile -->
-        <div class="d-flex flex-column flex-md-row flex-wrap gap-2 mb-2">
-          <p class="mb-0"><strong><%= i18n.name %>:</strong> <%= user.firstName %></p>
-          <span class="d-none d-md-inline">|</span>
-          <p class="mb-0"><strong><%= i18n.first_name %>:</strong> <%= user.lastName %></p>
-          <span class="d-none d-md-inline">|</span>
-          <p class="mb-0"><strong><%= i18n.email %>:</strong> <%= user.email %></p>
-        </div>
+        <!-- Infos utilisateur affichées ligne par ligne -->
+        <p class="card-text user-info">
+          <strong><%= i18n.name %>:</strong> <%= user.firstName %>
+        </p>
+        <p class="card-text user-info">
+          <strong><%= i18n.first_name %>:</strong> <%= user.lastName %>
+        </p>
+        <p class="card-text user-info">
+          <strong><%= i18n.email %>:</strong> <%= user.email %>
+        </p>
 
         <!-- 2FA -->
-        <div class="d-flex flex-wrap align-items-center mb-2">
+        <p class="card-text user-info d-flex align-items-center">
           <strong>Authentification à deux facteurs (2FA):</strong>
           <% if (!user.twoFactorEnabled) { %>
             <a href="/<%= locale %>/enable-2fa" class="btn btn-sm btn-warning ms-2">Activer 2FA</a>
           <% } else { %>
             <span class="badge bg-success ms-2">2FA activé</span>
           <% } %>
-        </div>
+        </p>
 
-        <!-- Mot de passe -->
-        <div class="d-flex flex-wrap align-items-center">
+        <!-- Bouton Réinitialisation du mot de passe -->
+        <p class="card-text user-info d-flex align-items-center">
           <strong>Mot de passe:</strong>
-          <button type="button" class="btn btn-sm btn-outline-dark ms-2" onclick="showSection('reset-password')">
-            <%= i18n.reset_password %>
-          </button>
-        </div>
+          <button type="button" class="btn btn-sm btn-outline-dark ms-2" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
+        </p>
 
-        <div id="disable-2fa-message" class="alert alert-success mt-3" style="display: none;"></div>
+        <div id="disable-2fa-message" class="alert alert-success" style="display: none;"></div>
       </div>
     </div>
 
-    <!-- Section Réinitialisation -->
+    <!-- Section Reset Password -->
     <div id="reset-password" class="card mt-3" style="display: none;">
       <div class="card-body">
         <h5 class="card-title"><%= i18n.reset_password %></h5>
@@ -543,6 +543,7 @@ progress {
     </div>
   </div>
 </div>
+
 
 
 
