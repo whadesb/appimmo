@@ -813,73 +813,74 @@ app.post('/:locale/register', async (req, res) => {
 });
 
 app.get('/:locale/2fa', (req, res) => {
-    const { locale } = req.params;
+  const { locale } = req.params;
 
-    if (!req.session.tmpUserId) {
-        return res.redirect(`/${locale}/login`);
-    }
+  if (!req.session.tmpUserId) {
+    return res.redirect(`/${locale}/login`);
+  }
 
-    const translationsPath = `./locales/${locale}/2fa.json`;
-    let i18n = {};
-    try {
-        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
+  const translationsPath = `./locales/${locale}/2fa.json`;
+  let i18n = {};
+  try {
+    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
 
-    res.render('2fa', {
-        locale,
-        i18n,
-        messages: req.flash()
-    });
+  res.render('2fa', {
+    locale,
+    i18n,
+    messages: req.flash()
+  });
 });
 
 
+
 app.post('/:locale/2fa', async (req, res) => {
-    const { locale } = req.params;
-    const { code } = req.body;
-    const tmpUserId = req.session.tmpUserId;
+  const { locale } = req.params;
+  const { code } = req.body;
 
-    if (!tmpUserId) {
+  const tmpUserId = req.session.tmpUserId;
+
+  if (!tmpUserId) {
+    return res.redirect(`/${locale}/login`);
+  }
+
+  try {
+    const user = await User.findById(tmpUserId);
+    if (!user || !user.twoFactorSecret) {
+      req.flash('error', 'Erreur de validation 2FA.');
+      return res.redirect(`/${locale}/login`);
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code,
+      window: 1
+    });
+
+    if (!verified) {
+      req.flash('error', 'Code 2FA invalide.');
+      return res.redirect(`/${locale}/2fa`);
+    }
+
+    // Connexion réussie
+    delete req.session.tmpUserId;
+    req.login(user, (err) => {
+      if (err) {
+        req.flash('error', 'Erreur de connexion.');
         return res.redirect(`/${locale}/login`);
-    }
+      }
+      return res.redirect(`/${locale}/user`);
+    });
 
-    try {
-        const user = await User.findById(tmpUserId);
-        if (!user || !user.twoFactorSecret) {
-            req.flash('error', 'Erreur de validation 2FA.');
-            return res.redirect(`/${locale}/login`);
-        }
-
-        const verified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,
-            encoding: 'base32',
-            token: code,
-            window: 1
-        });
-
-        if (!verified) {
-            req.flash('error', 'Code 2FA invalide.');
-            return res.redirect(`/${locale}/2fa`);
-        }
-
-        // Authentification réussie, supprimer tmpUserId
-        delete req.session.tmpUserId;
-
-        // Log in manuellement avec Passport si ce n'est pas déjà le cas
-        req.login(user, (err) => {
-            if (err) {
-                req.flash('error', 'Erreur de connexion.');
-                return res.redirect(`/${locale}/login`);
-            }
-            return res.redirect(`/${locale}/user`);
-        });
-    } catch (err) {
-        console.error('Erreur lors de la vérification 2FA :', err);
-        req.flash('error', 'Une erreur est survenue.');
-        res.redirect(`/${locale}/login`);
-    }
+  } catch (err) {
+    console.error('Erreur 2FA:', err);
+    req.flash('error', 'Une erreur est survenue.');
+    res.redirect(`/${locale}/login`);
+  }
 });
 
 
