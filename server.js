@@ -517,13 +517,16 @@ app.post('/:locale/login', (req, res, next) => {
     }
 
     // Si l'utilisateur a activé la 2FA, rediriger vers la page 2FA
-    if (user.twoFactorEnabled) {
-        req.session.tmpUserId = user._id; // Stocke temporairement l'utilisateur
-        return res.redirect(`/${locale}/2fa`);
-    }
+   if (user.twoFactorEnabled) {
+  req.session.tmpUserId = user._id;
+  return res.redirect(`/${locale}/2fa`);
+}
 
-    return res.redirect(`/${locale}/user`);
+req.login(user, (err) => {
+  if (err) return next(err);
+  return res.redirect(`/${locale}/user`);
 });
+
     })(req, res, next);
 });
 
