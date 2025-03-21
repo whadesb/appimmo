@@ -184,11 +184,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 </div>
                 <button type="submit" class="btn btn-primary w-100"><%= i18n.login_button %></button>
               </form>
-
-<% if (messages.error) { %>
-    <div id="error-message" class="alert alert-danger text-center mt-3">
-        <i class="bi bi-exclamation-triangle-fill"></i> <%= messages.error %>
-    </div>
+<% if (messages.error && messages.error.length > 0) { %>
+  <div class="alert alert-danger">
+    <%= messages.error[0] %>
+  </div>
 <% } %>
               <div class="mt-3 text-center">
                 <a href="/forgot-password"><%= i18n.forgot_password %></a>
