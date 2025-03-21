@@ -567,6 +567,54 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     });
 });
 
+app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
+  const locale = req.params.locale || 'fr';
+  const user = req.user;
+
+  // Générer secret
+  const secret = speakeasy.generateSecret({ name: 'UAP Immo' });
+
+  // Enregistrer le secret dans la BDD
+  user.twoFactorSecret = secret.base32;
+  await user.save();
+
+  // Générer le QR code
+  const otpauthUrl = secret.otpauth_url;
+  const qrCode = await QRCode.toDataURL(otpauthUrl);
+
+  // Charger les traductions
+  const i18n = JSON.parse(fs.readFileSync(`./locales/${locale}/enable-2fa.json`, 'utf8'));
+
+  res.render('enable-2fa', {
+    locale,
+    qrCode,
+    user,
+    i18n
+  });
+});
+
+app.post('/:locale/verify-2fa', async (req, res) => {
+  const { token } = req.body;
+  const locale = req.params.locale;
+  const user = req.user;
+
+  const verified = speakeasy.totp.verify({
+    secret: user.twoFactorSecret,
+    encoding: 'base32',
+    token
+  });
+
+  if (verified) {
+    user.isTwoFactorEnabled = true;
+    await user.save();
+    return res.redirect(`/${locale}/login`);
+  } else {
+    req.flash('error', 'Code invalide.');
+    return res.redirect(`/${locale}/enable-2fa`);
+  }
+});
+
+
 app.get('/faq', (req, res) => {
   res.render('faq', { title: 'faq' });
 });
@@ -691,7 +739,7 @@ app.post('/:locale/register', async (req, res) => {
     await sendAccountCreationEmail(newUser.email);
 
     //  Redirection vers la page 2FA (tu peux adapter la route si nécessaire)
-    res.redirect(`/${locale}/2fa`);
+    res.redirect(`/${locale}/enable-2fa`);
   } catch (error) {
     console.error('Erreur lors de l\'inscription :', error.message);
     req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
