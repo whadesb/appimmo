@@ -169,22 +169,25 @@ app.get('/', (req, res) => {
     }
 });
 // Route API pour récupérer les statistiques d'une page spécifique
-app.get('/api/stats/:id', async (req, res) => {
-    const pageId = req.params.id;
-    const pagePath = `/landing-pages/${pageId}.html`;
+app.get('/api/stats/:userId', async (req, res) => {
+  const { userId } = req.params;
+  const { startDate, endDate } = req.query;
 
-    try {
-        const stats = await getPageStats(pagePath);
+  try {
+    const pages = await Page.find({ owner: userId }); // récupère toutes les landing pages de l’utilisateur
+    const stats = [];
 
-        if (!stats.length) {
-            return res.json({ message: "Aucune donnée trouvée pour cette page.", views: 0, users: 0 });
-        }
-
-        res.json(stats[0]); // Renvoie uniquement la première ligne des stats
-    } catch (error) {
-        console.error('Erreur API Analytics:', error);
-        res.status(500).json({ error: 'Erreur API Analytics' });
+    for (const page of pages) {
+      const pagePath = `/landing-pages/${page._id}.html`;
+      const stat = await getPageStats(pagePath, startDate, endDate);
+      stats.push({ pageTitle: page.title, pagePath, ...stat });
     }
+
+    res.json(stats);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des stats' });
+  }
 });
 
 
@@ -1566,30 +1569,33 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
     }
 });
 
-async function getPageStats(pagePath) {
-  const [response] = await analyticsDataClient.runReport({
-    property: 'properties/123456789', // Ton ID GA4
-    dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
-    dimensions: [{ name: 'pagePath' }],
-    metrics: [{ name: 'screenPageViews' }, { name: 'activeUsers' }],
+async function getPageStats(pagePath, startDate, endDate) {
+  const response = await analyticsDataClient.runReport({
+    property: `properties/${GA4_PROPERTY_ID}`,
+    dateRanges: [{ startDate, endDate }],
+    dimensions: [{ name: 'pagePath' }, { name: 'sessionSource' }],
+    metrics: [{ name: 'screenPageViews' }, { name: 'totalUsers' }],
     dimensionFilter: {
       filter: {
         fieldName: 'pagePath',
-        stringFilter: { value: pagePath },
-      },
-    },
+        stringFilter: {
+          matchType: 'EXACT',
+          value: pagePath
+        }
+      }
+    }
   });
 
-  return response.rows.map(row => ({
+  const row = response.rows?.[0];
+  if (!row) return { views: 0, users: 0, sources: [] };
+
+  return {
     views: parseInt(row.metricValues[0].value),
     users: parseInt(row.metricValues[1].value),
-    source: 'non défini', // Ajoute si tu récupères d'autres dimensions
-    medium: 'non défini',
-    country: 'non défini',
-    city: 'non défini',
-    deviceCategory: 'non défini'
-  }));
+    source: row.dimensionValues[1].value
+  };
 }
+
 
 
 const port = process.env.PORT || 3000;
