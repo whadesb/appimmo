@@ -1074,24 +1074,21 @@ async function loadOrders() {
             noOrdersMessage.style.display = 'none';
 
             orders.forEach(order => {
-                const orderDate = new Date(order.createdAt); // Date de création de la commande
-                const expiryDate = new Date(order.expiryDateFormatted); // Date d'expiration
-                const today = new Date(); // Date actuelle
+                const orderDate = new Date(order.createdAt);
+                const expiryDate = new Date(order.expiryDate);
+                const today = new Date();
                 const timeDiff = expiryDate - today;
-                const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24)); // Convertir en jours
-
-                // Éviter un affichage de jours restants négatif
+                const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
                 const adjustedDaysRemaining = daysRemaining >= 0 ? daysRemaining : 0;
                 const progress = Math.min(((90 - adjustedDaysRemaining) / 90) * 100, 100);
 
-                // Déterminer la couleur de la barre de progression
-                let progressBarColor = '#8BC34A'; // 🟢 Vert (par défaut)
-                if (adjustedDaysRemaining <= 30) progressBarColor = '#FFC107'; // 🟠 Orange
-                if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722'; // 🔴 Rouge
+                let progressBarColor = '#8BC34A';
+                if (adjustedDaysRemaining <= 30) progressBarColor = '#FFC107';
+                if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722';
 
                 const row = document.createElement('tr');
                 row.innerHTML = `
-                    <td>${order.orderId}</td>
+                    <td>${order._id}</td>
                     <td>${orderDate.toLocaleDateString('fr-FR')}</td>
                     <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
                     <td>
@@ -1104,15 +1101,16 @@ async function loadOrders() {
                     </td>
                     <td>${expiryDate.toLocaleDateString('fr-FR')}</td>
                     <td>
-                        <button class="btn btn-outline-dark btn-sm" onclick="copyURL('/landing-pages/67d34cbd22d48feecc15c35f.html')">Copier</button>
-                        <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyId.url}', '_blank')">Voir</button>
+                        <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyUrl}')">Copier</button>
+                        <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyUrl}', '_blank')">Voir</button>
                     </td>
                 `;
                 ordersList.appendChild(row);
             });
         }
     } catch (error) {
-        document.getElementById('orders-list').innerHTML = '<tr><td colspan="10" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
+        document.getElementById('orders-list').innerHTML = '<tr><td colspan="6" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
+        console.error(error);
     }
 }
 
