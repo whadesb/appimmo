@@ -1,21 +1,25 @@
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const path = require('path');
 
-// 🔹 Remplace par ton ID Google Analytics
 const GA4_PROPERTY_ID = '448283789';
 
-// 🔹 Initialise le client API
 const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: path.join(__dirname, 'service-account.json') // Clé API
+  keyFilename: path.join(__dirname, 'service-account.json')
 });
 
-// 🔹 Fonction pour récupérer les stats d'une page spécifique
-async function getPageViews(pagePath) {
+async function getPageStats(pagePath) {
   const [response] = await analyticsDataClient.runReport({
     property: `properties/${GA4_PROPERTY_ID}`,
-    dateRanges: [{ startDate: '7daysAgo', endDate: 'yesterday' }], // Derniers 7 jours
-    dimensions: [{ name: 'pagePath' }],
-    metrics: [{ name: 'screenPageViews' }],
+    dateRanges: [{ startDate: '7daysAgo', endDate: 'yesterday' }],
+    dimensions: [
+      { name: 'pagePath' },
+      { name: 'sessionSource' },
+      { name: 'sessionMedium' }
+    ],
+    metrics: [
+      { name: 'screenPageViews' },
+      { name: 'totalUsers' }
+    ],
     dimensionFilter: {
       filter: {
         fieldName: 'pagePath',
@@ -24,12 +28,18 @@ async function getPageViews(pagePath) {
     }
   });
 
-  return response.rows.length > 0 ? response.rows[0].metricValues[0].value : 0;
+  if (!response.rows || response.rows.length === 0) {
+    return null;
+  }
+
+  const row = response.rows[0];
+  return {
+    pagePath: row.dimensionValues[0].value,
+    source: row.dimensionValues[1].value,
+    medium: row.dimensionValues[2].value,
+    views: row.metricValues[0].value,
+    users: row.metricValues[1].value
+  };
 }
 
-// 🔹 Test avec une landing page spécifique
-(async () => {
-  const pagePath = '/landing-pages/67d2085553a03b9b2ce4a939.html';
-  const views = await getPageViews(pagePath);
-  console.log(`Page: ${pagePath}, Visites: ${views}`);
-})();
+module.exports = { getPageStats };
