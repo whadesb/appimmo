@@ -1567,45 +1567,28 @@ const analyticsDataClient = new BetaAnalyticsDataClient({
 });
 
 async function getPageStats(pagePath) {
-    try {
-        const [response] = await analyticsDataClient.runReport({
-            property: `properties/${process.env.GA_PROPERTY_ID}`,
-            dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-            dimensions: [{ name: 'pagePath' }],
-            metrics: [
-                { name: 'screenPageViews' },  // Nombre de vues
-                { name: 'totalUsers' }        // Nombre d'utilisateurs uniques
-            ],
-            dimensionFilter: {
-                filter: {
-                    fieldName: 'pagePath',
-                    stringFilter: { matchType: 'EXACT', value: pagePath }
-                }
-            }
-        });
+  const [response] = await analyticsDataClient.runReport({
+    property: 'properties/123456789', // Ton ID GA4
+    dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
+    dimensions: [{ name: 'pagePath' }],
+    metrics: [{ name: 'screenPageViews' }, { name: 'activeUsers' }],
+    dimensionFilter: {
+      filter: {
+        fieldName: 'pagePath',
+        stringFilter: { value: pagePath },
+      },
+    },
+  });
 
-        if (!response.rows.length) {
-            return [{ pagePath, views: 0, users: 0 }];
-        }
-
-        // ✅ Déplacer cette partie DANS la fonction
-        const stats = response.rows.map(row => ({
-            pagePath: row.dimensionValues[0].value,
-            sessionSource: row.dimensionValues[1]?.value || "N/A",
-            sessionMedium: row.dimensionValues[2]?.value || "N/A",
-            city: row.dimensionValues[3]?.value || "N/A",
-            country: row.dimensionValues[4]?.value || "N/A",
-            deviceCategory: row.dimensionValues[5]?.value || "N/A",
-            views: row.metricValues[0].value,
-            users: row.metricValues[1].value
-        }));
-
-        return stats;
-
-    } catch (error) {
-        console.error('Erreur lors de la récupération des stats Google Analytics:', error);
-        return [{ pagePath, views: 0, users: 0 }];
-    }
+  return response.rows.map(row => ({
+    views: parseInt(row.metricValues[0].value),
+    users: parseInt(row.metricValues[1].value),
+    source: 'non défini', // Ajoute si tu récupères d'autres dimensions
+    medium: 'non défini',
+    country: 'non défini',
+    city: 'non défini',
+    deviceCategory: 'non défini'
+  }));
 }
 
 
