@@ -527,24 +527,18 @@ app.post('/:locale/login', (req, res, next) => {
         }
 
         req.logIn(user, (err) => {
-    if (err) {
-        return next(err);
-    }
+            if (err) return next(err);
 
-    // Si l'utilisateur a activé la 2FA, rediriger vers la page 2FA
-   if (user.twoFactorEnabled) {
-  req.session.tmpUserId = user._id;
-  return res.redirect(`/${locale}/2fa`);
-}
+            if (user.twoFactorEnabled) {
+                req.session.tmpUserId = user._id;
+                return res.redirect(`/${locale}/2fa`);
+            }
 
-req.login(user, (err) => {
-  if (err) return next(err);
-  return res.redirect(`/${locale}/user`);
-});
-
+            // Si la 2FA n’est pas activée, on va directement sur /user
+            return res.redirect(`/${locale}/user`);
+        });
     })(req, res, next);
 });
-
 
 
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
