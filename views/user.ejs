@@ -510,6 +510,7 @@ progress {
 
                                 <!-- Bouton qui montre la section de réinitialisation du mot de passe -->
                                 <button type="button" class="btn btn-outline-dark" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
+<div id="disable-2fa-message" class="alert alert-success" style="display: none;"></div>
                             </div>
                         </div>
 
@@ -1251,7 +1252,9 @@ document.addEventListener("DOMContentLoaded", loadStats);
 <script>
 document.addEventListener("DOMContentLoaded", function () {
     const btn = document.getElementById("disable-2fa-btn");
-    if (btn) {
+    const messageBox = document.getElementById("disable-2fa-message");
+
+    if (btn && messageBox) {
         btn.addEventListener("click", async function () {
             const confirmation = confirm("Es-tu sûr de vouloir désactiver la 2FA ?");
             if (!confirmation) return;
@@ -1263,8 +1266,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 if (response.ok) {
-                    alert("2FA désactivée avec succès.");
-                    window.location.reload();
+                    const result = await response.json();
+                    messageBox.textContent = result.message || "2FA désactivée avec succès.";
+                    messageBox.style.display = "block";
+
+                    setTimeout(() => {
+                        messageBox.style.display = "none";
+                        window.location.reload();
+                    }, 2000);
                 } else {
                     const res = await response.json();
                     alert(res.error || "Erreur lors de la désactivation de la 2FA.");
@@ -1277,6 +1286,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+
 
 
 </body>
