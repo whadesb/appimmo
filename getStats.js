@@ -20,7 +20,7 @@ async function getMultiplePageStats(pagePaths = []) {
 
   const [response] = await analyticsDataClient.runReport({
     property: `properties/${GA4_PROPERTY_ID}`,
-    dateRanges: [{ startDate: '365daysAgo', endDate: 'yesterday' }],
+    dateRanges: [{ startDate, endDate }],
     dimensions: [
       { name: 'pagePath' },
       { name: 'sessionSource' },
