@@ -770,7 +770,7 @@ progress {
 </div>
 
                         <!-- Section Created Pages -->
-                      <div id="created-pages" class="card" style="display: none;">
+                     <div id="created-pages" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title"><%= i18n.created_pages %></h5>
     <p class="card-text"><%= i18n.created_pages_info %></p>
@@ -794,6 +794,18 @@ progress {
 
     <div id="no-properties-message" style="display: none;" class="text-center">
       <p>Aucune landing page trouvée.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Toast de confirmation -->
+<div id="toast-confirm" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999; display: none;">
+  <div class="toast align-items-center text-white bg-success border-0 show" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        🎉 Redirection vers le paiement en cours...
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="document.getElementById('toast-confirm').style.display='none';"></button>
     </div>
   </div>
 </div>
@@ -1179,7 +1191,7 @@ async function loadLandingPages() {
             <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
               <i class="bi bi-clipboard"></i>
             </button>
-            <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}')" title="Diffuser">
+            <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}'); showToast();" title="Diffuser">
               <i class="bi bi-megaphone"></i>
             </button>
             <button class="btn btn-sm btn-secondary" onclick="editProperty('${page._id}')" title="Éditer">
@@ -1212,7 +1224,21 @@ async function loadLandingPages() {
     document.getElementById('properties-list').innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
   }
 }
+
+function redirectToPayment(propertyId) {
+  const locale = document.documentElement.lang || 'fr';
+  window.location.href = `/${locale}/payment?propertyId=${encodeURIComponent(propertyId)}`;
+}
+
+function showToast() {
+  const toast = document.getElementById('toast-confirm');
+  toast.style.display = 'block';
+  setTimeout(() => {
+    toast.style.display = 'none';
+  }, 3000);
+}
 </script>
+
 
 <script>
 async function renewOrder(orderId) { 
