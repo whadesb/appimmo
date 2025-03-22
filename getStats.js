@@ -2,7 +2,7 @@ const { GoogleAuth } = require('google-auth-library');
 const axios = require('axios');
 const path = require('path');
 
-const propertyId = process.env.GA_PROPERTY_ID || 'properties/123456789'; // Remplace par ton vrai ID
+const propertyId = process.env.GA_PROPERTY_ID || '448283789'; // Remplace par ton vrai ID
 const keyFilePath = path.join(__dirname, 'config', 'service-account.json'); // Chemin vers ta clé JSON
 
 // 🔐 Récupère le token OAuth2
