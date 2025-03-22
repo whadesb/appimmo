@@ -770,13 +770,15 @@ progress {
 </div>
 
                         <!-- Section Created Pages -->
-                        <div id="created-pages" class="card" style="display: none;">
-    <div class="card-body">
-        <h5 class="card-title"><%= i18n.created_pages %></h5>
-        <p class="card-text"><%= i18n.created_pages_info %></p>
-       <table class="table table-striped">
-    <thead>
-        <tr>
+                      <div id="created-pages" class="card" style="display: none;">
+  <div class="card-body">
+    <h5 class="card-title"><%= i18n.created_pages %></h5>
+    <p class="card-text"><%= i18n.created_pages_info %></p>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr>
             <th scope="col">Pièces</th>
             <th scope="col">Surface</th>
             <th scope="col">Prix</th>
@@ -784,19 +786,17 @@ progress {
             <th scope="col">Pays</th>
             <th scope="col">URL</th>
             <th scope="col">Actions</th>
-        </tr>
-    </thead>
-    <tbody id="properties-list">
-        <!-- Les propriétés créées par l'utilisateur seront affichées ici -->
-    </tbody>
-</table>
-<div id="no-properties-message" style="display: none;" class="text-center">
-    <p>Aucune landing page trouvée.</p>
+          </tr>
+        </thead>
+        <tbody id="properties-list"></tbody>
+      </table>
+    </div>
+
+    <div id="no-properties-message" style="display: none;" class="text-center">
+      <p>Aucune landing page trouvée.</p>
+    </div>
+  </div>
 </div>
-
-
-                            </div>
-                        </div>
 
                     </div> <!-- Fin de main-section -->
                 </div>
@@ -1152,61 +1152,68 @@ function copyURL(url) {
 }
 </script>
 <script>
-    async function loadLandingPages() {
-        try {
-            const response = await fetch('/user/landing-pages');
-            if (!response.ok) throw new Error("Erreur lors du chargement des données");
+async function loadLandingPages() {
+  try {
+    const response = await fetch('/user/landing-pages');
+    if (!response.ok) throw new Error("Erreur lors du chargement des données");
 
-            const landingPages = await response.json();
-            const landingPagesList = document.getElementById('properties-list');
-            landingPagesList.innerHTML = '';
+    const landingPages = await response.json();
+    const landingPagesList = document.getElementById('properties-list');
+    landingPagesList.innerHTML = '';
 
-            const noPropertiesMessage = document.getElementById('no-properties-message');
-            if (landingPages.length === 0) {
-                noPropertiesMessage.style.display = 'block';
-            } else {
-                noPropertiesMessage.style.display = 'none';
-                landingPages.forEach(page => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${page.rooms}</td>
-                        <td>${page.surface} m²</td>
-                        <td>${page.price.toLocaleString('fr-FR')} €</td>
-                        <td>${page.city}</td>
-                        <td>${page.country}</td>
-                        <td><a href="${page.url}" target="_blank">${page.url}</a></td>
-                        <td>
-                            <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${page.url}')">Copier</button>
-                            <button class="btn btn-primary btn-sm" onclick="redirectToPayment('${page._id}')">Diffuser</button>
-                        </td>
-                    `;
-                    landingPagesList.appendChild(row);
-                });
-            }
-        } catch (error) {
-            console.error("Erreur lors du chargement des landing pages :", error);
-            document.getElementById('properties-list').innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
-        }
+    const noPropertiesMessage = document.getElementById('no-properties-message');
+    if (landingPages.length === 0) {
+      noPropertiesMessage.style.display = 'block';
+    } else {
+      noPropertiesMessage.style.display = 'none';
+      landingPages.forEach(page => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${page.rooms}</td>
+          <td>${page.surface} m²</td>
+          <td>${page.price.toLocaleString('fr-FR')} €</td>
+          <td>${page.city}</td>
+          <td>${page.country}</td>
+          <td><a href="${page.url}" target="_blank">${page.url}</a></td>
+          <td>
+            <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
+              <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}')" title="Diffuser">
+              <i class="bi bi-megaphone"></i>
+            </button>
+            <button class="btn btn-sm btn-secondary" onclick="editProperty('${page._id}')" title="Éditer">
+              <i class="bi bi-pencil-square"></i>
+            </button>
+          </td>
+        `;
+        landingPagesList.appendChild(row);
+      });
     }
 
-    function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
-        navigator.clipboard.writeText(fullUrl)
-            .then(() => {
-                alert("URL copiée !");
-            })
-            .catch(err => console.error('Impossible de copier l\'URL : ', err));
-    }
+    // Ajouter effet de copie avec icône verte
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const url = `https://uap.immo${this.dataset.url}`;
+        navigator.clipboard.writeText(url).then(() => {
+          const icon = this.querySelector('i');
+          icon.classList.remove('bi-clipboard');
+          icon.classList.add('bi-check-circle-fill', 'text-success');
 
-    function redirectToPayment(propertyId) {
-        const locale = document.documentElement.lang || 'fr';
-        window.location.href = `/${locale}/payment?propertyId=${encodeURIComponent(propertyId)}`;
-    }
-
-    document.addEventListener("DOMContentLoaded", function () {
-        loadLandingPages();
+          setTimeout(() => {
+            icon.classList.remove('bi-check-circle-fill', 'text-success');
+            icon.classList.add('bi-clipboard');
+          }, 1500);
+        });
+      });
     });
+  } catch (error) {
+    console.error("Erreur lors du chargement des landing pages :", error);
+    document.getElementById('properties-list').innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
+  }
+}
 </script>
+
 <script>
 async function renewOrder(orderId) { 
   try { 
