@@ -172,14 +172,30 @@ app.get('/', (req, res) => {
 // Route API pour récupérer les statistiques d'une page spécifique
 const { getPageStats } = require('./getStats');
 
-app.get('/api/stats/:id', async (req, res) => {
-  const landingPages = await Property.find({ createdBy: req.user._id });
+router.get('/api/stats/:pageId', async (req, res) => {
+  try {
+    const { pageId } = req.params;
+    const startDate = req.query.startDate || '2024-03-01';
+    const endDate = req.query.endDate || '2025-03-21';
+    console.log('🔍 Récupération des stats pour', pageId);
 
-  const paths = userLandingPages.map(p => new URL(p.url).pathname);
+    const landingPages = await getLandingPagesFromDB(req.user.id);
+    console.log('✅ Landing pages récupérées :', landingPages.length);
 
-  const stats = await getPageStats(paths);
+    const matchingPage = landingPages.find(page => page._id.toString() === pageId);
+    if (!matchingPage) return res.status(404).json({ error: 'Page non trouvée' });
 
-  res.json(stats);
+    const pagePath = `/landing-pages/${matchingPage.slug}.html`;
+
+    console.log('📊 Statistiques pour le chemin :', pagePath);
+    const stats = await getPageStats(pagePath, startDate, endDate);
+    console.log('✅ Stats récupérées :', stats);
+
+    res.json(stats);
+  } catch (err) {
+    console.error('❌ Erreur API /api/stats/:id =>', err);
+    res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
+  }
 });
 
 
