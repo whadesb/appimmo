@@ -1231,7 +1231,7 @@ async function loadStats() {
   try {
     const response = await fetch('/user/landing-pages');
     const pages = await response.json();
-    const statsList = document.querySelector('#statsTable tbody'); // ✅ correction ici
+    const statsList = document.querySelector('#statsTable tbody');
     statsList.innerHTML = '';
 
     for (const page of pages) {
@@ -1240,15 +1240,21 @@ async function loadStats() {
 
       const res = await fetch(`/api/stats/${pageId}`);
 
-      // Vérification si la réponse est au format JSON
+      // Vérification si la réponse est JSON
       const contentType = res.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         const text = await res.text();
-        console.error("Réponse non JSON :", text);
+        console.error("❌ Réponse non JSON :", text);
         continue;
       }
 
       const data = await res.json();
+
+      // Si on reçoit une erreur de l’API, on l’affiche dans la console
+      if (data.error) {
+        console.error(`❌ Erreur pour la page ${pageId} :`, data.error);
+        continue;
+      }
 
       const views = data.views || 0;
       const users = data.users || 0;
@@ -1264,11 +1270,12 @@ async function loadStats() {
       statsList.appendChild(row);
     }
   } catch (error) {
-    console.error('Erreur lors du chargement des statistiques:', error);
+    console.error('❌ Erreur lors du chargement des statistiques:', error);
     const statsList = document.querySelector('#statsTable tbody');
     statsList.innerHTML = '<tr><td colspan="4">❌ Erreur lors du chargement des statistiques.</td></tr>';
   }
 }
+
 </script>
 <script>
   document.getElementById('disable2FABtn')?.addEventListener('click', async () => {
