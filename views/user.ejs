@@ -706,36 +706,37 @@ progress {
                         </div>
 
                         <!-- Section Données -->
-                        <div id="donnees" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= i18n.stats %></h5>
-                                <p class="card-text">Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.</p>
-                            <table class="table table-striped">
-    <form id="statsFilter">
-  <label>Période :
-    <input type="date" name="startDate" required>
-    <input type="date" name="endDate" required>
-    <button type="submit">Filtrer</button>
-  </label>
-</form>
+                       <div id="donnees" class="card" style="display: none;">
+  <div class="card-body">
+    <h5 class="card-title"><%= i18n.stats %></h5>
+    <p class="card-text">
+      Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.
+    </p>
 
-<table id="statsTable">
-  <thead>
-    <tr>
-      <th>Page</th>
-      <th>Vues</th>
-      <th>Utilisateurs</th>
-      <th>Source</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+    <form id="statsFilter" class="mb-3">
+      <label class="form-label d-block">Période :</label>
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <input type="date" name="startDate" class="form-control" required style="max-width: 200px;">
+        <input type="date" name="endDate" class="form-control" required style="max-width: 200px;">
+        <button type="submit" class="btn btn-outline-dark">Filtrer</button>
+      </div>
+    </form>
 
-
-
-
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th scope="col">Page</th>
+            <th scope="col">Vues</th>
+            <th scope="col">Utilisateurs</th>
+            <th scope="col">Source</th>
+          </tr>
+        </thead>
+        <tbody id="statsTableBody"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
-                        </div>
 <div id="orders" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title">Mes commandes</h5>
@@ -1231,7 +1232,7 @@ async function loadStats() {
   try {
     const response = await fetch('/user/landing-pages');
     const pages = await response.json();
-    const statsList = document.querySelector('#statsTable tbody');
+    const statsList = document.getElementById('statsTableBody');
     statsList.innerHTML = '';
 
     for (const page of pages) {
@@ -1239,8 +1240,6 @@ async function loadStats() {
       const pageUrl = page.url;
 
       const res = await fetch(`/api/stats/${pageId}`);
-
-      // Vérification si la réponse est JSON
       const contentType = res.headers.get("content-type");
       if (!contentType || !contentType.includes("application/json")) {
         const text = await res.text();
@@ -1249,8 +1248,6 @@ async function loadStats() {
       }
 
       const data = await res.json();
-
-      // Si on reçoit une erreur de l’API, on l’affiche dans la console
       if (data.error) {
         console.error(`❌ Erreur pour la page ${pageId} :`, data.error);
         continue;
@@ -1271,11 +1268,10 @@ async function loadStats() {
     }
   } catch (error) {
     console.error('❌ Erreur lors du chargement des statistiques:', error);
-    const statsList = document.querySelector('#statsTable tbody');
+    const statsList = document.getElementById('statsTableBody');
     statsList.innerHTML = '<tr><td colspan="4">❌ Erreur lors du chargement des statistiques.</td></tr>';
   }
 }
-
 </script>
 <script>
   document.getElementById('disable2FABtn')?.addEventListener('click', async () => {
