@@ -706,7 +706,7 @@ progress {
                         </div>
 
                         <!-- Section Données -->
-                      <div id="donnees" class="card" style="display: none;">
+                     <div id="donnees" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title"><%= i18n.stats %></h5>
     <p class="card-text">
@@ -738,6 +738,7 @@ progress {
     </div>
   </div>
 </div>
+
 <div id="orders" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title">Mes commandes</h5>
@@ -1265,7 +1266,7 @@ async function loadStats() {
         <td><span class="badge bg-info text-dark">${users}</span></td>
         <td><span class="badge bg-secondary">${source}</span></td>
         <td>
-          <button class="btn btn-sm btn-outline-dark me-1" onclick="copyURL('${pageUrl}')" title="Copier l'URL">
+          <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${pageUrl}" title="Copier l'URL">
             <i class="bi bi-clipboard"></i>
           </button>
           <button class="btn btn-sm btn-dark" onclick="window.open('${pageUrl}', '_blank')" title="Voir la page">
@@ -1275,6 +1276,24 @@ async function loadStats() {
       `;
       statsList.appendChild(row);
     }
+
+    // Ajouter les événements après l'injection
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const url = `https://uap.immo${this.dataset.url}`;
+        navigator.clipboard.writeText(url).then(() => {
+          const icon = this.querySelector('i');
+          icon.classList.remove('bi-clipboard');
+          icon.classList.add('bi-check-circle-fill', 'text-success');
+
+          setTimeout(() => {
+            icon.classList.remove('bi-check-circle-fill', 'text-success');
+            icon.classList.add('bi-clipboard');
+          }, 1500);
+        });
+      });
+    });
+
   } catch (error) {
     console.error('❌ Erreur lors du chargement des statistiques:', error);
     const statsList = document.getElementById('statsTableBody');
@@ -1282,6 +1301,7 @@ async function loadStats() {
   }
 }
 </script>
+
 
 <script>
   document.getElementById('disable2FABtn')?.addEventListener('click', async () => {
