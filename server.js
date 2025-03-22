@@ -182,10 +182,16 @@ app.get('/api/stats/:pageId', async (req, res) => {
     const landingPages = await getLandingPagesFromDB(req.user.id);
     console.log('✅ Landing pages récupérées :', landingPages.length);
 
-    const matchingPage = landingPages.find(page => page._id.toString() === pageId);
-    if (!matchingPage) return res.status(404).json({ error: 'Page non trouvée' });
+   const matchingPage = landingPages.find(page => page._id.toString() === pageId);
+if (!matchingPage) return res.status(404).json({ error: 'Page non trouvée' });
 
-    const pagePath = `/landing-pages/${matchingPage.slug}.html`;
+if (!matchingPage.url) {
+  console.error('❌ Aucun champ "url" pour la page :', matchingPage._id);
+  return res.status(500).json({ error: 'Champ "url" manquant pour cette page' });
+}
+
+const pagePath = `/landing-pages/${matchingPage.url}.html`;
+
 
     console.log('📊 Statistiques pour le chemin :', pagePath);
     const stats = await getPageStats(pagePath, startDate, endDate);
