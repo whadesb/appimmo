@@ -192,14 +192,14 @@ app.get('/api/stats/:pageId', async (req, res) => {
     }
 
     const pagePath = matchingPage.url.startsWith('/landing-pages/')
-  ? matchingPage.url
-  : `/landing-pages/${matchingPage.url}`;
+      ? matchingPage.url
+      : `/landing-pages/${matchingPage.url}`;
 
     console.log('📊 Statistiques pour le chemin :', pagePath);
 
     const stats = await getPageStats(pagePath, startDate, endDate);
 
-    if (!Array.isArray(stats)) {
+    if (!stats || typeof stats !== 'object') {
       console.error('❌ Statistiques non valides pour :', pagePath, stats);
       return res.status(500).json({ error: 'Statistiques non valides' });
     }
@@ -211,6 +211,7 @@ app.get('/api/stats/:pageId', async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
   }
 });
+
 
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
