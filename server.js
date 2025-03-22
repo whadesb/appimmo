@@ -33,7 +33,7 @@ const validator = require('validator');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 const crypto = require('crypto');
-const { getPageViews } = require('./analytics');
+const getPageStats = require('./getStats');
 const Page = require('./models/Page');
 const nodemailer = require('nodemailer');
 const { getMultiplePageStats } = require('./getStats');
@@ -193,7 +193,10 @@ app.get('/api/stats/:pageId', async (req, res) => {
       return res.status(500).json({ error: 'Champ "url" manquant pour cette page' });
     }
 
-    const pagePath = `/landing-pages/${matchingPage.url}`; // Pas besoin de rajouter .html si c’est déjà dans le champ url
+    const pagePath = matchingPage.url.startsWith('/landing-pages/')
+  ? matchingPage.url
+  : `/landing-pages/${matchingPage.url}`;
+
     console.log('📊 Statistiques pour le chemin :', pagePath);
 
     const stats = await getPageStats(pagePath, startDate, endDate);
