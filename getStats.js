@@ -46,7 +46,7 @@ async function getPageStats(pagePath) {
     };
 
     const response = await axios.post(
-      `https://analyticsdata.googleapis.com/v1beta/${propertyId}:runReport`,
+      `https://analyticsdata.googleapis.com/v1beta/properties/${propertyId}:runReport`,
       requestBody,
       {
         headers: {
