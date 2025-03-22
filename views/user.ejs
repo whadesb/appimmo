@@ -770,6 +770,15 @@ progress {
   </div>
 </div>
 
+<!-- Spinner de chargement pour statistiques -->
+<div id="stats-loading" class="text-center my-3" style="display: none;">
+  <div class="spinner-border text-secondary" role="status">
+    <span class="visually-hidden">Chargement...</span>
+  </div>
+  <p class="mt-2">Chargement des statistiques...</p>
+</div>
+
+
 
                         <!-- Section Created Pages -->
                      <div id="created-pages" class="card" style="display: none;">
@@ -1160,6 +1169,7 @@ function showSection(sectionId) {
   if (sectionId === 'donnees') loadStats();
 }
 </script>
+
 <script>
 async function loadLandingPages() {
   try {
