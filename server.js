@@ -190,7 +190,7 @@ if (!matchingPage.url) {
   return res.status(500).json({ error: 'Champ "url" manquant pour cette page' });
 }
 
-const pagePath = `/landing-pages/${matchingPage.url}.html`;
+const pagePath = `/landing-pages/${matchingPage.url}`;
 
 
     console.log('📊 Statistiques pour le chemin :', pagePath);
