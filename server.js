@@ -182,28 +182,34 @@ app.get('/api/stats/:pageId', async (req, res) => {
     const landingPages = await getLandingPagesFromDB(req.user.id);
     console.log('✅ Landing pages récupérées :', landingPages.length);
 
-   const matchingPage = landingPages.find(page => page._id.toString() === pageId);
-if (!matchingPage) return res.status(404).json({ error: 'Page non trouvée' });
+    const matchingPage = landingPages.find(page => page._id.toString() === pageId);
+    if (!matchingPage) {
+      console.error('❌ Page non trouvée pour l’ID :', pageId);
+      return res.status(404).json({ error: 'Page non trouvée' });
+    }
 
-if (!matchingPage.url) {
-  console.error('❌ Aucun champ "url" pour la page :', matchingPage._id);
-  return res.status(500).json({ error: 'Champ "url" manquant pour cette page' });
-}
+    if (!matchingPage.url) {
+      console.error('❌ Aucun champ "url" pour la page :', matchingPage._id);
+      return res.status(500).json({ error: 'Champ "url" manquant pour cette page' });
+    }
 
-const pagePath = `/landing-pages/${matchingPage.url}`;
-
-
+    const pagePath = `/landing-pages/${matchingPage.url}`; // Pas besoin de rajouter .html si c’est déjà dans le champ url
     console.log('📊 Statistiques pour le chemin :', pagePath);
-    const stats = await getPageStats(pagePath, startDate, endDate);
-    console.log('✅ Stats récupérées :', stats);
 
+    const stats = await getPageStats(pagePath, startDate, endDate);
+
+    if (!Array.isArray(stats)) {
+      console.error('❌ Statistiques non valides pour :', pagePath, stats);
+      return res.status(500).json({ error: 'Statistiques non valides' });
+    }
+
+    console.log('✅ Stats récupérées :', stats);
     res.json(stats);
   } catch (err) {
-    console.error('❌ Erreur API /api/stats/:id =>', err);
+    console.error('❌ Erreur API /api/stats/:pageId =>', err.message || err);
     res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
   }
 });
-
 
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
