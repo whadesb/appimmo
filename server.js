@@ -36,6 +36,7 @@ const crypto = require('crypto');
 const { getPageViews } = require('./analytics');
 const Page = require('./models/Page');
 const nodemailer = require('nodemailer');
+const { getMultiplePageStats } = require('./utils/getStats');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const invalidLocales = [
     'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
@@ -170,25 +171,27 @@ app.get('/', (req, res) => {
 });
 // Route API pour récupérer les statistiques d'une page spécifique
 app.get('/api/stats/:userId', async (req, res) => {
-  const { userId } = req.params;
-  const { startDate, endDate } = req.query;
-
   try {
-    const pages = await Page.find({ owner: userId }); // récupère toutes les landing pages de l’utilisateur
-    const stats = [];
+    const userId = req.params.userId;
+    const startDate = req.query.startDate || '365daysAgo';
+    const endDate = req.query.endDate || 'yesterday';
 
-    for (const page of pages) {
-      const pagePath = `/landing-pages/${page._id}.html`;
-      const stat = await getPageStats(pagePath, startDate, endDate);
-      stats.push({ pageTitle: page.title, pagePath, ...stat });
+    const properties = await Property.find({ userId });
+
+    const pagePaths = properties.map(p => p.url); // p.url doit correspondre au pagePath suivi dans GA
+
+    if (!pagePaths.length) {
+      return res.json([]);
     }
 
+    const stats = await getMultiplePageStats(pagePaths, startDate, endDate);
     res.json(stats);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des stats' });
+    console.error("❌ Erreur dans /api/stats/:userId :", error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
   }
 });
+
 
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
