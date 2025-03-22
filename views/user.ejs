@@ -706,7 +706,7 @@ progress {
                         </div>
 
                         <!-- Section Données -->
-                       <div id="donnees" class="card" style="display: none;">
+                      <div id="donnees" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title"><%= i18n.stats %></h5>
     <p class="card-text">
@@ -730,6 +730,7 @@ progress {
             <th scope="col">Vues</th>
             <th scope="col">Utilisateurs</th>
             <th scope="col">Source</th>
+            <th scope="col">Actions</th>
           </tr>
         </thead>
         <tbody id="statsTableBody"></tbody>
@@ -1260,19 +1261,28 @@ async function loadStats() {
       const row = document.createElement('tr');
       row.innerHTML = `
         <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
-        <td>${views}</td>
-        <td>${users}</td>
-        <td>${source}</td>
+        <td><span class="badge bg-primary">${views}</span></td>
+        <td><span class="badge bg-info text-dark">${users}</span></td>
+        <td><span class="badge bg-secondary">${source}</span></td>
+        <td>
+          <button class="btn btn-sm btn-outline-dark me-1" onclick="copyURL('${pageUrl}')" title="Copier l'URL">
+            <i class="bi bi-clipboard"></i>
+          </button>
+          <button class="btn btn-sm btn-dark" onclick="window.open('${pageUrl}', '_blank')" title="Voir la page">
+            <i class="bi bi-box-arrow-up-right"></i>
+          </button>
+        </td>
       `;
       statsList.appendChild(row);
     }
   } catch (error) {
     console.error('❌ Erreur lors du chargement des statistiques:', error);
     const statsList = document.getElementById('statsTableBody');
-    statsList.innerHTML = '<tr><td colspan="4">❌ Erreur lors du chargement des statistiques.</td></tr>';
+    statsList.innerHTML = '<tr><td colspan="5">❌ Erreur lors du chargement des statistiques.</td></tr>';
   }
 }
 </script>
+
 <script>
   document.getElementById('disable2FABtn')?.addEventListener('click', async () => {
     if (!confirm('Souhaitez-vous vraiment désactiver la 2FA ?')) return;
