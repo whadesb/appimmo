@@ -36,7 +36,7 @@ const crypto = require('crypto');
 const { getPageViews } = require('./analytics');
 const Page = require('./models/Page');
 const nodemailer = require('nodemailer');
-const { getMultiplePageStats } = require('./utils/getStats');
+const { getMultiplePageStats } = require('./getStats');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const invalidLocales = [
     'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
