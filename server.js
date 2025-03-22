@@ -173,7 +173,7 @@ app.get('/', (req, res) => {
 const { getPageStats } = require('./getStats');
 
 app.get('/api/stats/:id', async (req, res) => {
-  const userLandingPages = await getLandingPagesFromDB(req.params.id); // fonction fictive
+  const landingPages = await Property.find({ createdBy: req.user._id });
 
   const paths = userLandingPages.map(p => new URL(p.url).pathname);
 
