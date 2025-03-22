@@ -1112,9 +1112,11 @@ async function loadOrders() {
         if (adjustedDaysRemaining <= 30) progressBarColor = '#FFC107';
         if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722';
 
+        const url = order.propertyId?.url || `/landing-pages/${order.propertyId?._id}.html`;
+
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${order.orderId}</td>
+          <td>${order._id}</td>
           <td>${orderDate.toLocaleDateString('fr-FR')}</td>
           <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
           <td>
@@ -1125,10 +1127,10 @@ async function loadOrders() {
           </td>
           <td>${expiryDate.toLocaleDateString('fr-FR')}</td>
           <td>
-            <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${order.propertyUrl}" title="Copier l'URL">
+            <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${url}" title="Copier l'URL">
               <i class="bi bi-clipboard"></i>
             </button>
-            <button class="btn btn-sm btn-dark me-1" onclick="window.open('https://uap.immo${order.propertyUrl}', '_blank')" title="Voir la page">
+            <button class="btn btn-sm btn-dark me-1" onclick="window.open('https://uap.immo${url}', '_blank')" title="Voir la page">
               <i class="bi bi-eye"></i>
             </button>
           </td>
@@ -1157,7 +1159,6 @@ async function loadOrders() {
   }
 }
 
-// Recharger à l’affichage
 function showSection(sectionId) {
   const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
   sections.forEach(id => {
@@ -1169,6 +1170,7 @@ function showSection(sectionId) {
   if (sectionId === 'donnees') loadStats();
 }
 </script>
+
 
 <script>
 async function loadLandingPages() {
