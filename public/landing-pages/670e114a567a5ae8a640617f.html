@@ -1,0 +1,105 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Propriété à paris</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <style>
+        body, html {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: rgba(0, 0, 0, 0.6);
+          font-family: Arial, sans-serif;
+        }
+        .property-container {
+          background-color: white;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+          max-width: 800px;
+          width: 100%;
+          padding: 20px;
+          text-align: center;
+          color: black;
+        }
+        .property-title {
+          font-size: 32px;
+          margin-bottom: 20px;
+          color: black;
+        }
+        .property-details {
+          font-size: 18px;
+          margin-bottom: 20px;
+          color: black;
+        }
+        .property-photos {
+          display: flex;
+          justify-content: space-around;
+          gap: 10px;
+        }
+        .property-photos img {
+          width: 48%;
+          border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+          .property-container {
+            padding: 10px;
+          }
+          .property-title {
+            font-size: 24px;
+          }
+          .property-details {
+            font-size: 16px;
+          }
+          .property-photos {
+            flex-direction: column;
+            align-items: center;
+          }
+          .property-photos img {
+            width: 100%;
+            margin-bottom: 10px;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="property-container">
+        <h1 class="property-title">Propriété à paris</h1>
+        <div class="property-details">
+          <p><strong>Type de bien:</strong> Villa</p>
+          <p><strong>Nombre de pièces:</strong> 2</p>
+          <p><strong>Nombre de chambres:</strong> 3</p>
+          <p><strong>Surface:</strong> 45 m²</p>
+          <p><strong>Prix:</strong> 150000 €</p>
+          <p><strong>Localisation:</strong> paris, france</p>
+          <p><strong>Description:</strong> Ce château savoyard du XIIIème siècle, chargé d'histoire, est situé sur une commune de Haute-Savoie, proche de la frontière Suisse. Devenu au fil des ans un élément identitaire de la ville de Douvaine, le château de Troches propose 1 889 m² de surface totale sur 3 niveaux. Niché au coeur d'un parc de 6 hectares, avec une fontaine, une piscine et un court de tennis, il dispose de plusieurs salons et cuisines, salles de jeux ainsi que d'une bibliothèque en bois précieux. La partie nuit offre de nombreuses chambres et salles de bains. Une dépendance de 147 m² et une cave à spiritueux complètent ce château, rénové avec goût et matériaux nobles. Propriété à consommation énergétique excessive.
+</p>
+          <p><strong>Année de construction:</strong> 1998</p>
+          <p><strong>Salles de douche:</strong> 1</p>
+          <p><strong>Toilettes:</strong> 3</p>
+          
+          <p><strong>Ascenseur:</strong> Oui</p>
+          <p><strong>Cheminée:</strong> Oui</p>
+          <p><strong>Internet:</strong> Oui</p>
+          
+          
+          
+          <p><strong>Abri de voiture:</strong> Oui</p>
+          <p><strong>Parking:</strong> Oui</p>
+          
+          
+          
+        </div>
+        <div class="property-photos">
+          <img src="/uploads/218d79ce-dadc-4148-a525-b2582a66ab66.jpg" alt="Photo 1">
+          <img src="/uploads/0a08a259-1ffc-4372-b068-31b19bf1a15e.jpg" alt="Photo 2">
+        </div>
+      </div>
+    </body>
+    </html>

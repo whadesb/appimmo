@@ -1,0 +1,87 @@
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Propriété à paris</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <style>
+        body, html {
+          margin: 0;
+          padding: 0;
+          height: 100%;
+          width: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          background: rgba(0, 0, 0, 0.6);
+          font-family: Arial, sans-serif;
+        }
+        .property-container {
+          background-color: white;
+          border-radius: 10px;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+          max-width: 800px;
+          width: 100%;
+          padding: 20px;
+          text-align: center;
+          color: black;
+        }
+        .property-title {
+          font-size: 32px;
+          margin-bottom: 20px;
+          color: black;
+        }
+        .property-details {
+          font-size: 18px;
+          margin-bottom: 20px;
+          color: black;
+        }
+        .property-photos {
+          display: flex;
+          justify-content: space-around;
+          gap: 10px;
+        }
+        .property-photos img {
+          width: 48%;
+          border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+          .property-container {
+            padding: 10px;
+          }
+          .property-title {
+            font-size: 24px;
+          }
+          .property-details {
+            font-size: 16px;
+          }
+          .property-photos {
+            flex-direction: column;
+            align-items: center;
+          }
+          .property-photos img {
+            width: 100%;
+            margin-bottom: 10px;
+          }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="property-container">
+        <h1 class="property-title">Propriété à paris</h1>
+        <div class="property-details">
+          <p><strong>Nombre de pièces:</strong> 4</p>
+          <p><strong>Surface:</strong> 8 m²</p>
+          <p><strong>Prix:</strong> 150000 €</p>
+          <p><strong>Localisation:</strong> paris, france</p>
+          <p><strong>Jardin:</strong> Oui</p>
+        </div>
+        <div class="property-photos">
+          <img src="/uploads/ee8fa4a2-d307-49b4-8f9c-09dce6dc0332.jpg" alt="Photo 1">
+          <img src="/uploads/55f9e98f-5af9-468d-9f41-481fe87e7f64.jpg" alt="Photo 2">
+        </div>
+      </div>
+    </body>
+    </html>

@@ -1,0 +1,86 @@
+
+    <!DOCTYPE html>
+  <html lang="en">
+  <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Propriété à Monte Carlo</title>
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+      <style>
+          body, html {
+              margin: 0;
+              padding: 0;
+              height: 100%;
+              width: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              background: rgba(0, 0, 0, 0.6);
+              font-family: Arial, sans-serif;
+          }
+          .property-container {
+              background-color: white;
+              border-radius: 10px;
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); /* Ombre plus prononcée */
+              max-width: 800px;
+              width: 100%;
+              padding: 20px;
+              text-align: center;
+              color: black; /* Texte noir */
+          }
+          .property-title {
+              font-size: 32px;
+              margin-bottom: 20px;
+              color: black; /* Texte noir */
+          }
+          .property-details {
+              font-size: 18px;
+              margin-bottom: 20px;
+              color: black; /* Texte noir */
+          }
+          .property-photos {
+              display: flex;
+              justify-content: space-around;
+              gap: 10px;
+          }
+          .property-photos img {
+              width: 48%;
+              border-radius: 8px;
+          }
+          @media (max-width: 768px) {
+              .property-container {
+                  padding: 10px;
+              }
+              .property-title {
+                  font-size: 24px;
+              }
+              .property-details {
+                  font-size: 16px;
+              }
+              .property-photos {
+                  flex-direction: column;
+                  align-items: center;
+              }
+              .property-photos img {
+                  width: 100%;
+                  margin-bottom: 10px;
+              }
+          }
+      </style>
+  </head>
+  <body>
+      <div class="property-container">
+          <h1 class="property-title">Propriété à Monte Carlo</h1>
+          <div class="property-details">
+              <p><strong>Nombre de pièces:</strong> 12</p>
+              <p><strong>Surface:</strong> 220 m²</p>
+              <p><strong>Prix:</strong> 4055200 €</p>
+              <p><strong>Localisation:</strong> Monte Carlo, Monaco</p>
+          </div>
+          <div class="property-photos">
+              <img src="/uploads/0011dd00-0014-4c79-b939-be1cd2e6c510-photo1.jpg" alt="Photo 1">
+              <img src="/uploads/85f2db7a-ecae-44b7-9e64-22fa5e4a2e53-photo2.jpg" alt="Photo 2">
+          </div>
+      </div>
+  </body>
+  </html>
