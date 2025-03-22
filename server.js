@@ -170,26 +170,16 @@ app.get('/', (req, res) => {
     }
 });
 // Route API pour récupérer les statistiques d'une page spécifique
-app.get('/api/stats/:userId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const startDate = req.query.startDate || '365daysAgo';
-    const endDate = req.query.endDate || 'yesterday';
+const { getPageStats } = require('./getStats');
 
-    const properties = await Property.find({ userId });
+app.get('/api/stats/:id', async (req, res) => {
+  const userLandingPages = await getLandingPagesFromDB(req.params.id); // fonction fictive
 
-    const pagePaths = properties.map(p => p.url); // p.url doit correspondre au pagePath suivi dans GA
+  const paths = userLandingPages.map(p => new URL(p.url).pathname);
 
-    if (!pagePaths.length) {
-      return res.json([]);
-    }
+  const stats = await getPageStats(paths);
 
-    const stats = await getMultiplePageStats(pagePaths, startDate, endDate);
-    res.json(stats);
-  } catch (error) {
-    console.error("❌ Erreur dans /api/stats/:userId :", error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
-  }
+  res.json(stats);
 });
 
 
