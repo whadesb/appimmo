@@ -10,32 +10,26 @@ async function getPageStats(pagePaths = []) {
     const startDate = '365daysAgo'; // Sur les 12 derniers mois
     const endDate = 'today';
 
-    const response = await analyticsDataClient.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [
-        {
-          startDate,
-          endDate,
-        },
-      ],
-      dimensions: [
-        { name: 'pagePath' },
-        { name: 'sessionSource' },
-        { name: 'sessionMedium' },
-      ],
-      metrics: [
-        { name: 'screenPageViews' },
-        { name: 'totalUsers' },
-      ],
-      dimensionFilter: {
-        filter: {
-          fieldName: 'pagePath',
-          inListFilter: {
-            values: pagePaths,
-          },
-        },
+    const [response] = await analyticsDataClient.runReport({
+  property: `properties/${GA_PROPERTY_ID}`,
+  dateRanges: [
+    {
+      startDate: startDate,
+      endDate: endDate,
+    },
+  ],
+  dimensions: [{ name: 'pagePath' }, { name: 'source' }],
+  metrics: [{ name: 'screenPageViews' }, { name: 'activeUsers' }],
+  dimensionFilter: {
+    filter: {
+      fieldName: 'pagePath',
+      inListFilter: {
+        values: [pagePath], // 👈 Assure-toi que c'est bien un array
       },
-    });
+    },
+  },
+});
+
 
     const results = response[0].rows.map(row => ({
       pagePath: row.dimensionValues[0].value,
