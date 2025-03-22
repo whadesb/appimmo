@@ -1,27 +1,11 @@
-const { BetaAnalyticsDataClient } = require('@google-analytics/data');
+const { GoogleAuth } = require('google-auth-library');
+const axios = require('axios');
 const path = require('path');
 
-// Chemin vers ton fichier credentials.json
-const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
+const propertyId = process.env.GA_PROPERTY_ID || 'properties/123456789'; // Remplace par ton vrai ID
+const keyFilePath = path.join(__dirname, 'config', 'service-account.json'); // Chemin vers ta clé JSON
 
-// Création du client
-const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: CREDENTIALS_PATH
-});
-
-async function getPageStats(pagePath, startDate, endDate) {
-  try {
-    const propertyId = process.env.GA_PROPERTY_ID; // Ex: '448283789'
-
-    const [response] = await analyticsDataClient.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [{ startDate, endDate }],const { GoogleAuth } = require('google-auth-library');
-const axios = require('axios');
-
-const propertyId = 'GA4_PROPERTY_ID'; // remplace par ton ID GA4 (ex: 'properties/123456789')
-const keyFilePath = './config/service-account.json'; // chemin vers ta clé JSON
-
-// Récupération du token OAuth2 depuis le Service Account
+// 🔐 Récupère le token OAuth2
 async function getAccessToken() {
   const auth = new GoogleAuth({
     keyFile: keyFilePath,
@@ -33,15 +17,23 @@ async function getAccessToken() {
   return tokenResponse.token;
 }
 
-// Fonction principale pour récupérer les stats d'une page
+// 📊 Récupère les stats pour une page donnée
 async function getPageStats(pagePath) {
   try {
     const accessToken = await getAccessToken();
 
     const requestBody = {
-      dimensions: [{ name: 'pagePath' }, { name: 'sessionSourceMedium' }],
-      metrics: [{ name: 'screenPageViews' }, { name: 'activeUsers' }],
-      dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
+      dimensions: [
+        { name: 'pagePath' },
+        { name: 'sessionSourceMedium' }
+      ],
+      metrics: [
+        { name: 'screenPageViews' },
+        { name: 'activeUsers' }
+      ],
+      dateRanges: [
+        { startDate: '30daysAgo', endDate: 'today' }
+      ],
       dimensionFilter: {
         filter: {
           fieldName: 'pagePath',
@@ -78,8 +70,9 @@ async function getPageStats(pagePath) {
       users: parseInt(row.metricValues[1].value),
       source: row.dimensionValues[1].value || 'Inconnu',
     };
+
   } catch (error) {
-    console.error('❌ Erreur dans getPageStats :', error.message);
+    console.error('❌ Erreur dans getPageStats :', error.message || error);
     return {
       views: 0,
       users: 0,
@@ -89,52 +82,3 @@ async function getPageStats(pagePath) {
 }
 
 module.exports = { getPageStats };
-
-      dimensions: [{ name: 'pagePath' }, { name: 'source' }],
-      metrics: [{ name: 'screenPageViews' }, { name: 'activeUsers' }],
-      dimensionFilter: {
-        filter: {
-          fieldName: 'pagePath',
-          inListFilter: {
-            values: [pagePath] // <-- la correction essentielle ici ✅
-          }
-        }
-      }
-    });
-
-    const rows = response.rows || [];
-
-    let totalViews = 0;
-    let totalUsers = 0;
-    let topSource = 'N/A';
-
-    rows.forEach(row => {
-      const views = parseInt(row.metricValues[0].value || 0, 10);
-      const users = parseInt(row.metricValues[1].value || 0, 10);
-      const source = row.dimensionValues[1]?.value || 'N/A';
-
-      totalViews += views;
-      totalUsers += users;
-
-      if (views > 0 && topSource === 'N/A') {
-        topSource = source;
-      }
-    });
-
-    return {
-      views: totalViews,
-      users: totalUsers,
-      source: topSource
-    };
-
-  } catch (error) {
-    console.error('❌ Erreur dans getPageStats :', error.message || error);
-    return {
-      views: 0,
-      users: 0,
-      source: 'Erreur'
-    };
-  }
-}
-
-module.exports = getPageStats;
