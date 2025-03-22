@@ -4,20 +4,18 @@ const path = require('path');
 const GA4_PROPERTY_ID = '448283789';
 
 const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: path.join(__dirname, 'service-account.json')
+  keyFilename: path.join(__dirname, 'service-account.json'),
 });
 
-async function getMultiplePageStats(pagePaths) {
-  if (!Array.isArray(pagePaths) || pagePaths.length === 0) {
-    return [];
-  }
+async function getMultiplePageStats(pagePaths = []) {
+  if (!Array.isArray(pagePaths) || pagePaths.length === 0) return [];
 
-  const filters = pagePaths.map(path => ({
+  const filters = pagePaths.map((pagePath) => ({
     fieldName: 'pagePath',
     stringFilter: {
       matchType: 'EXACT',
-      value: path
-    }
+      value: pagePath,
+    },
   }));
 
   const [response] = await analyticsDataClient.runReport({
@@ -26,31 +24,29 @@ async function getMultiplePageStats(pagePaths) {
     dimensions: [
       { name: 'pagePath' },
       { name: 'sessionSource' },
-      { name: 'sessionMedium' }
+      { name: 'sessionMedium' },
     ],
     metrics: [
       { name: 'screenPageViews' },
-      { name: 'totalUsers' }
+      { name: 'totalUsers' },
     ],
     dimensionFilter: {
       filter: {
-        orGroup: {
-          expressions: filters.map(f => ({ filter: f }))
-        }
-      }
-    }
+        orGroup: { filters },
+      },
+    },
   });
 
   if (!response.rows || response.rows.length === 0) {
     return [];
   }
 
-  return response.rows.map(row => ({
-    pagePath: row.dimensionValues[0].value,
-    source: row.dimensionValues[1].value,
-    medium: row.dimensionValues[2].value,
-    views: row.metricValues[0].value,
-    users: row.metricValues[1].value
+  return response.rows.map((row) => ({
+    pagePath: row.dimensionValues[0]?.value || '',
+    source: row.dimensionValues[1]?.value || '',
+    medium: row.dimensionValues[2]?.value || '',
+    views: row.metricValues[0]?.value || '0',
+    users: row.metricValues[1]?.value || '0',
   }));
 }
 
