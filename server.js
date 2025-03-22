@@ -169,8 +169,6 @@ app.get('/', (req, res) => {
         res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
     }
 });
-// Route API pour récupérer les statistiques d'une page spécifique
-const { getPageStats } = require('./getStats');
 
 app.get('/api/stats/:pageId', async (req, res) => {
   try {
