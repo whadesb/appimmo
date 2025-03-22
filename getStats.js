@@ -2,7 +2,7 @@ const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const path = require('path');
 
 // Chemin vers ton fichier credentials.json
-const CREDENTIALS_PATH = path.join(__dirname, '../credentials.json');
+const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
 
 // Création du client
 const analyticsDataClient = new BetaAnalyticsDataClient({
