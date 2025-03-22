@@ -739,35 +739,37 @@ progress {
   </div>
 </div>
 
+
+<!-- ... tout le code HTML ci-dessus reste inchangé ... -->
+
+<!-- Section Mes Commandes (design harmonisé) -->
 <div id="orders" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title">Mes commandes</h5>
     <p class="card-text">Liste des commandes passées</p>
-    <table class="table table-striped">
-    <thead>
-  <tr>
-    <th>Order ID</th>
-    <th>Date</th>
-    <th>Status</th>
-    <th class="tooltip-container">
-      Jours restants
-      <span class="tooltip-text">Durée restante de validité du pack</span>
-    </th>
-    <th>Expiration Date</th>
-    <th>Actions</th>
-  </tr>
-</thead>
 
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>Commande</th>
+            <th>Date</th>
+            <th>Statut</th>
+            <th>Jours restants</th>
+            <th>Expiration</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="orders-list"></tbody>
+      </table>
+    </div>
 
-<tbody id="orders-list">
-  <!-- Contenu dynamique chargé via JS -->
-</tbody>
-    </table>
     <div id="no-orders-message" style="display: none;" class="text-center">
       <p>Aucune commande trouvée.</p>
     </div>
   </div>
 </div>
+
 
                         <!-- Section Created Pages -->
                      <div id="created-pages" class="card" style="display: none;">
@@ -1067,100 +1069,95 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 <script>
 function formatDate(dateString) {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, '0'); // Jour à 2 chiffres
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Mois à 2 chiffres
-    const year = date.getFullYear(); // Année complète
-
-    return `${day}-${month}-${year}`;
+  const date = new Date(dateString);
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
 }
 
 async function loadOrders() {
-    try {
-        const response = await fetch('/user/orders');
-        if (!response.ok) {
-            throw new Error('Erreur lors du chargement des commandes.');
-        }
+  try {
+    const response = await fetch('/user/orders');
+    if (!response.ok) throw new Error('Erreur lors du chargement des commandes.');
 
-        const orders = await response.json();
-        const ordersList = document.getElementById('orders-list');
-        ordersList.innerHTML = '';
+    const orders = await response.json();
+    const ordersList = document.getElementById('orders-list');
+    ordersList.innerHTML = '';
 
-        const noOrdersMessage = document.getElementById('no-orders-message');
-        if (orders.length === 0) {
-            noOrdersMessage.style.display = 'block';
-        } else {
-            noOrdersMessage.style.display = 'none';
+    const noOrdersMessage = document.getElementById('no-orders-message');
+    if (orders.length === 0) {
+      noOrdersMessage.style.display = 'block';
+    } else {
+      noOrdersMessage.style.display = 'none';
+      orders.forEach(order => {
+        const orderDate = new Date(order.createdAt);
+        const expiryDate = new Date(order.expiryDate);
+        const today = new Date();
+        const timeDiff = expiryDate - today;
+        const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        const adjustedDaysRemaining = daysRemaining >= 0 ? daysRemaining : 0;
+        const progress = Math.min(((90 - adjustedDaysRemaining) / 90) * 100, 100);
 
-            orders.forEach(order => {
-                const orderDate = new Date(order.createdAt);
-                const expiryDate = new Date(order.expiryDate);
-                const today = new Date();
-                const timeDiff = expiryDate - today;
-                const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-                const adjustedDaysRemaining = daysRemaining >= 0 ? daysRemaining : 0;
-                const progress = Math.min(((90 - adjustedDaysRemaining) / 90) * 100, 100);
+        let progressBarColor = '#8BC34A';
+        if (adjustedDaysRemaining <= 30) progressBarColor = '#FFC107';
+        if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722';
 
-                let progressBarColor = '#8BC34A';
-                if (adjustedDaysRemaining <= 30) progressBarColor = '#FFC107';
-                if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722';
-
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${order.orderId}</td>
-                    <td>${orderDate.toLocaleDateString('fr-FR')}</td>
-                    <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-                    <td>
-                        ${adjustedDaysRemaining} jours restants
-                        <div class="progress" style="height: 10px; margin-top: 5px;">
-                            <div class="progress-bar" role="progressbar" 
-                                style="width: ${progress}%; background-color: ${progressBarColor};">
-                            </div>
-                        </div>
-                    </td>
-                    <td>${expiryDate.toLocaleDateString('fr-FR')}</td>
-                    <td>
-                        <button class="btn btn-outline-dark btn-sm" onclick="copyURL('${order.propertyUrl}')">Copier</button>
-                        <button class="btn btn-dark btn-sm" onclick="window.open('${order.propertyUrl}', '_blank')">Voir</button>
-                    </td>
-                `;
-                ordersList.appendChild(row);
-            });
-        }
-    } catch (error) {
-        document.getElementById('orders-list').innerHTML = '<tr><td colspan="6" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
-        console.error(error);
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${order.orderId}</td>
+          <td>${orderDate.toLocaleDateString('fr-FR')}</td>
+          <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
+          <td>
+            ${adjustedDaysRemaining} jours restants
+            <div class="progress" style="height: 10px; margin-top: 5px;">
+              <div class="progress-bar" role="progressbar" style="width: ${progress}%; background-color: ${progressBarColor};"></div>
+            </div>
+          </td>
+          <td>${expiryDate.toLocaleDateString('fr-FR')}</td>
+          <td>
+            <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${order.propertyUrl}" title="Copier l'URL">
+              <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-sm btn-dark me-1" onclick="window.open('${order.propertyUrl}', '_blank')" title="Voir la page">
+              <i class="bi bi-eye"></i>
+            </button>
+          </td>
+        `;
+        ordersList.appendChild(row);
+      });
     }
-}
 
-// Charger la liste des commandes au chargement de la page
-document.addEventListener('DOMContentLoaded', loadOrders);
-
-
-// Charger les commandes quand on affiche la section "orders"
-function showSection(sectionId) {
-    const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
-    sections.forEach(id => {
-        document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+    document.querySelectorAll('#orders-list .copy-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const url = `https://uap.immo${this.dataset.url}`;
+        navigator.clipboard.writeText(url).then(() => {
+          const icon = this.querySelector('i');
+          icon.classList.remove('bi-clipboard');
+          icon.classList.add('bi-check-circle-fill', 'text-success');
+          setTimeout(() => {
+            icon.classList.remove('bi-check-circle-fill', 'text-success');
+            icon.classList.add('bi-clipboard');
+          }, 1500);
+        });
+      });
     });
-
-    if (sectionId === 'orders') {
-        loadOrders();
-    }
-    if (sectionId === 'created-pages') {
-        loadLandingPages();
-    }
-    if (sectionId === 'donnees') {
-        loadStats();
-    }
+  } catch (error) {
+    document.getElementById('orders-list').innerHTML = '<tr><td colspan="6" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
+    console.error(error);
+  }
 }
 
-// Fonction pour copier l'URL de la propriété
-function copyURL(url) {
-  const fullUrl = `https://uap.immo${url}`;
-  navigator.clipboard.writeText(fullUrl).then(() => {
-    alert("URL copiée !");
-  }).catch(err => console.error('Impossible de copier l\'URL : ', err));
+// Recharger à l’affichage
+function showSection(sectionId) {
+  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
+  sections.forEach(id => {
+    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+  });
+
+  if (sectionId === 'orders') loadOrders();
+  if (sectionId === 'created-pages') loadLandingPages();
+  if (sectionId === 'donnees') loadStats();
 }
 </script>
 <script>
