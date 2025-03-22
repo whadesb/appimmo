@@ -1477,6 +1477,11 @@ const transporter = nodemailer.createTransport({
   }
 });
 
+async function getLandingPagesFromDB(userId) {
+  return await LandingPage.find({ userId }); // ou adapte selon ton schéma
+}
+
+
 async function sendEmail(mailOptions) {
   try {
     await transporter.sendMail(mailOptions);
