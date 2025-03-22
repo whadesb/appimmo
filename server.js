@@ -1555,41 +1555,6 @@ app.post('/send-contact', async (req, res) => {
   }
 });
 
-const analyticsDataClient = new BetaAnalyticsDataClient({
-    credentials: {
-        client_email: process.env.GA_CLIENT_EMAIL,
-        private_key: process.env.GA_PRIVATE_KEY.replace(/\\n/g, '\n')
-    }
-});
-
-async function getPageStats(pagePath, startDate, endDate) {
-  const response = await analyticsDataClient.runReport({
-    property: `properties/${GA4_PROPERTY_ID}`,
-    dateRanges: [{ startDate, endDate }],
-    dimensions: [{ name: 'pagePath' }, { name: 'sessionSource' }],
-    metrics: [{ name: 'screenPageViews' }, { name: 'totalUsers' }],
-    dimensionFilter: {
-      filter: {
-        fieldName: 'pagePath',
-        stringFilter: {
-          matchType: 'EXACT',
-          value: pagePath
-        }
-      }
-    }
-  });
-
-  const row = response.rows?.[0];
-  if (!row) return { views: 0, users: 0, sources: [] };
-
-  return {
-    views: parseInt(row.metricValues[0].value),
-    users: parseInt(row.metricValues[1].value),
-    source: row.dimensionValues[1].value
-  };
-}
-
-
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
