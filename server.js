@@ -172,7 +172,7 @@ app.get('/', (req, res) => {
 // Route API pour récupérer les statistiques d'une page spécifique
 const { getPageStats } = require('./getStats');
 
-router.get('/api/stats/:pageId', async (req, res) => {
+app.get('/api/stats/:pageId', async (req, res) => {
   try {
     const { pageId } = req.params;
     const startDate = req.query.startDate || '2024-03-01';
