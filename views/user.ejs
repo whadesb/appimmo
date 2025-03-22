@@ -1301,11 +1301,11 @@ document.getElementById('statsFilter').addEventListener('submit', async (e) => {
   stats.forEach(stat => {
     const row = `
       <tr>
-        <td>${stat.pageTitle}</td>
-        <td>${stat.views}</td>
-        <td>${stat.users}</td>
-        <td>${stat.source}</td>
-      </tr>`;
+    <td>${stat.pagePath}</td>
+    <td>${stat.views}</td>
+    <td>${stat.users}</td>
+    <td>${stat.source}</td>
+  </tr>`;
     tbody.insertAdjacentHTML('beforeend', row);
   });
 });
