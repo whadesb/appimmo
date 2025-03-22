@@ -1,53 +1,55 @@
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
-const path = require('path');
 
-const GA4_PROPERTY_ID = '448283789';
+// Remplace par ton propre GA4 PROPERTY ID
+const propertyId = 'YOUR_GA4_PROPERTY_ID';
 
-const analyticsDataClient = new BetaAnalyticsDataClient({
-  keyFilename: path.join(__dirname, 'service-account.json'),
-});
+const analyticsDataClient = new BetaAnalyticsDataClient();
 
-async function getMultiplePageStats(pagePaths = []) {
-  if (!Array.isArray(pagePaths) || pagePaths.length === 0) return [];
+async function getPageStats(pagePaths = []) {
+  try {
+    const startDate = '365daysAgo'; // Sur les 12 derniers mois
+    const endDate = 'today';
 
-  const filters = pagePaths.map((pagePath) => ({
-    fieldName: 'pagePath',
-    stringFilter: {
-      matchType: 'EXACT',
-      value: pagePath,
-    },
-  }));
-
-  const [response] = await analyticsDataClient.runReport({
-    property: `properties/${GA4_PROPERTY_ID}`,
-    dateRanges: [{ startDate, endDate }],
-    dimensions: [
-      { name: 'pagePath' },
-      { name: 'sessionSource' },
-      { name: 'sessionMedium' },
-    ],
-    metrics: [
-      { name: 'screenPageViews' },
-      { name: 'totalUsers' },
-    ],
-    dimensionFilter: {
-      filter: {
-        orGroup: { filters },
+    const response = await analyticsDataClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [
+        {
+          startDate,
+          endDate,
+        },
+      ],
+      dimensions: [
+        { name: 'pagePath' },
+        { name: 'sessionSource' },
+        { name: 'sessionMedium' },
+      ],
+      metrics: [
+        { name: 'screenPageViews' },
+        { name: 'totalUsers' },
+      ],
+      dimensionFilter: {
+        filter: {
+          fieldName: 'pagePath',
+          inListFilter: {
+            values: pagePaths,
+          },
+        },
       },
-    },
-  });
+    });
 
-  if (!response.rows || response.rows.length === 0) {
+    const results = response[0].rows.map(row => ({
+      pagePath: row.dimensionValues[0].value,
+      source: row.dimensionValues[1].value,
+      medium: row.dimensionValues[2].value,
+      screenPageViews: row.metricValues[0].value,
+      users: row.metricValues[1].value,
+    }));
+
+    return results;
+  } catch (error) {
+    console.error('Erreur lors de la récupération des statistiques :', error.message);
     return [];
   }
-
-  return response.rows.map((row) => ({
-    pagePath: row.dimensionValues[0]?.value || '',
-    source: row.dimensionValues[1]?.value || '',
-    medium: row.dimensionValues[2]?.value || '',
-    views: row.metricValues[0]?.value || '0',
-    users: row.metricValues[1]?.value || '0',
-  }));
 }
 
-module.exports = { getMultiplePageStats };
+module.exports = { getPageStats };
