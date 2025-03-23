@@ -54,11 +54,7 @@ app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
 
-app.use((req, res, next) => {
-  res.locals.currentPath = req.path;
-  res.locals.isAuthenticated = req.isAuthenticated ? req.isAuthenticated() : false;
-  next();
-});
+
 
 
 app.use(session({
@@ -112,6 +108,15 @@ app.use((req, res, next) => {
     next();
   }
 });
+res.render('login', {
+  locale,
+  i18n,
+  messages: req.flash(),
+  isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+  currentPath: req.originalUrl // <- ici
+});
+
+
 app.get('/config', (req, res) => {
   res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
 });
