@@ -351,8 +351,22 @@ app.get('/', (req, res) => {
     }
 });
 
+// Middleware : accessible uniquement SI connecté
+function ensureAuthenticated(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect(`/${req.params.locale || 'fr'}/login`);
+}
 
-// Redirection vers la langue par défaut (ex: français) si aucune langue n'est spécifiée
+// Middleware : accessible uniquement SI NON connecté
+function ensureNotAuthenticated(req, res, next) {
+  if (!req.isAuthenticated || !req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect(`/${req.params.locale || 'fr'}/dashboard`); // ou autre page pour les membres
+}
+
 app.get('/:locale/login', (req, res) => {
     const locale = req.params.locale || 'fr';
     const translationsPath = `./locales/${locale}/login.json`;
@@ -368,9 +382,11 @@ app.get('/:locale/login', (req, res) => {
     res.render('login', {
         locale: locale,
         i18n: i18n,
-        messages: req.flash()  // Transmet les messages flash à la vue
+        messages: req.flash(),
+        isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false
     });
 });
+
 app.get('/stats/:urlPath', async (req, res) => {
     const urlPath = '/' + req.params.urlPath; // Exemple : "/landing-pages/page123.html"
     const views = await getPageViews(urlPath);
