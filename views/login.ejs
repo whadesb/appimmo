@@ -147,12 +147,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <a class="navbar-brand" href="/<%= locale %>">
             <span>UAP Immo</span>
         </a>
-        <div class="d-lg-none ms-auto me-4">
-            <a href="/<%= locale %>/login" style="position: relative;">
-                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                <span class="visually-hidden">Login</span>
-            </a>
-        </div>
+     <!-- Boutons Login / Logout + Sélecteur de langue (mobile) -->
+<div class="d-lg-none d-flex flex-column align-items-end gap-2 mt-3">
+
+  <% if (isAuthenticated) { %>
+    <form action="/logout" method="POST" class="w-100">
+      <button type="submit" class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2">
+        <i class="bi bi-box-arrow-right"></i>
+        <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+      </button>
+    </form>
+  <% } else { %>
+    <a href="/<%= locale %>/login" class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2">
+      <i class="bi bi-person-fill"></i>
+      <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+    </a>
+  <% } %>
+
+  <!-- Sélecteur de langue mobile -->
+  <div class="dropdown w-100 text-end">
+    <button class="btn btn-light border rounded-pill px-3 py-1 w-100 d-flex align-items-center justify-content-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
+      <i class="bi bi-chevron-down small"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow">
+      <% if (locale === 'fr') { %>
+        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= req.path %>">🇬🇧 <span>EN</span></a></li>
+      <% } else { %>
+        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= req.path %>">🇫🇷 <span>FR</span></a></li>
+      <% } %>
+    </ul>
+  </div>
+</div>
+
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -166,12 +193,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <a class="nav-link click-scroll" href="/fr/contact">contact</a>
 </li>
             </ul>
-<div class="d-lg-none ms-auto me-4">
-    <a href="/<%= locale %>/login" style="position: relative;">
-        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-        <span class="visually-hidden">Login</span>
-    </a>
-</div>
+
 <!-- Bouton login/logout (desktop) -->
 <div class="d-none d-lg-block">
   <% if (isAuthenticated) { %>
