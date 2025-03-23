@@ -110,11 +110,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   background-color: white;
   border-color: #ddd;
   transition: background-color 0.2s ease;
+  font-size: 1.2rem;
 }
 
 .language-switcher .btn-light:hover {
   background-color: #f8f9fa;
 }
+
 
         @media (max-width: 767px) {
             .form-container {
@@ -162,18 +164,23 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <span class="visually-hidden">Login</span>
                 </a>
             </div>
-            <div class="language-switcher ms-3 d-none d-lg-block">
+           <div class="language-switcher ms-3 d-none d-lg-block">
   <div class="dropdown">
     <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-      🌍 <span><%= locale === 'fr' ? 'Français' : 'English' %></span>
+      <% if (locale === 'fr') { %>
+        🇫🇷
+      <% } else { %>
+        🇬🇧
+      <% } %>
       <i class="bi bi-chevron-down small"></i>
     </button>
     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="languageDropdown">
-      <li><a class="dropdown-item" href="/fr/login">🇫🇷 Français</a></li>
-      <li><a class="dropdown-item" href="/en/login">🇬🇧 English</a></li>
+      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr/login">🇫🇷 <span>Français</span></a></li>
+      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en/login">🇬🇧 <span>English</span></a></li>
     </ul>
   </div>
 </div>
+
 
         </div>
     </div>
