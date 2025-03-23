@@ -657,7 +657,8 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     res.render('user', {
         locale,
         user,
-        i18n: userTranslations
+        i18n: userTranslations,
+currentPath: req.originalUrl 
     });
 });
 
