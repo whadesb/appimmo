@@ -172,9 +172,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </button>
     <ul class="dropdown-menu dropdown-menu-end shadow">
       <% if (locale === 'fr') { %>
-        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= req.path %>">🇬🇧 <span>EN</span></a></li>
+        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= currentPath %>"></li>
       <% } else { %>
-        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= req.path %>">🇫🇷 <span>FR</span></a></li>
+        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= currentPath %>"></li>
       <% } %>
     </ul>
   </div>
