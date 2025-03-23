@@ -303,7 +303,8 @@ app.get('/:locale', (req, res, next) => {
    res.render('index', {
     locale: locale,
     i18n: translations,
-    user: req.user || null
+    user: req.user || null,
+currentPath: req.originalUrl 
 });
 
 });
