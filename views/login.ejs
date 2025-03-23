@@ -168,19 +168,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
       <!-- 🔵 Login + Langue à droite -->
       <div class="d-flex align-items-center">
-        <% if (isAuthenticated) { %>
-          <form action="/logout" method="POST" class="d-inline me-2">
-            <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-              <i class="bi bi-box-arrow-right"></i>
-              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
-            </button>
-          </form>
-        <% } else { %>
-          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
-            <i class="bi bi-person-fill"></i>
-            <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-          </a>
-        <% } %>
+       <% if (isAuthenticated) { %>
+  <div class="dropdown me-2">
+    <button class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="bi bi-person-fill"></i>
+      <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+      <i class="bi bi-chevron-down small"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow">
+      <li>
+        <a class="dropdown-item d-flex align-items-center gap-2" href="/user">
+          <i class="bi bi-person-circle"></i>
+          <%= locale === 'fr' ? 'Accéder à mon compte' : 'Go to dashboard' %>
+        </a>
+      </li>
+      <li>
+        <form action="/logout" method="POST" class="dropdown-item p-0">
+          <button type="submit" class="btn w-100 text-start d-flex align-items-center gap-2 px-3 py-2">
+            <i class="bi bi-box-arrow-right"></i>
+            <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+          </button>
+        </form>
+      </li>
+    </ul>
+  </div>
+<% } else { %>
+  <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+    <i class="bi bi-person-fill"></i>
+    <%= locale === 'fr' ? 'Connexion' : 'Login' %>
+  </a>
+<% } %>
+
 
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
