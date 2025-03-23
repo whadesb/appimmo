@@ -770,7 +770,8 @@ app.get('/:lang/contact', (req, res) => {
     res.render('contact', {
         title: contactTranslations.title,
         i18n: i18n, // Passer les traductions fusionnées
-        messageEnvoye: messageEnvoye
+        messageEnvoye: messageEnvoye,
+currentPath: req.originalUrl 
     });
 });
 
