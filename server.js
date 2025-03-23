@@ -258,7 +258,8 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             price: property.price,
             city: property.city,
             country: property.country,
-            url: property.url
+            url: property.url,
+currentPath: req.originalUrl 
         });
     } catch (error) {
         console.error('Error fetching property:', error);
@@ -412,7 +413,8 @@ app.get('/:lang/forgot-password', (req, res) => {
     title: passwordResetTranslations.title,
     locale: locale,  // Langue active
     i18n: passwordResetTranslations,  // Traductions spécifiques
-    messages: req.flash()
+    messages: req.flash(),
+currentPath: req.originalUrl 
   });
 });
 
@@ -692,7 +694,8 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
       i18n,
       user,
       qrCode,
-      messages: req.flash()
+      messages: req.flash(),
+currentPath: req.originalUrl 
     });
   } catch (error) {
     console.error("Erreur dans GET /enable-2fa :", error);
