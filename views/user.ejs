@@ -433,22 +433,7 @@ progress {
                 </li>
 
             </ul>
-            <div class="d-none d-lg-block">
-                <% if (user) { %>
-                    <form action="/<%= locale %>/logout" method="POST" class="d-inline" onsubmit="event.preventDefault(); window.location.href = '/<%= locale %>/login';">
-    <button type="submit" style="background: none; border: none; position: relative;">
-        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-        <i class="bi bi-x-circle" style="font-size: 0.8rem; color: red; position: absolute; top: 0; right: 0;"></i>
-        <span class="visually-hidden"><%= i18n.menu.logout %></span>
-    </button>
-</form>
-                <% } else { %>
-                    <a href="/login" style="position: relative;">
-                        <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                        <span class="visually-hidden"><%= i18n.menu.login %></span>
-                    </a>
-                <% } %>
-            </div>
+           
 <% if (isAuthenticated) { %>
   <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
     <i class="bi bi-person-circle"></i>
