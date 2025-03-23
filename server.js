@@ -83,6 +83,12 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 }).catch((err) => {
   console.error('Error connecting to MongoDB', err);
 });
+// Middleware global pour rendre isAuthenticated et user accessibles dans toutes les vues EJS
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated?.() || false;
+  res.locals.user = req.user || null;
+  next();
+});
 
 // Middleware de déconnexion automatique après expiration de la session
 app.use((req, res, next) => {
@@ -297,7 +303,6 @@ app.get('/:locale', (req, res, next) => {
    res.render('index', {
     locale: locale,
     i18n: translations,
-    isAuthenticated: req.isAuthenticated?.() || false,
     user: req.user || null
 });
 
@@ -376,7 +381,6 @@ app.get('/:locale/login', (req, res) => {
   locale,
   i18n,
   messages: req.flash(),
-  isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
   currentPath: req.path // 👈 ici !
 });
 
