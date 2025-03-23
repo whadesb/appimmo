@@ -55,14 +55,11 @@ app.use(flash());
 app.use(i18n.init);
 
 app.use((req, res, next) => {
-  if (req.query.lang) {
-    res.cookie('locale', req.query.lang, { maxAge: 900000, httpOnly: true });
-    res.setLocale(req.query.lang);
-  } else if (req.cookies.locale) {
-    res.setLocale(req.cookies.locale);
-  }
+  res.locals.currentPath = req.path;
+  res.locals.isAuthenticated = req.isAuthenticated ? req.isAuthenticated() : false;
   next();
 });
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET,
