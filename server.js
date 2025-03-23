@@ -110,9 +110,16 @@ app.use((req, res, next) => {
 });
 
 app.get('/user', (req, res) => {
-  const locale = req.locale || 'fr'; // ou une autre logique pour récupérer la langue courante
-  res.redirect(`/${locale}/user`);
+  // Si l'utilisateur est authentifié, on redirige vers la bonne locale
+  const locale = req.user?.locale || 'fr';
+  return res.redirect(`/${locale}/user`);
 });
+app.post('/logout', isAuthenticated, (req, res) => {
+  req.logout(() => {
+    res.redirect(`/${req.locale || 'fr'}/login`);
+  });
+});
+
 
 app.get('/config', (req, res) => {
   res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
