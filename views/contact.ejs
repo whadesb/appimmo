@@ -121,76 +121,68 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
   <main>
-        <nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container">
-        <!-- Logo de la marque -->
-        <a class="navbar-brand" href="/<%= locale %>">
-            <span>UAP Immo</span>
-        </a>
+       <nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="/<%= locale %>">
+      <span>UAP Immo</span>
+    </a>
 
-        <!-- Icône de profil en version mobile -->
-        <div class="d-lg-none ms-auto d-inline-block me-2">
-            <a href="/<%= locale %>/login" style="position: relative;">
-                <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                <span class="visually-hidden">Login</span>
-            </a>
+    <!-- Bouton Burger -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu collapsé -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- 🟢 Liens à gauche -->
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
+        </li>
+      </ul>
+
+     <% if (isAuthenticated) { %>
+  <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+    <i class="bi bi-person-circle"></i>
+    <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+  </a>
+
+  <form action="/logout" method="POST" class="d-inline">
+    <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+      <i class="bi bi-box-arrow-right"></i>
+      <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+    </button>
+  </form>
+<% } else { %>
+  <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+    <i class="bi bi-person-fill"></i>
+    <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+  </a>
+<% } %>
+
+
+
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= currentPath %>">🇬🇧 <span>EN</span></a></li>
+            <% } else { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= currentPath %>">🇫🇷 <span>FR</span></a></li>
+            <% } %>
+          </ul>
         </div>
-
-        <!-- Bouton de changement de langue en version mobile et desktop -->
-        <div class="d-lg-none d-inline-block me-2">
-            <div class="dropdown">
-                <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                    <%= locale === 'fr' ? 'FR' : 'EN' %>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownMobile">
-                    <li>
-                        <a class="dropdown-item" href="/fr">FR</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="/en">EN</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <!-- Bouton de menu mobile -->
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <!-- Menu collapsible -->
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/<%= locale %>"><%= i18n.menu.home %></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/fr/contact">Contact</a>
-                </li>
-            </ul>
-
-            <!-- Icône de profil et bouton de changement de langue pour la version desktop -->
-            <div class="d-none d-lg-flex align-items-center">
-                <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
-                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                    <span class="visually-hidden">Login</span>
-                </a>
-                <div class="dropdown">
-                    <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownDesktop" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                        <%= locale === 'fr' ? 'FR' : 'EN' %>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdownDesktop">
-                        <li>
-                            <a class="dropdown-item" href="/fr">FR</a>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" href="/en">EN</a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+      </div>
     </div>
+  </div>
 </nav>
         <section class="new-section" id="section_4">
             <div class="container">
