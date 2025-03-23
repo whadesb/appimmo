@@ -64,11 +64,7 @@ app.use(session({
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
 }));
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.isAuthenticated?.() || false;
-  res.locals.user = req.user || null; // (utile si tu veux utiliser user.nom etc.)
-  next();
-});
+
 
 app.use('/property', require('./routes/property'));
 
@@ -298,10 +294,13 @@ app.get('/:locale', (req, res, next) => {
     }
 
     // Affichage de la page index avec la langue correcte
-    res.render('index', {
-        locale: locale,
-        i18n: translations
-    });
+   res.render('index', {
+    locale: locale,
+    i18n: translations,
+    isAuthenticated: req.isAuthenticated?.() || false,
+    user: req.user || null
+});
+
 });
 
 
