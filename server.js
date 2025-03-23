@@ -380,12 +380,13 @@ app.get('/:locale/login', (req, res) => {
     }
 
     res.render('login', {
-        locale: locale,
-        i18n: i18n,
+        locale,
+        i18n,
         messages: req.flash(),
         isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false
     });
 });
+
 
 app.get('/stats/:urlPath', async (req, res) => {
     const urlPath = '/' + req.params.urlPath; // Exemple : "/landing-pages/page123.html"
