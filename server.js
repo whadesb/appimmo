@@ -379,12 +379,14 @@ app.get('/:locale/login', (req, res) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    res.render('login', {
-        locale,
-        i18n,
-        messages: req.flash(),
-        isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false
-    });
+        res.render('login', {
+  locale,
+  i18n,
+  messages: req.flash(),
+  isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+  currentPath: req.path // 👈 ici !
+});
+
 });
 
 
