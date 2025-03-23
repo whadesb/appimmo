@@ -326,25 +326,7 @@ app.post('/disable-2fa', isAuthenticated, async (req, res) => {
   }
 });
 
-// Route dynamique pour la page de connexion avec gestion de la langue
-app.get('/', (req, res) => {
-    const excludedPaths = ['config', 'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php'];
-    
-    // Vérifier si la requête concerne une route spécifique (ex: /config)
-    if (excludedPaths.includes(req.path.replace('/', ''))) {
-        return res.sendStatus(404);
-    }
 
-    const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
-    const defaultLocale = 'fr'; // Langue par défaut
-
-    // Vérifier si l'utilisateur préfère l'anglais
-    if (acceptedLanguages.includes('en')) {
-        res.redirect('/en');
-    } else {
-        res.redirect(`/${defaultLocale}`); // Rediriger vers la langue par défaut (français)
-    }
-});
 
 // Middleware : accessible uniquement SI connecté
 function ensureAuthenticated(req, res, next) {
