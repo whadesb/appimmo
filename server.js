@@ -108,13 +108,6 @@ app.use((req, res, next) => {
     next();
   }
 });
-res.render('login', {
-  locale,
-  i18n,
-  messages: req.flash(),
-  isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
-  currentPath: req.originalUrl // <- ici
-});
 
 
 app.get('/config', (req, res) => {
