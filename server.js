@@ -109,6 +109,10 @@ app.use((req, res, next) => {
   }
 });
 
+app.get('/user', (req, res) => {
+  const locale = req.locale || 'fr'; // ou une autre logique pour récupérer la langue courante
+  res.redirect(`/${locale}/user`);
+});
 
 app.get('/config', (req, res) => {
   res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
