@@ -95,27 +95,28 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .navbar .navbar-icon.bi-person {
             color: #000 !important;
         }
-.language-switcher .dropdown-menu {
-  min-width: 140px;
-  transition: all 0.2s ease-in-out;
+.dropdown .btn-light {
+  background-color: transparent;
+  border: none;
+  font-size: 1.4rem;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.language-switcher .dropdown-item:hover {
+.dropdown .btn-light:hover {
   background-color: #f1f1f1;
-  color: #000;
-  transition: 0.2s;
 }
 
-.language-switcher .btn-light {
-  background-color: white;
-  border-color: #ddd;
-  transition: background-color 0.2s ease;
-  font-size: 1.2rem;
+.dropdown-menu a {
+  font-size: 1.4rem;
+  text-align: center;
+  padding: 6px 12px;
+  transition: background-color 0.2s ease-in-out;
 }
 
-.language-switcher .btn-light:hover {
+.dropdown-menu a:hover {
   background-color: #f8f9fa;
 }
+
 
 
         @media (max-width: 767px) {
@@ -164,22 +165,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <span class="visually-hidden">Login</span>
                 </a>
             </div>
-           <div class="language-switcher ms-3 d-none d-lg-block">
-  <div class="dropdown">
-    <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-      <% if (locale === 'fr') { %>
-        🇫🇷
-      <% } else { %>
-        🇬🇧
-      <% } %>
-      <i class="bi bi-chevron-down small"></i>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="languageDropdown">
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr/login">🇫🇷 <span>Français</span></a></li>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en/login">🇬🇧 <span>English</span></a></li>
-    </ul>
-  </div>
+  <!-- Sélecteur de langue avec drapeau uniquement -->
+<div class="dropdown ms-3">
+  <button class="btn btn-light border rounded-circle p-2" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+    <% if (locale === 'fr') { %>
+      🇫🇷
+    <% } else { %>
+      🇬🇧
+    <% } %>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="languageDropdown">
+    <% if (locale === 'fr') { %>
+      <li><a class="dropdown-item px-3" href="/en/login">🇬🇧</a></li>
+    <% } else { %>
+      <li><a class="dropdown-item px-3" href="/fr/login">🇫🇷</a></li>
+    <% } %>
+  </ul>
 </div>
+
 
 
         </div>
