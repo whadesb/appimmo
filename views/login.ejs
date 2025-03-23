@@ -95,6 +95,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .navbar .navbar-icon.bi-person {
             color: #000 !important;
         }
+.language-switcher .dropdown-menu {
+  min-width: 140px;
+  transition: all 0.2s ease-in-out;
+}
+
+.language-switcher .dropdown-item:hover {
+  background-color: #f1f1f1;
+  color: #000;
+  transition: 0.2s;
+}
+
+.language-switcher .btn-light {
+  background-color: white;
+  border-color: #ddd;
+  transition: background-color 0.2s ease;
+}
+
+.language-switcher .btn-light:hover {
+  background-color: #f8f9fa;
+}
+
         @media (max-width: 767px) {
             .form-container {
                 background: none;
@@ -141,19 +162,19 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     <span class="visually-hidden">Login</span>
                 </a>
             </div>
-            <div class="dropdown d-none d-lg-block ms-3">
-                <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
-                    <%= locale === 'fr' ? 'FR' : 'EN' %>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
-                    <li>
-                        <a class="dropdown-item" href="/fr/login">FR</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="/en/login">EN</a>
-                    </li>
-                </ul>
-            </div>
+            <div class="language-switcher ms-3 d-none d-lg-block">
+  <div class="dropdown">
+    <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+      🌍 <span><%= locale === 'fr' ? 'Français' : 'English' %></span>
+      <i class="bi bi-chevron-down small"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="languageDropdown">
+      <li><a class="dropdown-item" href="/fr/login">🇫🇷 Français</a></li>
+      <li><a class="dropdown-item" href="/en/login">🇬🇧 English</a></li>
+    </ul>
+  </div>
+</div>
+
         </div>
     </div>
 </nav>
