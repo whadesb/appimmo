@@ -596,6 +596,12 @@ app.post('/set-cookie-consent', (req, res) => {
     res.cookie('cookie_consent', 'accepted', { maxAge: maxAge, httpOnly: true });
     res.json({ message: 'Consentement enregistré', maxAge: maxAge });
 });
+app.post('/logout', (req, res) => {
+  req.logout?.(); // si tu utilises passport
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
+});
 
 app.get('/:locale/logout', (req, res, next) => {
     req.logout((err) => {
