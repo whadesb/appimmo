@@ -95,27 +95,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         .navbar .navbar-icon.bi-person {
             color: #000 !important;
         }
-.language-switcher .dropdown-menu {
-  min-width: 140px;
-  transition: all 0.2s ease-in-out;
+.language-switcher .dropdown-menu,
+.dropdown-menu[aria-labelledby="languageDropdownMobile"] {
+  min-width: 80px;
+  text-align: center;
 }
 
-.language-switcher .dropdown-item:hover {
-  background-color: #f1f1f1;
-  color: #000;
-  transition: 0.2s;
-}
-
-.language-switcher .btn-light {
+.language-switcher .btn-light,
+#languageDropdownMobile.btn-light {
   background-color: white;
   border-color: #ddd;
   transition: background-color 0.2s ease;
-  font-size: 1.2rem;
+  font-size: 1.4rem;
+  padding: 0.4rem 0.6rem;
 }
 
-.language-switcher .btn-light:hover {
-  background-color: #f8f9fa;
+.language-switcher .btn-light:hover,
+#languageDropdownMobile.btn-light:hover {
+  background-color: #f1f1f1;
 }
+
 
 
 
@@ -160,25 +159,24 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <a class="nav-link click-scroll" href="/fr/contact">contact</a>
 </li>
             </ul>
-            <div class="d-none d-lg-block">
-                <a href="/<%= locale %>/login" style="position: relative;">
-                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                    <span class="visually-hidden">Login</span>
-                </a>
-            </div>
-<div class="language-switcher ms-3 d-none d-lg-block">
+            <div class="d-lg-none d-flex align-items-center ms-auto gap-3">
+  <!-- Login Icon Mobile -->
+  <a href="/<%= locale %>/login" style="position: relative;">
+    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
+    <span class="visually-hidden">Login</span>
+  </a>
+
+  <!-- Language Switcher Mobile -->
   <div class="dropdown">
-    <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-      <% if (locale === 'fr') { %>
-        
-      <% } else { %>
-   
-      <% } %>
-      <i class="bi bi-chevron-down small"></i>
+    <button class="btn btn-light border rounded-circle p-2" type="button" id="languageDropdownMobile" data-bs-toggle="dropdown" aria-expanded="false">
+      <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
     </button>
-    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="languageDropdown">
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr/login">🇫🇷 <span>FR</span></a></li>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en/login">🇬🇧 <span>EN</span></a></li>
+    <ul class="dropdown-menu dropdown-menu-end shadow-sm" aria-labelledby="languageDropdownMobile">
+      <% if (locale === 'fr') { %>
+        <li><a class="dropdown-item text-center" href="/en/login">🇬🇧</a></li>
+      <% } else { %>
+        <li><a class="dropdown-item text-center" href="/fr/login">🇫🇷</a></li>
+      <% } %>
     </ul>
   </div>
 </div>
