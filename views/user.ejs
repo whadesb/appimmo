@@ -241,7 +241,9 @@ input[type="number"] {
     box-shadow: 0 0 5px rgba(143, 151, 196, 0.5);
 }
 
-
+  .navbar .btn-outline-dark {
+    margin-right: 12px;
+  }
 
 
         @media (max-width: 767px) {
@@ -432,11 +434,11 @@ progress {
     </button>
   </form>
 <% } else { %>
-  <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-    <i class="bi bi-person-fill"></i>
-    <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-  </a>
-<% } %>
+ <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+  <i class="bi bi-person-fill"></i>
+  <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+</a>
+
 
         <div class="dropdown d-none d-lg-block ms-3">
                 <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
