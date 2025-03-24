@@ -267,6 +267,11 @@ input[type="number"] {
     border-radius: 5px;
     transition: border 0.3s ease-in-out;
 }
+.form-control,
+.btn-form-submit {
+  width: 50%;
+  max-width: 100%;
+}
 
 /* Effet focus */
 .form-control:focus {
@@ -721,7 +726,7 @@ progress {
         <small id="charCount">0/820 caractères</small>
       </div>
 
-      <button type="submit" class="btn btn-dark w-100 py-2 mt-3">
+      <button type="submit" class="btn btn-custom btn-form-submit">
         <i class="fa fa-check-circle me-2"></i>Créer l'annonce
       </button>
     </form>
