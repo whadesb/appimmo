@@ -964,17 +964,20 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
 <script>
   document.getElementById('add-property-form').addEventListener('submit', function(event) {
       let missingFields = [];
-      const requiredFields = ['price', 'surface', 'country', 'city', 'propertyType', 'description'];
-      
-      requiredFields.forEach(field => {
-          const input = document.getElementById(field);
-          if (!input.value.trim()) {
-              missingFields.push(field);
-              input.style.border = "2px solid red";  // Mets en rouge les champs vides
-          } else {
-              input.style.border = "";  // Remets la bordure normale si rempli
-          }
-      });
+      requiredFields.forEach(id => {
+  const field = document.getElementById(id);
+  if (field && !field.value.trim()) {
+    hasError = true;
+    field.classList.add('shake');
+    field.style.border = '2px solid red';
+    setTimeout(() => {
+      field.classList.remove('shake');
+    }, 500);
+  } else if (field) {
+    field.style.border = '';
+  }
+});
+
 
       if (missingFields.length > 0) {
           event.preventDefault(); // Empêche l'envoi du formulaire
