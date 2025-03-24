@@ -828,62 +828,69 @@ progress {
 <script src="/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
-    function showSection(sectionId) {
-        const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
-        sections.forEach(id => {
-            const sectionElement = document.getElementById(id);
-            if (sectionElement) {
-                sectionElement.style.display = id === sectionId ? 'block' : 'none';
-            }
-        });
+   // Affiche une section spécifique et masque les autres
+function showSection(sectionId) {
+    const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password', 'orders'];
 
-        if (sectionId === 'created-pages') {
-            loadProperties();
+    sections.forEach(id => {
+        const sectionElement = document.getElementById(id);
+        if (sectionElement) {
+            sectionElement.style.display = (id === sectionId) ? 'block' : 'none';
         }
-    }
+    });
 
-    async function loadProperties() {
+    if (sectionId === 'created-pages') {
+        loadProperties();
+    }
+}
+
+// Charge et affiche les propriétés de l'utilisateur
+async function loadProperties() {
     try {
         const response = await fetch('/user/properties');
-        if (response.ok) {
-            const properties = await response.json();
-            const propertiesList = document.getElementById('properties-list');
-            propertiesList.innerHTML = '';
+        const propertiesList = document.getElementById('properties-list');
+        const noPropertiesMessage = document.getElementById('no-properties-message');
 
-            const noPropertiesMessage = document.getElementById('no-properties-message');
-            if (properties.length === 0) {
-                noPropertiesMessage.style.display = 'block';
-            } else {
-                noPropertiesMessage.style.display = 'none';
-                properties.forEach(property => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${property.rooms}</td>
-                        <td>${property.surface}</td>
-                        <td>${property.price.toLocaleString('fr-FR')} €</td>
-                        <td>${property.city}</td>
-                        <td>${property.country}</td>
-                        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
-                        <td>
-                            <div class="action-icons">
-                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
-                            </div>
-                        </td>
-                    `;
-                    propertiesList.appendChild(row);
-                });
-            }
-        } else {
-            const propertiesList = document.getElementById('properties-list');
+        if (!response.ok) {
             propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
+            return;
         }
+
+        const properties = await response.json();
+        propertiesList.innerHTML = '';
+
+        if (properties.length === 0) {
+            noPropertiesMessage.style.display = 'block';
+        } else {
+            noPropertiesMessage.style.display = 'none';
+            properties.forEach(property => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${property.rooms}</td>
+                    <td>${property.surface}</td>
+                    <td>${property.price.toLocaleString('fr-FR')} €</td>
+                    <td>${property.city}</td>
+                    <td>${property.country}</td>
+                    <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+                    <td>
+                        <div class="action-icons">
+                            <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                            <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                            <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
+                        </div>
+                    </td>
+                `;
+                propertiesList.appendChild(row);
+            });
+        }
+
     } catch (error) {
         const propertiesList = document.getElementById('properties-list');
         propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
+        console.error('Erreur lors du chargement des propriétés :', error);
     }
 }
+
 
 
     function copyURL(url) {
@@ -1111,16 +1118,6 @@ async function loadOrders() {
   }
 }
 
-function showSection(sectionId) {
-  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
-  sections.forEach(id => {
-    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
-  });
-
-  if (sectionId === 'orders') loadOrders();
-  if (sectionId === 'created-pages') loadLandingPages();
-  if (sectionId === 'donnees') loadStats();
-}
 </script>
 
 
