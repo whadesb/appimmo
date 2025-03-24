@@ -496,11 +496,12 @@ progress {
 
             </ul>
            
-<% if (isAuthenticated) { %>
+<% if (isAuthenticated && !currentPath.includes('/user')) { %>
   <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
     <i class="bi bi-person-circle"></i>
     <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
   </a>
+<% } %>
 
   <form action="/logout" method="POST" class="d-inline">
     <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
