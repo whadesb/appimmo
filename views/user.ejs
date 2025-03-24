@@ -530,142 +530,119 @@ progress {
 
                         <!-- Section Landing Page -->
                         <div id="landing" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= i18n.add_property %></h5>
-                                <p class="card-text"><%= i18n.property_details %></p>
-                                <h5 class="card-title"><%= i18n.add_property %></h5>
-                                <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
-  <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
-  <div class="form-group">
-    <label for="rooms"><%= i18n.rooms %></label>
-    <input type="number" class="form-control" id="rooms" name="rooms" required>
-  </div>
-  <div class="form-group">
-    <label for="bedrooms">Nombre de chambres</label>
-    <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
-  </div>
-  <div class="form-group">
-    <label for="surface"><%= i18n.surface %> :</label>
-    <input type="number" class="form-control" id="surface" name="surface" required>
-  </div>
-  <div class="form-group">
-    <label for="price"><%= i18n.price %> :</label>
-    <input type="number" class="form-control" id="price" name="price" required>
-  </div>
-   <div class="form-group">
-    <label for="country"><%= i18n.country %> :</label>
-    <input type="text" class="form-control" id="country" name="country" required>
-  </div>
+  <div class="card-body">
+    <h5 class="card-title"><%= i18n.add_property %></h5>
+    <p class="card-text"><%= i18n.property_details %></p>
 
-  <div class="form-group">
-    <label for="city"><%= i18n.city %> :</label>
-    <input type="text" class="form-control" id="city" name="city" required>
-  </div>
+    <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="userId" value="<%= user._id %>">
 
-  <!-- Année de construction -->
-  <div class="form-group">
-    <label for="yearBuilt">Année de construction</label>
-    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
-  </div>
-  <!-- Piscine -->
-  <div class="form-group">
-    <label for="pool">Piscine</label>
-    <select class="form-control" id="pool" name="pool">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <!-- Type de bien -->
-  <div class="form-group">
-    <label for="propertyType"><%= i18n.propertyType %>Type de bien :</label>
-    <select class="form-control" id="propertyType" name="propertyType" required>
-      
-      <option value="Propriété"><%= i18n.property %>Propriété</option>
-      <option value="Villa"><%= i18n.villa %>Villa</option>
-      <option value="Hôtel particulier"><%= i18n.hotel_particulier %>Hotel particulier</option>
-      <option value="Appartement"><%= i18n.apartment %>Appartement</option>
-      <option value="Chateau"><%= i18n.chateau %>Chateau</option>
-      <option value="Maison"><%= i18n.house %>Maison de ville</option>
-    </select>
-  </div>
+      <!-- ✅ Infos générales -->
+      <h6 class="mb-3 mt-4"><i class="fa-solid fa-house"></i> Informations générales</h6>
+      <div class="row">
+        <div class="col-md-4 form-group">
+          <label for="propertyType">Type de bien</label>
+          <select class="form-control" id="propertyType" name="propertyType" required>
+            <option value="">-- Choisir --</option>
+            <option value="Propriété">Propriété</option>
+            <option value="Villa">Villa</option>
+            <option value="Hôtel particulier">Hôtel particulier</option>
+            <option value="Appartement">Appartement</option>
+            <option value="Chateau">Château</option>
+            <option value="Maison">Maison de ville</option>
+          </select>
+        </div>
+        <div class="col-md-2 form-group">
+          <label for="rooms"><%= i18n.rooms %></label>
+          <input type="number" class="form-control" id="rooms" name="rooms" required>
+        </div>
+        <div class="col-md-2 form-group">
+          <label for="bedrooms">Chambres</label>
+          <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
+        </div>
+        <div class="col-md-2 form-group">
+          <label for="surface">Surface (m²)</label>
+          <input type="number" class="form-control" id="surface" name="surface" required>
+        </div>
+        <div class="col-md-2 form-group">
+          <label for="price">Prix (€)</label>
+          <input type="number" class="form-control" id="price" name="price" required>
+        </div>
+      </div>
 
-  <div class="form-group">
-    <label for="doubleGlazing">Double vitrage</label>
-    <select class="form-control" id="doubleGlazing" name="doubleGlazing">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
+      <div class="row mt-3">
+        <div class="col-md-4 form-group">
+          <label for="country">Pays</label>
+          <input type="text" class="form-control" id="country" name="country" required>
+        </div>
+        <div class="col-md-4 form-group">
+          <label for="city">Ville</label>
+          <input type="text" class="form-control" id="city" name="city" required>
+        </div>
+        <div class="col-md-4 form-group">
+          <label for="yearBuilt">Année de construction</label>
+          <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
+        </div>
+      </div>
+
+      <!-- ✅ Équipements -->
+      <h6 class="mb-3 mt-4"><i class="fa-solid fa-screwdriver-wrench"></i> Équipements</h6>
+      <div class="row">
+        <% let options = [
+          { id: 'pool', label: 'Piscine' },
+          { id: 'doubleGlazing', label: 'Double vitrage' },
+          { id: 'wateringSystem', label: 'Arrosage' },
+          { id: 'barbecue', label: 'Barbecue' },
+          { id: 'carShelter', label: 'Abri voiture' },
+          { id: 'parking', label: 'Parking' },
+          { id: 'caretakerHouse', label: 'Maison gardien' },
+          { id: 'electricShutters', label: 'Stores électriques' },
+          { id: 'outdoorLighting', label: 'Éclairage extérieur' }
+        ]; %>
+        <% options.forEach(opt => { %>
+          <div class="col-md-4 form-group">
+            <label for="<%= opt.id %>"><%= opt.label %></label>
+            <select class="form-control" id="<%= opt.id %>" name="<%= opt.id %>">
+              <option value="false">Non</option>
+              <option value="true">Oui</option>
+            </select>
+          </div>
+        <% }); %>
+      </div>
+
+      <!-- ✅ Photos -->
+      <h6 class="mb-3 mt-4"><i class="fa-solid fa-image"></i> Photos</h6>
+      <div class="row">
+        <div class="col-md-6 form-group">
+          <label for="photo1"><%= i18n.photo_1 %></label>
+          <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
+          <progress id="progress1" value="0" max="100" class="hidden"></progress>
+          <span id="status1" class="hidden">Chargement...</span>
+        </div>
+        <div class="col-md-6 form-group">
+          <label for="photo2"><%= i18n.photo_2 %></label>
+          <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
+          <progress id="progress2" value="0" max="100" class="hidden"></progress>
+          <span id="status2" class="hidden">Chargement...</span>
+        </div>
+      </div>
+
+      <!-- ✅ Description -->
+      <div class="form-group mt-4">
+        <label for="description"><%= i18n.description %> (max. 820 caractères)</label>
+        <textarea class="form-control" id="description" name="description" rows="4" maxlength="820" required></textarea>
+        <small id="charCount">0/820 caractères</small>
+      </div>
+
+      <div class="text-end mt-4">
+        <button type="submit" class="btn btn-custom px-4 py-2">
+          <i class="fa-solid fa-paper-plane me-1"></i> <%= i18n.save %>
+        </button>
+      </div>
+    </form>
   </div>
-  <div class="form-group">
-    <label for="wateringSystem">Arrosage</label>
-    <select class="form-control" id="wateringSystem" name="wateringSystem">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="barbecue">Barbecue</label>
-    <select class="form-control" id="barbecue" name="barbecue">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="carShelter">Abri de voiture</label>
-    <select class="form-control" id="carShelter" name="carShelter">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="parking">Parking</label>
-    <select class="form-control" id="parking" name="parking">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="caretakerHouse">Maison de gardien</label>
-    <select class="form-control" id="caretakerHouse" name="caretakerHouse">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="electricShutters">Stores électriques</label>
-    <select class="form-control" id="electricShutters" name="electricShutters">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="outdoorLighting">Éclairage extérieur</label>
-    <select class="form-control" id="outdoorLighting" name="outdoorLighting">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
- <div class="form-group">
-    <label for="photo1"><%= i18n.photo_1 %></label>
-    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-    <progress id="progress1" value="0" max="100" class="hidden"></progress>
-    <span id="status1" class="hidden">Chargement...</span>
 </div>
 
-<div class="form-group">
-    <label for="photo2"><%= i18n.photo_2 %></label>
-    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-    <progress id="progress2" value="0" max="100" class="hidden"></progress>
-    <span id="status2" class="hidden">Chargement...</span>
-</div>
-
-<div class="form-group">
-    <label for="description"><%= i18n.description %> (max. 820 caractères)</label>
-    <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
-    <small id="charCount">0/820 <%= i18n.characters %></small>
-  </div>
-  <button type="submit" class="btn btn-custom"><%= i18n.save %></button>
-</form>
 
                                 <div id="generatedLink" class="mt-3"></div>
                             </div>
