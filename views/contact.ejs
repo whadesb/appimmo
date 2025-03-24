@@ -161,11 +161,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </form>
 <% } else { %>
   <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-  <i class="bi bi-person-fill"></i>
-  <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-</a>
-
-
+    <i class="bi bi-person-fill"></i>
+    <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+  </a>
+<% } %>
 
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
