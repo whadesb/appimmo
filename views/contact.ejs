@@ -173,11 +173,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <i class="bi bi-chevron-down small"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow">
-            <% if (locale === 'fr') { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= currentPath %>">🇬🇧 <span>EN</span></a></li>
-            <% } else { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= currentPath %>">🇫🇷 <span>FR</span></a></li>
-            <% } %>
+        <%
+  const cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '';
+%>
+<% if (locale === 'fr') { %>
+  <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">🇬🇧 <span>EN</span></a></li>
+<% } else { %>
+  <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">🇫🇷 <span>FR</span></a></li>
+<% } %>
+
           </ul>
         </div>
       </div>
