@@ -954,14 +954,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     document.onclick = resetTimer;
     document.onscroll = resetTimer;
 </script>
-<script>
-  const descriptionInput = document.getElementById('description');
-  const charCount = document.getElementById('charCount');
 
-  descriptionInput.addEventListener('input', function() {
-    charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
-  });
-</script>
 <script>
   document.getElementById('add-property-form').addEventListener('submit', function(event) {
       let missingFields = [];
@@ -1367,6 +1360,84 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 
+<script>
+// ✅ Étapes avec effet fade, tooltips, responsive, bouton suivant corrigé + animation erreur
+function nextStep(step) {
+  const steps = document.querySelectorAll('.form-step');
+  steps.forEach((s, index) => {
+    if (index + 1 === step) {
+      s.style.display = 'block';
+      setTimeout(() => s.classList.add('show'), 10);
+    } else {
+      s.classList.remove('show');
+      setTimeout(() => s.style.display = 'none', 300);
+    }
+  });
+  document.getElementById('formProgress').style.width = `${step * 33}%`;
+}
 
+// ✅ Active les tooltips Bootstrap
+const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
+
+// ✅ Description caractère dynamique
+const description = document.getElementById('description');
+const charCount = document.getElementById('charCount');
+description?.addEventListener('input', () => {
+  charCount.textContent = `${description.value.length}/820 caractères`;
+});
+
+// ✅ Animation vibrante pour les champs manquants + vérification
+const form = document.getElementById('add-property-form');
+form?.addEventListener('submit', async function(event) {
+  event.preventDefault();
+  let hasError = false;
+  const requiredFields = ['price', 'surface', 'propertyType', 'rooms', 'bedrooms', 'description'];
+
+  requiredFields.forEach(id => {
+    const field = document.getElementById(id);
+    if (!field || !field.value.trim()) {
+      hasError = true;
+      field.classList.add('shake');
+      field.style.border = '2px solid red';
+      setTimeout(() => {
+        field.classList.remove('shake');
+      }, 500);
+    } else {
+      field.style.border = '';
+    }
+  });
+
+  if (hasError) return alert('Veuillez remplir tous les champs requis.');
+
+  const formData = new FormData(this);
+  try {
+    const response = await fetch('/add-property', {
+      method: 'POST',
+      body: formData
+    });
+    const result = await response.text();
+    document.getElementById('generatedLink').innerHTML = result;
+  } catch (error) {
+    console.error('Erreur lors de l\'ajout de la propriété :', error);
+  }
+});
+
+// ✅ Animation CSS pour effet shake
+const style = document.createElement('style');
+style.textContent = `
+  .shake {
+    animation: shake 0.3s;
+  }
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+  }
+`;
+document.head.appendChild(style);
+</script>
 </body>
 </html>
