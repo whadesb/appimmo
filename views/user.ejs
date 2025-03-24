@@ -88,7 +88,13 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     display: inline-block;
     cursor: help;
 }
-
+.fade {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+.fade.show {
+  opacity: 1;
+}
 .tooltip-text {
     visibility: hidden;
     width: 200px;
@@ -331,7 +337,10 @@ input[type="number"] {
 .hidden {
     display: none;
 }
-
+.row > [class^='col-'] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 
 progress {
     width: 100%;
@@ -529,124 +538,122 @@ progress {
 
 
                         <!-- Section Landing Page -->
-                        <div id="landing" class="card" style="display: none;">
+               <!-- Formulaire multi-étapes UX-friendly avec tooltips, progress bar, fade-in et responsive -->
+<div id="landing" class="card" style="display: none;">
   <div class="card-body">
-    <h5 class="card-title"><%= i18n.add_property %></h5>
+    <h5 class="card-title"><i class="fa-solid fa-house"></i> <%= i18n.add_property %></h5>
     <p class="card-text"><%= i18n.property_details %></p>
 
-    <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+    <!-- Progress bar -->
+    <div class="progress mb-4">
+      <div id="formProgress" class="progress-bar" role="progressbar" style="width: 33%;"></div>
+    </div>
+
+    <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
       <input type="hidden" name="userId" value="<%= user._id %>">
 
-      <!-- ✅ Infos générales -->
-      <h6 class="mb-3 mt-4"><i class="fa-solid fa-house"></i> Informations générales</h6>
-      <div class="row">
-        <div class="col-md-4 form-group">
-          <label for="propertyType">Type de bien</label>
-          <select class="form-control" id="propertyType" name="propertyType" required>
-            <option value="">-- Choisir --</option>
-            <option value="Propriété">Propriété</option>
-            <option value="Villa">Villa</option>
-            <option value="Hôtel particulier">Hôtel particulier</option>
-            <option value="Appartement">Appartement</option>
-            <option value="Chateau">Château</option>
-            <option value="Maison">Maison de ville</option>
-          </select>
-        </div>
-        <div class="col-md-2 form-group">
-          <label for="rooms"><%= i18n.rooms %></label>
-          <input type="number" class="form-control" id="rooms" name="rooms" required>
-        </div>
-        <div class="col-md-2 form-group">
-          <label for="bedrooms">Chambres</label>
-          <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
-        </div>
-        <div class="col-md-2 form-group">
-          <label for="surface">Surface (m²)</label>
-          <input type="number" class="form-control" id="surface" name="surface" required>
-        </div>
-        <div class="col-md-2 form-group">
-          <label for="price">Prix (€)</label>
-          <input type="number" class="form-control" id="price" name="price" required>
-        </div>
-      </div>
-
-      <div class="row mt-3">
-        <div class="col-md-4 form-group">
-          <label for="country">Pays</label>
-          <input type="text" class="form-control" id="country" name="country" required>
-        </div>
-        <div class="col-md-4 form-group">
-          <label for="city">Ville</label>
-          <input type="text" class="form-control" id="city" name="city" required>
-        </div>
-        <div class="col-md-4 form-group">
-          <label for="yearBuilt">Année de construction</label>
-          <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
-        </div>
-      </div>
-
-      <!-- ✅ Équipements -->
-      <h6 class="mb-3 mt-4"><i class="fa-solid fa-screwdriver-wrench"></i> Équipements</h6>
-      <div class="row">
-        <% let options = [
-          { id: 'pool', label: 'Piscine' },
-          { id: 'doubleGlazing', label: 'Double vitrage' },
-          { id: 'wateringSystem', label: 'Arrosage' },
-          { id: 'barbecue', label: 'Barbecue' },
-          { id: 'carShelter', label: 'Abri voiture' },
-          { id: 'parking', label: 'Parking' },
-          { id: 'caretakerHouse', label: 'Maison gardien' },
-          { id: 'electricShutters', label: 'Stores électriques' },
-          { id: 'outdoorLighting', label: 'Éclairage extérieur' }
-        ]; %>
-        <% options.forEach(opt => { %>
-          <div class="col-md-4 form-group">
-            <label for="<%= opt.id %>"><%= opt.label %></label>
-            <select class="form-control" id="<%= opt.id %>" name="<%= opt.id %>">
-              <option value="false">Non</option>
-              <option value="true">Oui</option>
+      <!-- Step 1: Informations générales -->
+      <div class="form-step step-1 fade show">
+        <h6 class="mb-3">1. Informations générales</h6>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="propertyType">Type de bien
+              <i class="fa-solid fa-circle-info ms-1 text-secondary" data-bs-toggle="tooltip" title="Ex : Villa, Appartement, etc."></i>
+            </label>
+            <select class="form-control" id="propertyType" name="propertyType" required>
+              <option value="">-- Choisir --</option>
+              <option value="Propriété">Propriété</option>
+              <option value="Villa">Villa</option>
+              <option value="Hôtel particulier">Hôtel particulier</option>
+              <option value="Appartement">Appartement</option>
+              <option value="Chateau">Château</option>
+              <option value="Maison">Maison</option>
             </select>
           </div>
-        <% }); %>
-      </div>
-
-      <!-- ✅ Photos -->
-      <h6 class="mb-3 mt-4"><i class="fa-solid fa-image"></i> Photos</h6>
-      <div class="row">
-        <div class="col-md-6 form-group">
-          <label for="photo1"><%= i18n.photo_1 %></label>
-          <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-          <progress id="progress1" value="0" max="100" class="hidden"></progress>
-          <span id="status1" class="hidden">Chargement...</span>
+          <div class="col-md-3 mb-3">
+            <label for="rooms">Pièces</label>
+            <input type="number" class="form-control" id="rooms" name="rooms" required>
+          </div>
+          <div class="col-md-3 mb-3">
+            <label for="bedrooms">Chambres</label>
+            <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
+          </div>
         </div>
-        <div class="col-md-6 form-group">
-          <label for="photo2"><%= i18n.photo_2 %></label>
-          <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-          <progress id="progress2" value="0" max="100" class="hidden"></progress>
-          <span id="status2" class="hidden">Chargement...</span>
+        <div class="row">
+          <div class="col-md-4 mb-3">
+            <label for="surface">Surface (m²)</label>
+            <input type="number" class="form-control" id="surface" name="surface" required>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="price">Prix (€)</label>
+            <input type="number" class="form-control" id="price" name="price" required>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="yearBuilt">Année construction
+              <i class="fa-solid fa-circle-info ms-1 text-secondary" data-bs-toggle="tooltip" title="Optionnel"></i>
+            </label>
+            <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
+          </div>
+        </div>
+        <div class="text-end">
+          <button type="button" class="btn btn-primary" onclick="nextStep(2)">Suivant</button>
         </div>
       </div>
 
-      <!-- ✅ Description -->
-      <div class="form-group mt-4">
-        <label for="description"><%= i18n.description %> (max. 820 caractères)</label>
-        <textarea class="form-control" id="description" name="description" rows="4" maxlength="820" required></textarea>
-        <small id="charCount">0/820 caractères</small>
+      <!-- Step 2: Équipements -->
+      <div class="form-step step-2 fade" style="display:none">
+        <h6 class="mb-3">2. Équipements</h6>
+        <div class="row">
+          <% const equip = ['pool', 'doubleGlazing', 'wateringSystem', 'barbecue', 'carShelter', 'parking', 'caretakerHouse', 'electricShutters', 'outdoorLighting'];
+             const labels = {
+               pool: 'Piscine', doubleGlazing: 'Double vitrage', wateringSystem: 'Arrosage',
+               barbecue: 'Barbecue', carShelter: 'Abri voiture', parking: 'Parking',
+               caretakerHouse: 'Maison de gardien', electricShutters: 'Stores électriques', outdoorLighting: 'Éclairage extérieur'
+             }; %>
+          <% equip.forEach(id => { %>
+            <div class="col-md-4 mb-3">
+              <label for="<%= id %>"><%= labels[id] %></label>
+              <select class="form-control" id="<%= id %>" name="<%= id %>">
+                <option value="false">Non</option>
+                <option value="true">Oui</option>
+              </select>
+            </div>
+          <% }); %>
+        </div>
+        <div class="text-end">
+          <button type="button" class="btn btn-outline-secondary" onclick="nextStep(1)">Précédent</button>
+          <button type="button" class="btn btn-primary" onclick="nextStep(3)">Suivant</button>
+        </div>
       </div>
 
-      <div class="text-end mt-4">
-        <button type="submit" class="btn btn-custom px-4 py-2">
-          <i class="fa-solid fa-paper-plane me-1"></i> <%= i18n.save %>
-        </button>
+      <!-- Step 3: Médias et description -->
+      <div class="form-step step-3 fade" style="display:none">
+        <h6 class="mb-3">3. Photos & Description</h6>
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="photo1">Photo 1</label>
+            <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="photo2">Photo 2</label>
+            <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
+          </div>
+        </div>
+        <div class="mb-3">
+          <label for="description">Description</label>
+          <textarea class="form-control" id="description" name="description" maxlength="820" rows="4" required></textarea>
+          <small id="charCount">0/820 caractères</small>
+        </div>
+        <div class="text-end">
+          <button type="button" class="btn btn-outline-secondary" onclick="nextStep(2)">Précédent</button>
+          <button type="submit" class="btn btn-success">Valider</button>
+        </div>
       </div>
     </form>
+
+    <div id="generatedLink" class="mt-4 fade"></div>
   </div>
 </div>
-
-
-                                <div id="generatedLink" class="mt-3"></div>
-                            </div>
-                        </div>
 
                         <!-- Section Données -->
                      <div id="donnees" class="card" style="display: none;">
@@ -1326,6 +1333,30 @@ document.getElementById('statsFilter').addEventListener('submit', async (e) => {
   </tr>`;
     tbody.insertAdjacentHTML('beforeend', row);
   });
+});
+</script>
+<script>
+function nextStep(step) {
+  const steps = document.querySelectorAll('.form-step');
+  steps.forEach((s, index) => {
+    s.style.display = (index + 1 === step) ? 'block' : 'none';
+    s.classList.remove('show');
+    setTimeout(() => s.classList.add('show'), 50);
+  });
+  document.getElementById('formProgress').style.width = `${step * 33}%`;
+}
+
+// Tooltip Bootstrap init
+const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+  return new bootstrap.Tooltip(tooltipTriggerEl);
+});
+
+// Compteur caractères
+const description = document.getElementById('description');
+const charCount = document.getElementById('charCount');
+description?.addEventListener('input', () => {
+  charCount.textContent = `${description.value.length}/820 caractères`;
 });
 </script>
 
