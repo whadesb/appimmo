@@ -1339,25 +1339,28 @@ document.getElementById('statsFilter').addEventListener('submit', async (e) => {
 function nextStep(step) {
   const steps = document.querySelectorAll('.form-step');
   steps.forEach((s, index) => {
-    s.style.display = (index + 1 === step) ? 'block' : 'none';
-    s.classList.remove('show');
-    setTimeout(() => s.classList.add('show'), 50);
+    if (index + 1 === step) {
+      s.style.display = 'block';
+      setTimeout(() => s.classList.add('show'), 10);
+    } else {
+      s.classList.remove('show');
+      setTimeout(() => s.style.display = 'none', 300);
+    }
   });
   document.getElementById('formProgress').style.width = `${step * 33}%`;
 }
 
-// Tooltip Bootstrap init
+// ✅ Active les tooltips Bootstrap
 const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-const tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl);
-});
+tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
 
-// Compteur caractères
+// ✅ Description caractère dynamique
 const description = document.getElementById('description');
 const charCount = document.getElementById('charCount');
 description?.addEventListener('input', () => {
   charCount.textContent = `${description.value.length}/820 caractères`;
 });
+
 </script>
 
 </body>
