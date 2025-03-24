@@ -820,7 +820,8 @@ app.get('/:locale/register', (req, res) => {
     res.render('register', {
         locale: locale,
         i18n: i18n,
-        messages: req.flash() // Pour afficher d'éventuelles erreurs d'inscription
+        messages: req.flash(),
+currentPath: req.originalUrl  // Pour afficher d'éventuelles erreurs d'inscription
     });
 });
 
