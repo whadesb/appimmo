@@ -1082,7 +1082,7 @@ async function loadOrders() {
 
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${order._id}</td>
+          <td>${order.orderId || order._id}</td>
           <td>${orderDate.toLocaleDateString('fr-FR')}</td>
           <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
           <td>
