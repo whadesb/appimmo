@@ -968,7 +968,6 @@ app.post('/add-property', isAuthenticated, upload.fields([
       pool: req.body.pool === 'true',
       propertyType: req.body.propertyType,
       fireplace: req.body.fireplace === 'true',
-      doubleGlazing: req.body.doubleGlazing === 'true',
       wateringSystem: req.body.wateringSystem === 'true',
       carShelter: req.body.carShelter === 'true',
       parking: req.body.parking === 'true',
