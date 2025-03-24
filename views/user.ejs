@@ -88,13 +88,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     display: inline-block;
     cursor: help;
 }
-.fade {
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
-}
-.fade.show {
-  opacity: 1;
-}
+
 .tooltip-text {
     visibility: hidden;
     width: 200px;
@@ -337,10 +331,7 @@ input[type="number"] {
 .hidden {
     display: none;
 }
-.row > [class^='col-'] {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
+
 
 progress {
     width: 100%;
@@ -538,128 +529,147 @@ progress {
 
 
                         <!-- Section Landing Page -->
-               <!-- Formulaire multi-étapes UX-friendly avec tooltips, progress bar, fade-in et responsive -->
-<div id="landing" class="card" style="display: none;">
-  <div class="card-body">
-    <h5 class="card-title"><i class="fa-solid fa-house"></i> <%= i18n.add_property %></h5>
-    <p class="card-text"><%= i18n.property_details %></p>
-
-    <!-- Progress bar -->
-    <div class="progress mb-4">
-      <div id="formProgress" class="progress-bar" role="progressbar" style="width: 33%;"></div>
-    </div>
-
-    <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data" class="needs-validation" novalidate>
-      <input type="hidden" name="userId" value="<%= user._id %>">
-
-      <!-- Step 1: Informations générales -->
-      <div class="form-step step-1 fade show">
-        <h6 class="mb-3">1. Informations générales</h6>
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="propertyType">Type de bien
-              <i class="fa-solid fa-circle-info ms-1 text-secondary" data-bs-toggle="tooltip" title="Ex : Villa, Appartement, etc."></i>
-            </label>
-            <select class="form-control" id="propertyType" name="propertyType" required>
-              <option value="">-- Choisir --</option>
-              <option value="Propriété">Propriété</option>
-              <option value="Villa">Villa</option>
-              <option value="Hôtel particulier">Hôtel particulier</option>
-              <option value="Appartement">Appartement</option>
-              <option value="Chateau">Château</option>
-              <option value="Maison">Maison</option>
-            </select>
-          </div>
-          <div class="col-md-3 mb-3">
-            <label for="rooms">Pièces</label>
-            <input type="number" class="form-control" id="rooms" name="rooms" required>
-          </div>
-          <div class="col-md-3 mb-3">
-            <label for="bedrooms">Chambres</label>
-            <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4 mb-3">
-            <label for="surface">Surface (m²)</label>
-            <input type="number" class="form-control" id="surface" name="surface" required>
-          </div>
-          <div class="col-md-4 mb-3">
-            <label for="price">Prix (€)</label>
-            <input type="number" class="form-control" id="price" name="price" required>
-          </div>
-          <div class="col-md-4 mb-3">
-            <label for="yearBuilt">Année construction
-              <i class="fa-solid fa-circle-info ms-1 text-secondary" data-bs-toggle="tooltip" title="Optionnel"></i>
-            </label>
-            <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
-          </div>
-        </div>
-        <div class="text-end">
-          <button type="button" class="btn btn-primary" onclick="nextStep(2)">Suivant</button>
-        </div>
-      </div>
-
-      <!-- Step 2: Équipements -->
-      <div class="form-step step-2 fade" style="display:none">
-        <h6 class="mb-3">2. Équipements</h6>
-        <div class="row">
-          <% const equip = ['pool', 'doubleGlazing', 'wateringSystem', 'barbecue', 'carShelter', 'parking', 'caretakerHouse', 'electricShutters', 'outdoorLighting'];
-             const labels = {
-               pool: 'Piscine', doubleGlazing: 'Double vitrage', wateringSystem: 'Arrosage',
-               barbecue: 'Barbecue', carShelter: 'Abri voiture', parking: 'Parking',
-               caretakerHouse: 'Maison de gardien', electricShutters: 'Stores électriques', outdoorLighting: 'Éclairage extérieur'
-             }; %>
-          <% equip.forEach(id => { %>
-            <div class="col-md-4 mb-3">
-              <label for="<%= id %>"><%= labels[id] %></label>
-              <select class="form-control" id="<%= id %>" name="<%= id %>">
-                <option value="false">Non</option>
-                <option value="true">Oui</option>
-              </select>
-            </div>
-          <% }); %>
-        </div>
-        <div class="text-end">
-          <button type="button" class="btn btn-outline-secondary" onclick="nextStep(1)">Précédent</button>
-          <button type="button" class="btn btn-primary" onclick="nextStep(3)">Suivant</button>
-        </div>
-      </div>
-
-      <!-- Step 3: Médias et description -->
-      <div class="form-step step-3 fade" style="display:none">
-        <h6 class="mb-3">3. Photos & Description</h6>
-        <div class="row">
-          <div class="col-md-6 mb-3">
-            <label for="photo1">Photo 1</label>
-            <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-<progress id="progress1" class="hidden" max="100" value="0"></progress>
-<span id="status1" class="hidden"></span>
-
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="photo2">Photo 2</label>
-            <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-<progress id="progress2" class="hidden" max="100" value="0"></progress>
-<span id="status2" class="hidden"></span>
-
-          </div>
-        </div>
-        <div class="mb-3">
-          <label for="description">Description</label>
-          <textarea class="form-control" id="description" name="description" maxlength="820" rows="4" required></textarea>
-          <small id="charCount">0/820 caractères</small>
-        </div>
-        <div class="text-end">
-          <button type="button" class="btn btn-outline-secondary" onclick="nextStep(2)">Précédent</button>
-          <button type="submit" class="btn btn-success">Valider</button>
-        </div>
-      </div>
-    </form>
-
-    <div id="generatedLink" class="mt-4 fade"></div>
+                        <div id="landing" class="card" style="display: none;">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= i18n.add_property %></h5>
+                                <p class="card-text"><%= i18n.property_details %></p>
+                                <h5 class="card-title"><%= i18n.add_property %></h5>
+                                <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+  <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
+  <div class="form-group">
+    <label for="rooms"><%= i18n.rooms %></label>
+    <input type="number" class="form-control" id="rooms" name="rooms" required>
   </div>
+  <div class="form-group">
+    <label for="bedrooms">Nombre de chambres</label>
+    <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
+  </div>
+  <div class="form-group">
+    <label for="surface"><%= i18n.surface %> :</label>
+    <input type="number" class="form-control" id="surface" name="surface" required>
+  </div>
+  <div class="form-group">
+    <label for="price"><%= i18n.price %> :</label>
+    <input type="number" class="form-control" id="price" name="price" required>
+  </div>
+   <div class="form-group">
+    <label for="country"><%= i18n.country %> :</label>
+    <input type="text" class="form-control" id="country" name="country" required>
+  </div>
+
+  <div class="form-group">
+    <label for="city"><%= i18n.city %> :</label>
+    <input type="text" class="form-control" id="city" name="city" required>
+  </div>
+
+  <!-- Année de construction -->
+  <div class="form-group">
+    <label for="yearBuilt">Année de construction</label>
+    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
+  </div>
+  <!-- Piscine -->
+  <div class="form-group">
+    <label for="pool">Piscine</label>
+    <select class="form-control" id="pool" name="pool">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <!-- Type de bien -->
+  <div class="form-group">
+    <label for="propertyType"><%= i18n.propertyType %>Type de bien :</label>
+    <select class="form-control" id="propertyType" name="propertyType" required>
+      
+      <option value="Propriété"><%= i18n.property %>Propriété</option>
+      <option value="Villa"><%= i18n.villa %>Villa</option>
+      <option value="Hôtel particulier"><%= i18n.hotel_particulier %>Hotel particulier</option>
+      <option value="Appartement"><%= i18n.apartment %>Appartement</option>
+      <option value="Chateau"><%= i18n.chateau %>Chateau</option>
+      <option value="Maison"><%= i18n.house %>Maison de ville</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="doubleGlazing">Double vitrage</label>
+    <select class="form-control" id="doubleGlazing" name="doubleGlazing">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="wateringSystem">Arrosage</label>
+    <select class="form-control" id="wateringSystem" name="wateringSystem">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="barbecue">Barbecue</label>
+    <select class="form-control" id="barbecue" name="barbecue">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="carShelter">Abri de voiture</label>
+    <select class="form-control" id="carShelter" name="carShelter">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="parking">Parking</label>
+    <select class="form-control" id="parking" name="parking">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="caretakerHouse">Maison de gardien</label>
+    <select class="form-control" id="caretakerHouse" name="caretakerHouse">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="electricShutters">Stores électriques</label>
+    <select class="form-control" id="electricShutters" name="electricShutters">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label for="outdoorLighting">Éclairage extérieur</label>
+    <select class="form-control" id="outdoorLighting" name="outdoorLighting">
+      <option value="false">Non</option>
+      <option value="true">Oui</option>
+    </select>
+  </div>
+ <div class="form-group">
+    <label for="photo1"><%= i18n.photo_1 %></label>
+    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
+    <progress id="progress1" value="0" max="100" class="hidden"></progress>
+    <span id="status1" class="hidden">Chargement...</span>
 </div>
+
+<div class="form-group">
+    <label for="photo2"><%= i18n.photo_2 %></label>
+    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
+    <progress id="progress2" value="0" max="100" class="hidden"></progress>
+    <span id="status2" class="hidden">Chargement...</span>
+</div>
+
+<div class="form-group">
+    <label for="description"><%= i18n.description %> (max. 820 caractères)</label>
+    <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
+    <small id="charCount">0/820 <%= i18n.characters %></small>
+  </div>
+  <button type="submit" class="btn btn-custom"><%= i18n.save %></button>
+</form>
+
+                                <div id="generatedLink" class="mt-3"></div>
+                            </div>
+                        </div>
 
                         <!-- Section Données -->
                      <div id="donnees" class="card" style="display: none;">
@@ -828,69 +838,62 @@ progress {
 <script src="/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
-   // Affiche une section spécifique et masque les autres
-function showSection(sectionId) {
-    const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password', 'orders'];
+    function showSection(sectionId) {
+        const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
+        sections.forEach(id => {
+            const sectionElement = document.getElementById(id);
+            if (sectionElement) {
+                sectionElement.style.display = id === sectionId ? 'block' : 'none';
+            }
+        });
 
-    sections.forEach(id => {
-        const sectionElement = document.getElementById(id);
-        if (sectionElement) {
-            sectionElement.style.display = (id === sectionId) ? 'block' : 'none';
+        if (sectionId === 'created-pages') {
+            loadProperties();
         }
-    });
-
-    if (sectionId === 'created-pages') {
-        loadProperties();
     }
-}
 
-// Charge et affiche les propriétés de l'utilisateur
-async function loadProperties() {
+    async function loadProperties() {
     try {
         const response = await fetch('/user/properties');
-        const propertiesList = document.getElementById('properties-list');
-        const noPropertiesMessage = document.getElementById('no-properties-message');
+        if (response.ok) {
+            const properties = await response.json();
+            const propertiesList = document.getElementById('properties-list');
+            propertiesList.innerHTML = '';
 
-        if (!response.ok) {
-            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
-            return;
-        }
-
-        const properties = await response.json();
-        propertiesList.innerHTML = '';
-
-        if (properties.length === 0) {
-            noPropertiesMessage.style.display = 'block';
+            const noPropertiesMessage = document.getElementById('no-properties-message');
+            if (properties.length === 0) {
+                noPropertiesMessage.style.display = 'block';
+            } else {
+                noPropertiesMessage.style.display = 'none';
+                properties.forEach(property => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${property.rooms}</td>
+                        <td>${property.surface}</td>
+                        <td>${property.price.toLocaleString('fr-FR')} €</td>
+                        <td>${property.city}</td>
+                        <td>${property.country}</td>
+                        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
+                        <td>
+                            <div class="action-icons">
+                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
+                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
+                                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
+                            </div>
+                        </td>
+                    `;
+                    propertiesList.appendChild(row);
+                });
+            }
         } else {
-            noPropertiesMessage.style.display = 'none';
-            properties.forEach(property => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${property.rooms}</td>
-                    <td>${property.surface}</td>
-                    <td>${property.price.toLocaleString('fr-FR')} €</td>
-                    <td>${property.city}</td>
-                    <td>${property.country}</td>
-                    <td><a href="${property.url}" target="_blank">${property.url}</a></td>
-                    <td>
-                        <div class="action-icons">
-                            <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                            <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                            <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
-                        </div>
-                    </td>
-                `;
-                propertiesList.appendChild(row);
-            });
+            const propertiesList = document.getElementById('properties-list');
+            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
         }
-
     } catch (error) {
         const propertiesList = document.getElementById('properties-list');
         propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
-        console.error('Erreur lors du chargement des propriétés :', error);
     }
 }
-
 
 
     function copyURL(url) {
@@ -967,24 +970,28 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     document.onclick = resetTimer;
     document.onscroll = resetTimer;
 </script>
+<script>
+  const descriptionInput = document.getElementById('description');
+  const charCount = document.getElementById('charCount');
 
+  descriptionInput.addEventListener('input', function() {
+    charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
+  });
+</script>
 <script>
   document.getElementById('add-property-form').addEventListener('submit', function(event) {
       let missingFields = [];
-      requiredFields.forEach(id => {
-  const field = document.getElementById(id);
-  if (field && !field.value.trim()) {
-    hasError = true;
-    field.classList.add('shake');
-    field.style.border = '2px solid red';
-    setTimeout(() => {
-      field.classList.remove('shake');
-    }, 500);
-  } else if (field) {
-    field.style.border = '';
-  }
-});
-
+      const requiredFields = ['price', 'surface', 'country', 'city', 'propertyType', 'description'];
+      
+      requiredFields.forEach(field => {
+          const input = document.getElementById(field);
+          if (!input.value.trim()) {
+              missingFields.push(field);
+              input.style.border = "2px solid red";  // Mets en rouge les champs vides
+          } else {
+              input.style.border = "";  // Remets la bordure normale si rempli
+          }
+      });
 
       if (missingFields.length > 0) {
           event.preventDefault(); // Empêche l'envoi du formulaire
@@ -1118,6 +1125,16 @@ async function loadOrders() {
   }
 }
 
+function showSection(sectionId) {
+  const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
+  sections.forEach(id => {
+    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+  });
+
+  if (sectionId === 'orders') loadOrders();
+  if (sectionId === 'created-pages') loadLandingPages();
+  if (sectionId === 'donnees') loadStats();
+}
 </script>
 
 
@@ -1334,116 +1351,6 @@ document.getElementById('statsFilter').addEventListener('submit', async (e) => {
   });
 });
 </script>
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  // ✅ Étapes avec effet fade
-  window.nextStep = function(step) {
-    const steps = document.querySelectorAll('.form-step');
-    steps.forEach((s, index) => {
-      if (index + 1 === step) {
-        s.style.display = 'block';
-        setTimeout(() => s.classList.add('show'), 10);
-      } else {
-        s.classList.remove('show');
-        setTimeout(() => s.style.display = 'none', 300);
-      }
-    });
-    document.getElementById('formProgress').style.width = `${step * 33}%`;
-  };
 
-  // ✅ Tooltips Bootstrap
-  const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-  tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
-
-  // ✅ Compteur caractères
-  const description = document.getElementById('description');
-  const charCount = document.getElementById('charCount');
-  if (description && charCount) {
-    description.addEventListener('input', () => {
-      charCount.textContent = `${description.value.length}/820 caractères`;
-    });
-  }
-});
-</script>
-
-<script>
-// ✅ Étapes avec effet fade, tooltips, responsive, bouton suivant corrigé + animation erreur
-function nextStep(step) {
-  const steps = document.querySelectorAll('.form-step');
-  steps.forEach((s, index) => {
-    if (index + 1 === step) {
-      s.style.display = 'block';
-      setTimeout(() => s.classList.add('show'), 10);
-    } else {
-      s.classList.remove('show');
-      setTimeout(() => s.style.display = 'none', 300);
-    }
-  });
-  document.getElementById('formProgress').style.width = `${step * 33}%`;
-}
-
-// ✅ Active les tooltips Bootstrap
-const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-tooltipTriggerList.map(el => new bootstrap.Tooltip(el));
-
-// ✅ Description caractère dynamique
-const description = document.getElementById('description');
-const charCount = document.getElementById('charCount');
-description?.addEventListener('input', () => {
-  charCount.textContent = `${description.value.length}/820 caractères`;
-});
-
-// ✅ Animation vibrante pour les champs manquants + vérification
-const form = document.getElementById('add-property-form');
-form?.addEventListener('submit', async function(event) {
-  event.preventDefault();
-  let hasError = false;
-  const requiredFields = ['price', 'surface', 'propertyType', 'rooms', 'bedrooms', 'description'];
-
-  requiredFields.forEach(id => {
-    const field = document.getElementById(id);
-    if (!field || !field.value.trim()) {
-      hasError = true;
-      field.classList.add('shake');
-      field.style.border = '2px solid red';
-      setTimeout(() => {
-        field.classList.remove('shake');
-      }, 500);
-    } else {
-      field.style.border = '';
-    }
-  });
-
-  if (hasError) return alert('Veuillez remplir tous les champs requis.');
-
-  const formData = new FormData(this);
-  try {
-    const response = await fetch('/add-property', {
-      method: 'POST',
-      body: formData
-    });
-    const result = await response.text();
-    document.getElementById('generatedLink').innerHTML = result;
-  } catch (error) {
-    console.error('Erreur lors de l\'ajout de la propriété :', error);
-  }
-});
-
-// ✅ Animation CSS pour effet shake
-const style = document.createElement('style');
-style.textContent = `
-  .shake {
-    animation: shake 0.3s;
-  }
-  @keyframes shake {
-    0% { transform: translateX(0); }
-    25% { transform: translateX(-5px); }
-    50% { transform: translateX(5px); }
-    75% { transform: translateX(-5px); }
-    100% { transform: translateX(0); }
-  }
-`;
-document.head.appendChild(style);
-</script>
 </body>
 </html>
