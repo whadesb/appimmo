@@ -1474,14 +1474,8 @@ align-self: center;
                         <i class="fal fa-shower"></i>
                         <p>${property.bathrooms || 'Non renseigné'}</p>
                     </div>
-                    <div class="detail">
-                        <i class="fal fa-toilet"></i>
-                        <p>${property.toilets || 'Non renseigné'}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-arrow-up"></i>
-                        <p>${property.elevator ? 'Oui' : 'Non'}</p>
-                    </div>
+
+          
                 </div>
 
                 <!-- Année de construction -->
