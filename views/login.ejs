@@ -122,7 +122,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   border-color: #52566f;
 }
 
-
+  .navbar .btn-outline-dark {
+    margin-right: 12px;
+  }
 
 
 
@@ -179,10 +181,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </button>
   </form>
 <% } else { %>
-  <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-    <i class="bi bi-person-fill"></i>
-    <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-  </a>
+<a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+  <i class="bi bi-person-fill"></i>
+  <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+</a>
 <% } %>
 
 
