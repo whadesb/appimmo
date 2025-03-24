@@ -59,6 +59,37 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     background-color: #d7d7d7 !important; 
     width: 7.6rem;
 }
+.form-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #dee2e6;
+}
+
+.form-section:first-of-type {
+  border-top: none;
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.form-section h6 {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #444;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.form-section h6 i {
+  color: #8f97c4;
+  font-size: 20px;
+}
+
+.form-text {
+  font-size: 0.875rem;
+  color: #6c757d;
+}
 
    .sidebar {
             background-color: #8f97c4;
@@ -528,148 +559,134 @@ progress {
         </div>
 
 
-                        <!-- Section Landing Page -->
-                        <div id="landing" class="card" style="display: none;">
-                            <div class="card-body">
-                                <h5 class="card-title"><%= i18n.add_property %></h5>
-                                <p class="card-text"><%= i18n.property_details %></p>
-                                <h5 class="card-title"><%= i18n.add_property %></h5>
-                                <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
-  <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
-  <div class="form-group">
-    <label for="rooms"><%= i18n.rooms %></label>
-    <input type="number" class="form-control" id="rooms" name="rooms" required>
-  </div>
-  <div class="form-group">
-    <label for="bedrooms">Nombre de chambres</label>
-    <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
-  </div>
-  <div class="form-group">
-    <label for="surface"><%= i18n.surface %> :</label>
-    <input type="number" class="form-control" id="surface" name="surface" required>
-  </div>
-  <div class="form-group">
-    <label for="price"><%= i18n.price %> :</label>
-    <input type="number" class="form-control" id="price" name="price" required>
-  </div>
-   <div class="form-group">
-    <label for="country"><%= i18n.country %> :</label>
-    <input type="text" class="form-control" id="country" name="country" required>
-  </div>
+          <!-- ✅ FORMULAIRE AMÉLIORÉ UX - SECTION LANDING -->
+<div id="landing" class="card" style="display: none;">
+  <div class="card-body">
+    <h5 class="card-title"><%= i18n.add_property %></h5>
+    <p class="card-text"><%= i18n.property_details %></p>
 
-  <div class="form-group">
-    <label for="city"><%= i18n.city %> :</label>
-    <input type="text" class="form-control" id="city" name="city" required>
-  </div>
+    <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+      <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
 
-  <!-- Année de construction -->
-  <div class="form-group">
-    <label for="yearBuilt">Année de construction</label>
-    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
-  </div>
-  <!-- Piscine -->
-  <div class="form-group">
-    <label for="pool">Piscine</label>
-    <select class="form-control" id="pool" name="pool">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <!-- Type de bien -->
-  <div class="form-group">
-    <label for="propertyType"><%= i18n.propertyType %>Type de bien :</label>
-    <select class="form-control" id="propertyType" name="propertyType" required>
-      
-      <option value="Propriété"><%= i18n.property %>Propriété</option>
-      <option value="Villa"><%= i18n.villa %>Villa</option>
-      <option value="Hôtel particulier"><%= i18n.hotel_particulier %>Hotel particulier</option>
-      <option value="Appartement"><%= i18n.apartment %>Appartement</option>
-      <option value="Chateau"><%= i18n.chateau %>Chateau</option>
-      <option value="Maison"><%= i18n.house %>Maison de ville</option>
-    </select>
-  </div>
+      <!-- SECTION: Informations générales -->
+      <hr class="my-4">
+      <h6 class="text-muted mb-3"><i class="fa fa-home me-2"></i> Informations générales</h6>
 
-  <div class="form-group">
-    <label for="doubleGlazing">Double vitrage</label>
-    <select class="form-control" id="doubleGlazing" name="doubleGlazing">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
+      <div class="form-group">
+        <label for="rooms">Nombre total de pièces</label>
+        <input type="number" class="form-control" id="rooms" name="rooms" required>
+        <small class="form-text text-muted">Inclut les chambres, salons, etc.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="bedrooms">Nombre de chambres</label>
+        <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
+        <small class="form-text text-muted">Indiquez uniquement les chambres à coucher.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="surface">Surface habitable (m²)</label>
+        <input type="number" class="form-control" id="surface" name="surface" required>
+        <small class="form-text text-muted">Exemple : 120</small>
+      </div>
+
+      <div class="form-group">
+        <label for="price">Prix en €</label>
+        <input type="number" class="form-control" id="price" name="price" required>
+        <small class="form-text text-muted">Exemple : 750000</small>
+      </div>
+
+      <div class="form-group">
+        <label for="country">Pays</label>
+        <input type="text" class="form-control" id="country" name="country" required>
+      </div>
+
+      <div class="form-group">
+        <label for="city">Ville</label>
+        <input type="text" class="form-control" id="city" name="city" required>
+      </div>
+
+      <div class="form-group">
+        <label for="yearBuilt">Année de construction</label>
+        <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
+        <small class="form-text text-muted">Exemple : 1995</small>
+      </div>
+
+      <div class="form-group">
+        <label for="propertyType">Type de bien</label>
+        <select class="form-control" id="propertyType" name="propertyType" required>
+          <option value="">-- Choisir --</option>
+          <option value="Propriété">Propriété</option>
+          <option value="Villa">Villa</option>
+          <option value="Hôtel particulier">Hôtel particulier</option>
+          <option value="Appartement">Appartement</option>
+          <option value="Chateau">Château</option>
+          <option value="Maison">Maison</option>
+        </select>
+      </div>
+
+      <!-- SECTION: Équipements -->
+      <hr class="my-4">
+      <h6 class="text-muted mb-3"><i class="fa fa-cogs me-2"></i> Équipements</h6>
+
+      <% const equipmentOptions = [
+        { id: 'pool', label: 'Piscine' },
+        { id: 'doubleGlazing', label: 'Double vitrage' },
+        { id: 'wateringSystem', label: 'Arrosage automatique' },
+        { id: 'barbecue', label: 'Barbecue' },
+        { id: 'carShelter', label: 'Abri de voiture' },
+        { id: 'parking', label: 'Parking' },
+        { id: 'caretakerHouse', label: 'Maison de gardien' },
+        { id: 'electricShutters', label: 'Stores électriques' },
+        { id: 'outdoorLighting', label: 'Éclairage extérieur' }
+      ]; %>
+
+      <% equipmentOptions.forEach(e => { %>
+        <div class="form-group">
+          <label for="<%= e.id %>"><%= e.label %></label>
+          <select class="form-control" id="<%= e.id %>" name="<%= e.id %>">
+            <option value="false">Non</option>
+            <option value="true">Oui</option>
+          </select>
+        </div>
+      <% }); %>
+
+      <!-- SECTION: Photos -->
+      <hr class="my-4">
+      <h6 class="text-muted mb-3"><i class="fa fa-image me-2"></i> Photos</h6>
+
+      <div class="form-group">
+        <label for="photo1">Photo principale</label>
+        <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
+        <progress id="progress1" value="0" max="100" class="hidden"></progress>
+        <span id="status1" class="hidden text-success">Chargement...</span>
+      </div>
+
+      <div class="form-group">
+        <label for="photo2">Photo secondaire</label>
+        <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
+        <progress id="progress2" value="0" max="100" class="hidden"></progress>
+        <span id="status2" class="hidden text-success">Chargement...</span>
+      </div>
+
+      <!-- SECTION: Description -->
+      <hr class="my-4">
+      <h6 class="text-muted mb-3"><i class="fa fa-align-left me-2"></i> Description</h6>
+
+      <div class="form-group">
+        <label for="description">Description (max. 820 caractères)</label>
+        <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
+        <small id="charCount">0/820 caractères</small>
+      </div>
+
+      <button type="submit" class="btn btn-dark w-100 py-2 mt-3">
+        <i class="fa fa-check-circle me-2"></i>Créer l'annonce
+      </button>
+    </form>
+
+    <div id="generatedLink" class="mt-3"></div>
   </div>
-  <div class="form-group">
-    <label for="wateringSystem">Arrosage</label>
-    <select class="form-control" id="wateringSystem" name="wateringSystem">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="barbecue">Barbecue</label>
-    <select class="form-control" id="barbecue" name="barbecue">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="carShelter">Abri de voiture</label>
-    <select class="form-control" id="carShelter" name="carShelter">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="parking">Parking</label>
-    <select class="form-control" id="parking" name="parking">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="caretakerHouse">Maison de gardien</label>
-    <select class="form-control" id="caretakerHouse" name="caretakerHouse">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="electricShutters">Stores électriques</label>
-    <select class="form-control" id="electricShutters" name="electricShutters">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
-  <div class="form-group">
-    <label for="outdoorLighting">Éclairage extérieur</label>
-    <select class="form-control" id="outdoorLighting" name="outdoorLighting">
-      <option value="false">Non</option>
-      <option value="true">Oui</option>
-    </select>
-  </div>
- <div class="form-group">
-    <label for="photo1"><%= i18n.photo_1 %></label>
-    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-    <progress id="progress1" value="0" max="100" class="hidden"></progress>
-    <span id="status1" class="hidden">Chargement...</span>
 </div>
-
-<div class="form-group">
-    <label for="photo2"><%= i18n.photo_2 %></label>
-    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-    <progress id="progress2" value="0" max="100" class="hidden"></progress>
-    <span id="status2" class="hidden">Chargement...</span>
-</div>
-
-<div class="form-group">
-    <label for="description"><%= i18n.description %> (max. 820 caractères)</label>
-    <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
-    <small id="charCount">0/820 <%= i18n.characters %></small>
-  </div>
-  <button type="submit" class="btn btn-custom"><%= i18n.save %></button>
-</form>
-
-                                <div id="generatedLink" class="mt-3"></div>
-                            </div>
-                        </div>
 
                         <!-- Section Données -->
                      <div id="donnees" class="card" style="display: none;">
@@ -1351,6 +1368,22 @@ document.getElementById('statsFilter').addEventListener('submit', async (e) => {
   });
 });
 </script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const descriptionInput = document.getElementById('description');
+  const charCount = document.getElementById('charCount');
 
+  descriptionInput.addEventListener('input', function () {
+    const count = descriptionInput.value.length;
+    charCount.textContent = `${count}/820 caractères`;
+
+    if (count > 750) {
+      charCount.style.color = '#dc3545'; // rouge
+    } else {
+      charCount.style.color = '#6c757d'; // gris
+    }
+  });
+});
+</script>
 </body>
 </html>
