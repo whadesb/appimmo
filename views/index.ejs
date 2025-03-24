@@ -123,6 +123,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             background-color: #52566f;
             color: #fff;
         }
+  .navbar .btn-outline-dark {
+    margin-right: 12px;
+  }
         @media (max-width: 767px) {
             .form-container {
                 background: none;
@@ -177,10 +180,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </ul>
 
      <% if (isAuthenticated) { %>
-  <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
-    <i class="bi bi-person-circle"></i>
-    <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
-  </a>
+ <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+  <i class="bi bi-person-fill"></i>
+  <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+</a>
+
 
   <form action="/logout" method="POST" class="d-inline">
     <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
