@@ -48,6 +48,9 @@
         .navbar .navbar-brand, .navbar .nav-link {
             color: #000;
         }
+  .navbar .btn-outline-dark {
+    margin-right: 12px;
+  }
     </style>
 </head>
 <body>
@@ -101,10 +104,10 @@
 
             <!-- Icône de profil et bouton de changement de langue pour la version desktop -->
             <div class="d-none d-lg-flex align-items-center">
-                <a href="/<%= locale %>/login" class="me-3" style="position: relative;">
-                    <i class="bi bi-person-circle" style="font-size: 1.8rem; color: black;"></i>
-                    <span class="visually-hidden">Login</span>
-                </a>
+                <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+  <i class="bi bi-person-fill"></i>
+  <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+</a>
                 <div class="dropdown">
                     <button class="btn btn-link dropdown-toggle" type="button" id="languageDropdownDesktop" data-bs-toggle="dropdown" aria-expanded="false" style="text-decoration: none; color: #000;">
                         <%= locale === 'fr' ? 'FR' : 'EN' %>
