@@ -296,12 +296,13 @@ input[type="number"] {
 
 /* Centrer le bouton de soumission et le rendre plus petit */
 #add-property-form button[type="submit"] {
+  width: 100%; /* Même largeur que les champs */
+  max-width: 500px; /* Aligné sur la largeur max des .form-group */
+  margin: 30px 0 0 0; /* Supprime le centrage automatique */
+  padding: 10px;
   display: block;
-  margin: 30px auto 0 auto;
-  width: auto;
-  min-width: 150px;
-  padding: 10px 20px;
 }
+
 
 /* Barre de progression des images (même largeur que input) */
 #add-property-form progress {
@@ -722,9 +723,9 @@ progress {
         <small id="charCount">0/820 caractères</small>
       </div>
 
-      <button type="submit" class="btn btn-dark w-100 py-2 mt-3">
-        <i class="fa fa-check-circle me-2"></i>Créer l'annonce
-      </button>
+      <button type="submit" class="btn btn-dark py-2 mt-3">
+  <i class="fa fa-check-circle me-2"></i>Créer l'annonce
+</button>
     </form>
 
     <div id="generatedLink" class="mt-3"></div>
