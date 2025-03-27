@@ -868,14 +868,25 @@ app.post('/:locale/register', async (req, res) => {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
     await sendAccountCreationEmail(newUser.email);
 
-    //  Redirection vers la page 2FA (tu peux adapter la route si nécessaire)
-    res.redirect(`/${locale}/enable-2fa`);
+    // Connexion automatique de l'utilisateur
+    req.login(newUser, (err) => {
+      if (err) {
+        console.error('Erreur lors de la connexion automatique après inscription :', err);
+        req.flash('error', 'Erreur de connexion automatique.');
+        return res.redirect(`/${locale}/login`);
+      }
+
+      // Redirection vers la page 2FA après connexion
+      res.redirect(`/${locale}/enable-2fa`);
+    });
+
   } catch (error) {
     console.error('Erreur lors de l\'inscription :', error.message);
     req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
     res.redirect(`/${locale}/register`);
   }
 });
+
 
 app.get('/:locale/2fa', (req, res) => {
   const { locale } = req.params;
