@@ -52,30 +52,32 @@
       padding: 12px 30px;
       font-size: 1rem;
     }
-    .section-about {
+    .section-about,
+    .section-strengths {
       background: #ffffff;
       padding: 80px 0;
     }
-    .section-about h2 {
+    .section-about h2,
+    .section-strengths h2 {
       font-size: 2.2rem;
       font-weight: bold;
       margin-bottom: 30px;
       text-align: center;
     }
-    .section-about .feature {
+    .feature {
       text-align: center;
       padding: 20px;
     }
-    .section-about .feature i {
+    .feature i {
       font-size: 3rem;
       color: #6c63ff;
       margin-bottom: 15px;
     }
-    .section-about .feature h5 {
+    .feature h5 {
       font-weight: 600;
       margin-bottom: 10px;
     }
-    .section-about .feature p {
+    .feature p {
       color: #666;
       font-size: 1rem;
     }
@@ -276,50 +278,73 @@
 </nav>
 
 <main>
-    <!-- Section 1 : Hero avec deux colonnes -->
     <section class="section-intro">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6 col-md-12 left-col" data-aos="fade-right">
-            <div>
-              <h1><%= locale === 'fr' ? "Créez, diffusez, suivez vos annonces" : "Create, Share and Track Your Listings" %></h1>
-              <p><%= locale === 'fr' ? "Une plateforme simple, gratuite et puissante pour vos annonces immobilières." : "A simple, free and powerful platform for your real estate listings." %></p>
-              <a href="/<%= locale %>/register" class="btn btn-dark rounded-pill">
-                <%= locale === 'fr' ? "Commencer maintenant" : "Start Now" %>
-              </a>
-            </div>
-          </div>
-          <div class="col-lg-6 col-md-12" data-aos="fade-left">
-            <img src="/images/uapimmovisuel.png" alt="plateforme uap immo" class="img-fluid rounded">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 col-md-12 left-col" data-aos="fade-right">
+          <div>
+            <h1>UAP Immo, plateforme de webmarketing en immobilier</h1>
+            <p>Générez, diffusez et suivez vos annonces grâce à une plateforme professionnelle, gratuite et automatisée.</p>
+            <a href="/<%= locale %>/register" class="btn btn-dark rounded-pill">
+              <%= locale === 'fr' ? "Commencer maintenant" : "Start Now" %>
+            </a>
           </div>
         </div>
+        <div class="col-lg-6 col-md-12" data-aos="fade-left">
+          <img src="/images/uapimmovisuel.png" alt="plateforme uap immo" class="img-fluid rounded">
+        </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Section 2 : Fonctionnalités -->
-    <section class="section-about">
-      <div class="container">
-        <h2><%= locale === 'fr' ? "Une solution complète pour votre visibilité immobilière" : "A complete solution for your real estate visibility" %></h2>
-        <div class="row">
-          <div class="col-md-4 feature" data-aos="fade-up">
-            <i class="bi bi-pencil-square"></i>
-            <h5><%= locale === 'fr' ? "Formulaire intelligent" : "Smart Form" %></h5>
-            <p><%= locale === 'fr' ? "Renseignez les informations de votre bien en quelques clics." : "Fill in your property details in just a few clicks." %></p>
-          </div>
-          <div class="col-md-4 feature" data-aos="fade-up" data-aos-delay="100">
-            <i class="bi bi-globe"></i>
-            <h5><%= locale === 'fr' ? "Page optimisée SEO" : "SEO Optimized Page" %></h5>
-            <p><%= locale === 'fr' ? "Chaque landing page est optimisée pour Google." : "Each landing page is SEO optimized for Google." %></p>
-          </div>
-          <div class="col-md-4 feature" data-aos="fade-up" data-aos-delay="200">
-            <i class="bi bi-bar-chart-line"></i>
-            <h5><%= locale === 'fr' ? "Statistiques en temps réel" : "Real-time Tracking" %></h5>
-            <p><%= locale === 'fr' ? "Analysez les performances de vos annonces en un coup d’œil." : "Track your listing's performance at a glance." %></p>
-          </div>
+  <!-- Section 2 -->
+  <section class="section-about">
+    <div class="container">
+      <h2>Comment fonctionne notre plateforme ?</h2>
+      <div class="row">
+        <div class="col-md-4 feature" data-aos="fade-up">
+          <i class="bi bi-ui-checks-grid"></i>
+          <h5>Remplissez le formulaire</h5>
+          <p>Décrivez votre bien immobilier de façon simple et intuitive.</p>
+        </div>
+        <div class="col-md-4 feature" data-aos="fade-up" data-aos-delay="100">
+          <i class="bi bi-laptop"></i>
+          <h5>Générez votre landing page</h5>
+          <p>Une page optimisée est automatiquement créée pour votre annonce.</p>
+        </div>
+        <div class="col-md-4 feature" data-aos="fade-up" data-aos-delay="200">
+          <i class="bi bi-send"></i>
+          <h5>Diffusez et suivez</h5>
+          <p>Obtenez l’URL, partagez-la et accédez aux statistiques en temps réel.</p>
         </div>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+
+  <!-- Section 3 -->
+  <section class="section-strengths">
+    <div class="container">
+      <h2>Pourquoi choisir UAP Immo ?</h2>
+      <div class="row">
+        <div class="col-md-4 feature" data-aos="zoom-in">
+          <i class="bi bi-rocket-takeoff"></i>
+          <h5>Rapidité</h5>
+          <p>Créez et diffusez une annonce professionnelle en moins de 2 minutes.</p>
+        </div>
+        <div class="col-md-4 feature" data-aos="zoom-in" data-aos-delay="100">
+          <i class="bi bi-bar-chart"></i>
+          <h5>Performance</h5>
+          <p>Des pages ultra-optimisées pour Google et les réseaux sociaux.</p>
+        </div>
+        <div class="col-md-4 feature" data-aos="zoom-in" data-aos-delay="200">
+          <i class="bi bi-gift"></i>
+          <h5>Gratuité</h5>
+          <p>Un service gratuit sans abonnement, accessible à tous.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
     <!-- Footer -->
     <footer class="site-footer section-padding">
         <div class="container">
@@ -357,14 +382,9 @@
             <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer.all_rights %></p>
         </div>
     </footer>
- <script src="/js/jquery.min.js"></script>
-  <script src="/js/bootstrap.bundle.min.js"></script>
-  <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-  <script>
-    AOS.init({
-      once: true,
-      duration: 1000
-    });
-  </script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init({ once: true, duration: 1000 });</script>
 </body>
 </html>
