@@ -1,20 +1,24 @@
 {
-  "title": "Activer l'authentification à deux facteurs",
-  "instruction": "Veuillez scanner ce QR code avec votre application d'authentification pour activer le 2FA.",
-  "secret": "Code secret :",
-  "qrCode": "QR Code",
-  "verify": "Vérifier",
-  "menu": {
-    "home": "Accueil",
-    "fonctionnement": "Fonctionnement",
-    "processus": "Processus",
-    "faq": "FAQ",
-    "contact": "Contact"
-  },
+  "title": "Activer l'authentification 2FA",
+  "instruction": "Activez votre double authentification",
+  "step_title": "Étapes à suivre",
+  "steps": [
+    "Téléchargez l'application Google Authenticator sur votre smartphone.",
+    "Ouvrez l'application et scannez le QR code ci-dessous.",
+    "Ou entrez manuellement la clé secrète ci-dessous.",
+    "Saisissez le code généré par l'application pour valider."
+  ],
+  "secret_label": "Clé secrète",
+  "codeLabel": "Code à 6 chiffres",
+  "verify": "Vérifier le code",
   "footer": {
     "information": "Informations",
     "create_account": "Créer un compte",
     "access": "Accès",
+    "contact": "Contact"
+  },
+  "menu": {
+    "home": "Accueil",
     "contact": "Contact"
   }
 }
