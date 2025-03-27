@@ -5,90 +5,126 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Two-Factor Authentication page for UAP Immo.">
   <title>UAP Immo | <%= i18n.title %></title>
+
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles-main.css">
+
   <style>
+    body {
+      background-color: #f4f5f7;
+    }
+
     .form-container {
-      max-width: 480px;
-      margin: 130px auto;
+      max-width: 600px;
+      margin: 110px auto 50px;
       padding: 30px;
-      background: #fff;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
     }
+
     .form-container h2 {
-      margin-bottom: 10px;
-      font-size: 1.7rem;
+      font-size: 1.8rem;
       font-weight: 600;
-      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
     }
-    .form-container p.description {
-      text-align: center;
-      font-size: 0.95rem;
+
+    .form-container p {
       color: #555;
     }
+
     .form-container .form-label {
       font-weight: 500;
     }
+
+    .instruction-block {
+      background-color: #f9fafc;
+      border-left: 4px solid #8f97c4;
+      padding: 15px 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+    }
+
+    .instruction-block ul {
+      padding-left: 0;
+      list-style: none;
+      margin: 0;
+    }
+
+    .instruction-block li {
+      margin-bottom: 8px;
+      color: #444;
+    }
+
     .btn-primary {
       background-color: #52566f;
-      border-color: #52566f;
+      border: none;
     }
+
     .btn-primary:hover {
-      background-color: #3f4258;
-      border-color: #3f4258;
+      background-color: #43465b;
     }
-    .info-steps {
-      font-size: 0.9rem;
-      margin-bottom: 20px;
-      padding: 15px;
-      background-color: #f0f0f0;
-      border-left: 4px solid #8f97c4;
-      border-radius: 5px;
-    }
-    .info-steps ul {
-      padding-left: 20px;
-    }
+
     @media (max-width: 576px) {
       .form-container {
-        margin: 100px 15px;
+        margin-top: 80px;
         padding: 20px;
+      }
+
+      .form-container h2 {
+        font-size: 1.5rem;
       }
     }
   </style>
 </head>
 <body>
+
+  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg fixed-top" style="background-color: #C4B990;">
     <div class="container">
       <a class="navbar-brand" href="/<%= locale %>">UAP Immo</a>
+
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
         <span class="navbar-toggler-icon"></span>
       </button>
+
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav me-auto">
           <li class="nav-item"><a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a></li>
           <li class="nav-item"><a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a></li>
         </ul>
+
         <% if (isAuthenticated) { %>
-          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill me-2">Mon compte</a>
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill me-2">
+            <i class="bi bi-person-circle me-1"></i> <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+          </a>
           <form action="/logout" method="POST" class="d-inline">
-            <button type="submit" class="btn btn-outline-dark rounded-pill">Déconnexion</button>
+            <button class="btn btn-outline-dark rounded-pill" type="submit">
+              <i class="bi bi-box-arrow-right me-1"></i> <%= i18n.logout %>
+            </button>
           </form>
         <% } else { %>
-          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill me-3">Connexion</a>
+          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill me-2">
+            <i class="bi bi-person-fill me-1"></i> <%= locale === 'fr' ? 'Connexion' : 'Login' %>
+          </a>
         <% } %>
+
+        <!-- Langue -->
         <div class="dropdown">
-          <button class="btn btn-light border rounded-pill" type="button" data-bs-toggle="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
             <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
             <i class="bi bi-chevron-down small"></i>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end">
-            <% const cleanPath = currentPath.replace(/^\/(fr|en)/, '') || ''; %>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <%
+              const cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '';
+            %>
             <% if (locale === 'fr') { %>
-              <li><a class="dropdown-item" href="/en<%= cleanPath %>">🇬🇧 EN</a></li>
+              <li><a class="dropdown-item" href="/en<%= cleanPath %>">🇬🇧 English</a></li>
             <% } else { %>
-              <li><a class="dropdown-item" href="/fr<%= cleanPath %>">🇫🇷 FR</a></li>
+              <li><a class="dropdown-item" href="/fr<%= cleanPath %>">🇫🇷 Français</a></li>
             <% } %>
           </ul>
         </div>
@@ -96,69 +132,71 @@
     </div>
   </nav>
 
+  <!-- Main -->
   <main>
-    <section>
-      <div class="container">
-        <div class="form-container">
-          <h2>Vérification 2FA</h2>
-          <p class="description">Pour sécuriser votre compte, veuillez entrer le code à 6 chiffres généré par votre application Google Authenticator.</p>
+    <div class="container">
+      <div class="form-container">
+        <h2 class="text-center"><%= i18n.heading %></h2>
+        <p class="text-center"><%= i18n.description %></p>
 
-          <div class="info-steps">
-            <strong>Marche à suivre :</strong>
-            <ul>
-              <li>Ouvrez l'application Google Authenticator sur votre téléphone.</li>
-              <li>Repérez le code associé à "UAP Immo".</li>
-              <li>Entrez ce code dans le champ ci-dessous.</li>
-            </ul>
+        <!-- Instructions -->
+        <div class="instruction-block">
+          <h6 class="fw-bold mb-2"><%= i18n.instruction_title %></h6>
+          <ul>
+            <% i18n.instruction_steps.forEach(function(step) { %>
+              <li>✅ <%= step %></li>
+            <% }); %>
+          </ul>
+        </div>
+
+        <% if (messages.error && messages.error.length > 0) { %>
+          <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
+        <% } %>
+
+        <form method="POST" action="/<%= locale %>/2fa">
+          <div class="mb-3">
+            <label for="code" class="form-label"><%= i18n.label %></label>
+            <input type="text" name="code" id="code" class="form-control" required maxlength="6" pattern="\d{6}" placeholder="<%= i18n.placeholder %>">
           </div>
-
-          <% if (messages.error && messages.error.length > 0) { %>
-            <div class="alert alert-danger text-center"><%= messages.error[0] %></div>
-          <% } %>
-
-          <form method="POST" action="/<%= locale %>/2fa">
-            <div class="mb-3">
-              <label for="code" class="form-label">Code à 6 chiffres :</label>
-              <input type="text" name="code" id="code" class="form-control text-center" required maxlength="6" pattern="\d{6}" placeholder="Ex : 123456">
-            </div>
-            <div class="d-grid">
-              <button type="submit" class="btn btn-primary">Valider le code</button>
-            </div>
-          </form>
-
-          <div class="text-center mt-3">
-            <a href="/<%= locale %>/logout">Se déconnecter</a>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-primary"><%= i18n.submit_button %></button>
           </div>
+        </form>
+
+        <div class="text-center mt-3">
+          <a href="/<%= locale %>/logout" class="text-muted"><%= i18n.logout %></a>
         </div>
       </div>
-    </section>
+    </div>
   </main>
 
+  <!-- Footer -->
   <footer class="site-footer section-padding mt-5">
     <div class="container">
       <div class="row">
-        <div class="col-lg-3 col-12 mb-4 pb-2">
+        <div class="col-lg-3 col-12 mb-4">
           <a class="navbar-brand mb-2" href="/">UAP Immo</a>
         </div>
         <div class="col-lg-3 col-md-4 col-6">
-          <h6 class="site-footer-title mb-3">Informations</h6>
+          <h6 class="site-footer-title mb-3"><%= i18n.footer.information %></h6>
           <ul class="site-footer-links">
-            <li class="site-footer-link-item"><a href="/" class="site-footer-link">Accueil</a></li>
-            <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
+            <li><a href="/" class="site-footer-link"><%= i18n.menu.home %></a></li>
+            <li><a href="/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
           </ul>
         </div>
         <div class="col-lg-3 col-md-4 col-6">
-          <h6 class="site-footer-title mb-3">Accès</h6>
+          <h6 class="site-footer-title mb-3"><%= i18n.footer.access %></h6>
           <ul class="site-footer-links">
-            <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
+            <li><a href="/contact" class="site-footer-link"><%= i18n.footer.contact %></a></li>
           </ul>
         </div>
-        <p class="text-muted mt-4">© 2025 UAP Company. Tous droits réservés.</p>
+        <p class="mt-4">&copy; 2025 UAP Company. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
-  <script src="/js/jquery.min.js"></script>
+  <!-- Scripts -->
   <script src="/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
 </body>
 </html>
