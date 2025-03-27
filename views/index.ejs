@@ -10,32 +10,89 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 })(window,document,'script','dataLayer','GTM-TF7HSC3N');
 </script>
 <!-- Fin Google Tag Manager -->
-    <!-- Balises Meta SEO -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="<%= i18n.metaDescription %>">
-    <meta name="author" content="<%= i18n.metaAuthor %>">
-    <meta name="robots" content="index, follow">
-    <meta name="keywords" content="<%= i18n.metaKeywords %>">
-    <meta name="theme-color" content="#C4B990">
-    <title><%= i18n.title %></title>
-    <!-- Balises Open Graph pour le partage social -->
-    <meta property="og:title" content="<%= i18n.ogTitle %>">
-    <meta property="og:description" content="<%= i18n.ogDescription %>">
-    <meta property="og:image" content="<%= i18n.ogImage %>">
-    <meta property="og:url" content="https://www.uapimmo.com">
-    <meta property="og:type" content="website">
-    <!-- Liens CSS et préchargement -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
-    <link rel="preload" href="/css/bootstrap.min.css" as="style">
-    <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="preload" href="/css/bootstrap-icons.css" as="style">
-    <link rel="stylesheet" href="/css/bootstrap-icons.css">
-    <link rel="preload" href="/css/styles-main.css" as="style">
-    <link rel="stylesheet" href="/css/styles-main.css">
-    <style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="<%= i18n.metaDescription %>">
+<meta name="author" content="<%= i18n.metaAuthor %>">
+<meta name="robots" content="index, follow">
+<meta name="keywords" content="<%= i18n.metaKeywords %>">
+<meta name="theme-color" content="#C4B990">
+<title><%= i18n.title %></title>
+<meta property="og:title" content="<%= i18n.ogTitle %>">
+<meta property="og:description" content="<%= i18n.ogDescription %>">
+<meta property="og:image" content="<%= i18n.ogImage %>">
+<meta property="og:url" content="https://www.uapimmo.com">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Open+Sans&display=swap" rel="stylesheet">
+<link rel="preload" href="/css/bootstrap.min.css" as="style">
+<link rel="stylesheet" href="/css/bootstrap.min.css">
+<link rel="preload" href="/css/bootstrap-icons.css" as="style">
+<link rel="stylesheet" href="/css/bootstrap-icons.css">
+<link rel="preload" href="/css/styles-main.css" as="style">
+<link rel="stylesheet" href="/css/styles-main.css">
+<link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css">
+<style>
+.hero-section {
+    padding: 100px 0;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+.hero-section h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+.hero-section p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-top: 20px;
+    margin-bottom: 30px;
+}
+.hero-section .btn {
+    padding: 12px 30px;
+    font-size: 1rem;
+}
+.features-section {
+    padding: 80px 0;
+    background-color: #fff;
+}
+.features-section .feature {
+    text-align: center;
+    padding: 20px;
+    transition: transform 0.3s;
+}
+.features-section .feature:hover {
+    transform: translateY(-10px);
+}
+.features-section .feature i {
+    font-size: 3rem;
+    color: #52566f;
+    margin-bottom: 15px;
+}
+.features-section .feature h5 {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.features-section .feature p {
+    color: #666;
+    font-size: 1rem;
+}
+.tracking-section {
+    padding: 60px 0;
+    background-color: #f8f9fa;
+    text-align: center;
+}
+.tracking-section h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+.tracking-section p {
+    font-size: 1.1rem;
+    color: #555;
+}
         /* Styles supplémentaires */
         @media (min-width: 992px) {
             .icon-container i {
@@ -149,111 +206,48 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </style>
 </head>
 <body id="top">
-
 <noscript>
-  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-    <main>
-       <nav class="navbar navbar-expand-lg fixed-top">
+<main>
+<nav class="navbar navbar-expand-lg fixed-top">
+<!-- nav conservée -->
+</nav>
+<section class="hero-section" data-aos="fade-up">
   <div class="container">
-    <a class="navbar-brand" href="/<%= locale %>">
-      <span>UAP Immo</span>
-    </a>
-
-    <!-- Bouton Burger -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- Menu collapsé -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <!-- 🟢 Liens à gauche -->
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
-        </li>
-      </ul>
-
-    <% if (isAuthenticated) { %>
-  <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-    <i class="bi bi-person-circle"></i>
-    <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
-  </a>
-  <form action="/logout" method="POST" class="d-inline">
-    <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-      <i class="bi bi-box-arrow-right"></i>
-      <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
-    </button>
-  </form>
-<% } else { %>
-  <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-    <i class="bi bi-person-fill"></i>
-    <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-  </a>
-<% } %>
-
-
-
-
-
-        <div class="dropdown">
-          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
-            <i class="bi bi-chevron-down small"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-           <% 
-  // Vérifie si on est sur la racine /fr ou /en
-  const cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath;
-%>
-
-<% if (locale === 'fr') { %>
-  <li>
-    <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">🇬🇧 <span>EN</span></a>
-  </li>
-<% } else { %>
-  <li>
-    <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">🇫🇷 <span>FR</span></a>
-  </li>
-<% } %>
-
-          </ul>
-        </div>
+    <h1><%= i18n.heading %></h1>
+    <p><%= i18n.intro %></p>
+    <a href="/<%= locale %>/register" class="btn btn-outline-dark rounded-pill"><%= i18n.hero.cta %></a>
+  </div>
+</section>
+<section class="features-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4 feature" data-aos="fade-up" data-aos-delay="100">
+        <i class="bi bi-file-earmark-text"></i>
+        <h5><%= locale === 'fr' ? 'Création automatique' : 'Automatic Creation' %></h5>
+        <p><%= locale === 'fr' ? 'Générez votre page d’annonce à partir d’un simple formulaire.' : 'Generate your listing page from a simple form.' %></p>
+      </div>
+      <div class="col-md-4 feature" data-aos="fade-up" data-aos-delay="200">
+        <i class="bi bi-search"></i>
+        <h5><%= locale === 'fr' ? 'Optimisation SEO' : 'SEO Optimization' %></h5>
+        <p><%= locale === 'fr' ? 'Chaque page est optimisée pour le référencement sur Google.' : 'Each page is optimized for SEO on Google.' %></p>
+      </div>
+      <div class="col-md-4 feature" data-aos="fade-up" data-aos-delay="300">
+        <i class="bi bi-megaphone"></i>
+        <h5><%= locale === 'fr' ? 'Diffusion ciblée' : 'Targeted Distribution' %></h5>
+        <p><%= locale === 'fr' ? 'Diffusez vos annonces grâce à nos packs sur les meilleures plateformes.' : 'Distribute your listings with our packages on top platforms.' %></p>
       </div>
     </div>
   </div>
-</nav>
-
-        <!-- Contenu principal -->
-        <section class="new-section">
-            <div class="container">
-                <div class="row">
-                    <div class="col-lg-6 col-12">
-                        <div class="text-container">
-                            <h4><%= i18n.heading %></h4>
-                            <p class="form-text"><%= i18n.intro %></p>
-                            <p class="form-text"><%= i18n.details %></p>
-                            <a href="/<%= locale %>/login" class="btn-commencer" style="position: relative;">Commencer maintenant</a>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 col-12">
-                        <div class="image-container">
-                            <img src="/images/uap%20immo%20plateforme%20de%20webmarketing%20immobilier.png" alt="<%= i18n.new_hero.image_alt %>" class="img-fluid" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-
-    </main>
-
+</section>
+<section class="tracking-section" data-aos="fade-up">
+  <div class="container">
+    <h2><%= locale === 'fr' ? 'Suivi de vos annonces en temps réel' : 'Real-time tracking of your listings' %></h2>
+    <p><%= locale === 'fr' ? 'Visualisez la performance de vos landing pages et accédez à vos statistiques en direct.' : 'Track the performance of your landing pages and access your live statistics.' %></p>
+  </div>
+</section>
+</main>
     <!-- Footer -->
     <footer class="site-footer section-padding">
         <div class="container">
@@ -291,9 +285,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer.all_rights %></p>
         </div>
     </footer>
-
-    <!-- Scripts -->
-    <script src="/js/jquery.min.js"></script>
-    <script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>AOS.init();</script>
 </body>
 </html>
