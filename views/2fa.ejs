@@ -1,173 +1,149 @@
 <!DOCTYPE html>
 <html lang="<%= locale %>">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Two-Factor Authentication page for UAP Immo.">
-    <title>UAP Immo | <%= i18n.title %></title>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-icons.css" rel="stylesheet">
-    <link rel="preload" href="/css/styles-main.css" as="style">
-    <link rel="stylesheet" href="/css/styles-main.css">
-    <style>
-        .form-container {
-            max-width: 600px;
-            margin: 110px auto;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        .form-container h2 {
-            margin-bottom: 20px;
-        }
-        .form-control-icon {
-            position: relative;
-        }
-        .form-control-icon input {
-            padding-right: 2.5rem;
-        }
-        .form-control-icon .icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-        .btn-primary {
-            background-color: #52566f;
-            border-color: #000;
-        }
-        .btn-primary:hover {
-            background-color: #52566f;
-            border-color: #52566f;
-        }
-        .navbar {
-            background-color: #C4B990;
-        }
-        .navbar .navbar-brand, .navbar .nav-link {
-            color: #000;
-        }
-  .navbar .btn-outline-dark {
-    margin-right: 12px;
-  }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Two-Factor Authentication page for UAP Immo.">
+  <title>UAP Immo | <%= i18n.title %></title>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles-main.css">
+  <style>
+    .form-container {
+      max-width: 480px;
+      margin: 130px auto;
+      padding: 30px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    }
+    .form-container h2 {
+      margin-bottom: 10px;
+      font-size: 1.7rem;
+      font-weight: 600;
+      text-align: center;
+    }
+    .form-container p.description {
+      text-align: center;
+      font-size: 0.95rem;
+      color: #555;
+    }
+    .form-container .form-label {
+      font-weight: 500;
+    }
+    .btn-primary {
+      background-color: #52566f;
+      border-color: #52566f;
+    }
+    .btn-primary:hover {
+      background-color: #3f4258;
+      border-color: #3f4258;
+    }
+    .info-steps {
+      font-size: 0.9rem;
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #f0f0f0;
+      border-left: 4px solid #8f97c4;
+      border-radius: 5px;
+    }
+    .info-steps ul {
+      padding-left: 20px;
+    }
+    @media (max-width: 576px) {
+      .form-container {
+        margin: 100px 15px;
+        padding: 20px;
+      }
+    }
+  </style>
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg fixed-top">
-  <div class="container">
-    <a class="navbar-brand" href="/<%= locale %>">
-      <span>UAP Immo</span>
-    </a>
-
-    <!-- Bouton Burger -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- Menu collapsé -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <!-- 🟢 Liens à gauche -->
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
-        </li>
-      </ul>
-
-     <% if (isAuthenticated) { %>
-  <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
-    <i class="bi bi-person-circle"></i>
-    <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
-  </a>
-
-  <form action="/logout" method="POST" class="d-inline">
-    <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-      <i class="bi bi-box-arrow-right"></i>
-      <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
-    </button>
-  </form>
-<% } else { %>
-  <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-    <i class="bi bi-person-fill"></i>
-    <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-  </a>
-<% } %> <!-- ← C'EST CE QUI MANQUE -->
-
-<div class="dropdown">
-  <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
-    data-bs-toggle="dropdown" aria-expanded="false">
-    <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
-    <i class="bi bi-chevron-down small"></i>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end shadow">
-    <%
-      const cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '';
-    %>
-    <% if (locale === 'fr') { %>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">🇬🇧 <span>EN</span></a></li>
-    <% } else { %>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">🇫🇷 <span>FR</span></a></li>
-    <% } %>
-  </ul>
-</div>
-
+  <nav class="navbar navbar-expand-lg fixed-top" style="background-color: #C4B990;">
+    <div class="container">
+      <a class="navbar-brand" href="/<%= locale %>">UAP Immo</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          <li class="nav-item"><a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a></li>
+          <li class="nav-item"><a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a></li>
+        </ul>
+        <% if (isAuthenticated) { %>
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill me-2">Mon compte</a>
+          <form action="/logout" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-outline-dark rounded-pill">Déconnexion</button>
+          </form>
+        <% } else { %>
+          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill me-3">Connexion</a>
+        <% } %>
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill" type="button" data-bs-toggle="dropdown">
+            <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end">
+            <% const cleanPath = currentPath.replace(/^\/(fr|en)/, '') || ''; %>
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item" href="/en<%= cleanPath %>">🇬🇧 EN</a></li>
+            <% } else { %>
+              <li><a class="dropdown-item" href="/fr<%= cleanPath %>">🇫🇷 FR</a></li>
+            <% } %>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
-</nav>
+  </nav>
+
   <main>
-    <!-- Section for 2FA -->
-    <section class="new-section">
+    <section>
       <div class="container">
-        <div class="row">
-          <div class="col-12 col-lg-8 mx-auto">
-            <div class="form-container">
-  <h2 class="text-center"><%= i18n.heading %></h2>
-  <p class="text-center"><%= i18n.description %></p>
+        <div class="form-container">
+          <h2>Vérification 2FA</h2>
+          <p class="description">Pour sécuriser votre compte, veuillez entrer le code à 6 chiffres généré par votre application Google Authenticator.</p>
 
-  <% if (messages.error && messages.error.length > 0) { %>
-    <p class="text-center text-danger"><%= messages.error[0] %></p>
-  <% } %>
+          <div class="info-steps">
+            <strong>Marche à suivre :</strong>
+            <ul>
+              <li>Ouvrez l'application Google Authenticator sur votre téléphone.</li>
+              <li>Repérez le code associé à "UAP Immo".</li>
+              <li>Entrez ce code dans le champ ci-dessous.</li>
+            </ul>
+          </div>
 
-  <form method="POST" action="/<%= locale %>/2fa">
-    <div class="mb-3">
-      <label for="code" class="form-label">Code à 6 chiffres :</label>
-      <input type="text" name="code" id="code" class="form-control" required maxlength="6" pattern="\d{6}">
-    </div>
-    <div class="d-grid gap-2">
-      <button type="submit" class="btn btn-primary">Valider</button>
-    </div>
-  </form>
+          <% if (messages.error && messages.error.length > 0) { %>
+            <div class="alert alert-danger text-center"><%= messages.error[0] %></div>
+          <% } %>
 
-  <!-- Lien pour se déconnecter -->
-  <div class="text-center mt-3">
-    <a href="/<%= locale %>/logout"><%= i18n.logout %></a>
-  </div>
-</div>
+          <form method="POST" action="/<%= locale %>/2fa">
+            <div class="mb-3">
+              <label for="code" class="form-label">Code à 6 chiffres :</label>
+              <input type="text" name="code" id="code" class="form-control text-center" required maxlength="6" pattern="\d{6}" placeholder="Ex : 123456">
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary">Valider le code</button>
+            </div>
+          </form>
 
+          <div class="text-center mt-3">
+            <a href="/<%= locale %>/logout">Se déconnecter</a>
           </div>
         </div>
       </div>
     </section>
   </main>
 
-  <!-- Footer -->
-  <footer class="site-footer section-padding">
+  <footer class="site-footer section-padding mt-5">
     <div class="container">
       <div class="row">
         <div class="col-lg-3 col-12 mb-4 pb-2">
-          <a class="navbar-brand mb-2" href="/">
-            <span>UAP Immo</span>
-          </a>
+          <a class="navbar-brand mb-2" href="/">UAP Immo</a>
         </div>
         <div class="col-lg-3 col-md-4 col-6">
           <h6 class="site-footer-title mb-3">Informations</h6>
           <ul class="site-footer-links">
-            <li class="site-footer-link-item"><a href="/" class="site-footer-link">Home</a></li>
+            <li class="site-footer-link-item"><a href="/" class="site-footer-link">Accueil</a></li>
             <li class="site-footer-link-item"><a href="/register" class="site-footer-link">Créer un compte</a></li>
           </ul>
         </div>
@@ -177,12 +153,11 @@
             <li class="site-footer-link-item"><a href="/contact" class="site-footer-link">Contact</a></li>
           </ul>
         </div>
-        <p class="copyright-text mt-lg-5 mt-4">Copyright © 2024 UAP Company. All rights reserved.</p>
+        <p class="text-muted mt-4">© 2025 UAP Company. Tous droits réservés.</p>
       </div>
     </div>
   </footer>
 
-  <!-- JAVASCRIPT FILES -->
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.bundle.min.js"></script>
 </body>
