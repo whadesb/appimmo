@@ -121,7 +121,30 @@
     </section>
   </main>
 
-  <%- include('partials/footer', { i18n, locale }) %>
+<footer class="site-footer section-padding mt-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-12 mb-4">
+        <a class="navbar-brand mb-2" href="/<%= locale %>">UAP Immo</a>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.information %></h6>
+        <ul class="site-footer-links">
+          <li><a href="/<%= locale %>" class="site-footer-link"><%= i18n.menu.home %></a></li>
+          <li><a href="/<%= locale %>/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.access %></h6>
+        <ul class="site-footer-links">
+          <li><a href="/<%= locale %>/contact" class="site-footer-link"><%= i18n.footer.contact %></a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="mt-4 text-center">&copy; 2025 UAP Company. All rights reserved.</p>
+  </div>
+</footer>
+
 
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.bundle.min.js"></script>
