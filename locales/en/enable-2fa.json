@@ -1,20 +1,24 @@
 {
   "title": "Enable Two-Factor Authentication",
-  "instruction": "Please scan this QR code with your authentication app to enable 2FA.",
-  "secret": "Secret Code:",
-  "qrCode": "QR Code",
+  "instruction": "Enable Your 2FA Security",
+  "step_title": "How to proceed",
+  "steps": [
+    "Download the Google Authenticator app on your smartphone.",
+    "Open the app and scan the QR code below.",
+    "Or enter the secret key manually into the app.",
+    "Enter the 6-digit code displayed in the app to verify."
+  ],
+  "secret_label": "Secret key",
+  "codeLabel": "6-digit code",
   "verify": "Verify",
-  "menu": {
-    "home": "Home",
-    "fonctionnement": "How it works",
-    "processus": "Process",
-    "faq": "FAQ",
-    "contact": "Contact"
-  },
   "footer": {
     "information": "Information",
     "create_account": "Create an account",
     "access": "Access",
+    "contact": "Contact"
+  },
+  "menu": {
+    "home": "Home",
     "contact": "Contact"
   }
 }
