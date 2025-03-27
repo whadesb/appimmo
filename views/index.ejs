@@ -19,13 +19,15 @@
   <meta property="og:type" content="website">
 
   <!-- Fonts & Styles -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Open+Sans&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/bootstrap.min.css">
   <link rel="stylesheet" href="/css/bootstrap-icons.css">
   <link rel="stylesheet" href="/css/styles-main.css">
   <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css"/>
+ <link href="assets/css/mainhome.css" rel="stylesheet">
 
   <style>
 .section-intro {
@@ -277,74 +279,125 @@
   </div>
 </nav>
 
-<main>
-    <section class="section-intro">
+<main class="main">
+
+  <!-- Hero Section -->
+  <section id="hero" class="hero section light-background">
     <div class="container">
-      <div class="row">
-        <div class="col-lg-6 col-md-12 left-col" data-aos="fade-right">
-          <div>
-            <h1>UAP Immo, plateforme de webmarketing en immobilier</h1>
-            <p>Générez, diffusez et suivez vos annonces grâce à une plateforme professionnelle, gratuite et automatisée.</p>
-            <a href="/<%= locale %>/register" class="btn btn-dark rounded-pill">
-              <%= locale === 'fr' ? "Commencer maintenant" : "Start Now" %>
-            </a>
+      <div class="row gy-4">
+        <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="zoom-out">
+          <h1>Welcome to <span>UAP Immo</span></h1>
+          <p>Create instant landing pages and boost your property's online visibility</p>
+          <div class="d-flex">
+            <a href="#about" class="btn-get-started">Let’s Get Started</a>
           </div>
         </div>
-        <div class="col-lg-6 col-md-12" data-aos="fade-left">
-          <img src="/images/uapimmovisuel.png" alt="plateforme uap immo" class="img-fluid rounded">
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Services Section -->
+  <section id="featured-services" class="featured-services section">
+    <div class="container">
+      <div class="row gy-4">
+        <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
+          <div class="service-item position-relative">
+            <div class="icon"><i class="bi bi-lightning-charge icon"></i></div>
+            <h4><a href="#" class="stretched-link">Instant Creation</a></h4>
+            <p>Generate a property page in one click — no technical skills required</p>
+          </div>
+        </div>
+        <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
+          <div class="service-item position-relative">
+            <div class="icon"><i class="bi bi-clock icon"></i></div>
+            <h4><a href="#" class="stretched-link">Time-Saving</a></h4>
+            <p>No more lengthy listings — everything is automated and instant</p>
+          </div>
+        </div>
+        <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
+          <div class="service-item position-relative">
+            <div class="icon"><i class="bi bi-eye icon"></i></div>
+            <h4><a href="#" class="stretched-link">Maximum Visibility</a></h4>
+            <p>Share your free landing page anywhere and attract more buyers instantly</p>
+          </div>
+        </div>
+        <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="400">
+          <div class="service-item position-relative">
+            <div class="icon"><i class="bi bi-megaphone icon"></i></div>
+            <h4><a href="#" class="stretched-link">Maximize Impact</a></h4>
+            <p>Go further with targeted exposure through our premium pack</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Section 2 -->
-  <section class="section-about">
+  <!-- About Section -->
+  <section id="about" class="about section light-background">
+    <div class="container section-title" data-aos="fade-up">
+      <h2>About</h2>
+      <p><span>The Story Behind</span> <span class="description-title">UAP Immo</span></p>
+    </div>
     <div class="container">
-      <h2>Comment fonctionne notre plateforme ?</h2>
-      <div class="row">
-        <div class="col-md-4 feature" data-aos="fade-up">
-          <i class="bi bi-ui-checks-grid"></i>
-          <h5>Remplissez le formulaire</h5>
-          <p>Décrivez votre bien immobilier de façon simple et intuitive.</p>
+      <div class="row gy-3">
+        <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+          <img src="/assets/img/uap immo real estate.png" alt="" class="img-fluid">
         </div>
-        <div class="col-md-4 feature" data-aos="fade-up" data-aos-delay="100">
-          <i class="bi bi-laptop"></i>
-          <h5>Générez votre landing page</h5>
-          <p>Une page optimisée est automatiquement créée pour votre annonce.</p>
-        </div>
-        <div class="col-md-4 feature" data-aos="fade-up" data-aos-delay="200">
-          <i class="bi bi-send"></i>
-          <h5>Diffusez et suivez</h5>
-          <p>Obtenez l’URL, partagez-la et accédez aux statistiques en temps réel.</p>
+        <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
+          <div class="about-content ps-0 ps-lg-3">
+            <h3>A New Vision of Real Estate Marketing</h3>
+            <p class="fst-italic">UAP Immo was born from a simple idea: real estate professionals need a faster way to promote their listings — without wasting time or dealing with technical constraints.</p>
+            <ul>
+              <li><i class="bi bi-graph-up-arrow"></i>
+                <div>
+                  <h4>Accelerate Property Promotion</h4>
+                  <p>Drive more buyer attention and generate visits with a streamlined solution made for real estate professionals.</p>
+                </div>
+              </li>
+              <li><i class="bi bi-file-earmark-plus"></i>
+                <div>
+                  <h4>Create and Share in Seconds</h4>
+                  <p>Our tool lets you build your own property page in one click, with a unique URL ready to share everywhere.</p>
+                </div>
+              </li>
+            </ul>
+            <p>We believe every property deserves the spotlight. With UAP Immo, you can create your own landing page in seconds — no cost, no barriers.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Section 3 -->
-  <section class="section-strengths">
-    <div class="container">
-      <h2>Pourquoi choisir UAP Immo ?</h2>
-      <div class="row">
-        <div class="col-md-4 feature" data-aos="zoom-in">
-          <i class="bi bi-rocket-takeoff"></i>
-          <h5>Rapidité</h5>
-          <p>Créez et diffusez une annonce professionnelle en moins de 2 minutes.</p>
+  <!-- Stats Section -->
+  <section id="stats" class="stats section">
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+      <div class="row gy-4">
+        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center text-center">
+          <i class="bi bi-lightning-charge"></i>
+          <div class="stats-item">
+            <p><strong>Free Landing Page</strong><br>Create your property page in just one click — no cost, no complexity.</p>
+          </div>
         </div>
-        <div class="col-md-4 feature" data-aos="zoom-in" data-aos-delay="100">
-          <i class="bi bi-bar-chart"></i>
-          <h5>Performance</h5>
-          <p>Des pages ultra-optimisées pour Google et les réseaux sociaux.</p>
+        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center text-center">
+          <i class="bi bi-bar-chart-line"></i>
+          <div class="stats-item">
+            <p><strong>SEO-Optimized</strong><br>Your page is built to rank on search engines and attract organic traffic.</p>
+          </div>
         </div>
-        <div class="col-md-4 feature" data-aos="zoom-in" data-aos-delay="200">
-          <i class="bi bi-gift"></i>
-          <h5>Gratuité</h5>
-          <p>Un service gratuit sans abonnement, accessible à tous.</p>
+        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center text-center">
+          <i class="bi bi-bullseye"></i>
+          <div class="stats-item">
+            <p><strong>Targeted Distribution</strong><br>Boost visibility with premium exposure on selected ad platforms.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- FAQ and Contact sections would be added similarly here -->
+
 </main>
+
     <!-- Footer -->
     <footer class="site-footer section-padding">
         <div class="container">
