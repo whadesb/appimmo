@@ -14,13 +14,13 @@
     "faq": "FAQ",
     "contact": "Contact"
   },
-  "instruction_title": "Comment utiliser la vérification 2FA ?",
-  "instruction_steps": [
-    "1. Ouvrez l'application Google Authenticator sur votre téléphone.",
-    "2. Recherchez le code à 6 chiffres associé à UAP Immo.",
-    "3. Saisissez ce code ci-dessous pour accéder à votre compte.",
-    "⚠️ Attention : Le code expire toutes les 30 secondes."
-  ],
+ "instruction_title": "Étapes à suivre :",
+"instruction_steps": [
+  "Ouvrez l'application Google Authenticator",
+  "Copiez le code généré (6 chiffres)",
+  "Entrez le code ci-dessous pour valider",
+  "Le code expire après 30 secondes"
+],
   "footer": {
     "information": "Informations",
     "create_account": "Créer un compte",
