@@ -1191,6 +1191,7 @@ section,
   border: 1px solid color-mix(in srgb, var(--default-color), transparent 85%);
   border-radius: 5px;
   overflow: hidden;
+color: #fff;
 }
 
 .faq .faq-container .faq-item:last-child {
