@@ -488,6 +488,33 @@
             <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer.all_rights %></p>
         </div>
     </footer>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const faqItems = document.querySelectorAll('.faq-item');
+
+    faqItems.forEach(item => {
+      const toggle = item.querySelector('.faq-toggle');
+      toggle.addEventListener('click', () => {
+        // Ferme les autres
+        faqItems.forEach(i => {
+          if (i !== item) {
+            i.classList.remove('faq-active');
+          }
+        });
+
+        // Active ou désactive la question cliquée
+        item.classList.toggle('faq-active');
+      });
+
+      // Permet aussi d’ouvrir en cliquant sur la question (h3)
+      const question = item.querySelector('h3');
+      question.addEventListener('click', () => {
+        toggle.click(); // Simule un clic sur l’icône
+      });
+    });
+  });
+</script>
+
   <script src="assets/vendor/php-email-form/validate.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
