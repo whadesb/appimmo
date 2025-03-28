@@ -9,7 +9,8 @@
   <meta name="robots" content="index, follow">
   <meta name="keywords" content="<%= i18n.metaKeywords %>">
   <meta name="theme-color" content="#C4B990">
-  <title><%= i18n.title %></title>
+  <title>UAP Immo | <%= i18n.title %></title>
+
 
   <!-- Open Graph -->
   <meta property="og:title" content="<%= i18n.ogTitle %>">
@@ -204,6 +205,7 @@
 <noscript>
 <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
+<%- include('partials/navbar', { locale, i18n, isAuthenticated, currentPath }) %>
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
     <a class="navbar-brand" href="/<%= locale %>">
@@ -283,18 +285,16 @@
 
   <!-- Hero Section -->
   <section id="hero" class="hero section light-background">
-    <div class="container">
-      <div class="row gy-4">
-        <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center" data-aos="zoom-out">
-          <h1>Welcome to <span>UAP Immo</span></h1>
-          <p>Create instant landing pages and boost your property's online visibility</p>
-          <div class="d-flex">
-            <a href="#about" class="btn-get-started">Let’s Get Started</a>
+      <div class="container">
+        <div class="row gy-4">
+          <div class="col-lg-6 d-flex flex-column justify-content-center">
+            <h1><%= i18n.hero.title %></h1>
+            <p><%= i18n.hero.subtitle %></p>
+            <a href="#about" class="btn btn-primary mt-3"><%= i18n.hero.cta %></a>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
   <!-- Featured Services Section -->
   <section id="featured-services" class="featured-services section">
