@@ -300,39 +300,21 @@
 
   <!-- Featured Services Section -->
   <section id="featured-services" class="featured-services section">
-    <div class="container">
-      <div class="row gy-4">
-        <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="100">
+  <div class="container">
+    <div class="row gy-4">
+      <% i18n.featured_services.forEach((service, index) => { %>
+        <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="<%= (index + 1) * 100 %>">
           <div class="service-item position-relative">
-            <div class="icon"><i class="bi bi-lightning-charge icon"></i></div>
-            <h4><a href="#" class="stretched-link">Instant Creation</a></h4>
-            <p>Generate a property page in one click — no technical skills required</p>
+            <div class="icon"><i class="bi <%= service.icon %> icon"></i></div>
+            <h4><a href="#" class="stretched-link"><%= service.title %></a></h4>
+            <p><%= service.text %></p>
           </div>
         </div>
-        <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="200">
-          <div class="service-item position-relative">
-            <div class="icon"><i class="bi bi-clock icon"></i></div>
-            <h4><a href="#" class="stretched-link">Time-Saving</a></h4>
-            <p>No more lengthy listings — everything is automated and instant</p>
-          </div>
-        </div>
-        <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="300">
-          <div class="service-item position-relative">
-            <div class="icon"><i class="bi bi-eye icon"></i></div>
-            <h4><a href="#" class="stretched-link">Maximum Visibility</a></h4>
-            <p>Share your free landing page anywhere and attract more buyers instantly</p>
-          </div>
-        </div>
-        <div class="col-xl-3 col-md-6 d-flex" data-aos="fade-up" data-aos-delay="400">
-          <div class="service-item position-relative">
-            <div class="icon"><i class="bi bi-megaphone icon"></i></div>
-            <h4><a href="#" class="stretched-link">Maximize Impact</a></h4>
-            <p>Go further with targeted exposure through our premium pack</p>
-          </div>
-        </div>
-      </div>
+      <% }) %>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- About Section -->
   <section id="about" class="about section light-background">
