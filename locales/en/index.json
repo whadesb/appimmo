@@ -55,6 +55,27 @@
     "text": "Go further with targeted exposure through our premium pack"
   }
 ],
+"about": {
+  "title": "About",
+  "subtitle_prefix": "The Story Behind",
+  "subtitle_highlight": "UAP Immo",
+  "heading": "A New Vision of Real Estate Marketing",
+  "intro": "UAP Immo was born from a simple idea: real estate professionals need a faster way to promote their listings — without wasting time or dealing with technical constraints.",
+  "points": [
+    {
+      "icon": "bi-graph-up-arrow",
+      "title": "Accelerate Property Promotion",
+      "text": "Drive more buyer attention and generate visits with a streamlined solution made for real estate professionals."
+    },
+    {
+      "icon": "bi-file-earmark-plus",
+      "title": "Create and Share in Seconds",
+      "text": "Our tool lets you build your own property page in one click, with a unique URL ready to share everywhere."
+    }
+  ],
+  "conclusion": "We believe every property deserves the spotlight. With UAP Immo, you can create your own landing page in seconds — no cost, no barriers."
+},
+
 
   "faq": {
     "questions": [
