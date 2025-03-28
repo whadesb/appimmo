@@ -43,17 +43,21 @@ color: #000 !important;
 .faq-content p {
   color: white !important;
 }
-.lang-flag {
+ .lang-flag {
       width: 24px;
       height: 16px;
-      background-size: cover;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
       display: inline-block;
+      flex-shrink: 0;
     }
     .lang-fr {
       background-image: url('https://flagcdn.com/fr.svg');
     }
     .lang-en {
       background-image: url('https://flagcdn.com/gb.svg');
+    }
     }.section-intro {
       padding: 100px 0;
       background: #f8f9fa;
