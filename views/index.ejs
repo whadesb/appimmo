@@ -44,11 +44,17 @@ color: #000 !important;
   color: white !important;
 }
 .lang-flag {
-  font-size: 18px;
-  line-height: 1;
-}
-
-.section-intro {
+      width: 24px;
+      height: 16px;
+      background-size: cover;
+      display: inline-block;
+    }
+    .lang-fr {
+      background-image: url('https://flagcdn.com/fr.svg');
+    }
+    .lang-en {
+      background-image: url('https://flagcdn.com/gb.svg');
+    }.section-intro {
       padding: 100px 0;
       background: #f8f9fa;
     }
@@ -269,30 +275,20 @@ color: #000 !important;
 
 
 
-        <div class="dropdown">
-          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
-  data-bs-toggle="dropdown" aria-expanded="false">
-  <span class="lang-flag"><%= locale === 'fr' ? '🇫🇷' : '🇬🇧' %></span>
-  <i class="bi bi-chevron-down small"></i>
-</button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-           <% 
-  // Vérifie si on est sur la racine /fr ou /en
-  const cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath;
-%>
-
-<% if (locale === 'fr') { %>
-  <li>
-    <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">🇬🇧 <span>EN</span></a>
-  </li>
-<% } else { %>
-  <li>
-    <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">🇫🇷 <span>FR</span></a>
-  </li>
-<% } %>
-
-          </ul>
-        </div>
+      <div class="dropdown">
+  <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+    <i class="bi bi-chevron-down small"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end shadow">
+    <% const cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath; %>
+    <% if (locale === 'fr') { %>
+      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+    <% } else { %>
+      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+    <% } %>
+  </ul>
+</div>
       </div>
     </div>
   </div>
