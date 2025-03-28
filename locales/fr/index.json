@@ -55,6 +55,27 @@
     "text": "Allez plus loin avec une diffusion ciblée grâce à notre pack premium"
   }
 ],
+"about": {
+  "title": "À propos",
+  "subtitle_prefix": "L’histoire derrière",
+  "subtitle_highlight": "UAP Immo",
+  "heading": "Une nouvelle vision du marketing immobilier",
+  "intro": "UAP Immo est né d'une idée simple : les professionnels de l’immobilier ont besoin d’un moyen plus rapide pour promouvoir leurs annonces — sans perdre de temps ni affronter des contraintes techniques.",
+  "points": [
+    {
+      "icon": "bi-graph-up-arrow",
+      "title": "Accélérez la promotion de vos biens",
+      "text": "Attirez plus d’acheteurs et générez des visites grâce à une solution conçue pour les professionnels de l’immobilier."
+    },
+    {
+      "icon": "bi-file-earmark-plus",
+      "title": "Créez et partagez en quelques secondes",
+      "text": "Notre outil vous permet de générer une page de bien en un clic, avec une URL unique à partager partout."
+    }
+  ],
+  "conclusion": "Nous croyons que chaque bien mérite la lumière. Avec UAP Immo, créez votre landing page en quelques secondes — gratuitement, sans barrières."
+},
+
 
   "faq": {
     "questions": [
