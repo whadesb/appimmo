@@ -251,19 +251,68 @@ color: #000 !important;
 <%- include('partials/navbar', { locale, i18n, isAuthenticated, currentPath }) %>
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg fixed-top">
-  <div class="container d-flex justify-content-between align-items-center">
-    <div class="d-flex align-items-center gap-3">
-      <a class="navbar-brand" href="/<%= locale %>">
-        <span>UAP Immo</span>
-      </a>
-      <!-- Mobile Language Selector -->
-      <div class="mobile-lang-selector">
+  <div class="container">
+    <a class="navbar-brand" href="/<%= locale %>">
+      <span>UAP Immo</span>
+    </a>
+
+    <!-- Mobile Language Selector -->
+    <div class="mobile-lang-selector">
+      <div class="dropdown">
+        <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+          <% let cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath; %>
+          <% if (locale === 'fr') { %>
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+          <% } else { %>
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
+        </li>
+      </ul>
+
+      <% if (isAuthenticated) { %>
+        <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+          <i class="bi bi-person-circle"></i>
+          <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+        </a>
+        <form action="/logout" method="POST" class="d-inline">
+          <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+            <i class="bi bi-box-arrow-right"></i>
+            <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+          </button>
+        </form>
+      <% } else { %>
+        <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+          <i class="bi bi-person-fill"></i>
+          <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+        </a>
+      <% } %>
+
+      <!-- Desktop Language Selector -->
+      <div class="desktop-lang-selector ms-3">
         <div class="dropdown">
-          <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow">
-            <% let cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath; %>
             <% if (locale === 'fr') { %>
               <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
             <% } else { %>
@@ -273,11 +322,6 @@ color: #000 !important;
         </div>
       </div>
     </div>
-
-    <!-- Burger Button -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
   </div>
 </nav>
 
