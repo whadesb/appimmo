@@ -76,6 +76,25 @@
   "conclusion": "We believe every property deserves the spotlight. With UAP Immo, you can create your own landing page in seconds — no cost, no barriers."
 },
 
+"stats": [
+  {
+    "icon": "bi-lightning-charge",
+    "title": "Free Landing Page",
+    "text": "Create your property page in just one click — no cost, no complexity."
+  },
+  {
+    "icon": "bi-bar-chart-line",
+    "title": "SEO-Optimized",
+    "text": "Your page is built to rank on search engines and attract organic traffic."
+  },
+  {
+    "icon": "bi-bullseye",
+    "title": "Targeted Distribution",
+    "text": "Boost visibility with premium exposure on selected ad platforms."
+  }
+],
+
+
 
   "faq": {
     "questions": [
