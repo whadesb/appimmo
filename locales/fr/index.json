@@ -33,6 +33,29 @@
     "contact": "Contact",
     "language": "Langue"
   },
+"featured_services": [
+  {
+    "icon": "bi-lightning-charge",
+    "title": "Création Instantanée",
+    "text": "Générez une page de bien en un clic — aucune compétence technique requise"
+  },
+  {
+    "icon": "bi-clock",
+    "title": "Gain de Temps",
+    "text": "Fini les annonces interminables — tout est automatisé et instantané"
+  },
+  {
+    "icon": "bi-eye",
+    "title": "Visibilité Maximale",
+    "text": "Partagez votre page gratuite partout et attirez plus d’acheteurs"
+  },
+  {
+    "icon": "bi-megaphone",
+    "title": "Impact Renforcé",
+    "text": "Allez plus loin avec une diffusion ciblée grâce à notre pack premium"
+  }
+],
+
   "faq": {
     "questions": [
       {
