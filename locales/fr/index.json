@@ -19,6 +19,14 @@
     "image": "/images/uapimmovisuel.png",
     "alt": "UAP Immo Plateforme Webmarketing Immobilier"
   },
+"hero": {
+  "title": "Boostez votre Marketing Immobilier",
+  "subtitle": "Avec UAP Immo, générez automatiquement des landing pages professionnelles et maximisez vos conversions.",
+  "cta": "Inscrivez-vous maintenant",
+  "image": "/images/uapimmovisuel.png",
+  "alt": "UAP Immo Plateforme Webmarketing Immobilier"
+},
+
   "menu": {
     "home": "Accueil",
     "fonctionnement": "Fonctionnement",
