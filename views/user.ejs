@@ -23,6 +23,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         html, body {
             height: 100%;
         }
+.lang-flag {
+      width: 24px;
+      height: 16px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .lang-fr {
+      background-image: url('https://flagcdn.com/fr.svg');
+    }
+    .lang-en {
+      background-image: url('https://flagcdn.com/gb.svg');
+    }
         body {
             display: flex;
             flex-direction: column;
@@ -445,6 +460,22 @@ progress {
     margin-top: 5px;
 }
         }
+@media (max-width: 991.98px) {
+      .mobile-lang-selector {
+        display: flex !important;
+        align-items: center;
+        gap: 8px;
+      }
+      .desktop-lang-selector {
+        display: none !important;
+      }
+    }
+    @media (min-width: 992px) {
+      .mobile-lang-selector {
+        display: none !important;
+      }
+    }
+
     </style>
 </head>
 <body id="top">
