@@ -46,18 +46,7 @@ color: #000 !important;
 .lang-flag {
   font-size: 18px;
   line-height: 1;
-  display: inline-block;
-  vertical-align: middle;
 }
-
-.btn-lang-flag {
-  display: flex !important;
-  align-items: center !important;
-  gap: 6px;
-  font-size: 16px;
-  padding-left: 10px;
-}
-
 
 .section-intro {
       padding: 100px 0;
@@ -119,25 +108,6 @@ color: #000 !important;
     }
         /* Styles supplémentaires */
         @media (min-width: 992px) {
-/* Correction du bouton langue pour que le drapeau s'affiche aussi sur desktop */
-.btn-lang-flag {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center;
-  gap: 6px;
-  font-size: 16px;
-  padding-left: 10px;
-  padding-right: 10px;
-  white-space: nowrap;
-}
-
-.btn-lang-flag .lang-flag {
-  display: inline-block !important;
-  font-size: 18px;
-  line-height: 1;
-  vertical-align: middle;
-}
-
             .icon-container i {
                 font-size: 3.5rem;
                 width: 100px;
@@ -245,25 +215,6 @@ color: #000 !important;
                 padding-top: 10px;
                 padding-bottom: 10px;
             }
-/* Correction du bouton langue pour que le drapeau s'affiche aussi sur desktop */
-.btn-lang-flag {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center;
-  gap: 6px;
-  font-size: 16px;
-  padding-left: 10px;
-  padding-right: 10px;
-  white-space: nowrap;
-}
-
-.btn-lang-flag .lang-flag {
-  display: inline-block !important;
-  font-size: 18px;
-  line-height: 1;
-  vertical-align: middle;
-}
-
         }
     </style>
 </head>
@@ -272,55 +223,81 @@ color: #000 !important;
 <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
 <%- include('partials/navbar', { locale, i18n, isAuthenticated, currentPath }) %>
-<nav class="navbar navbar-expand-lg fixed-top bg-white shadow-sm">
-  <div class="container d-flex align-items-center justify-content-between">
-    <a class="navbar-brand" href="/<%= locale %>">UAP Immo</a>
+<nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="/<%= locale %>">
+      <span>UAP Immo</span>
+    </a>
 
-    <div class="mobile-actions">
-      <div class="dropdown">
-        <button class="btn btn-lang-flag" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <span class="lang-flag-icon <%= locale === 'fr' ? 'flag-fr' : 'flag-en' %>"></span>
-        </button>
-        <ul class="dropdown-menu">
-          <% const cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath; %>
-          <% if (locale === 'fr') { %>
-            <li><a class="dropdown-item" href="/en<%= cleanPath %>"><span class="lang-flag-icon flag-en"></span> English</a></li>
-          <% } else { %>
-            <li><a class="dropdown-item" href="/fr<%= cleanPath %>"><span class="lang-flag-icon flag-fr"></span> Français</a></li>
-          <% } %>
-        </ul>
-      </div>
-      <% if (isAuthenticated) { %>
-        <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1"><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></a>
-      <% } else { %>
-        <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1"><%= locale === 'fr' ? 'Connexion' : 'Login' %></a>
-      <% } %>
-    </div>
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <!-- Bouton Burger -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Menu collapsé -->
     <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- 🟢 Liens à gauche -->
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a></li>
-        <li class="nav-item"><a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
+        </li>
       </ul>
-      <div class="dropdown">
-        <button class="btn btn-lang-flag" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-          <span class="lang-flag-icon <%= locale === 'fr' ? 'flag-fr' : 'flag-en' %>"></span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <% if (locale === 'fr') { %>
-            <li><a class="dropdown-item" href="/en<%= cleanPath %>"><span class="lang-flag-icon flag-en"></span> English</a></li>
-          <% } else { %>
-            <li><a class="dropdown-item" href="/fr<%= cleanPath %>"><span class="lang-flag-icon flag-fr"></span> Français</a></li>
-          <% } %>
-        </ul>
+
+    <% if (isAuthenticated) { %>
+  <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+    <i class="bi bi-person-circle"></i>
+    <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+  </a>
+  <form action="/logout" method="POST" class="d-inline">
+    <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+      <i class="bi bi-box-arrow-right"></i>
+      <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+    </button>
+  </form>
+<% } else { %>
+  <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+    <i class="bi bi-person-fill"></i>
+    <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+  </a>
+<% } %>
+
+
+
+
+
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
+  data-bs-toggle="dropdown" aria-expanded="false">
+  <span class="lang-flag"><%= locale === 'fr' ? '🇫🇷' : '🇬🇧' %></span>
+  <i class="bi bi-chevron-down small"></i>
+</button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+           <% 
+  // Vérifie si on est sur la racine /fr ou /en
+  const cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath;
+%>
+
+<% if (locale === 'fr') { %>
+  <li>
+    <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">🇬🇧 <span>EN</span></a>
+  </li>
+<% } else { %>
+  <li>
+    <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">🇫🇷 <span>FR</span></a>
+  </li>
+<% } %>
+
+          </ul>
+        </div>
       </div>
     </div>
   </div>
 </nav>
+
 <main class="main">
   <!-- Hero Section -->
   <section id="hero" class="hero section light-background">
