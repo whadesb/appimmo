@@ -354,29 +354,19 @@
 
   <!-- Stats Section -->
   <section id="stats" class="stats section">
-    <div class="container" data-aos="fade-up" data-aos-delay="100">
-      <div class="row gy-4">
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="row gy-4">
+      <% i18n.stats.forEach(stat => { %>
         <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center text-center">
-          <i class="bi bi-lightning-charge"></i>
+          <i class="bi <%= stat.icon %>"></i>
           <div class="stats-item">
-            <p><strong>Free Landing Page</strong><br>Create your property page in just one click — no cost, no complexity.</p>
+            <p><strong><%= stat.title %></strong><br><%= stat.text %></p>
           </div>
         </div>
-        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center text-center">
-          <i class="bi bi-bar-chart-line"></i>
-          <div class="stats-item">
-            <p><strong>SEO-Optimized</strong><br>Your page is built to rank on search engines and attract organic traffic.</p>
-          </div>
-        </div>
-        <div class="col-lg-4 col-md-6 d-flex flex-column align-items-center text-center">
-          <i class="bi bi-bullseye"></i>
-          <div class="stats-item">
-            <p><strong>Targeted Distribution</strong><br>Boost visibility with premium exposure on selected ad platforms.</p>
-          </div>
-        </div>
-      </div>
+      <% }) %>
     </div>
-  </section>
+  </div>
+</section>
 
  <!-- Faq Section -->
     <section id="faq" class="faq section light-background">
