@@ -93,24 +93,45 @@
   }
 ],
 
+"faq": {
+  "title": "F.A.Q",
+  "subtitle": "Questions Fréquemment Posées",
+  "questions": [
+    {
+      "question": "La création d'une landing page est-elle gratuite ?",
+      "answer": "Oui, absolument. Notre plateforme vous permet de créer une landing page personnalisée pour votre bien en un clic — sans frais cachés ni abonnement. C’est simple, rapide et 100% gratuit. Besoin de plus d’infos ? Contactez-nous !"
+    },
+    {
+      "question": "Puis-je modifier ma page une fois créée ?",
+      "answer": "Oui, vous pouvez. Depuis votre tableau de bord personnel, vous avez un accès complet à vos pages. Vous pouvez modifier les photos, ajuster la description ou corriger les détails à tout moment."
+    },
+    {
+      "question": "Ma page est-elle optimisée pour le SEO ?",
+      "answer": "Absolument. Chaque page générée est optimisée automatiquement pour le référencement. Le contenu, les titres, les balises et les mots-clés sont structurés pour une meilleure visibilité."
+    },
+    {
+      "question": "Faut-il des compétences techniques pour utiliser la plateforme ?",
+      "answer": "Pas du tout. UAP Immo a été conçu pour offrir une expérience simple et intuitive — sans connaissance technique. Remplissez un formulaire et votre page est générée automatiquement."
+    },
+    {
+      "question": "Comment partager ma page une fois prête ?",
+      "answer": "Dès que vous terminez le formulaire, votre page est générée instantanément. Une URL unique s'affiche et peut être copiée immédiatement ou retrouvée dans votre tableau de bord."
+    },
+    {
+      "question": "Puis-je suivre les statistiques de ma page ?",
+      "answer": "Oui — directement depuis votre tableau de bord. Pour chaque page, vous pouvez consulter les vues, les sources de trafic et les plateformes utilisées par vos visiteurs."
+    },
+    {
+      "question": "Que contient le pack de promotion premium ?",
+      "answer": "Le pack premium offre une visibilité étendue en diffusant votre bien sur des plateformes publicitaires performantes. Tout est géré pour vous — visibilité maximale, zéro effort."
+    },
+    {
+      "question": "Sur quelles plateformes mon bien sera-t-il diffusé ?",
+      "answer": "Votre bien sera diffusé sur des réseaux publicitaires de confiance et des réseaux sociaux afin d’atteindre une audience qualifiée. Cela inclut également notre propre réseau de diffusion."
+    }
+  ]
+},
 
-
-  "faq": {
-    "questions": [
-      {
-        "question": "Qu'est-ce que la plateforme UAP Immo ?",
-        "answer": "UAP Immo est une plateforme de webmarketing immobilier haut de gamme qui simplifie votre marketing en vous permettant de générer des landing pages en quelques clics."
-      },
-      {
-        "question": "Comment fonctionne la plateforme ?",
-        "answer": "Notre plateforme simplifie la création de landing pages pour vos biens immobiliers. Il vous suffit de remplir les détails et de télécharger les photos."
-      },
-      {
-        "question": "Quels moyens de paiement sont acceptés ?",
-        "answer": "Actuellement, nous acceptons les paiements par cartes bancaires."
-      }
-    ]
-  },
   "fonctionnementTitle": "Fonctionnement de la plateforme",
   "fonctionnementPart1": "La plateforme UAP Immo simplifie la création d'annonces immobilières en offrant un processus en ligne rapide et intuitif. En quelques étapes, vous pouvez générer une landing page optimisée pour chaque propriété. Il vous suffit de remplir un formulaire dédié, de télécharger des photos et de renseigner les détails clés de votre bien immobilier. Une fois ces informations saisies, notre système génère automatiquement une page professionnelle prête à être diffusée.",
   "fonctionnementPart2": "Une fois votre annonce créée, UAP Immo met à profit son expertise en webmarketing pour maximiser sa visibilité. Nous diffusons votre annonce sur les canaux de communication les plus pertinents pour capter l’attention de votre audience cible et attirer des prospects qualifiés. En utilisant des stratégies de diffusion ciblées et optimisées, nous vous aidons à convertir efficacement votre audience en clients potentiels pour atteindre vos objectifs de vente.",
