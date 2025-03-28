@@ -415,42 +415,47 @@ color: #000 !important;
 </main>
 
     <!-- Footer -->
-    <footer class="site-footer section-padding">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-3 col-12 mb-4 pb-2">
-                    <a class="navbar-brand mb-2" href="/<%= locale %>">
-                        <span>UAP Immo</span>
-                    </a>
-                </div>
-                <div class="col-lg-3 col-md-4 col-6">
-                    <h6 class="site-footer-title mb-3">Informations</h6>
-                    <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
-                        <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-4 col-6">
-                    <h6 class="site-footer-title mb-3">Accès</h6>
-                    <ul class="site-footer-links">
-                        <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
-                    </ul>
-                </div>
-                <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-                    <div class="dropdown">
-                        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <%= i18n.menu.language %>
-                        </button>
-                        <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="/en/contact">English</a></li>
-                            <li><a class="dropdown-item" href="/fr/contact">Français</a></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer.all_rights %></p>
+   <footer class="site-footer section-padding">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-12 mb-4 pb-2">
+        <a class="navbar-brand mb-2" href="/<%= locale %>">
+          <span>UAP Immo</span>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3">Informations</h6>
+        <ul class="site-footer-links">
+          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3">Accès</h6>
+        <ul class="site-footer-links">
+          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <% const cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath; %>
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+            <% } else { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+            <% } %>
+          </ul>
         </div>
-    </footer>
+      </div>
+    </div>
+    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer.all_rights %></p>
+  </div>
+</footer>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
     const faqItems = document.querySelectorAll('.faq-item');
