@@ -248,7 +248,7 @@ color: #000 !important;
 <noscript>
 <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-<%- include('partials/navbar', { locale, i18n, isAuthenticated, currentPath }) %>
+<% let cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath; %>
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
