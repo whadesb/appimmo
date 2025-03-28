@@ -46,7 +46,17 @@ color: #000 !important;
 .lang-flag {
   font-size: 18px;
   line-height: 1;
+  display: inline-block;
+  vertical-align: middle;
 }
+
+.btn-lang-flag {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
 
 .section-intro {
       padding: 100px 0;
@@ -270,7 +280,7 @@ color: #000 !important;
 
 
         <div class="dropdown">
-          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
+         <button class="btn btn-light border rounded-pill px-3 py-1 btn-lang-flag" type="button"
   data-bs-toggle="dropdown" aria-expanded="false">
   <span class="lang-flag"><%= locale === 'fr' ? '🇫🇷' : '🇬🇧' %></span>
   <i class="bi bi-chevron-down small"></i>
