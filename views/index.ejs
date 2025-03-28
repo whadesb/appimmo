@@ -318,39 +318,39 @@
 
   <!-- About Section -->
   <section id="about" class="about section light-background">
-    <div class="container section-title" data-aos="fade-up">
-      <h2>About</h2>
-      <p><span>The Story Behind</span> <span class="description-title">UAP Immo</span></p>
-    </div>
-    <div class="container">
-      <div class="row gy-3">
-        <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
-         <img src="/images/uap-immo-real-estate.png" alt="UAP Immo Real Estate" class="img-fluid">
-        </div>
-        <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
-          <div class="about-content ps-0 ps-lg-3">
-            <h3>A New Vision of Real Estate Marketing</h3>
-            <p class="fst-italic">UAP Immo was born from a simple idea: real estate professionals need a faster way to promote their listings — without wasting time or dealing with technical constraints.</p>
-            <ul>
-              <li><i class="bi bi-graph-up-arrow"></i>
+  <div class="container section-title" data-aos="fade-up">
+    <h2><%= i18n.about.title %></h2>
+    <p>
+      <span><%= i18n.about.subtitle_prefix %></span>
+      <span class="description-title"><%= i18n.about.subtitle_highlight %></span>
+    </p>
+  </div>
+  <div class="container">
+    <div class="row gy-3">
+      <div class="col-lg-6" data-aos="fade-up" data-aos-delay="100">
+        <img src="/images/uap-immo-real-estate.png" alt="UAP Immo Real Estate" class="img-fluid">
+      </div>
+      <div class="col-lg-6 d-flex flex-column justify-content-center" data-aos="fade-up" data-aos-delay="200">
+        <div class="about-content ps-0 ps-lg-3">
+          <h3><%= i18n.about.heading %></h3>
+          <p class="fst-italic"><%= i18n.about.intro %></p>
+          <ul>
+            <% i18n.about.points.forEach(point => { %>
+              <li><i class="bi <%= point.icon %>"></i>
                 <div>
-                  <h4>Accelerate Property Promotion</h4>
-                  <p>Drive more buyer attention and generate visits with a streamlined solution made for real estate professionals.</p>
+                  <h4><%= point.title %></h4>
+                  <p><%= point.text %></p>
                 </div>
               </li>
-              <li><i class="bi bi-file-earmark-plus"></i>
-                <div>
-                  <h4>Create and Share in Seconds</h4>
-                  <p>Our tool lets you build your own property page in one click, with a unique URL ready to share everywhere.</p>
-                </div>
-              </li>
-            </ul>
-            <p>We believe every property deserves the spotlight. With UAP Immo, you can create your own landing page in seconds — no cost, no barriers.</p>
-          </div>
+            <% }) %>
+          </ul>
+          <p><%= i18n.about.conclusion %></p>
         </div>
       </div>
     </div>
-  </section>
+  </div>
+</section>
+
 
   <!-- Stats Section -->
   <section id="stats" class="stats section">
