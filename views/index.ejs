@@ -52,9 +52,10 @@ color: #000 !important;
 
 .btn-lang-flag {
   display: flex !important;
-  align-items: center;
-  justify-content: center;
+  align-items: center !important;
   gap: 6px;
+  font-size: 16px;
+  padding-left: 10px;
 }
 
 
@@ -279,30 +280,22 @@ color: #000 !important;
 
 
 
-        <div class="dropdown">
-         <button class="btn btn-light border rounded-pill px-3 py-1 btn-lang-flag" type="button"
-  data-bs-toggle="dropdown" aria-expanded="false">
-  <span class="lang-flag"><%= locale === 'fr' ? '🇫🇷' : '🇬🇧' %></span>
-  <i class="bi bi-chevron-down small"></i>
-</button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-           <% 
-  // Vérifie si on est sur la racine /fr ou /en
-  const cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath;
-%>
+      <div class="dropdown">
+  <button class="btn btn-light border rounded-pill px-3 py-1 btn-lang-flag" type="button"
+    data-bs-toggle="dropdown" aria-expanded="false">
+    <span class="lang-flag"><%= locale === 'fr' ? '🇫🇷' : '🇬🇧' %></span>
+    <i class="bi bi-chevron-down small"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end shadow">
+    <% const cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath; %>
+    <% if (locale === 'fr') { %>
+      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">🇬🇧 <span>EN</span></a></li>
+    <% } else { %>
+      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">🇫🇷 <span>FR</span></a></li>
+    <% } %>
+  </ul>
+</div>
 
-<% if (locale === 'fr') { %>
-  <li>
-    <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">🇬🇧 <span>EN</span></a>
-  </li>
-<% } else { %>
-  <li>
-    <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">🇫🇷 <span>FR</span></a>
-  </li>
-<% } %>
-
-          </ul>
-        </div>
       </div>
     </div>
   </div>
