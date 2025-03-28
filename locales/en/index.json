@@ -19,6 +19,14 @@
     "image": "/images/uapimmovisuel.png",
     "alt": "UAP Immo Real Estate Web Marketing Platform"
   },
+"hero": {
+  "title": "Boost Your Real Estate Marketing",
+  "subtitle": "With UAP Immo, generate professional landing pages automatically and maximize your conversions.",
+  "cta": "Sign Up Now",
+  "image": "/images/uapimmovisuel.png",
+  "alt": "UAP Immo Real Estate Web Marketing Platform"
+},
+
   "menu": {
     "home": "Home",
     "fonctionnement": "How It Works",
