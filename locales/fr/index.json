@@ -75,6 +75,24 @@
   ],
   "conclusion": "Nous croyons que chaque bien mérite la lumière. Avec UAP Immo, créez votre landing page en quelques secondes — gratuitement, sans barrières."
 },
+"stats": [
+  {
+    "icon": "bi-lightning-charge",
+    "title": "Page de Bien Gratuite",
+    "text": "Créez votre page immobilière en un clic — sans coût ni complexité."
+  },
+  {
+    "icon": "bi-bar-chart-line",
+    "title": "Optimisée SEO",
+    "text": "Votre page est conçue pour être bien référencée et attirer du trafic organique."
+  },
+  {
+    "icon": "bi-bullseye",
+    "title": "Diffusion Ciblée",
+    "text": "Boostez la visibilité grâce à une diffusion premium sur des plateformes sélectionnées."
+  }
+],
+
 
 
   "faq": {
