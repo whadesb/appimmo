@@ -415,7 +415,7 @@ color: #000 !important;
 </main>
 
     <!-- Footer -->
-   <footer class="site-footer section-padding">
+ <footer class="site-footer section-padding">
   <div class="container">
     <div class="row">
       <div class="col-lg-3 col-12 mb-4 pb-2">
@@ -443,7 +443,6 @@ color: #000 !important;
             <i class="bi bi-chevron-down small"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow">
-            <% cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath; %>
             <% if (locale === 'fr') { %>
               <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
             <% } else { %>
