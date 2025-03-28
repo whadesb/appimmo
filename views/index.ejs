@@ -263,7 +263,6 @@ color: #000 !important;
           <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end shadow">
-          <% let cleanPath = currentPath === '/fr' || currentPath === '/en' ? '' : currentPath; %>
           <% if (locale === 'fr') { %>
             <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
           <% } else { %>
