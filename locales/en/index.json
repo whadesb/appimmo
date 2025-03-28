@@ -33,6 +33,29 @@
     "contact": "Contact",
     "language": "Language"
   },
+"featured_services": [
+  {
+    "icon": "bi-lightning-charge",
+    "title": "Instant Creation",
+    "text": "Generate a property page in one click — no technical skills required"
+  },
+  {
+    "icon": "bi-clock",
+    "title": "Time-Saving",
+    "text": "No more lengthy listings — everything is automated and instant"
+  },
+  {
+    "icon": "bi-eye",
+    "title": "Maximum Visibility",
+    "text": "Share your free landing page anywhere and attract more buyers instantly"
+  },
+  {
+    "icon": "bi-megaphone",
+    "title": "Maximize Impact",
+    "text": "Go further with targeted exposure through our premium pack"
+  }
+],
+
   "faq": {
     "questions": [
       {
