@@ -671,7 +671,7 @@ section,
 }
 
 .stats .stats-item {
-  background-color: color-mix(in srgb, #7c85b9 50%, transparent);
+  background-color: color-mix(in srgb, blue 10%, transparent);
   margin-top: -32px;
   padding: 40px 30px 35px 30px;
   width: 100%;
