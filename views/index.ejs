@@ -43,6 +43,10 @@ color: #000 !important;
 .faq-content p {
   color: white !important;
 }
+.lang-flag {
+  font-size: 18px;
+  line-height: 1;
+}
 
 .section-intro {
       padding: 100px 0;
@@ -267,10 +271,10 @@ color: #000 !important;
 
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
-            data-bs-toggle="dropdown" aria-expanded="false">
-            <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
-            <i class="bi bi-chevron-down small"></i>
-          </button>
+  data-bs-toggle="dropdown" aria-expanded="false">
+  <span class="lang-flag"><%= locale === 'fr' ? '🇫🇷' : '🇬🇧' %></span>
+  <i class="bi bi-chevron-down small"></i>
+</button>
           <ul class="dropdown-menu dropdown-menu-end shadow">
            <% 
   // Vérifie si on est sur la racine /fr ou /en
