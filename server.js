@@ -1252,6 +1252,29 @@ async function generateLandingPage(property) {
                 width: 100%;
                 height: 100%;
             }
+.dpe-bar {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.dpe-label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+.dpe-rating {
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+}
+.dpe-rating.a { background-color: #2ecc71; }
+.dpe-rating.b { background-color: #27ae60; }
+.dpe-rating.c { background-color: #f1c40f; }
+.dpe-rating.d { background-color: #e67e22; }
+.dpe-rating.e { background-color: #e74c3c; }
+.dpe-rating.f { background-color: #c0392b; }
+.dpe-rating.g { background-color: #8e44ad; }
+.dpe-rating.en\ cours { background-color: #ccc; color: #333; }
 
             .slides {
                 display: flex;
@@ -1487,7 +1510,12 @@ align-self: center;
                         <p>${property.bathrooms || 'Non renseigné'}</p>
                     </div>
 
-          
+          <div class="construction-year">DPE : 
+  <span style="font-weight: 500; color: ${property.dpe === 'En cours' ? '#cc9f00' : '#2c7a00'}">
+    ${property.dpe}
+  </span>
+</div>
+
                 </div>
 
                 <!-- Année de construction -->
