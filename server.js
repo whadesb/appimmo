@@ -1041,6 +1041,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     property.price = price;
     property.city = city;
     property.country = country;
+  property.dpe = req.body.dpe || 'En cours';
 
     if (req.files.photo1) {
       const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
@@ -1252,29 +1253,45 @@ async function generateLandingPage(property) {
                 width: 100%;
                 height: 100%;
             }
+.dpe-section {
+  margin-top: 30px;
+}
+
+.dpe-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
 .dpe-bar {
   display: flex;
-  align-items: center;
-  margin-top: 10px;
+  flex-direction: column;
+  width: 200px;
 }
-.dpe-label {
-  margin-right: 10px;
-  font-weight: bold;
-}
-.dpe-rating {
+
+.bar {
   padding: 5px 10px;
-  border-radius: 4px;
   color: white;
   font-weight: bold;
+  font-size: 1rem;
+  margin: 1px 0;
+  border-radius: 3px;
+  opacity: 0.5;
 }
-.dpe-rating.a { background-color: #2ecc71; }
-.dpe-rating.b { background-color: #27ae60; }
-.dpe-rating.c { background-color: #f1c40f; }
-.dpe-rating.d { background-color: #e67e22; }
-.dpe-rating.e { background-color: #e74c3c; }
-.dpe-rating.f { background-color: #c0392b; }
-.dpe-rating.g { background-color: #8e44ad; }
-.dpe-rating.en\ cours { background-color: #ccc; color: #333; }
+
+.bar.A { background-color: #009966; }
+.bar.B { background-color: #66CC00; }
+.bar.C { background-color: #FFCC00; }
+.bar.D { background-color: #FF9900; }
+.bar.E { background-color: #FF6600; }
+.bar.F { background-color: #FF3300; }
+.bar.G { background-color: #CC0000; }
+
+.bar.${property.dpe.toUpperCase()} {
+  opacity: 1;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+}
+
 
             .slides {
                 display: flex;
@@ -1510,11 +1527,23 @@ align-self: center;
                         <p>${property.bathrooms || 'Non renseigné'}</p>
                     </div>
 
-          <div class="construction-year">DPE : 
-  <span style="font-weight: 500; color: ${property.dpe === 'En cours' ? '#cc9f00' : '#2c7a00'}">
-    ${property.dpe}
-  </span>
+         <div class="dpe-section">
+  ${property.dpe.toLowerCase() === 'en cours' ? `
+    <div class="dpe-label">DPE : En cours</div>
+  ` : `
+    <div class="dpe-label">DPE : ${property.dpe.toUpperCase()}</div>
+    <div class="dpe-bar">
+      <div class="bar A">A</div>
+      <div class="bar B">B</div>
+      <div class="bar C">C</div>
+      <div class="bar D">D</div>
+      <div class="bar E">E</div>
+      <div class="bar F">F</div>
+      <div class="bar G">G</div>
+    </div>
+  `}
 </div>
+
 
                 </div>
 
