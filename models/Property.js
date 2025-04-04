@@ -1,6 +1,24 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
+// Fonction utilitaire pour mettre la première lettre en majuscule
+function capitalizeFirstLetter(str) {
+  if (!str || typeof str !== 'string') return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+// Hook mongoose pour transformer city et country avant sauvegarde
+propertySchema.pre('save', function (next) {
+  if (this.city) {
+    this.city = capitalizeFirstLetter(this.city.trim());
+  }
+  if (this.country) {
+    this.country = capitalizeFirstLetter(this.country.trim());
+  }
+  next();
+});
+
+
 const propertySchema = new Schema({
     rooms: { type: Number, required: true },
 createdAt: { type: Date, default: Date.now },
