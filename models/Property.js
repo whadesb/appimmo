@@ -26,6 +26,11 @@ const propertySchema = new Schema({
   caretakerHouse: { type: Boolean, default: false },
   electricShutters: { type: Boolean, default: false },
   outdoorLighting: { type: Boolean, default: false },
+  dpe: {
+  type: String,
+  enum: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'En cours'],
+  default: 'En cours'
+},
   url: { type: String },
   views: { type: Number, default: 0 },
   createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
