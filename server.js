@@ -1034,7 +1034,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
       return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
     }
 
-    const { rooms, surface, price, city, country } = req.body;
+    const { rooms, surface, price, city, country, description, dpe } = req.body;
 
     property.rooms = rooms;
     property.surface = surface;
