@@ -71,6 +71,29 @@ async function generateLandingPage(property) {
                 margin: 0 auto;
                 height: 100%; /* Assure que le container occupe toute la hauteur de l'écran */
             }
+.dpe-bar {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+.dpe-label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+.dpe-rating {
+  padding: 5px 10px;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+}
+.dpe-rating.a { background-color: #2ecc71; }
+.dpe-rating.b { background-color: #27ae60; }
+.dpe-rating.c { background-color: #f1c40f; }
+.dpe-rating.d { background-color: #e67e22; }
+.dpe-rating.e { background-color: #e74c3c; }
+.dpe-rating.f { background-color: #c0392b; }
+.dpe-rating.g { background-color: #8e44ad; }
+.dpe-rating.en\ cours { background-color: #ccc; color: #333; }
 
             .slider {
                 flex: 2;
@@ -324,6 +347,10 @@ align-self: center;
                         <p>${property.elevator ? 'Oui' : 'Non'}</p>
                     </div>
                 </div>
+<div class="dpe-bar">
+  <div class="dpe-label">DPE :</div>
+  <div class="dpe-rating ${property.dpe.toLowerCase()}">${property.dpe}</div>
+</div>
 
                 <!-- Année de construction -->
                 <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
