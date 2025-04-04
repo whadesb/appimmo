@@ -384,6 +384,7 @@ router.post('/add-property', authMiddleware, upload.fields([
             price,
             city,
             country,
+            dpe: dpe || 'En cours',
             createdBy: req.user._id,
             photos: [photo1, photo2]
         });
@@ -414,7 +415,7 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
             return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
         }
 
-        const { rooms, surface, price, city, country } = req.body;
+        const { rooms, surface, price, city, country, dpe } = req.body;
 
         property.rooms = rooms;
         property.surface = surface;
