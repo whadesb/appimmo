@@ -1274,23 +1274,34 @@ async function generateLandingPage(property) {
   color: white;
   font-weight: bold;
   font-size: 1rem;
-  margin: 1px 0;
+  margin: 2px 0;
   border-radius: 3px;
   opacity: 0.5;
+  transition: all 0.3s ease;
 }
 
-.bar.A { background-color: #009966; }
-.bar.B { background-color: #66CC00; }
-.bar.C { background-color: #FFCC00; }
-.bar.D { background-color: #FF9900; }
-.bar.E { background-color: #FF6600; }
-.bar.F { background-color: #FF3300; }
-.bar.G { background-color: #CC0000; }
+.bar.A { background-color: #009966; width: 40%; }
+.bar.B { background-color: #66CC00; width: 50%; }
+.bar.C { background-color: #FFCC00; width: 60%; }
+.bar.D { background-color: #FF9900; width: 70%; }
+.bar.E { background-color: #FF6600; width: 80%; }
+.bar.F { background-color: #FF3300; width: 90%; }
+.bar.G { background-color: #CC0000; width: 100%; }
 
-.bar.${property.dpe.toUpperCase()} {
+.bar.active {
   opacity: 1;
-  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
 }
+
+/* Style si DPE est "En cours" */
+.bar.pending {
+  background-color: #ccc !important;
+  color: #333;
+  width: 100% !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+}
+
 
 
             .slides {
@@ -1527,22 +1538,17 @@ align-self: center;
                         <p>${property.bathrooms || 'Non renseigné'}</p>
                     </div>
 
-         <div class="dpe-section">
-  ${property.dpe.toLowerCase() === 'en cours' ? `
-    <div class="dpe-label">DPE : En cours</div>
-  ` : `
-    <div class="dpe-label">DPE : ${property.dpe.toUpperCase()}</div>
-    <div class="dpe-bar">
-      <div class="bar A">A</div>
-      <div class="bar B">B</div>
-      <div class="bar C">C</div>
-      <div class="bar D">D</div>
-      <div class="bar E">E</div>
-      <div class="bar F">F</div>
-      <div class="bar G">G</div>
-    </div>
-  `}
+        <div class="dpe-section">
+  <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
+  <div class="dpe-bar">
+    ${['A','B','C','D','E','F','G'].map(letter => `
+      <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
+        ${letter}
+      </div>
+    `).join('')}
+  </div>
 </div>
+
 
 
                 </div>
