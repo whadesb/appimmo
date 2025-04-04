@@ -7,48 +7,39 @@ function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-// Hook mongoose pour transformer certains champs avant sauvegarde
+// ✅ D'abord tu déclares ton schema
+const propertySchema = new Schema({
+  rooms: { type: Number, required: true },
+  createdAt: { type: Date, default: Date.now },
+  bedrooms: { type: Number, required: true },
+  surface: { type: Number, required: true },
+  price: { type: Number, required: true },
+  city: { type: String, required: true },
+  country: { type: String, required: true },
+  description: { type: String, required: true, maxlength: 820 },
+  yearBuilt: { type: Number },
+  pool: { type: Boolean, default: false },
+  propertyType: { type: String, required: true },
+  wateringSystem: { type: Boolean, default: false },
+  carShelter: { type: Boolean, default: false },
+  parking: { type: Boolean, default: false },
+  caretakerHouse: { type: Boolean, default: false },
+  electricShutters: { type: Boolean, default: false },
+  outdoorLighting: { type: Boolean, default: false },
+  url: { type: String },
+  views: { type: Number, default: 0 },
+  createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  photos: [String]
+});
+
+// ✅ Ensuite tu ajoutes le hook .pre
 propertySchema.pre('save', function (next) {
-  if (this.city) {
-    this.city = capitalizeFirstLetter(this.city.trim());
-  }
-  if (this.country) {
-    this.country = capitalizeFirstLetter(this.country.trim());
-  }
-  if (this.propertyType) {
-    this.propertyType = capitalizeFirstLetter(this.propertyType.trim());
-  }
+  if (this.city) this.city = capitalizeFirstLetter(this.city.trim());
+  if (this.country) this.country = capitalizeFirstLetter(this.country.trim());
+  if (this.propertyType) this.propertyType = capitalizeFirstLetter(this.propertyType.trim());
   next();
 });
 
-
-
-const propertySchema = new Schema({
-    rooms: { type: Number, required: true },
-createdAt: { type: Date, default: Date.now },
-    bedrooms: { type: Number, required: true },
-    surface: { type: Number, required: true },
-    price: { type: Number, required: true },
-    city: { type: String, required: true },
-    country: { type: String, required: true },
-    description: { type: String, required: true, maxlength: 820 }, // Description ajoutée
-    yearBuilt: { type: Number, required: false },
-    pool: { type: Boolean, default: false },
-    propertyType: { type: String, required: true },
-    wateringSystem: { type: Boolean, default: false },
-    carShelter: { type: Boolean, default: false },
-    parking: { type: Boolean, default: false },
-    caretakerHouse: { type: Boolean, default: false },
-    electricShutters: { type: Boolean, default: false },
-    outdoorLighting: { type: Boolean, default: false },
-    url: { type: String, required: false },
-    createdAt: { type: Date, default: Date.now },
-    views: { type: Number, default: 0 },
-    createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
-    photos: [String],
-url: { type: String, required: false }
-});
-
+// ✅ Puis tu exportes
 const Property = mongoose.model('Property', propertySchema);
-
 module.exports = Property;
