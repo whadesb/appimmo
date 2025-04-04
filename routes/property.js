@@ -414,7 +414,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
-    const { rooms, surface, price, city, country } = req.body;
+    const { rooms, surface, price, city, country, dpe, description } = req.body;
 
     let photo1 = null;
     let photo2 = null;
@@ -447,6 +447,7 @@ router.post('/add-property', authMiddleware, upload.fields([
             city,
             country,
             dpe: dpe || 'En cours',
+    description: description || '',
             createdBy: req.user._id,
             photos: [photo1, photo2]
         });
