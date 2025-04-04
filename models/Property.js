@@ -7,7 +7,7 @@ function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-// Hook mongoose pour transformer city et country avant sauvegarde
+// Hook mongoose pour transformer certains champs avant sauvegarde
 propertySchema.pre('save', function (next) {
   if (this.city) {
     this.city = capitalizeFirstLetter(this.city.trim());
@@ -15,8 +15,12 @@ propertySchema.pre('save', function (next) {
   if (this.country) {
     this.country = capitalizeFirstLetter(this.country.trim());
   }
+  if (this.propertyType) {
+    this.propertyType = capitalizeFirstLetter(this.propertyType.trim());
+  }
   next();
 });
+
 
 
 const propertySchema = new Schema({
