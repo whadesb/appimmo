@@ -727,6 +727,21 @@ progress {
       <!-- SECTION: Photos -->
       <hr class="my-4">
       <h6 class="text-black mb-3"><i class="fa fa-image me-2"></i> Photos</h6>
+<div class="form-group">
+  <label for="dpe">Diagnostic de Performance Énergétique (DPE)</label>
+  <select class="form-control" id="dpe" name="dpe" required>
+    <option value="">-- Sélectionner --</option>
+    <option value="A">A - Excellent</option>
+    <option value="B">B - Très bon</option>
+    <option value="C">C - Bon</option>
+    <option value="D">D - Moyenne</option>
+    <option value="E">E - Passable</option>
+    <option value="F">F - Mauvais</option>
+    <option value="G">G - Très mauvais</option>
+    <option value="En cours">En cours</option>
+  </select>
+  <small class="form-text text-muted">Obligatoire pour les annonces, sauf si "En cours".</small>
+</div>
 
       <div class="form-group">
         <label for="photo1">Photo principale</label>
