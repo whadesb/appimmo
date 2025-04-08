@@ -774,7 +774,7 @@ app.get('/:lang/contact', (req, res) => {
    res.render('contact', {
     title: contactTranslations.title,
     i18n: i18n,
-    locale: locale, // ← C’est ça qui manque !
+    locale: locale, 
     messageEnvoye: messageEnvoye,
     currentPath: req.originalUrl
 });
