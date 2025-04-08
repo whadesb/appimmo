@@ -771,12 +771,13 @@ app.get('/:lang/contact', (req, res) => {
     const i18n = { ...globalTranslations, ...contactTranslations };
 
     // Rendre la page contact avec les traductions
-    res.render('contact', {
-        title: contactTranslations.title,
-        i18n: i18n, // Passer les traductions fusionnées
-        messageEnvoye: messageEnvoye,
-currentPath: req.originalUrl 
-    });
+   res.render('contact', {
+    title: contactTranslations.title,
+    i18n: i18n,
+    locale: locale, // ← C’est ça qui manque !
+    messageEnvoye: messageEnvoye,
+    currentPath: req.originalUrl
+});
 });
 
 app.post('/send-contact', async (req, res) => {
