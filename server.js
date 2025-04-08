@@ -1434,48 +1434,114 @@ async function generateLandingPage(property) {
             }
 
             @media screen and (max-width: 768px) {
-       
- .container {
-                    flex-direction: column;
-height: auto;
-                }
-                .slider {
-        height: 250px; /* Ajuster la hauteur */
-        margin-top: 20px; /* Ajoute une marge propre au-dessus du slider */
-    }
+  body {
+    height: auto !important;
+    display: block !important;
+    padding-bottom: 20px;
+  }
 
-    .slides img {
-        height: 250px; /* Même hauteur que le slider */
-    }
+  .container {
+    flex-direction: column;
+    height: auto;
+    width: 100%;
+  }
 
-                .property-details {
-                    grid-template-columns: repeat(2, 1fr);
-                }
+  .slider {
+    height: auto;
+    max-height: 300px;
+    position: relative;
+    overflow: hidden;
+    margin-top: 10px;
+  }
 
-                .property-info {
-                    padding: 20px;
-                }
+  .slides {
+    height: 100%;
+    position: relative;
+  }
 
-                .property-info h1 {
-                    font-size: 1.8rem;
-                }
+  .slides img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    opacity: 1;
+    animation: none; /* désactivation du slideshow automatique */
+    margin-bottom: 15px;
+  }
 
-                .property-info h2 {
-                    font-size: 1.2rem;
-                }
+  .property-info {
+    padding: 15px;
+    width: 100%;
+  }
 
-                .price {
-                    font-size: 1.2rem;
-                    width: 100%;
-                    padding: 10px;
-                    text-align: center;
-align-self: center;
-                }
+  .property-info h1 {
+    font-size: 1.6rem;
+    margin-top: 10px;
+  }
 
-                .property-description {
-                    font-size: 0.9rem;
-                }
-            }
+  .property-info h2 {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+  }
+
+  .property-details {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .detail {
+    font-size: 1rem;
+  }
+
+  .price {
+    font-size: 1.3rem;
+    width: 100%;
+    padding: 12px;
+    text-align: center;
+    margin-top: 20px;
+    background-color: #C4B990;
+    color: #fff;
+    font-weight: bold;
+  }
+
+  .property-description {
+    font-size: 1rem;
+    padding: 15px;
+    margin-top: 25px;
+    background-color: #f1f1f1;
+    border-radius: 6px;
+  }
+
+  .construction-year {
+    font-size: 1rem;
+    margin-top: 20px;
+    color: #444;
+  }
+
+  .dpe-section {
+    margin-top: 25px;
+  }
+
+  .dpe-label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .dpe-bar {
+    width: 100%;
+    max-width: 250px;
+    margin: auto;
+  }
+
+  .bar {
+    padding: 8px;
+    font-size: 0.95rem;
+    border-radius: 4px;
+  }
+}
+
 @media screen and (max-width: 500px) {
     .property-details {
         grid-template-columns: 1fr; /* Une seule colonne */
