@@ -1,0 +1,394 @@
+
+    <!DOCTYPE html>
+    <html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Propriété à Paris, Francea</title>
+
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'}); 
+        var f=d.getElementsByTagName(s)[0], j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:''; 
+        j.async=true; j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl; 
+        f.parentNode.insertBefore(j,f); 
+        })(window,document,'script','dataLayer','GTM-TF7HSC3N');</script>
+        <!-- End Google Tag Manager -->
+
+        <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet">
+        
+        <style>
+             * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                background-color: #ffffff;
+                color: #3c3c3c;
+                line-height: 1.5;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+            }
+
+            .container {
+                max-width: 1400px;
+                width: 100%;
+                display: flex;
+                flex-direction: row;
+                background-color: white;
+                border-radius: 0;
+                overflow: hidden;
+                margin: 0 auto;
+                height: 100%; /* Assure que le container occupe toute la hauteur de l'écran */
+            }
+
+            .slider {
+                flex: 2;
+                overflow: hidden;
+                position: relative;
+                width: 100%;
+                height: 100%;
+            }
+.dpe-section {
+  margin-top: 30px;
+}
+
+.dpe-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.dpe-bar {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+}
+
+.bar {
+  padding: 5px 10px;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  margin: 2px 0;
+  border-radius: 3px;
+  opacity: 0.5;
+  transition: all 0.3s ease;
+}
+
+.bar.A { background-color: #009966; width: 40%; }
+.bar.B { background-color: #66CC00; width: 50%; }
+.bar.C { background-color: #FFCC00; width: 60%; }
+.bar.D { background-color: #FF9900; width: 70%; }
+.bar.E { background-color: #FF6600; width: 80%; }
+.bar.F { background-color: #FF3300; width: 90%; }
+.bar.G { background-color: #CC0000; width: 100%; }
+
+.bar.active {
+  opacity: 1;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+}
+
+/* Style si DPE est "En cours" */
+.bar.pending {
+  background-color: #ccc !important;
+  color: #333;
+  width: 100% !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
+}
+
+
+
+            .slides {
+                display: flex;
+                position: absolute;
+                width: 100%;
+                height: 100%;
+            }
+
+            .slides img {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                opacity: 0;
+                animation: slide 10s infinite;
+            }
+
+            .slides img:nth-child(1) {
+                animation-delay: 0s;
+            }
+
+            .slides img:nth-child(2) {
+                animation-delay: 5s;
+            }
+
+            @keyframes slide {
+                0%, 50% {
+                    opacity: 1;
+                }
+                55%, 100% {
+                    opacity: 0;
+                }
+            }
+
+            .property-info {
+                flex: 0.8;
+                padding: 40px;
+                display: flex;
+                flex-direction: column;
+                justify-content:space-around;
+                height: 100%;
+            }
+
+            .property-lorem {
+                font-family: "Lora", serif;
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+                color: #3c3c3c;
+                border-bottom: 1px solid #C4B990;
+                padding-bottom: 5px;
+            }
+
+            .property-info h1 {
+                font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+                line-height: 1.1;
+                margin-bottom: .5rem;
+                font-weight: 400;
+                color: #3c3c3c;
+                font-size: 2.5rem;
+            }
+
+            .property-info h2 {
+                font-size: 1.6rem;
+                color: #2c2c2c;
+                font-weight: 300;
+                margin-bottom: 30px;
+            }
+
+            .property-details {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+
+            .detail {
+                display: flex;
+                align-items: center;
+            }
+
+            .detail i {
+                font-size: 1.3rem;
+                color: #C4B990;
+                margin-right: 8px;
+            }
+
+            .detail p {
+                font-size: 1rem;
+                color: #333;
+            }
+
+            .price {
+                background-color: #c4b9905f;
+                padding: 5px 15px;
+                font-size: 1.5rem;
+                font-weight: 400;
+                color: #212529;
+                text-align: center;
+                text-transform: uppercase;
+                margin-top: 30px;
+                width: fit-content;
+                align-self: flex-start;
+            }
+
+            .property-description {
+                margin-top: 20px;
+                padding: 15px;
+                background-color: #f7f7f7;
+                border: 1px solid #ddd;
+                font-size: 1rem;
+                color: #555;
+                text-align: justify;
+                line-height: 1.6;
+            }
+
+            .property-description .section-title {
+                font-size: 1.4rem;
+                font-weight: 400;
+                color: #3c3c3c;
+                margin-bottom: 10px;
+            }
+
+            .construction-year {
+                margin-top: 20px;
+                font-size: 1.2rem;
+                color: #3c3c3c;
+                font-weight: 300;
+            }
+
+            @media screen and (max-width: 768px) {
+       
+ .container {
+                    flex-direction: column;
+height: auto;
+                }
+                .slider {
+        height: 250px; /* Ajuster la hauteur */
+        margin-top: 20px; /* Ajoute une marge propre au-dessus du slider */
+    }
+
+    .slides img {
+        height: 250px; /* Même hauteur que le slider */
+    }
+
+                .property-details {
+                    grid-template-columns: repeat(2, 1fr);
+                }
+
+                .property-info {
+                    padding: 20px;
+                }
+
+                .property-info h1 {
+                    font-size: 1.8rem;
+                }
+
+                .property-info h2 {
+                    font-size: 1.2rem;
+                }
+
+                .price {
+                    font-size: 1.2rem;
+                    width: 100%;
+                    padding: 10px;
+                    text-align: center;
+align-self: center;
+                }
+
+                .property-description {
+                    font-size: 0.9rem;
+                }
+            }
+@media screen and (max-width: 500px) {
+    .property-details {
+        grid-template-columns: 1fr; /* Une seule colonne */
+        gap: 5px; /* Moins d’espace entre les éléments */
+    }
+}
+
+            @media screen and (min-width: 769px) {
+                body {
+                    height: 100vh;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                }
+
+                .container {
+                    height: 80vh;
+                    align-items: center;
+                }
+            }
+        </style>
+    </head>
+    <body>
+
+        <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+        <!-- End Google Tag Manager (noscript) -->
+
+        <div class="container">
+            <!-- Slider de la propriété -->
+            <div class="slider">
+                <div class="slides">
+                    <img src="/uploads/e09487b4-510c-482d-8086-c91281bcc6f5.png" alt="Image 1">
+                    <img src="/uploads/58400dc8-12dc-4d24-af58-b7bca331af2c.png" alt="Image 2">
+                </div>
+            </div>
+
+            <!-- Informations sur la propriété -->
+            <div class="property-info">
+                <p class="property-lorem">UAP Immo Annonce</p>
+
+                <h1>Propriété à Paris, Francea</h1>
+                <h2>Type de bien: Appartement</h2>
+
+                <!-- Détails de la propriété avec pictogrammes -->
+                <div class="property-details">
+                    <div class="detail">
+                        <i class="fal fa-home"></i>
+                        <p>1</p>
+                    </div>
+                    <div class="detail">
+                        <i class="fal fa-bed"></i>
+                        <p>2</p>
+                    </div>
+                    <div class="detail">
+                        <i class="fal fa-ruler-combined"></i>
+                        <p>11 m²</p>
+                    </div>
+                    <div class="detail">
+                        <i class="fal fa-shower"></i>
+                        <p>Non renseigné</p>
+                    </div>
+
+        <div class="dpe-section">
+  <div class="dpe-label">DPE : A</div>
+  <div class="dpe-bar">
+    
+      <div class="bar A active ">
+        A
+      </div>
+    
+      <div class="bar B  ">
+        B
+      </div>
+    
+      <div class="bar C  ">
+        C
+      </div>
+    
+      <div class="bar D  ">
+        D
+      </div>
+    
+      <div class="bar E  ">
+        E
+      </div>
+    
+      <div class="bar F  ">
+        F
+      </div>
+    
+      <div class="bar G  ">
+        G
+      </div>
+    
+  </div>
+</div>
+
+
+
+                </div>
+
+                <!-- Année de construction -->
+                <div class="construction-year">Année de construction: Non renseignée</div>
+
+                <!-- Brève description sous les pictogrammes -->
+                <div class="property-description">
+                    <div class="section-title">Visite guidée</div>
+                    test
+                </div>
+                <div class="price">Prix: 1 500 000 €</div>
+            </div>
+        </div>
+
+    </body>
+    </html>
