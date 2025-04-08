@@ -744,11 +744,12 @@ progress {
 </div>
 
       <div class="form-group">
-        <label for="photo1">Photo principale <span class="text-danger">*</span></label>
-        <label for="photo1">Photo principale <span style="color:red">*</span></label>
-        <progress id="progress1" value="0" max="100" class="hidden"></progress>
-        <span id="status1" class="hidden text-success">Chargement...</span>
-      </div>
+  <label for="photo1">Photo principale <span class="text-danger">*</span></label>
+  <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
+  <progress id="progress1" value="0" max="100" class="hidden"></progress>
+  <span id="status1" class="hidden text-success">Chargement...</span>
+</div>
+
 
       <div class="form-group">
         <label for="photo2">Photo secondaire <span style="color:red">*</span></label>
