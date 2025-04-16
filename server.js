@@ -1202,22 +1202,23 @@ async function generateLandingPage(property) {
     <!DOCTYPE html>
     <html lang="fr">
     <head>
+ <!-- Google Tag Manager -->
+        <script>
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','${GTM_ID}');
+        </script>
+        <!-- Fin Google Tag Manager -->
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="ie=edge">
         <title>Propriété à ${property.city}, ${property.country}</title>
 
-        <!-- Google Tag Manager -->
-        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(), event:'gtm.js'}); 
-        var f=d.getElementsByTagName(s)[0], j=d.createElement(s), dl=l!='dataLayer'?'&l='+l:''; 
-        j.async=true; j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl; 
-        f.parentNode.insertBefore(j,f); 
-        })(window,document,'script','dataLayer','${GTM_ID}');</script>
-        <!-- End Google Tag Manager -->
-
         <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet">
-        
-        <style>
+
+         <style>
              * {
                 margin: 0;
                 padding: 0;
@@ -1246,29 +1247,6 @@ async function generateLandingPage(property) {
                 margin: 0 auto;
                 height: 100%; /* Assure que le container occupe toute la hauteur de l'écran */
             }
-
-            .slider {
-                flex: 2;
-                overflow: hidden;
-                position: relative;
-                width: 100%;
-                height: 100%;
-            }
-.dpe-section {
-  margin-top: 30px;
-}
-
-.dpe-label {
-  font-weight: bold;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-}
-
-.dpe-bar {
-  display: flex;
-  flex-direction: column;
-  width: 200px;
-}
 .additional-info-desktop {
             display: none;
             margin-top: 40px;
@@ -1286,6 +1264,21 @@ async function generateLandingPage(property) {
             margin-bottom: 15px;
         }
 
+.dpe-section {
+  margin-top: 30px;
+}
+
+.dpe-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.dpe-bar {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+}
 
 .bar {
   padding: 5px 10px;
@@ -1321,6 +1314,14 @@ async function generateLandingPage(property) {
 }
 
 
+
+            .slider {
+                flex: 2;
+                overflow: hidden;
+                position: relative;
+                width: 100%;
+                height: 100%;
+            }
 
             .slides {
                 display: flex;
@@ -1449,8 +1450,18 @@ async function generateLandingPage(property) {
                 color: #3c3c3c;
                 font-weight: 300;
             }
+    hr.divider {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 40px auto 20px;
+      width: 90%;
+    }
 
-            @media screen and (max-width: 768px) {
+    .extra-info-desktop {
+      display: none;
+    }
+
+           @media screen and (max-width: 768px) {
   body {
     height: auto !important;
     display: block !important;
@@ -1557,6 +1568,9 @@ async function generateLandingPage(property) {
     font-size: 0.95rem;
     border-radius: 4px;
   }
+.extra-info-desktop {
+        display: block;
+      }
 }
 
 @media screen and (max-width: 500px) {
@@ -1566,7 +1580,7 @@ async function generateLandingPage(property) {
     }
 }
 
-            @media screen and (min-width: 769px) {
+           @media screen and (min-width: 769px) {
   html, body {
     height: auto;
     overflow-y: auto;
@@ -1578,9 +1592,6 @@ async function generateLandingPage(property) {
     align-items: flex-start;
     padding: 30px 0;
   }
-.additional-info-desktop {
-                display: block;
-            }
 
   .container {
     height: auto;
@@ -1602,78 +1613,73 @@ async function generateLandingPage(property) {
     opacity: 0;
     animation: slide 10s infinite;
   }
+.additional-info-desktop {
+                display: block;
+            }
+.extra-info-desktop {
+        display: block;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 20px 60px;
+      }
 }
 
         </style>
     </head>
     <body>
-
-        <!-- Google Tag Manager (noscript) -->
-        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-        <!-- End Google Tag Manager (noscript) -->
+<!-- Google Tag Manager (noscript) -->
+        <noscript>
+          <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" 
+          height="0" width="0" style="display:none;visibility:hidden"></iframe>
+        </noscript>
+        <!-- Fin Google Tag Manager (noscript) -->
 
         <div class="container">
-    <!-- Slider de la propriété -->
     <div class="slider">
-        <div class="slides">
-            <img src="/uploads/${property.photos[0] || 'default.jpg'}" alt="Image 1">
-            <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2">
-        </div>
+      <div class="slides">
+        <img src="/uploads/${property.photos[0] || 'default.jpg'}" alt="Image 1" />
+        <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2" />
+      </div>
     </div>
 
-    <!-- Informations sur la propriété -->
     <div class="property-info">
-        <p class="property-lorem">UAP Immo Annonce</p>
+      <p class="property-lorem">UAP Immo Annonce</p>
+      <h1>Propriété à ${property.city}, ${property.country}</h1>
+      <h2>Type de bien: ${property.propertyType}</h2>
 
-        <h1>Propriété à ${property.city}, ${property.country}</h1>
-        <h2>Type de bien: ${property.propertyType}</h2>
+      <div class="property-details">
+        <div class="detail"><i class="fal fa-home"></i><p>${property.rooms}</p></div>
+        <div class="detail"><i class="fal fa-bed"></i><p>${property.bedrooms}</p></div>
+        <div class="detail"><i class="fal fa-ruler-combined"></i><p>${property.surface} m²</p></div>
+        <div class="detail"><i class="fal fa-shower"></i><p>${property.bathrooms || 'Non renseigné'}</p></div>
+      </div>
 
-        <div class="property-details">
-            <div class="detail">
-                <i class="fal fa-home"></i>
-                <p>${property.rooms}</p>
-            </div>
-            <div class="detail">
-                <i class="fal fa-bed"></i>
-                <p>${property.bedrooms}</p>
-            </div>
-            <div class="detail">
-                <i class="fal fa-ruler-combined"></i>
-                <p>${property.surface} m²</p>
-            </div>
-            <div class="detail">
-                <i class="fal fa-shower"></i>
-                <p>${property.bathrooms || 'Non renseigné'}</p>
-            </div>
-        </div>
+      <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
 
-        <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
+      <div class="property-description">
+        <div class="section-title">Visite guidée</div>
+        ${property.description || 'Aucune description fournie.'}
+      </div>
 
-        <div class="property-description">
-            <div class="section-title">Visite guidée</div>
-            ${property.description || 'Aucune description fournie.'}
-        </div>
-
-        <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
-
-        <!-- Section DPE pour Desktop uniquement -->
-        <div class="additional-info-desktop">
-            <hr>
-            <h3 class="complement-title">Informations complémentaires</h3>
-            <div class="dpe-section">
-                <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
-                <div class="dpe-bar">
-                    ${['A','B','C','D','E','F','G'].map(letter => `
-                        <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
-                            ${letter}
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        </div>
+      <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
     </div>
-</div>
+  </div>
 
+  <!-- SECTION DPE EN DESSOUS EN VERSION DESKTOP -->
+  <div class="extra-info-desktop">
+    <hr class="divider" />
+    <h2>Informations complémentaires</h2>
+    <div class="dpe-section">
+      <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
+      <div class="dpe-bar">
+        ${['A','B','C','D','E','F','G'].map(letter => `
+          <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
+            ${letter}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  </div>
 </body>
     </html>`;
 
