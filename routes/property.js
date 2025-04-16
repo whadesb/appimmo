@@ -274,6 +274,16 @@ async function generateLandingPage(property) {
                 color: #3c3c3c;
                 font-weight: 300;
             }
+    hr.divider {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin: 40px auto 20px;
+      width: 90%;
+    }
+
+    .extra-info-desktop {
+      display: none;
+    }
 
            @media screen and (max-width: 768px) {
   body {
@@ -382,6 +392,9 @@ async function generateLandingPage(property) {
     font-size: 0.95rem;
     border-radius: 4px;
   }
+.extra-info-desktop {
+        display: block;
+      }
 }
 
 @media screen and (max-width: 500px) {
@@ -427,6 +440,12 @@ async function generateLandingPage(property) {
 .additional-info-desktop {
                 display: block;
             }
+.extra-info-desktop {
+        display: block;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 0 20px 60px;
+      }
 }
 
         </style>
@@ -439,68 +458,52 @@ async function generateLandingPage(property) {
         </noscript>
         <!-- Fin Google Tag Manager (noscript) -->
 
-       <div class="container">
-    <!-- Slider de la propriété -->
+        <div class="container">
     <div class="slider">
-        <div class="slides">
-            <img src="/uploads/${property.photos[0] || 'default.jpg'}" alt="Image 1">
-            <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2">
-        </div>
+      <div class="slides">
+        <img src="/uploads/${property.photos[0] || 'default.jpg'}" alt="Image 1" />
+        <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2" />
+      </div>
     </div>
 
-    <!-- Informations sur la propriété -->
     <div class="property-info">
-        <p class="property-lorem">UAP Immo Annonce</p>
+      <p class="property-lorem">UAP Immo Annonce</p>
+      <h1>Propriété à ${property.city}, ${property.country}</h1>
+      <h2>Type de bien: ${property.propertyType}</h2>
 
-        <h1>Propriété à ${property.city}, ${property.country}</h1>
-        <h2>Type de bien: ${property.propertyType}</h2>
+      <div class="property-details">
+        <div class="detail"><i class="fal fa-home"></i><p>${property.rooms}</p></div>
+        <div class="detail"><i class="fal fa-bed"></i><p>${property.bedrooms}</p></div>
+        <div class="detail"><i class="fal fa-ruler-combined"></i><p>${property.surface} m²</p></div>
+        <div class="detail"><i class="fal fa-shower"></i><p>${property.bathrooms || 'Non renseigné'}</p></div>
+      </div>
 
-        <div class="property-details">
-            <div class="detail">
-                <i class="fal fa-home"></i>
-                <p>${property.rooms}</p>
-            </div>
-            <div class="detail">
-                <i class="fal fa-bed"></i>
-                <p>${property.bedrooms}</p>
-            </div>
-            <div class="detail">
-                <i class="fal fa-ruler-combined"></i>
-                <p>${property.surface} m²</p>
-            </div>
-            <div class="detail">
-                <i class="fal fa-shower"></i>
-                <p>${property.bathrooms || 'Non renseigné'}</p>
-            </div>
-        </div>
+      <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
 
-        <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
+      <div class="property-description">
+        <div class="section-title">Visite guidée</div>
+        ${property.description || 'Aucune description fournie.'}
+      </div>
 
-        <div class="property-description">
-            <div class="section-title">Visite guidée</div>
-            ${property.description || 'Aucune description fournie.'}
-        </div>
-
-        <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
-
-        <!-- Section DPE pour Desktop uniquement -->
-        <div class="additional-info-desktop">
-            <hr>
-            <h3 class="complement-title">Informations complémentaires</h3>
-            <div class="dpe-section">
-                <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
-                <div class="dpe-bar">
-                    ${['A','B','C','D','E','F','G'].map(letter => `
-                        <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
-                            ${letter}
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        </div>
+      <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
     </div>
-</div>
+  </div>
 
+  <!-- SECTION DPE EN DESSOUS EN VERSION DESKTOP -->
+  <div class="extra-info-desktop">
+    <hr class="divider" />
+    <h2>Informations complémentaires</h2>
+    <div class="dpe-section">
+      <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
+      <div class="dpe-bar">
+        ${['A','B','C','D','E','F','G'].map(letter => `
+          <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
+            ${letter}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  </div>
 </body>
     </html>`;
 
