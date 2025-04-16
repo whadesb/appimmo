@@ -1244,14 +1244,18 @@ async function generateLandingPage(property) {
       height: auto;
       padding: 40px 20px;
       gap: 30px;
+align-items: stretch;
     }
 
-    .slider {
-      flex: 2;
-      overflow: hidden;
-      position: relative;
-      max-height: 700px;
-    }
+    
+.slider {
+  flex: 2;
+  overflow: hidden;
+  position: relative;
+  height: auto; 
+  display: flex;
+  flex-direction: column;
+}
 
     .slides {
       display: flex;
@@ -1277,13 +1281,14 @@ async function generateLandingPage(property) {
       55%, 100% { opacity: 0; }
     }
 
-    .property-info {
-      flex: 0.8;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      gap: 20px;
-    }
+   .property-info {
+  flex: 0.8;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%; 
+}
 
     .property-lorem {
       font-size: 1.2rem;
