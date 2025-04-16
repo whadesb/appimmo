@@ -23,442 +23,255 @@ async function generateLandingPage(property) {
     const GTM_ID = 'GTM-TF7HSC3N'; 
     const GA_MEASUREMENT_ID = 'G-0LN60RQ12K';  
     const template = `
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
- <!-- Google Tag Manager -->
-        <script>
-          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','${GTM_ID}');
-        </script>
-        <!-- Fin Google Tag Manager -->
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta http-equiv="X-UA-Compatible" content="ie=edge">
-        <title>Propriété à ${property.city}, ${property.country}</title>
+   <!DOCTYPE html>
+<html lang="fr">
+<head>
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','${GTM_ID}');
+  </script>
+  <!-- Fin Google Tag Manager -->
 
-        <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Propriété à ${property.city}, ${property.country}</title>
 
-         <style>
-             * {
-                margin: 0;
-                padding: 0;
-                box-sizing: border-box;
-            }
+  <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
 
-            body {
-                font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-                background-color: #ffffff;
-                color: #3c3c3c;
-                line-height: 1.5;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-            }
-
-            .container {
-                max-width: 1400px;
-                width: 100%;
-                display: flex;
-                flex-direction: row;
-                background-color: white;
-                border-radius: 0;
-                overflow: hidden;
-                margin: 0 auto;
-                height: 100%; /* Assure que le container occupe toute la hauteur de l'écran */
-            }
-.additional-info-desktop {
-            display: none;
-            margin-top: 40px;
-        }
-
-        .additional-info-desktop hr {
-            border: none;
-            border-top: 1px solid #ccc;
-            margin-bottom: 15px;
-        }
-
-        .complement-title {
-            font-size: 1.3rem;
-            color: #333;
-            margin-bottom: 15px;
-        }
-
-.dpe-section {
-  margin-top: 30px;
-}
-
-.dpe-label {
-  font-weight: bold;
-  margin-bottom: 10px;
-  font-size: 1.1rem;
-}
-
-.dpe-bar {
-  display: flex;
-  flex-direction: column;
-  width: 200px;
-}
-
-.bar {
-  padding: 5px 10px;
-  color: white;
-  font-weight: bold;
-  font-size: 1rem;
-  margin: 2px 0;
-  border-radius: 3px;
-  opacity: 0.5;
-  transition: all 0.3s ease;
-}
-
-.bar.A { background-color: #009966; width: 40%; }
-.bar.B { background-color: #66CC00; width: 50%; }
-.bar.C { background-color: #FFCC00; width: 60%; }
-.bar.D { background-color: #FF9900; width: 70%; }
-.bar.E { background-color: #FF6600; width: 80%; }
-.bar.F { background-color: #FF3300; width: 90%; }
-.bar.G { background-color: #CC0000; width: 100%; }
-
-.bar.active {
-  opacity: 1;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
-}
-
-/* Style si DPE est "En cours" */
-.bar.pending {
-  background-color: #ccc !important;
-  color: #333;
-  width: 100% !important;
-  opacity: 1 !important;
-  box-shadow: none !important;
-}
-
-
-
-            .slider {
-                flex: 2;
-                overflow: hidden;
-                position: relative;
-                width: 100%;
-                height: 100%;
-            }
-
-            .slides {
-                display: flex;
-                position: absolute;
-                width: 100%;
-                height: 100%;
-            }
-
-            .slides img {
-                position: absolute;
-                width: 100%;
-                height: 100%;
-                object-fit: cover;
-                opacity: 0;
-                animation: slide 10s infinite;
-            }
-
-            .slides img:nth-child(1) {
-                animation-delay: 0s;
-            }
-
-            .slides img:nth-child(2) {
-                animation-delay: 5s;
-            }
-
-            @keyframes slide {
-                0%, 50% {
-                    opacity: 1;
-                }
-                55%, 100% {
-                    opacity: 0;
-                }
-            }
-
-            .property-info {
-                flex: 0.8;
-                padding: 40px;
-                display: flex;
-                flex-direction: column;
-                justify-content:space-around;
-                height: 100%;
-            }
-
-            .property-lorem {
-                font-family: "Lora", serif;
-                font-size: 1.2rem;
-                margin-bottom: 1rem;
-                color: #3c3c3c;
-                border-bottom: 1px solid #C4B990;
-                padding-bottom: 5px;
-            }
-
-            .property-info h1 {
-                font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
-                line-height: 1.1;
-                margin-bottom: .5rem;
-                font-weight: 400;
-                color: #3c3c3c;
-                font-size: 2.5rem;
-            }
-
-            .property-info h2 {
-                font-size: 1.6rem;
-                color: #2c2c2c;
-                font-weight: 300;
-                margin-bottom: 30px;
-            }
-
-            .property-details {
-                display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                gap: 10px;
-                margin-bottom: 20px;
-            }
-
-            .detail {
-                display: flex;
-                align-items: center;
-            }
-
-            .detail i {
-                font-size: 1.3rem;
-                color: #C4B990;
-                margin-right: 8px;
-            }
-
-            .detail p {
-                font-size: 1rem;
-                color: #333;
-            }
-
-            .price {
-                background-color: #c4b9905f;
-                padding: 5px 15px;
-                font-size: 1.5rem;
-                font-weight: 400;
-                color: #212529;
-                text-align: center;
-                text-transform: uppercase;
-                margin-top: 30px;
-                width: fit-content;
-                align-self: flex-start;
-            }
-
-            .property-description {
-                margin-top: 20px;
-                padding: 15px;
-                background-color: #f7f7f7;
-                border: 1px solid #ddd;
-                font-size: 1rem;
-                color: #555;
-                text-align: justify;
-                line-height: 1.6;
-            }
-
-            .property-description .section-title {
-                font-size: 1.4rem;
-                font-weight: 400;
-                color: #3c3c3c;
-                margin-bottom: 10px;
-            }
-
-            .construction-year {
-                margin-top: 20px;
-                font-size: 1.2rem;
-                color: #3c3c3c;
-                font-weight: 300;
-            }
-    hr.divider {
-      border: none;
-      border-top: 1px solid #ddd;
-      margin: 40px auto 20px;
-      width: 90%;
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
+    body {
+      font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      background-color: #ffffff;
+      color: #3c3c3c;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1400px;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      background-color: white;
+      border-radius: 0;
+      overflow: hidden;
+      margin: 0 auto;
+      height: auto;
+      padding: 40px 20px;
+      gap: 30px;
+    }
+
+    .slider {
+      flex: 2;
+      overflow: hidden;
+      position: relative;
+      max-height: 700px;
+    }
+
+    .slides {
+      display: flex;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+    }
+
+    .slides img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      animation: slide 10s infinite;
+    }
+
+    .slides img:nth-child(1) { animation-delay: 0s; }
+    .slides img:nth-child(2) { animation-delay: 5s; }
+
+    @keyframes slide {
+      0%, 50% { opacity: 1; }
+      55%, 100% { opacity: 0; }
+    }
+
+    .property-info {
+      flex: 0.8;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      gap: 20px;
+    }
+
+    .property-lorem {
+      font-size: 1.2rem;
+      border-bottom: 1px solid #C4B990;
+      padding-bottom: 5px;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      font-weight: 400;
+    }
+
+    h2 {
+      font-size: 1.6rem;
+      font-weight: 300;
+    }
+
+    .property-details {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .detail {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .detail i {
+      color: #C4B990;
+    }
+
+    .construction-year {
+      font-size: 1.1rem;
+    }
+
+    .property-description {
+      background: #f7f7f7;
+      padding: 15px;
+      border: 1px solid #ddd;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      margin-bottom: 10px;
+    }
+
+    .price {
+      background-color: #c4b9905f;
+      padding: 10px 20px;
+      font-size: 1.5rem;
+      font-weight: 500;
+      width: fit-content;
+      text-transform: uppercase;
+    }
+
+    /* Bloc Infos complémentaires */
     .extra-info-desktop {
       display: none;
+      max-width: 1400px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #ffffff;
     }
 
-           @media screen and (max-width: 768px) {
-  body {
-    height: auto !important;
-    display: block !important;
-    padding-bottom: 20px;
-  }
-
-  .container {
-    flex-direction: column;
-    height: auto;
-    width: 100%;
-  }
-
-  .slider {
-    height: auto;
-    max-height: 300px;
-    position: relative;
-    overflow: hidden;
-    margin-top: 10px;
-  }
-
-  .slides {
-    height: 100%;
-    position: relative;
-  }
-
-  .slides img {
-    position: relative;
-    width: 100%;
-    height: auto;
-    object-fit: cover;
-    opacity: 1;
-    animation: none; /* désactivation du slideshow automatique */
-    margin-bottom: 15px;
-  }
-
-  .property-info {
-    padding: 15px;
-    width: 100%;
-  }
-
-  .property-info h1 {
-    font-size: 1.6rem;
-    margin-top: 10px;
-  }
-
-  .property-info h2 {
-    font-size: 1.2rem;
-    margin-bottom: 20px;
-  }
-
-  .property-details {
-    grid-template-columns: 1fr;
-    gap: 10px;
-    margin-bottom: 20px;
-  }
-
-  .detail {
-    font-size: 1rem;
-  }
-
-  .price {
-    font-size: 1.3rem;
-    width: 100%;
-    padding: 12px;
-    text-align: center;
-    margin-top: 20px;
-    background-color: #C4B990;
-    color: #fff;
-    font-weight: bold;
-  }
-
-  .property-description {
-    font-size: 1rem;
-    padding: 15px;
-    margin-top: 25px;
-    background-color: #f1f1f1;
-    border-radius: 6px;
-  }
-
-  .construction-year {
-    font-size: 1rem;
-    margin-top: 20px;
-    color: #444;
-  }
-
-  .dpe-section {
-    margin-top: 25px;
-  }
-
-  .dpe-label {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 8px;
-  }
-
-  .dpe-bar {
-    width: 100%;
-    max-width: 250px;
-    margin: auto;
-  }
-
-  .bar {
-    padding: 8px;
-    font-size: 0.95rem;
-    border-radius: 4px;
-  }
-.extra-info-desktop {
-        display: block;
-      }
-}
-
-@media screen and (max-width: 500px) {
-    .property-details {
-        grid-template-columns: 1fr; /* Une seule colonne */
-        gap: 5px; /* Moins d’espace entre les éléments */
+    .extra-info-desktop hr {
+      border: none;
+      border-top: 1px solid #ddd;
+      margin-bottom: 25px;
     }
-}
 
-           @media screen and (min-width: 769px) {
-  html, body {
-    height: auto;
-    overflow-y: auto;
-  }
+    .extra-info-desktop h2 {
+      font-size: 1.6rem;
+      margin-bottom: 20px;
+    }
 
-  body {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding: 30px 0;
-  }
+    .dpe-section {
+      margin-top: 10px;
+    }
 
-  .container {
-    height: auto;
-    max-height: none;
-    align-items: flex-start;
-    flex-direction: row;
-  }
- .slider {
-    height: 100vh;
-    max-height: 700px;
-  }
+    .dpe-label {
+      font-weight: bold;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
 
-  .slides {
-    position: relative;
-    height: 100%;
-  }
+    .dpe-bar {
+      display: flex;
+      flex-direction: column;
+      width: 220px;
+    }
 
-  .slides img {
-    opacity: 0;
-    animation: slide 10s infinite;
-  }
-.additional-info-desktop {
-                display: block;
-            }
-.extra-info-desktop {
-        display: block;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 0 20px 60px;
+    .bar {
+      padding: 6px 12px;
+      color: white;
+      font-weight: bold;
+      font-size: 1rem;
+      margin: 2px 0;
+      border-radius: 4px;
+      opacity: 0.5;
+    }
+
+    .bar.A { background-color: #009966; width: 40%; }
+    .bar.B { background-color: #66CC00; width: 50%; }
+    .bar.C { background-color: #FFCC00; width: 60%; }
+    .bar.D { background-color: #FF9900; width: 70%; }
+    .bar.E { background-color: #FF6600; width: 80%; }
+    .bar.F { background-color: #FF3300; width: 90%; }
+    .bar.G { background-color: #CC0000; width: 100%; }
+
+    .bar.active {
+      opacity: 1;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+    }
+
+    .bar.pending {
+      background-color: #ccc !important;
+      color: #333;
+      width: 100% !important;
+      opacity: 1 !important;
+      box-shadow: none !important;
+    }
+
+    /* Responsive mobile */
+    @media screen and (max-width: 768px) {
+      .container {
+        flex-direction: column;
       }
-}
 
-        </style>
-    </head>
-    <body>
-<!-- Google Tag Manager (noscript) -->
-        <noscript>
-          <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" 
-          height="0" width="0" style="display:none;visibility:hidden"></iframe>
-        </noscript>
-        <!-- Fin Google Tag Manager (noscript) -->
+      .slides, .slides img {
+        position: relative;
+        height: auto;
+        opacity: 1;
+        animation: none;
+      }
 
-        <div class="container">
+      .extra-info-desktop {
+        display: block;
+      }
+
+      .dpe-bar {
+        width: 100%;
+        max-width: 250px;
+      }
+    }
+
+    /* Affiche le bloc en desktop */
+    @media screen and (min-width: 769px) {
+      .extra-info-desktop {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Google Tag Manager (noscript) -->
+  <noscript>
+    <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  </noscript>
+
+  <!-- Bloc principal -->
+  <div class="container">
     <div class="slider">
       <div class="slides">
         <img src="/uploads/${property.photos[0] || 'default.jpg'}" alt="Image 1" />
@@ -489,9 +302,9 @@ async function generateLandingPage(property) {
     </div>
   </div>
 
-  <!-- SECTION DPE EN DESSOUS EN VERSION DESKTOP -->
+  <!-- Bloc secondaire en dessous -->
   <div class="extra-info-desktop">
-    <hr class="divider" />
+    <hr />
     <h2>Informations complémentaires</h2>
     <div class="dpe-section">
       <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
@@ -504,8 +317,9 @@ async function generateLandingPage(property) {
       </div>
     </div>
   </div>
+
 </body>
-    </html>`;
+</html>`;
 
   const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
   fs.writeFileSync(filePath, template);
