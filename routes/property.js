@@ -265,6 +265,9 @@ align-items: stretch;
       .extra-info-desktop {
         display: block;
       }
+.container {
+    height: 75vh;
+  }
     }
   </style>
 </head>
