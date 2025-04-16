@@ -374,19 +374,27 @@ async function generateLandingPage(property) {
     }
 }
 
-            @media screen and (min-width: 769px) {
-                body {
-                    height: 100vh;
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }
+           @media screen and (min-width: 769px) {
+  html, body {
+    height: auto;
+    overflow-y: auto;
+  }
 
-                .container {
-                    height: 80vh;
-                    align-items: center;
-                }
-            }
+  body {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 30px 0;
+  }
+
+  .container {
+    height: auto;
+    max-height: none;
+    align-items: flex-start;
+    flex-direction: row;
+  }
+}
+
         </style>
     </head>
     <body>
