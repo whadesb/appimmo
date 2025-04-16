@@ -393,6 +393,20 @@ async function generateLandingPage(property) {
     align-items: flex-start;
     flex-direction: row;
   }
+ .slider {
+    height: 100vh;
+    max-height: 700px;
+  }
+
+  .slides {
+    position: relative;
+    height: 100%;
+  }
+
+  .slides img {
+    opacity: 0;
+    animation: slide 10s infinite;
+  }
 }
 
         </style>
