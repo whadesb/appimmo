@@ -1202,20 +1202,21 @@ async function generateLandingPage(property) {
   <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Propriété à ${property.city}, ${property.country}</title>
-
   <!-- Google Tag Manager -->
   <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start': new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
     j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','${GTM_ID}');
   </script>
   <!-- Fin Google Tag Manager -->
 
-  <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Propriété à ${property.city}, ${property.country}</title>
+
+  <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
 
   <style>
     * {
@@ -1225,7 +1226,7 @@ async function generateLandingPage(property) {
     }
 
     body {
-      font-family: "Lora", "Source Sans Pro", sans-serif;
+      font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
       background-color: #ffffff;
       color: #3c3c3c;
       line-height: 1.5;
@@ -1233,32 +1234,38 @@ async function generateLandingPage(property) {
 
     .container {
       max-width: 1400px;
-      margin: 0 auto;
-      padding: 40px 20px;
+      width: 100%;
       display: flex;
       flex-direction: row;
+      background-color: white;
+      border-radius: 0;
+      overflow: hidden;
+      margin: 0 auto;
+      height: auto;
+      padding: 40px 20px;
       gap: 30px;
     }
 
     .slider {
       flex: 2;
-      position: relative;
       overflow: hidden;
+      position: relative;
       max-height: 700px;
     }
 
     .slides {
+      display: flex;
       position: absolute;
       width: 100%;
       height: 100%;
     }
 
     .slides img {
+      position: absolute;
       width: 100%;
       height: 100%;
       object-fit: cover;
       opacity: 0;
-      position: absolute;
       animation: slide 10s infinite;
     }
 
@@ -1274,6 +1281,7 @@ async function generateLandingPage(property) {
       flex: 0.8;
       display: flex;
       flex-direction: column;
+      justify-content: space-around;
       gap: 20px;
     }
 
@@ -1335,11 +1343,11 @@ async function generateLandingPage(property) {
 
     /* Bloc Infos complémentaires */
     .extra-info-desktop {
+      display: none;
       max-width: 1400px;
-      margin: 0 auto 60px;
+      margin: 40px auto;
       padding: 20px;
       background: #ffffff;
-      display: none;
     }
 
     .extra-info-desktop hr {
@@ -1404,7 +1412,6 @@ async function generateLandingPage(property) {
     @media screen and (max-width: 768px) {
       .container {
         flex-direction: column;
-        padding: 20px;
       }
 
       .slides, .slides img {
@@ -1416,7 +1423,6 @@ async function generateLandingPage(property) {
 
       .extra-info-desktop {
         display: block;
-        padding: 20px;
       }
 
       .dpe-bar {
@@ -1440,7 +1446,7 @@ async function generateLandingPage(property) {
     <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
   </noscript>
 
-  <!-- Premier container (slider + infos) -->
+  <!-- Bloc principal -->
   <div class="container">
     <div class="slider">
       <div class="slides">
@@ -1472,7 +1478,7 @@ async function generateLandingPage(property) {
     </div>
   </div>
 
-  <!-- Bloc en dessous = Informations complémentaires -->
+  <!-- Bloc secondaire en dessous -->
   <div class="extra-info-desktop">
     <hr />
     <h2>Informations complémentaires</h2>
