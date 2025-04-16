@@ -71,6 +71,23 @@ async function generateLandingPage(property) {
                 margin: 0 auto;
                 height: 100%; /* Assure que le container occupe toute la hauteur de l'écran */
             }
+.additional-info-desktop {
+            display: none;
+            margin-top: 40px;
+        }
+
+        .additional-info-desktop hr {
+            border: none;
+            border-top: 1px solid #ccc;
+            margin-bottom: 15px;
+        }
+
+        .complement-title {
+            font-size: 1.3rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
 .dpe-section {
   margin-top: 30px;
 }
@@ -407,6 +424,9 @@ async function generateLandingPage(property) {
     opacity: 0;
     animation: slide 10s infinite;
   }
+.additional-info-desktop {
+                display: block;
+            }
 }
 
         </style>
@@ -419,76 +439,69 @@ async function generateLandingPage(property) {
         </noscript>
         <!-- Fin Google Tag Manager (noscript) -->
 
-        <div class="container">
-            <!-- Slider de la propriété -->
-            <div class="slider">
-                <div class="slides">
-                    <img src="/uploads/${property.photos[0] || 'default.jpg'}" alt="Image 1">
-                    <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2">
-                </div>
+       <div class="container">
+    <!-- Slider de la propriété -->
+    <div class="slider">
+        <div class="slides">
+            <img src="/uploads/${property.photos[0] || 'default.jpg'}" alt="Image 1">
+            <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2">
+        </div>
+    </div>
+
+    <!-- Informations sur la propriété -->
+    <div class="property-info">
+        <p class="property-lorem">UAP Immo Annonce</p>
+
+        <h1>Propriété à ${property.city}, ${property.country}</h1>
+        <h2>Type de bien: ${property.propertyType}</h2>
+
+        <div class="property-details">
+            <div class="detail">
+                <i class="fal fa-home"></i>
+                <p>${property.rooms}</p>
             </div>
-
-            <!-- Informations sur la propriété -->
-            <div class="property-info">
-                <p class="property-lorem">UAP Immo Annonce</p>
-
-                <h1>Propriété à ${property.city}, ${property.country}</h1>
-                <h2>Type de bien: ${property.propertyType}</h2>
-
-                <!-- Détails de la propriété avec pictogrammes -->
-                <div class="property-details">
-                    <div class="detail">
-                        <i class="fal fa-home"></i>
-                        <p>${property.rooms}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-bed"></i>
-                        <p>${property.bedrooms}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-ruler-combined"></i>
-                        <p>${property.surface} m²</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-shower"></i>
-                        <p>${property.bathrooms || 'Non renseigné'}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-toilet"></i>
-                        <p>${property.toilets || 'Non renseigné'}</p>
-                    </div>
-                    <div class="detail">
-                        <i class="fal fa-arrow-up"></i>
-                        <p>${property.elevator ? 'Oui' : 'Non'}</p>
-                    </div>
-                </div>
-<div class="dpe-section">
-  <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
-  <div class="dpe-bar">
-    ${['A','B','C','D','E','F','G'].map(letter => `
-      <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
-        ${letter}
-      </div>
-    `).join('')}
-  </div>
-</div>
-
-
-
-                <!-- Année de construction -->
-                <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
-
-                <!-- Brève description sous les pictogrammes -->
-                <div class="property-description">
-                    <div class="section-title">Visite guidée</div>
-                    ${property.description || 'Aucune description fournie.'}
-                </div>
-
-               <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
+            <div class="detail">
+                <i class="fal fa-bed"></i>
+                <p>${property.bedrooms}</p>
+            </div>
+            <div class="detail">
+                <i class="fal fa-ruler-combined"></i>
+                <p>${property.surface} m²</p>
+            </div>
+            <div class="detail">
+                <i class="fal fa-shower"></i>
+                <p>${property.bathrooms || 'Non renseigné'}</p>
             </div>
         </div>
 
-    </body>
+        <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
+
+        <div class="property-description">
+            <div class="section-title">Visite guidée</div>
+            ${property.description || 'Aucune description fournie.'}
+        </div>
+
+        <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
+
+        <!-- Section DPE pour Desktop uniquement -->
+        <div class="additional-info-desktop">
+            <hr>
+            <h3 class="complement-title">Informations complémentaires</h3>
+            <div class="dpe-section">
+                <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
+                <div class="dpe-bar">
+                    ${['A','B','C','D','E','F','G'].map(letter => `
+                        <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
+                            ${letter}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
     </html>`;
 
   const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
