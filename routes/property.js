@@ -422,11 +422,19 @@ align-items: stretch;
     <!-- Colonne 2 : Autres infos -->
     <div class="extra-col">
       <ul class="other-info">
-        ${property.toilets ? `<li><strong>Toilettes :</strong> ${property.toilets}</li>` : ''}
-        ${property.elevator !== undefined ? `<li><strong>Ascenseur :</strong> ${property.elevator ? 'Oui' : 'Non'}</li>` : ''}
-        ${property.floor ? `<li><strong>Étage :</strong> ${property.floor}</li>` : ''}
-        ${property.exterior ? `<li><strong>Extérieur :</strong> ${property.exterior}</li>` : ''}
-      </ul>
+  <% if (property.toilets) { %>
+    <li><strong>Toilettes :</strong> <%= property.toilets %></li>
+  <% } %>
+  <% if (typeof property.elevator !== 'undefined') { %>
+    <li><strong>Ascenseur :</strong> <%= property.elevator ? 'Oui' : 'Non' %></li>
+  <% } %>
+  <% if (property.floor) { %>
+    <li><strong>Étage :</strong> <%= property.floor %></li>
+  <% } %>
+  <% if (property.exterior) { %>
+    <li><strong>Extérieur :</strong> <%= property.exterior %></li>
+  <% } %>
+</ul>
     </div>
 
     <!-- Colonne 3 : Vide -->
