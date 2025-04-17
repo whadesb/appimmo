@@ -241,6 +241,28 @@ align-items: stretch;
   line-height: 1.8;
   font-family: "Lora", serif;
 }
+.main-info-section {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.main-info-section .info-label {
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+
+.main-info-section .info-item {
+  padding: 6px 12px;
+  font-size: 1rem;
+  color: #3c3c3c;
+  margin: 2px 0;
+  border-radius: 4px;
+  background-color: #f7f7f7;
+  width: fit-content;
+}
 
 .extra-columns {
   display: flex;
@@ -445,14 +467,14 @@ align-items: stretch;
 
     <!-- Colonne 2 : Autres infos -->
    <!-- Colonne 2 : Infos principales réutilisées -->
-<div class="extra-col">
-  <ul class="other-info">
-    <li><strong>Prix :</strong> ${Number(property.price).toLocaleString('fr-FR')} €</li>
-    <li><strong>Nombre de pièces :</strong> ${property.rooms}</li>
-    <li><strong>Nombre de chambres :</strong> ${property.bedrooms}</li>
-    <li><strong>Année de construction :</strong> ${property.yearBuilt || 'Non renseignée'}</li>
-  </ul>
+<div class="main-info-section">
+  <div class="info-label">Informations clés</div>
+  <div class="info-item">Prix : ${Number(property.price).toLocaleString('fr-FR')} €</div>
+  <div class="info-item">Pièces : ${property.rooms}</div>
+  <div class="info-item">Chambres : ${property.bedrooms}</div>
+  <div class="info-item">Année : ${property.yearBuilt || 'Non renseignée'}</div>
 </div>
+
 
     <!-- Colonne 3 : Vide -->
     <div class="extra-col">
