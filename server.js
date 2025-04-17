@@ -1425,14 +1425,14 @@ align-items: stretch;
 }
 
 .main-info-section .info-label {
-  font-weight: bold;
+  font-weight: 500;
   margin-bottom: 10px;
-  font-size: 1.1rem;
+  font-size: 1.3rem;
 }
 
 .main-info-section .info-item {
   padding: 6px 12px;
-  font-size: 1rem;
+  font-size: 1.8rem;
   color: #3c3c3c;
   margin: 2px 0;
   border-radius: 4px;
