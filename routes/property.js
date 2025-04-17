@@ -218,6 +218,20 @@ align-items: stretch;
   margin-bottom: 10px;
   font-size: 1rem;
 }
+.extra-col ul.other-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+
+.other-info li {
+  font-size: 1.1rem;
+  color: #3c3c3c;
+  line-height: 1.8;
+  font-family: "Lora", serif;
+}
+
 .extra-columns {
   display: flex;
   flex-direction: row;
