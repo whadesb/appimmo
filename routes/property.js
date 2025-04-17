@@ -184,6 +184,74 @@ align-items: stretch;
       padding: 20px;
       background: #ffffff;
     }
+.extra-columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 30px;
+  border: 1px solid #eee;
+  padding: 20px;
+}
+
+.extra-col {
+  flex: 1;
+  padding: 0 20px;
+  position: relative;
+}
+
+.extra-col:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background-color: #ddd;
+}
+
+.other-info {
+  list-style: none;
+  padding: 0;
+}
+
+.other-info li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+.extra-columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 30px;
+  border: 1px solid #eee;
+  padding: 20px;
+}
+
+.extra-col {
+  flex: 1;
+  padding: 0 20px;
+  position: relative;
+}
+
+.extra-col:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background-color: #ddd;
+}
+
+.other-info {
+  list-style: none;
+  padding: 0;
+}
+
+.other-info li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
 
     .extra-info-desktop hr {
       border: none;
@@ -332,20 +400,41 @@ align-items: stretch;
   </div>
 
   <!-- Bloc secondaire en dessous -->
-  <div class="extra-info-desktop">
-    <hr />
-    <h2>Informations complémentaires</h2>
-    <div class="dpe-section">
-      <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
-      <div class="dpe-bar">
-        ${['A','B','C','D','E','F','G'].map(letter => `
-          <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
-            ${letter}
-          </div>
-        `).join('')}
+ <div class="extra-info-desktop">
+  <hr />
+  <h2>Informations complémentaires</h2>
+
+  <div class="extra-columns">
+    <!-- Colonne 1 : DPE -->
+    <div class="extra-col">
+      <div class="dpe-section">
+        <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
+        <div class="dpe-bar">
+          ${['A','B','C','D','E','F','G'].map(letter => `
+            <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
+              ${letter}
+            </div>
+          `).join('')}
+        </div>
       </div>
     </div>
+
+    <!-- Colonne 2 : Autres infos -->
+    <div class="extra-col">
+      <ul class="other-info">
+        ${property.toilets ? `<li><strong>Toilettes :</strong> ${property.toilets}</li>` : ''}
+        ${property.elevator !== undefined ? `<li><strong>Ascenseur :</strong> ${property.elevator ? 'Oui' : 'Non'}</li>` : ''}
+        ${property.floor ? `<li><strong>Étage :</strong> ${property.floor}</li>` : ''}
+        ${property.exterior ? `<li><strong>Extérieur :</strong> ${property.exterior}</li>` : ''}
+      </ul>
+    </div>
+
+    <!-- Colonne 3 : Vide -->
+    <div class="extra-col">
+      <!-- À remplir plus tard -->
+    </div>
   </div>
+</div>
 
 </body>
 </html>`;
