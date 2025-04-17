@@ -420,15 +420,15 @@ align-items: stretch;
     </div>
 
     <!-- Colonne 2 : Autres infos -->
-    <div class="extra-col">
-      <ul class="other-info">
-  ${property.toilets ? `<li><strong>Toilettes :</strong> ${property.toilets}</li>` : ''}
-  ${typeof property.elevator !== 'undefined' ? `<li><strong>Ascenseur :</strong> ${property.elevator ? 'Oui' : 'Non'}</li>` : ''}
-  ${property.floor ? `<li><strong>Étage :</strong> ${property.floor}</li>` : ''}
-  ${property.exterior ? `<li><strong>Extérieur :</strong> ${property.exterior}</li>` : ''}
-</ul>
-
-    </div>
+   <!-- Colonne 2 : Infos principales réutilisées -->
+<div class="extra-col">
+  <ul class="other-info">
+    <li><strong>Prix :</strong> ${Number(property.price).toLocaleString('fr-FR')} €</li>
+    <li><strong>Nombre de pièces :</strong> ${property.rooms}</li>
+    <li><strong>Nombre de chambres :</strong> ${property.bedrooms}</li>
+    <li><strong>Année de construction :</strong> ${property.yearBuilt || 'Non renseignée'}</li>
+  </ul>
+</div>
 
     <!-- Colonne 3 : Vide -->
     <div class="extra-col">
