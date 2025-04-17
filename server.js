@@ -1199,7 +1199,7 @@ async function generateLandingPage(property) {
     const GA_MEASUREMENT_ID = 'G-0LN60RQ12K'; 
 
     const template = `
-  <!DOCTYPE html>
+   <!DOCTYPE html>
 <html lang="fr">
 <head>
   <!-- Google Tag Manager -->
@@ -1246,6 +1246,12 @@ async function generateLandingPage(property) {
       gap: 30px;
 align-items: stretch;
     }
+.property-details.one-line {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  margin: 20px 0;
+}
 
     
 .slider {
@@ -1255,12 +1261,6 @@ align-items: stretch;
   height: auto; 
   display: flex;
   flex-direction: column;
-}
-.property-details.one-line {
-  display: flex;
-  flex-direction: row;
-  gap: 30px;
-  margin: 20px 0;
 }
 
     .slides {
@@ -1360,6 +1360,74 @@ align-items: stretch;
       padding: 20px;
       background: #ffffff;
     }
+.extra-columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 30px;
+  border: 1px solid #eee;
+  padding: 20px;
+}
+
+.extra-col {
+  flex: 1;
+  padding: 0 20px;
+  position: relative;
+}
+
+.extra-col:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background-color: #ddd;
+}
+
+.other-info {
+  list-style: none;
+  padding: 0;
+}
+
+.other-info li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
+.extra-columns {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 30px;
+  border: 1px solid #eee;
+  padding: 20px;
+}
+
+.extra-col {
+  flex: 1;
+  padding: 0 20px;
+  position: relative;
+}
+
+.extra-col:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background-color: #ddd;
+}
+
+.other-info {
+  list-style: none;
+  padding: 0;
+}
+
+.other-info li {
+  margin-bottom: 10px;
+  font-size: 1rem;
+}
 
     .extra-info-desktop hr {
       border: none;
@@ -1448,7 +1516,7 @@ align-items: stretch;
         display: block;
       }
 .container {
-    height: 75vh; 
+    height: 75vh;
   }
 .property-details.one-line {
     display: flex;
@@ -1456,7 +1524,6 @@ align-items: stretch;
     gap: 30px;
     margin: 20px 0;
   }
-
     }
   </style>
 </head>
@@ -1481,7 +1548,7 @@ align-items: stretch;
       <h1>Propriété à ${property.city}, ${property.country}</h1>
       <h2>Type de bien: ${property.propertyType}</h2>
 
-     <div class="property-details one-line">
+      <div class="property-details one-line">
   <div class="detail">
     <i class="fal fa-ruler-combined"></i>
     <p>${property.surface} m²</p>
@@ -1509,20 +1576,41 @@ align-items: stretch;
   </div>
 
   <!-- Bloc secondaire en dessous -->
-  <div class="extra-info-desktop">
-    <hr />
-    <h2>Informations complémentaires</h2>
-    <div class="dpe-section">
-      <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
-      <div class="dpe-bar">
-        ${['A','B','C','D','E','F','G'].map(letter => `
-          <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
-            ${letter}
-          </div>
-        `).join('')}
+ <div class="extra-info-desktop">
+  <hr />
+  <h2>Informations complémentaires</h2>
+
+  <div class="extra-columns">
+    <!-- Colonne 1 : DPE -->
+    <div class="extra-col">
+      <div class="dpe-section">
+        <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
+        <div class="dpe-bar">
+          ${['A','B','C','D','E','F','G'].map(letter => `
+            <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
+              ${letter}
+            </div>
+          `).join('')}
+        </div>
       </div>
     </div>
+
+    <!-- Colonne 2 : Autres infos -->
+    <div class="extra-col">
+      <ul class="other-info">
+        ${property.toilets ? `<li><strong>Toilettes :</strong> ${property.toilets}</li>` : ''}
+        ${property.elevator !== undefined ? `<li><strong>Ascenseur :</strong> ${property.elevator ? 'Oui' : 'Non'}</li>` : ''}
+        ${property.floor ? `<li><strong>Étage :</strong> ${property.floor}</li>` : ''}
+        ${property.exterior ? `<li><strong>Extérieur :</strong> ${property.exterior}</li>` : ''}
+      </ul>
+    </div>
+
+    <!-- Colonne 3 : Vide -->
+    <div class="extra-col">
+      <!-- À remplir plus tard -->
+    </div>
   </div>
+</div>
 
 </body>
 </html>`;
