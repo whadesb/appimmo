@@ -212,12 +212,22 @@ align-items: stretch;
 .other-info {
   list-style: none;
   padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* Aligne en haut */
+  align-items: flex-start;
 }
 
+
 .other-info li {
-  margin-bottom: 10px;
-  font-size: 1rem;
+  font-size: 1.2rem; /* Plus grande et pro */
+  color: #2b2b2b;
+  margin-bottom: 12px;
+  font-family: "Lora", serif;
+  line-height: 1.6;
 }
+
 .extra-col ul.other-info {
   display: flex;
   flex-direction: column;
