@@ -70,6 +70,12 @@ async function generateLandingPage(property) {
       gap: 30px;
 align-items: stretch;
     }
+.property-details.one-line {
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+  margin: 20px 0;
+}
 
     
 .slider {
@@ -268,6 +274,12 @@ align-items: stretch;
 .container {
     height: 75vh;
   }
+.property-details.one-line {
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    margin: 20px 0;
+  }
     }
   </style>
 </head>
@@ -292,12 +304,21 @@ align-items: stretch;
       <h1>Propriété à ${property.city}, ${property.country}</h1>
       <h2>Type de bien: ${property.propertyType}</h2>
 
-      <div class="property-details">
-        <div class="detail"><i class="fal fa-home"></i><p>${property.rooms}</p></div>
-        <div class="detail"><i class="fal fa-bed"></i><p>${property.bedrooms}</p></div>
-        <div class="detail"><i class="fal fa-ruler-combined"></i><p>${property.surface} m²</p></div>
-        <div class="detail"><i class="fal fa-shower"></i><p>${property.bathrooms || 'Non renseigné'}</p></div>
-      </div>
+      <div class="property-details one-line">
+  <div class="detail">
+    <i class="fal fa-ruler-combined"></i>
+    <p>${property.surface} m²</p>
+  </div>
+  <div class="detail">
+    <i class="fal fa-bed"></i>
+    <p>${property.bedrooms} Chambre${property.bedrooms > 1 ? 's' : ''}</p>
+  </div>
+  <div class="detail">
+    <i class="fal fa-home"></i>
+    <p>${property.rooms} Pièce${property.rooms > 1 ? 's' : ''}</p>
+  </div>
+</div>
+
 
       <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
 
