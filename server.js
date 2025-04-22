@@ -1572,6 +1572,20 @@ align-items: stretch;
     gap: 30px;
     margin: 20px 0;
   }
+#map {
+  width: calc(33.33% - 10px);
+  height: 389px;
+  max-width: 389px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.extra-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
     }
   </style>
 </head>
@@ -1642,8 +1656,6 @@ align-items: stretch;
         </div>
       </div>
     </div>
-<div id="map" style="height: 400px; width: 100%; margin-top: 30px;"></div>
-
     <!-- Colonne 2 : Autres infos -->
    <!-- Colonne 2 : Infos principales réutilisées -->
 <div class="main-info-section">
