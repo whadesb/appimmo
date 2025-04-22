@@ -1662,13 +1662,14 @@ align-items: stretch;
   </div>
 </div>
 
-</body><script>
+</body>
+<script>
   document.addEventListener("DOMContentLoaded", function () {
-    const city = "${property.city}";
-    const country = "${property.country}";
-    const fullAddress = `${city}, ${country}`;
-
-    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`)
+    const city = "${property.city.replace(/"/g, '\\"')}";
+    const country = "${property.country.replace(/"/g, '\\"')}";
+    const fullAddress = city + ", " + country;
+    
+    fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(fullAddress))
       .then(response => response.json())
       .then(data => {
         if (data && data.length > 0) {
@@ -1683,7 +1684,7 @@ align-items: stretch;
           }).addTo(map);
 
           L.marker([lat, lon]).addTo(map)
-            .bindPopup(`<b>${city}</b><br>${country}`).openPopup();
+            .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
         } else {
           document.getElementById('map').innerHTML = "Carte non disponible pour cette localisation.";
         }
