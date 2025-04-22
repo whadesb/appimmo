@@ -23,7 +23,7 @@ async function generateLandingPage(property) {
     const GTM_ID = 'GTM-TF7HSC3N'; 
     const GA_MEASUREMENT_ID = 'G-0LN60RQ12K';  
     const template = `
-   <!DOCTYPE html>
+        <!DOCTYPE html>
 <html lang="fr">
 <head>
   <!-- Google Tag Manager -->
@@ -397,18 +397,19 @@ align-items: stretch;
     margin: 20px 0;
   }
 #map {
-      height: 300px;
-      width: 100%;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-top: 10px;
-    }
+  width: calc(33.33% - 10px);
+  height: 389px;
+  max-width: 389px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
 
-    .extra-col {
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
+.extra-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
     }
   </style>
 </head>
@@ -479,8 +480,6 @@ align-items: stretch;
         </div>
       </div>
     </div>
-<div id="map" style="height: 400px; width: 100%; margin-top: 30px;"></div>
-
     <!-- Colonne 2 : Autres infos -->
    <!-- Colonne 2 : Infos principales réutilisées -->
 <div class="main-info-section">
@@ -492,48 +491,45 @@ align-items: stretch;
 </div>
 
 
-  <div class="extra-col">
-  <div class="info-label">Localisation</div>
-  <div id="map" style="height: 300px; width: 100%; border-radius: 8px;"></div>
-</div>
-
+    <!-- Colonne 3 : Vide -->
+    <div class="extra-col">
+      <!-- À remplir plus tard -->
+    </div>
   </div>
 </div>
 
 </body>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-  const city = "${cityEscaped}";
-  const country = "${countryEscaped}";
-  const fullAddress = city + ", " + country;
+    const city = "${property.city.replace(/"/g, '\\"')}";
+    const country = "${property.country.replace(/"/g, '\\"')}";
+    const fullAddress = city + ", " + country;
+    
+    fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(fullAddress))
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          const lat = data[0].lat;
+          const lon = data[0].lon;
 
-  fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(fullAddress))
-    .then(response => response.json())
-    .then(data => {
-      if (data && data.length > 0) {
-        const lat = data[0].lat;
-        const lon = data[0].lon;
+          const map = L.map('map').setView([lat, lon], 13);
 
-        const map = L.map('map').setView([lat, lon], 13);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+          }).addTo(map);
 
-        // 🎨 Noir & blanc (CartoDB Positron)
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-          subdomains: 'abcd',
-          maxZoom: 19
-        }).addTo(map);
-
-        L.marker([lat, lon]).addTo(map)
-          .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
-      } else {
-        document.getElementById('map').innerText = "Carte non disponible.";
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      document.getElementById('map').innerText = "Erreur lors du chargement de la carte.";
-    });
-});
+          L.marker([lat, lon]).addTo(map)
+            .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
+        } else {
+          document.getElementById('map').innerHTML = "Carte non disponible pour cette localisation.";
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('map').innerHTML = "Erreur lors du chargement de la carte.";
+      });
+  });
 </script>
 </html>`;
   const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
