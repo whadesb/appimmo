@@ -1695,24 +1695,16 @@ align-items: stretch;
           const lon = data[0].lon;
 
           const map = L.map('map').setView([lat, lon], 13);
-map.invalidateSize(); // 🔧 indispensable si le conteneur n'était pas visible au chargement
+map.invalidateSize(); // important pour s'assurer que le rendu est correct
 
-         L.tileLayer('https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
-  maxZoom: 18,
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+  subdomains: 'abcd',
+  maxZoom: 19
 }).addTo(map);
 
-
-          L.marker([lat, lon]).addTo(map)
-            .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
-        } else {
-          document.getElementById('map').innerHTML = "Carte non disponible pour cette localisation.";
-        }
-      })
-      .catch(err => {
-        console.error(err);
-        document.getElementById('map').innerHTML = "Erreur lors du chargement de la carte.";
-      });
+L.marker([lat, lon]).addTo(map)
+  .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
   });
 </script>
 </html>`;
