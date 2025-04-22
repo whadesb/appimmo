@@ -35,7 +35,10 @@ async function generateLandingPage(property) {
     })(window,document,'script','dataLayer','${GTM_ID}');
   </script>
   <!-- Fin Google Tag Manager -->
-
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<!-- Leaflet JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Propriété à ${property.city}, ${property.country}</title>
@@ -463,6 +466,7 @@ align-items: stretch;
         </div>
       </div>
     </div>
+<div id="map" style="height: 400px; width: 100%; margin-top: 30px;"></div>
 
     <!-- Colonne 2 : Autres infos -->
    <!-- Colonne 2 : Infos principales réutilisées -->
@@ -483,6 +487,38 @@ align-items: stretch;
 </div>
 
 </body>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const city = "<%= property.city %>";
+    const country = "<%= property.country %>";
+    const fullAddress = `${city}, ${country}`;
+
+    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data && data.length > 0) {
+          const lat = data[0].lat;
+          const lon = data[0].lon;
+
+          const map = L.map('map').setView([lat, lon], 13);
+
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap'
+          }).addTo(map);
+
+          L.marker([lat, lon]).addTo(map)
+            .bindPopup(`<b>${city}</b><br>${country}`).openPopup();
+        } else {
+          document.getElementById('map').innerHTML = "Carte non disponible pour cette localisation.";
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('map').innerHTML = "Erreur lors du chargement de la carte.";
+      });
+  });
+</script>
 </html>`;
   const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
   fs.writeFileSync(filePath, template);
