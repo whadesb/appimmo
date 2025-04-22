@@ -1436,7 +1436,6 @@ align-items: stretch;
   color: #3c3c3c;
   margin: 2px 0;
   border-radius: 4px;
-  background-color: #f7f7f7;
   width: fit-content;
 }
 
