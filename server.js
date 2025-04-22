@@ -1573,17 +1573,21 @@ align-items: stretch;
     margin: 20px 0;
   }
 #map {
-  width: calc(33.33% - 10px);
+  width: 100%;
   height: 389px;
-  max-width: 389px;
+  min-width: 400px;
   border: 1px solid #ddd;
   border-radius: 8px;
 }
+
 
 .extra-col {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+}
+.extra-col.map-col {
+  flex: 1.5; /* un peu plus que les autres colonnes */
 }
 
     }
@@ -1669,7 +1673,7 @@ align-items: stretch;
 
     <!-- Colonne 3 : Vide -->
 <!-- Colonne 3 : Carte -->
-<div class="extra-col">
+<div class="extra-col map-col">
   <div class="info-label">Localisation</div>
   <div id="map"></div>
 </div>
@@ -1691,6 +1695,7 @@ align-items: stretch;
           const lon = data[0].lon;
 
           const map = L.map('map').setView([lat, lon], 13);
+map.invalidateSize(); // 🔧 indispensable si le conteneur n'était pas visible au chargement
 
          L.tileLayer('https://tiles.wmflabs.org/bw-mapnik/{z}/{x}/{y}.png', {
   maxZoom: 18,
