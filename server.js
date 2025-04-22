@@ -1662,11 +1662,10 @@ align-items: stretch;
   </div>
 </div>
 
-</body>
-<script>
+</body><script>
   document.addEventListener("DOMContentLoaded", function () {
-    const city = "<%= property.city %>";
-    const country = "<%= property.country %>";
+    const city = "${property.city}";
+    const country = "${property.country}";
     const fullAddress = `${city}, ${country}`;
 
     fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}`)
