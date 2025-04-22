@@ -1432,7 +1432,7 @@ align-items: stretch;
 
 .main-info-section .info-item {
   padding: 6px 12px;
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   color: #3c3c3c;
   margin: 2px 0;
   border-radius: 4px;
