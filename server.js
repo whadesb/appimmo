@@ -1686,7 +1686,7 @@ align-items: stretch;
     const city = "${property.city.replace(/"/g, '\\"')}";
     const country = "${property.country.replace(/"/g, '\\"')}";
     const fullAddress = city + ", " + country;
-    
+
     fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(fullAddress))
       .then(response => response.json())
       .then(data => {
@@ -1695,16 +1695,24 @@ align-items: stretch;
           const lon = data[0].lon;
 
           const map = L.map('map').setView([lat, lon], 13);
-map.invalidateSize(); // important pour s'assurer que le rendu est correct
+          map.invalidateSize(); // important
 
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-  subdomains: 'abcd',
-  maxZoom: 19
-}).addTo(map);
+          L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19
+          }).addTo(map);
 
-L.marker([lat, lon]).addTo(map)
-  .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
+          L.marker([lat, lon]).addTo(map)
+            .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
+        } else {
+          document.getElementById('map').innerHTML = "Carte non disponible.";
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('map').innerHTML = "Erreur lors du chargement de la carte.";
+      });
   });
 </script>
 </html>`;
