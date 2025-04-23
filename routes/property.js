@@ -364,11 +364,11 @@ align-items: stretch;
   margin-bottom: 20px;
 }
 
-.extra-col .info-label,
-.dpe-label {
+.extra-col .info-label {
   font-size: 1.35rem;
   font-weight: 400;
-  margin-bottom: 12px; /* espacement uniforme */
+  font-family: "Lora", serif;
+  margin-bottom: 12px;
 }
 
 
@@ -503,22 +503,20 @@ align-items: stretch;
   <h2>Informations complémentaires</h2>
 
   <div class="extra-columns">
-    <!-- Colonne 1 : DPE -->
-    <div class="extra-col">
-      <div class="dpe-section">
-        <div class="dpe-label">DPE : ${property.dpe || 'En cours'}</div>
-        <div class="dpe-bar">
-          ${['A','B','C','D','E','F','G'].map(letter => `
-            <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
-              ${letter}
-            </div>
-          `).join('')}
-        </div>
+<!-- Colonne 1 : DPE -->
+<div class="extra-col">
+  <div class="info-label">DPE</div>
+  <div class="dpe-bar">
+    ${['A','B','C','D','E','F','G'].map(letter => `
+      <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
+        ${letter}
       </div>
-    </div>
-    <!-- Colonne 2 : Autres infos -->
-   <!-- Colonne 2 : Infos principales réutilisées -->
-<div class="main-info-section">
+    `).join('')}
+  </div>
+</div>
+
+<!-- Colonne 2 : Informations clés -->
+<div class="extra-col">
   <div class="info-label">Informations clés</div>
   <div class="info-item">Prix : ${Number(property.price).toLocaleString('fr-FR')} €</div>
   <div class="info-item">Pièces : ${property.rooms}</div>
@@ -526,13 +524,12 @@ align-items: stretch;
   <div class="info-item">Année : ${property.yearBuilt || 'Non renseignée'}</div>
 </div>
 
-
-    <!-- Colonne 3 : Vide -->
-<!-- Colonne 3 : Carte -->
+<!-- Colonne 3 : Localisation -->
 <div class="extra-col map-col">
   <div class="info-label">Localisation</div>
   <div id="map"></div>
 </div>
+
   </div>
 </div>
 
