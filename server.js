@@ -1601,6 +1601,25 @@ align-items: stretch;
 .extra-col.map-col {
   flex: 1.5; /* un peu plus que les autres colonnes */
 }
+/* Harmoniser tous les titres de colonnes */
+.extra-col .info-label,
+.dpe-label {
+  font-size: 1.35rem;
+  font-weight: 400;
+  margin-bottom: 12px;
+  font-family: "Lora", serif;
+}
+
+.extra-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.extra-columns {
+  align-items: flex-start;
+}
+
 
     }
   </style>
