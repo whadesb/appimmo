@@ -358,6 +358,19 @@ align-items: stretch;
       opacity: 1 !important;
       box-shadow: none !important;
     }
+.extra-info-desktop h2 {
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.extra-col .info-label,
+.dpe-label {
+  font-size: 1.35rem;
+  font-weight: 400;
+  margin-bottom: 12px; /* espacement uniforme */
+}
+
 
     /* Responsive mobile */
     @media screen and (max-width: 768px) {
