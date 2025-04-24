@@ -1084,12 +1084,27 @@ app.post('/property/update/:id', isAuthenticated, async (req, res) => {
 
     // Mettre à jour les champs depuis le formulaire
     property.rooms = req.body.rooms;
-    property.surface = req.body.surface;
-    property.price = req.body.price;
-    property.city = req.body.city;
-    property.country = req.body.country;
-    property.dpe = req.body.dpe;
-    property.description = req.body.description;
+property.bedrooms = req.body.bedrooms;
+property.surface = req.body.surface;
+property.price = req.body.price;
+property.city = req.body.city;
+property.country = req.body.country;
+property.yearBuilt = req.body.yearBuilt;
+property.propertyType = req.body.propertyType;
+property.dpe = req.body.dpe;
+property.description = req.body.description;
+
+// Champs booléens des équipements (venant de <select> avec 'true' ou 'false' comme valeurs)
+property.pool = req.body.pool === 'true';
+property.doubleGlazing = req.body.doubleGlazing === 'true';
+property.wateringSystem = req.body.wateringSystem === 'true';
+property.barbecue = req.body.barbecue === 'true';
+property.carShelter = req.body.carShelter === 'true';
+property.parking = req.body.parking === 'true';
+property.caretakerHouse = req.body.caretakerHouse === 'true';
+property.electricShutters = req.body.electricShutters === 'true';
+property.outdoorLighting = req.body.outdoorLighting === 'true';
+
 
     // (Optionnel) gestion des photos à ajouter ici si nécessaire
 
