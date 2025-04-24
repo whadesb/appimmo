@@ -848,10 +848,41 @@ app.get('/:locale/register', (req, res) => {
 
 app.use('/pdf', pdfRoutes);
 
+const axios = require('axios'); // tout en haut de ton fichier
+
 app.post('/:locale/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword } = req.body;
+  const { email, firstName, lastName, role, password, confirmPassword, 'g-recaptcha-response': captcha } = req.body;
   const locale = req.params.locale;
 
+  // ⚠️ Si captcha vide
+  if (!captcha) {
+    req.flash('error', 'Veuillez valider le CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // 🔍 Vérification reCAPTCHA
+  try {
+    const secretKey = 'TA_CLE_SECRETE_RECAPTCHA'; // remplace avec ta clé secrète
+    const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
+
+    const response = await axios.post(verificationURL, null, {
+      params: {
+        secret: secretKey,
+        response: captcha,
+      },
+    });
+
+    if (!response.data.success) {
+      req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
+      return res.redirect(`/${locale}/register`);
+    }
+  } catch (err) {
+    console.error("Erreur reCAPTCHA :", err);
+    req.flash('error', 'Erreur de vérification CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // ✅ Validation email et mot de passe
   if (!validator.isEmail(email)) {
     req.flash('error', 'L\'adresse email n\'est pas valide.');
     return res.redirect(`/${locale}/register`);
@@ -872,7 +903,6 @@ app.post('/:locale/register', async (req, res) => {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
     await sendAccountCreationEmail(newUser.email);
 
-    // Connexion automatique de l'utilisateur
     req.login(newUser, (err) => {
       if (err) {
         console.error('Erreur lors de la connexion automatique après inscription :', err);
@@ -880,7 +910,6 @@ app.post('/:locale/register', async (req, res) => {
         return res.redirect(`/${locale}/login`);
       }
 
-      // Redirection vers la page 2FA après connexion
       res.redirect(`/${locale}/enable-2fa`);
     });
 
@@ -890,7 +919,6 @@ app.post('/:locale/register', async (req, res) => {
     res.redirect(`/${locale}/register`);
   }
 });
-
 
 app.get('/:locale/2fa', (req, res) => {
   const { locale } = req.params;
