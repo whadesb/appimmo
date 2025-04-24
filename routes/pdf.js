@@ -12,7 +12,14 @@ router.get('/:propertyId', async (req, res) => {
       args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
     const page = await browser.newPage();
-    await page.goto(url, { waitUntil: 'networkidle0' });
+console.log("🔍 URL chargée :", url);
+const response = await page.goto(url, { waitUntil: 'networkidle0' });
+
+if (!response || !response.ok()) {
+  console.error('❌ Erreur HTTP lors du chargement de la page :', response && response.status());
+  return res.status(500).send('Impossible de charger la page HTML');
+}
+
 
     const pdfBuffer = await page.pdf({
       format: 'A4',
