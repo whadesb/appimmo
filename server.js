@@ -824,7 +824,8 @@ app.get('/:locale/register', (req, res) => {
         locale: locale,
         i18n: i18n,
         messages: req.flash(),
-currentPath: req.originalUrl  // Pour afficher d'éventuelles erreurs d'inscription
+currentPath: req.originalUrl,
+RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY 
     });
 });
 
