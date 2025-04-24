@@ -1,43 +1,38 @@
 const express = require('express');
+const fs = require('fs');
+const path = require('path');
+const pdf = require('html-pdf-node');
+
 const router = express.Router();
-const puppeteer = require('puppeteer');
 
 router.get('/:propertyId', async (req, res) => {
   const propertyId = req.params.propertyId;
-  const url = `${process.env.BASE_URL}/landing-pages/${propertyId}.html`;
+  const htmlPath = path.join(__dirname, '..', 'public', 'landing-pages', `${propertyId}.html`);
 
   try {
-    const browser = await puppeteer.launch({
-      headless: 'new', 
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-    const page = await browser.newPage();
-console.log("🔍 URL chargée :", url);
-const response = await page.goto(url, { waitUntil: 'networkidle0' });
+    if (!fs.existsSync(htmlPath)) {
+      return res.status(404).send("Fichier introuvable");
+    }
 
-if (!response || !response.ok()) {
-  console.error('❌ Erreur HTTP lors du chargement de la page :', response && response.status());
-  return res.status(500).send('Impossible de charger la page HTML');
-}
+    const htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
-
-    const pdfBuffer = await page.pdf({
+    const file = { content: htmlContent };
+    const options = {
       format: 'A4',
       printBackground: true,
-      margin: { top: '0', right: '0', bottom: '0', left: '0' }
-    });
+    };
 
-    await browser.close();
+    const pdfBuffer = await pdf.generatePdf(file, options);
 
     res.set({
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename=landing-${propertyId}.pdf`,
-      'Content-Length': pdfBuffer.length,
     });
+
     res.send(pdfBuffer);
-  } catch (err) {
-    console.error('Erreur PDF :', err);
-    res.status(500).send('Erreur lors de la génération du PDF');
+  } catch (error) {
+    console.error("Erreur PDF :", error);
+    res.status(500).send("Erreur lors de la génération du PDF");
   }
 });
 
