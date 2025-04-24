@@ -1074,9 +1074,6 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-const multer = require('multer');
-const upload = multer({ dest: 'public/uploads/' }); // ou ton storage personnalisé
-
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
