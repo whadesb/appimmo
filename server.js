@@ -1051,12 +1051,29 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
       return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
     }
 
-    res.render('edit-property', { property });
+    const locale = req.language || 'fr'; // ou req.query.lang || 'fr' selon ton système
+    const currentPath = req.originalUrl;
+
+    const i18n = {
+      menu: {
+        home: locale === 'fr' ? 'Accueil' : 'Home',
+        contact: locale === 'fr' ? 'Contact' : 'Contact',
+      }
+    };
+
+    res.render('edit-property', {
+      property,
+      locale,
+      currentPath,
+      i18n,
+      isAuthenticated: req.isAuthenticated()
+    });
   } catch (error) {
     console.error('Erreur lors de la récupération de la propriété:', error);
     res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
   }
 });
+
 
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
