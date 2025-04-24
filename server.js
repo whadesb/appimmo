@@ -43,6 +43,7 @@ const invalidLocales = [
     'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py'
 ];
 const tempAuthStore = {}; // { sessionId: user }
+const pdfRoutes = require('./routes/pdf');
 
 const app = express();
 
@@ -844,6 +845,8 @@ app.get('/:locale/register', (req, res) => {
         messages: req.flash() // Pour afficher d'éventuelles erreurs d'inscription
     });
 });
+
+app.use('/pdf', pdfRoutes);
 
 app.post('/:locale/register', async (req, res) => {
   const { email, firstName, lastName, role, password, confirmPassword } = req.body;
