@@ -1075,59 +1075,47 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
 });
 
 
-app.post('/property/update/:id', isAuthenticated, upload.fields([
-  { name: 'photo1', maxCount: 1 },
-  { name: 'photo2', maxCount: 1 }
-]), async (req, res) => {
+app.post('/property/update/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
 
     if (!property || !property.createdBy.equals(req.user._id)) {
-      return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
+      return res.status(403).send("Vous n'êtes pas autorisé à modifier cette propriété.");
     }
 
-    const { rooms, surface, price, city, country, description, dpe } = req.body;
+    // Mettre à jour les champs
+    property.rooms = req.body.rooms;
+    property.surface = req.body.surface;
+    property.price = req.body.price;
+    property.city = req.body.city;
+    property.country = req.body.country;
+    property.dpe = req.body.dpe;
+    property.description = req.body.description;
 
-    property.rooms = rooms;
-    property.surface = surface;
-    property.price = price;
-    property.city = city;
-    property.country = country;
-  property.dpe = req.body.dpe || 'En cours';
-
-    if (req.files.photo1) {
-      const photo1Path = `public/uploads/${uuidv4()}-photo1.jpg`;
-      await sharp(req.files.photo1[0].path)
-        .resize(800)
-        .jpeg({ quality: 80 })
-        .toFile(photo1Path);
-      property.photos[0] = path.basename(photo1Path);
-      fs.unlinkSync(req.files.photo1[0].path);
-    }
-
-    if (req.files.photo2) {
-      const photo2Path = `public/uploads/${uuidv4()}-photo2.jpg`;
-      await sharp(req.files.photo2[0].path)
-        .resize(800)
-        .jpeg({ quality: 80 })
-        .toFile(photo2Path);
-      property.photos[1] = path.basename(photo2Path);
-      fs.unlinkSync(req.files.photo2[0].path);
-    }
+    // Gère les photos si nécessaires
 
     await property.save();
 
-    const landingPageUrl = await generateLandingPage(property);
+    res.render('edit-property', {
+      property,
+      successMessage: "Votre annonce a été mise à jour avec succès.",
+      locale: req.language || 'fr',
+      currentPath: req.originalUrl,
+      i18n: {
+        menu: {
+          home: req.language === 'fr' ? 'Accueil' : 'Home',
+          contact: req.language === 'fr' ? 'Contact' : 'Contact',
+        }
+      },
+      isAuthenticated: req.isAuthenticated()
+    });
 
-    property.url = landingPageUrl;
-    await property.save();
-
-    res.redirect('/user');
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de la propriété : ', error);
-    res.status(500).json({ error: 'Une erreur est survenue lors de la mise à jour de la propriété.' });
+    console.error('Erreur lors de la mise à jour de la propriété :', error);
+    res.status(500).send("Erreur interne du serveur.");
   }
 });
+
 
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
