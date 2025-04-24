@@ -222,6 +222,25 @@
                             <label for="photo2" class="form-label">Photo 2 (optionnel)</label>
                             <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
                         </div>
+<div class="mb-3">
+  <label for="dpe" class="form-label">DPE</label>
+  <select class="form-control" id="dpe" name="dpe">
+    <option value="A" <%= property.dpe === 'A' ? 'selected' : '' %>>A - Excellent</option>
+    <option value="B" <%= property.dpe === 'B' ? 'selected' : '' %>>B - Très bon</option>
+    <option value="C" <%= property.dpe === 'C' ? 'selected' : '' %>>C - Bon</option>
+    <option value="D" <%= property.dpe === 'D' ? 'selected' : '' %>>D - Moyenne</option>
+    <option value="E" <%= property.dpe === 'E' ? 'selected' : '' %>>E - Passable</option>
+    <option value="F" <%= property.dpe === 'F' ? 'selected' : '' %>>F - Mauvais</option>
+    <option value="G" <%= property.dpe === 'G' ? 'selected' : '' %>>G - Très mauvais</option>
+    <option value="En cours" <%= property.dpe === 'En cours' ? 'selected' : '' %>>En cours</option>
+  </select>
+</div>
+
+<div class="mb-3">
+  <label for="description" class="form-label">Description</label>
+  <textarea class="form-control" id="description" name="description" rows="4"><%= property.description %></textarea>
+</div>
+
                         <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
                     </form>
                 </div>
