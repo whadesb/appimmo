@@ -202,55 +202,102 @@
 <% } %>
 
                     <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
-                        <div class="mb-3">
-                            <label for="rooms" class="form-label">Nombre de pièces</label>
-                            <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="surface" class="form-label">Surface (m²)</label>
-                            <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="price" class="form-label">Prix (€)</label>
-                            <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="city" class="form-label">Ville</label>
-                            <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="country" class="form-label">Pays</label>
-                            <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="photo1" class="form-label">Photo 1 (optionnel)</label>
-                            <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
-                        </div>
-                        <div class="mb-3">
-                            <label for="photo2" class="form-label">Photo 2 (optionnel)</label>
-                            <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
-                        </div>
-<div class="mb-3">
-  <label for="dpe" class="form-label">DPE</label>
-  <select class="form-control" id="dpe" name="dpe">
-    <option value="A" <%= property.dpe === 'A' ? 'selected' : '' %>>A - Excellent</option>
-    <option value="B" <%= property.dpe === 'B' ? 'selected' : '' %>>B - Très bon</option>
-    <option value="C" <%= property.dpe === 'C' ? 'selected' : '' %>>C - Bon</option>
-    <option value="D" <%= property.dpe === 'D' ? 'selected' : '' %>>D - Moyenne</option>
-    <option value="E" <%= property.dpe === 'E' ? 'selected' : '' %>>E - Passable</option>
-    <option value="F" <%= property.dpe === 'F' ? 'selected' : '' %>>F - Mauvais</option>
-    <option value="G" <%= property.dpe === 'G' ? 'selected' : '' %>>G - Très mauvais</option>
-    <option value="En cours" <%= property.dpe === 'En cours' ? 'selected' : '' %>>En cours</option>
-  </select>
-</div>
+  <input type="hidden" name="userId" value="<%= property.userId %>">
 
-<div class="mb-3">
-  <label for="description" class="form-label">Description</label>
-  <textarea class="form-control" id="description" name="description" rows="4"><%= property.description %></textarea>
-</div>
+  <div class="mb-3">
+    <label for="rooms" class="form-label">Nombre de pièces</label>
+    <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
+  </div>
 
-                        <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
-                    </form>
+  <div class="mb-3">
+    <label for="bedrooms" class="form-label">Nombre de chambres</label>
+    <input type="number" class="form-control" id="bedrooms" name="bedrooms" value="<%= property.bedrooms %>">
+  </div>
+
+  <div class="mb-3">
+    <label for="surface" class="form-label">Surface (m²)</label>
+    <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="price" class="form-label">Prix (€)</label>
+    <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="country" class="form-label">Pays</label>
+    <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="city" class="form-label">Ville</label>
+    <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
+  </div>
+
+  <div class="mb-3">
+    <label for="yearBuilt" class="form-label">Année de construction</label>
+    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt" value="<%= property.yearBuilt %>">
+  </div>
+
+  <div class="mb-3">
+    <label for="propertyType" class="form-label">Type de bien</label>
+    <select class="form-control" id="propertyType" name="propertyType">
+      <% const types = ['Propriété','Villa','Hôtel particulier','Appartement','Chateau','Maison']; %>
+      <% types.forEach(type => { %>
+        <option value="<%= type %>" <%= property.propertyType === type ? 'selected' : '' %>><%= type %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <% const equipmentOptions = [
+    { id: 'pool', label: 'Piscine' },
+    { id: 'doubleGlazing', label: 'Double vitrage' },
+    { id: 'wateringSystem', label: 'Arrosage automatique' },
+    { id: 'barbecue', label: 'Barbecue' },
+    { id: 'carShelter', label: 'Abri de voiture' },
+    { id: 'parking', label: 'Parking' },
+    { id: 'caretakerHouse', label: 'Maison de gardien' },
+    { id: 'electricShutters', label: 'Stores électriques' },
+    { id: 'outdoorLighting', label: 'Eclairage extérieur' }
+  ]; %>
+
+  <% equipmentOptions.forEach(e => { %>
+    <div class="mb-3">
+      <label for="<%= e.id %>" class="form-label"><%= e.label %></label>
+      <select class="form-control" id="<%= e.id %>" name="<%= e.id %>">
+        <option value="false" <%= property[e.id] === false ? 'selected' : '' %>>Non</option>
+        <option value="true" <%= property[e.id] === true ? 'selected' : '' %>>Oui</option>
+      </select>
+    </div>
+  <% }) %>
+
+  <div class="mb-3">
+    <label for="photo1" class="form-label">Photo principale</label>
+    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
+  </div>
+
+  <div class="mb-3">
+    <label for="photo2" class="form-label">Photo secondaire</label>
+    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
+  </div>
+
+  <div class="mb-3">
+    <label for="dpe" class="form-label">DPE</label>
+    <select class="form-control" id="dpe" name="dpe">
+      <% const dpeOptions = ['A','B','C','D','E','F','G','En cours']; %>
+      <% dpeOptions.forEach(option => { %>
+        <option value="<%= option %>" <%= property.dpe === option ? 'selected' : '' %>><%= option %></option>
+      <% }) %>
+    </select>
+  </div>
+
+  <div class="mb-3">
+    <label for="description" class="form-label">Description</label>
+    <textarea class="form-control" id="description" name="description" rows="4"><%= property.description %></textarea>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
+</form>
                 </div>
             </div>
         </div>
