@@ -1074,7 +1074,6 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-
 app.post('/property/update/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -1083,7 +1082,7 @@ app.post('/property/update/:id', isAuthenticated, async (req, res) => {
       return res.status(403).send("Vous n'êtes pas autorisé à modifier cette propriété.");
     }
 
-    // Mettre à jour les champs
+    // Mettre à jour les champs depuis le formulaire
     property.rooms = req.body.rooms;
     property.surface = req.body.surface;
     property.price = req.body.price;
@@ -1092,27 +1091,32 @@ app.post('/property/update/:id', isAuthenticated, async (req, res) => {
     property.dpe = req.body.dpe;
     property.description = req.body.description;
 
-    // Gère les photos si nécessaires
+    // (Optionnel) gestion des photos à ajouter ici si nécessaire
 
     await property.save();
 
-    res.render('edit-property', {
-  property,
-  successMessage: "Votre annonce a été mise à jour avec succès.",
-  locale: req.language || 'fr',
-  currentPath: req.originalUrl,
-  i18n: {
-    menu: {
-      home: (req.language || 'fr') === 'fr' ? 'Accueil' : 'Home',
-      contact: (req.language || 'fr') === 'fr' ? 'Contact' : 'Contact',
-    }
-  },
-  isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false
-});
+    // Localisation + traduction pour le rendu
+    const locale = req.language || 'fr';
+    const currentPath = req.originalUrl;
+    const i18n = {
+      menu: {
+        home: locale === 'fr' ? 'Accueil' : 'Home',
+        contact: locale === 'fr' ? 'Contact' : 'Contact',
+      }
+    };
 
+    res.render('edit-property', {
+      property,
+      successMessage: "Votre annonce a été mise à jour avec succès.",
+      locale,
+      currentPath,
+      i18n,
+      isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false
+    });
 
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de la propriété :', error);
+    console.error('Erreur lors de la mise à jour de la propriété :', error.message);
+    console.error(error.stack);
     res.status(500).send("Erreur interne du serveur.");
   }
 });
