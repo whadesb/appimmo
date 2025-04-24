@@ -44,7 +44,7 @@ const invalidLocales = [
 ];
 const tempAuthStore = {}; // { sessionId: user }
 const pdfRoutes = require('./routes/pdf');
-const secretKey = process.env.RECAPTCHA_SECRET_KEY; 
+const secretKey = process.env.RECAPTCHA_SECRET_KEY;; 
 
 const app = express();
 
@@ -866,12 +866,13 @@ app.post('/:locale/register', async (req, res) => {
     const secretKey = 'TA_CLE_SECRETE_RECAPTCHA'; // remplace avec ta clé secrète
     const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
 
-    const response = await axios.post(verificationURL, null, {
-      params: {
-        secret: secretKey,
-        response: captcha,
-      },
-    });
+const response = await axios.post(verificationURL, null, {
+  params: {
+    secret: secretKey,
+    response: captcha,
+  },
+});
+
 
     if (!response.data.success) {
       req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
