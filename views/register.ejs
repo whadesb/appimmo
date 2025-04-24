@@ -286,7 +286,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     </div>
                                 </div>
 <div class="mb-3">
-  <div class="g-recaptcha" data-sitekey="6Lfm2CIrAAAAACcUCz4m-hvljOpDgIWVjoWwC3p9"></div>
+  <div class="g-recaptcha" data-sitekey="<%= process.env.RECAPTCHA_SITE_KEY %>"></div>
 </div>
 
                                 <button type="submit" class="btn btn-primary w-100"><%= i18n.register_button %></button>
