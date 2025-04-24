@@ -1097,18 +1097,19 @@ app.post('/property/update/:id', isAuthenticated, async (req, res) => {
     await property.save();
 
     res.render('edit-property', {
-      property,
-      successMessage: "Votre annonce a été mise à jour avec succès.",
-      locale: req.language || 'fr',
-      currentPath: req.originalUrl,
-      i18n: {
-        menu: {
-          home: req.language === 'fr' ? 'Accueil' : 'Home',
-          contact: req.language === 'fr' ? 'Contact' : 'Contact',
-        }
-      },
-      isAuthenticated: req.isAuthenticated()
-    });
+  property,
+  successMessage: "Votre annonce a été mise à jour avec succès.",
+  locale: req.language || 'fr',
+  currentPath: req.originalUrl,
+  i18n: {
+    menu: {
+      home: (req.language || 'fr') === 'fr' ? 'Accueil' : 'Home',
+      contact: (req.language || 'fr') === 'fr' ? 'Contact' : 'Contact',
+    }
+  },
+  isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false
+});
+
 
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la propriété :', error);
