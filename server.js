@@ -1074,7 +1074,13 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/property/update/:id', isAuthenticated, async (req, res) => {
+const multer = require('multer');
+const upload = multer({ dest: 'public/uploads/' }); // ou ton storage personnalisé
+
+app.post('/property/update/:id', isAuthenticated, upload.fields([
+  { name: 'photo1', maxCount: 1 },
+  { name: 'photo2', maxCount: 1 }
+]), async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
 
@@ -1084,29 +1090,36 @@ app.post('/property/update/:id', isAuthenticated, async (req, res) => {
 
     // Mettre à jour les champs depuis le formulaire
     property.rooms = req.body.rooms;
-property.bedrooms = req.body.bedrooms;
-property.surface = req.body.surface;
-property.price = req.body.price;
-property.city = req.body.city;
-property.country = req.body.country;
-property.yearBuilt = req.body.yearBuilt;
-property.propertyType = req.body.propertyType;
-property.dpe = req.body.dpe;
-property.description = req.body.description;
+    property.bedrooms = req.body.bedrooms;
+    property.surface = req.body.surface;
+    property.price = req.body.price;
+    property.city = req.body.city;
+    property.country = req.body.country;
+    property.yearBuilt = req.body.yearBuilt;
+    property.propertyType = req.body.propertyType;
+    property.dpe = req.body.dpe;
+    property.description = req.body.description;
 
-// Champs booléens des équipements (venant de <select> avec 'true' ou 'false' comme valeurs)
-property.pool = req.body.pool === 'true';
-property.doubleGlazing = req.body.doubleGlazing === 'true';
-property.wateringSystem = req.body.wateringSystem === 'true';
-property.barbecue = req.body.barbecue === 'true';
-property.carShelter = req.body.carShelter === 'true';
-property.parking = req.body.parking === 'true';
-property.caretakerHouse = req.body.caretakerHouse === 'true';
-property.electricShutters = req.body.electricShutters === 'true';
-property.outdoorLighting = req.body.outdoorLighting === 'true';
+    // Champs booléens des équipements (venant de <select> avec 'true' ou 'false' comme valeurs)
+    property.pool = req.body.pool === 'true';
+    property.doubleGlazing = req.body.doubleGlazing === 'true';
+    property.wateringSystem = req.body.wateringSystem === 'true';
+    property.barbecue = req.body.barbecue === 'true';
+    property.carShelter = req.body.carShelter === 'true';
+    property.parking = req.body.parking === 'true';
+    property.caretakerHouse = req.body.caretakerHouse === 'true';
+    property.electricShutters = req.body.electricShutters === 'true';
+    property.outdoorLighting = req.body.outdoorLighting === 'true';
 
-
-    // (Optionnel) gestion des photos à ajouter ici si nécessaire
+    // ➕ Mise à jour des photos si présentes
+    if (req.files) {
+      if (req.files.photo1 && req.files.photo1[0]) {
+        property.photo1 = req.files.photo1[0].filename;
+      }
+      if (req.files.photo2 && req.files.photo2[0]) {
+        property.photo2 = req.files.photo2[0].filename;
+      }
+    }
 
     await property.save();
 
@@ -1135,6 +1148,7 @@ property.outdoorLighting = req.body.outdoorLighting === 'true';
     res.status(500).send("Erreur interne du serveur.");
   }
 });
+
 
 
 app.get('/user/properties', isAuthenticated, async (req, res) => {
