@@ -1293,16 +1293,19 @@ async function loadLandingPages() {
           <td>${page.country}</td>
           <td><a href="${page.url}" target="_blank">${page.url}</a></td>
           <td>
-            <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
-              <i class="bi bi-clipboard"></i>
-            </button>
-            <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}'); showToast();" title="Diffuser">
-              <i class="bi bi-megaphone"></i>
-            </button>
-            <button class="btn btn-sm btn-secondary" onclick="editProperty('${page._id}')" title="Éditer">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-          </td>
+  <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
+    <i class="bi bi-clipboard"></i>
+  </button>
+  <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}'); showToast();" title="Diffuser">
+    <i class="bi bi-megaphone"></i>
+  </button>
+  <button class="btn btn-sm btn-secondary me-1" onclick="editProperty('${page._id}')" title="Éditer">
+    <i class="bi bi-pencil-square"></i>
+  </button>
+  <a class="btn btn-sm btn-outline-primary" href="/pdf/${page._id}" target="_blank" title="Télécharger PDF">
+    <i class="bi bi-file-earmark-pdf"></i>
+  </a>
+</td>
         `;
         landingPagesList.appendChild(row);
       });
