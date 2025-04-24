@@ -19,7 +19,8 @@ router.get('/:propertyId', async (req, res) => {
     const file = { content: htmlContent };
     const options = {
       format: 'A4',
-      printBackground: true,
+      landscape: true, // mode paysage
+      printBackground: true, // inclure les images, styles
     };
 
     const pdfBuffer = await pdf.generatePdf(file, options);
