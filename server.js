@@ -1118,7 +1118,13 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
       }
     }
 
-    await property.save();
+   await property.save();
+
+// 🆕 Regénérer la landing page après mise à jour
+const updatedLandingPageUrl = await generateLandingPage(property);
+property.url = updatedLandingPageUrl;
+await property.save();
+
 
     // Localisation + traduction pour le rendu
     const locale = req.language || 'fr';
