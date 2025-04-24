@@ -194,6 +194,13 @@
             <div class="col-lg-6 col-12">
                 <div class="form-container">
                     <h4>Modifier</h4>
+<% if (typeof successMessage !== 'undefined') { %>
+  <div class="alert alert-success alert-dismissible fade show" role="alert">
+    <%= successMessage %>
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+  </div>
+<% } %>
+
                     <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
                         <div class="mb-3">
                             <label for="rooms" class="form-label">Nombre de pièces</label>
@@ -360,5 +367,13 @@
 
         document.addEventListener('DOMContentLoaded', initializeStripe);
     </script>
+<% if (typeof successMessage !== 'undefined') { %>
+<script>
+  setTimeout(() => {
+    window.location.href = "/<%= locale %>/user"; // ou autre URL cible
+  }, 3000); // 3 secondes
+</script>
+<% } %>
+
 </body>
 </html>
