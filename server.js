@@ -864,7 +864,7 @@ app.post('/:locale/register', async (req, res) => {
 
   // 🔍 Vérification reCAPTCHA
   try {
-    const secretKey = 'TA_CLE_SECRETE_RECAPTCHA'; // remplace avec ta clé secrète
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
     const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
 
 const response = await axios.post(verificationURL, null, {
