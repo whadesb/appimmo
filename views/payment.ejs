@@ -21,7 +21,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link rel="preload" href="/css/styles-main.css" as="style">
-    <link rel="stylesheet" href="/css/styles-main.css">  
+    <link rel="stylesheet" href="/css/styles-main.css">
+<script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=EUR"></script>  
     <style>
         
 .formun-container {
@@ -274,6 +275,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                     <!-- Stripe Element will be inserted here -->
                                 </div>
                             </div>
+<div id="paypal-button-container"></div>
                             <button type="submit" class="btn btn-primary btn-block"><%= i18n.pay_now %></button>
                         </form>
                     </div>
@@ -350,75 +352,42 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="/js/jquery.sticky.js"></script>
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-      async function initializeStripe() {
-    const response = await fetch('/config');
-    const { publicKey } = await response.json();
-    const stripe = Stripe(publicKey);
-    const elements = stripe.elements();
     
-    const cardElement = elements.create('card', {
-        hidePostalCode: true,
-        style: {
-            base: {
-                fontSize: '16px',
-                color: '#32325d',
-                '::placeholder': { color: '#aab7c4' },
-            },
-            invalid: { color: '#fa755a', iconColor: '#fa755a' },
-        },
-    });
-    
-    cardElement.mount('#card-element');
-
-    const form = document.getElementById('payment-form');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        // 🔥 Créer un PaymentMethod via Stripe
-        const { paymentMethod, error } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement,
+   <script>
+paypal.Buttons({
+    createOrder: function(data, actions) {
+        return actions.order.create({
+            purchase_units: [{
+                amount: {
+                    value: '500.00' // Montant en euros
+                }
+            }]
         });
-
-        if (error) {
-            console.error('❌ Erreur de création PaymentMethod:', error);
-            alert('Erreur lors de la saisie des données.');
-            return;
-        }
-
-        const formData = {
-            propertyId: "<%= propertyId %>",
-            stripeToken: paymentMethod.id,
-            amount: 50000 // Montant en centimes (500€)
-        };
-
-        try {
-            const response = await fetch('/process-payment', {
+    },
+    onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+            // Appel backend pour enregistrer la commande
+            fetch('/process-paypal-payment', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                alert('✅ Paiement réussi !');
-                window.location.href = data.redirectUrl;
-            } else {
-                const errorData = await response.json();
-                console.error('❌ Erreur paiement:', errorData.error);
-                alert('Erreur de paiement : ' + errorData.error);
-            }
-        } catch (error) {
-            console.error('❌ Erreur AJAX:', error);
-            alert('Une erreur est survenue.');
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', initializeStripe);
-    </script>
+                body: JSON.stringify({
+                    orderID: data.orderID,
+                    propertyId: "<%= propertyId %>",
+                    amount: 50000
+                })
+            }).then(response => response.json())
+              .then(data => {
+                  if (data.success) {
+                      alert('Paiement réussi !');
+                      window.location.href = data.redirectUrl;
+                  } else {
+                      alert('Erreur serveur : ' + data.message);
+                  }
+              });
+        });
+    }
+}).render('#paypal-button-container');
+</script>
 <script>
     console.log("Property ID:", "<%= propertyId %>");
 </script>
