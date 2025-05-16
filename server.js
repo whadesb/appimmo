@@ -24,7 +24,6 @@ const Order = require('./models/Order');
 const fs = require('fs');
 const cookieParser = require('cookie-parser');
 const i18n = require('./i18n');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const compression = require('compression');
 const multer = require('multer');
 const sharp = require('sharp');
@@ -131,10 +130,6 @@ app.post('/logout', isAuthenticated, (req, res) => {
 });
 
 
-app.get('/config', (req, res) => {
-  res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
-});
-
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
   if (req.isAuthenticated()) {
@@ -168,10 +163,6 @@ const upload = multer({
   }
 });
 
-// Route spécifique pour la configuration Stripe (évite "Not Found")
-app.get('/config', (req, res) => {
-    res.json({ publicKey: process.env.STRIPE_PUBLIC_KEY });
-});
 
 
 app.get('/', (req, res) => {
@@ -1178,6 +1169,32 @@ app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
     } catch (error) {
         console.error("Erreur lors de la récupération des landing pages :", error);
         res.status(500).json({ error: "Une erreur est survenue lors de la récupération des landing pages." });
+    }
+});
+app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
+    try {
+        const { orderID, propertyId, amount } = req.body;
+
+        // Tu peux faire une requête à l’API PayPal pour vérifier la validité du paiement ici (facultatif avec capture())
+
+        const newOrder = new Order({
+            userId: req.user._id,
+            propertyId,
+            amount: parseInt(amount, 10),
+            status: 'paid',
+            expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+        });
+
+        await newOrder.save();
+
+        const locale = req.cookies.locale || 'fr';
+        const redirectUrl = `/${locale}/user`;
+
+        res.json({ success: true, redirectUrl });
+
+    } catch (err) {
+        console.error("❌ Erreur process-paypal-payment :", err);
+        res.status(500).json({ success: false, message: 'Erreur serveur' });
     }
 });
 
