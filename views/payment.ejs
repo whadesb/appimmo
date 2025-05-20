@@ -15,6 +15,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <meta name="description" content="">
     <meta name="author" content="">
     <meta name="theme-color" content="#C4B990"> 
+<script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=EUR"></script>
     <title>UAP Immo | Payment</title>    
     <link rel="preconnect" href="https://fonts.googleapis.com">        
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -242,40 +243,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                     </div>
 <div class="form-container">
                         <h4><%= i18n.payment_card %></h4>
-                        <form id="payment-form" autocomplete="off">
-                            <div class="mb-3">
-                                <label for="name" class="form-label"><%= i18n.card_name %></label>
-                                <input type="text" class="form-control" id="name" name="name" autocomplete="off" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="email" class="form-label"><%= i18n.email %></label>
-                                <input type="email" class="form-control" id="email" name="email" autocomplete="off" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="address" class="form-label"><%= i18n.address %></label>
-                                <input type="text" class="form-control" id="address" name="address" autocomplete="off" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="city" class="form-label"><%= i18n.city %></label>
-                                <input type="text" class="form-control" id="city" name="city" autocomplete="off" required>
-                            </div>
-   <div class="mb-3">
-                                <label for="zip" class="form-label"><%= i18n.zip %></label>
-                                <input type="text" class="form-control" id="zip" name="zip" autocomplete="off" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="country" class="form-label"><%= i18n.country %></label>
-                                <input type="text" class="form-control" id="country" name="country" autocomplete="off" required>
-                            </div>
-                         
-                            <div class="mb-3">
-                                <label for="card-element" class="form-label"><%= i18n.card_number %></label>
-                                <div id="card-element" class="form-control card-number" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="0">
-                                    <!-- Stripe Element will be inserted here -->
-                                </div>
-                            </div>
-                            <button type="submit" class="btn btn-primary btn-block"><%= i18n.pay_now %></button>
-                        </form>
+<div class="form-container">
+  <h4><%= i18n.pay_with_paypal %></h4>
+  <div id="paypal-button-container"></div>
+</div>
+
                     </div>
 <div id="payment-success-message" class="alert alert-success d-none text-center mt-3" style="display: none;">
     <h4>Paiement réussi !</h4>
@@ -350,77 +322,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <script src="/js/jquery.sticky.js"></script>
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
-    <script src="https://js.stripe.com/v3/"></script>
-    <script>
-      async function initializeStripe() {
-    const response = await fetch('/config');
-    const { publicKey } = await response.json();
-    const stripe = Stripe(publicKey);
-    const elements = stripe.elements();
-    
-    const cardElement = elements.create('card', {
-        hidePostalCode: true,
-        style: {
-            base: {
-                fontSize: '16px',
-                color: '#32325d',
-                '::placeholder': { color: '#aab7c4' },
-            },
-            invalid: { color: '#fa755a', iconColor: '#fa755a' },
-        },
-    });
-    
-    cardElement.mount('#card-element');
-
-    const form = document.getElementById('payment-form');
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        // 🔥 Créer un PaymentMethod via Stripe
-        const { paymentMethod, error } = await stripe.createPaymentMethod({
-            type: 'card',
-            card: cardElement,
-        });
-
-        if (error) {
-            console.error('❌ Erreur de création PaymentMethod:', error);
-            alert('Erreur lors de la saisie des données.');
-            return;
-        }
-
-        const formData = {
-            propertyId: "<%= propertyId %>",
-            stripeToken: paymentMethod.id,
-            amount: 50000 // Montant en centimes (500€)
-        };
-
-        try {
-            const response = await fetch('/process-payment', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData),
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                alert('✅ Paiement réussi !');
-                window.location.href = data.redirectUrl;
-            } else {
-                const errorData = await response.json();
-                console.error('❌ Erreur paiement:', errorData.error);
-                alert('Erreur de paiement : ' + errorData.error);
-            }
-        } catch (error) {
-            console.error('❌ Erreur AJAX:', error);
-            alert('Une erreur est survenue.');
-        }
-    });
-}
-
-document.addEventListener('DOMContentLoaded', initializeStripe);
-    </script>
+   
 <script>
     console.log("Property ID:", "<%= propertyId %>");
+</script>
+<script>
+paypal.Buttons({
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{
+        amount: {
+          value: '500.00'
+        }
+      }]
+    });
+  },
+  onApprove: function(data, actions) {
+    return actions.order.capture().then(function(details) {
+      fetch('/process-paypal-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderID: data.orderID,
+          propertyId: "<%= propertyId %>",
+          amount: 50000
+        })
+      })
+      .then(res => res.json())
+      .then(result => {
+        if (result.success) {
+          window.location.href = result.redirectUrl;
+        } else {
+          alert("Erreur : " + result.message);
+        }
+      });
+    });
+  }
+}).render('#paypal-button-container');
 </script>
 
 </body>
