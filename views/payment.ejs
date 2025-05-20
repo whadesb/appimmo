@@ -1,124 +1,426 @@
-<!DOCTYPE html>
-<html lang="<%= locale %>">
+<!doctype html>
+<html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>UAP Immo | Paiement</title>
+    <!-- Google Tag Manager -->
+<script>
+(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id=' + i + dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-TF7HSC3N');
+</script>
+<!-- Fin Google Tag Manager -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <meta name="theme-color" content="#C4B990"> 
+    <title>UAP Immo | Payment</title>    
+    <link rel="preconnect" href="https://fonts.googleapis.com">        
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preload" href="/css/styles-main.css" as="style">
+    <link rel="stylesheet" href="/css/styles-main.css">  
+    <style>
+        
+.formun-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f9f9f9;
 
-  <!-- Google Tag Manager -->
-  <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','GTM-TF7HSC3N');
-  </script>
-  <!-- Fin Google Tag Manager -->
+        }
+        .formun-container h4 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .formun-container .form-text {
+            margin-bottom: 15px;
+            font-size: 1.01rem
+        }
+.formunr-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border: 1px solid #d4d4d4;
 
-  <!-- PayPal SDK -->
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=EUR"></script>
+        }
+        .formunr-container h4 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .formunr-container .form-text {
+            margin-bottom: 15px;
+            font-size: 1.01rem
+        }
 
-  <!-- CSS -->
-  <link href="/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/css/styles-main.css" rel="stylesheet">
+.formrecap-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border: 1px solid grey;
 
-  <style>
-    .form-container {
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
-      background: #f9f9f9;
-      border-radius: 2px;
-      box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
-    }
-    .form-container h4 {
-      margin-bottom: 20px;
-    }
-    #paypal-button-container {
-      margin-top: 20px;
-    }
-  </style>
+        }
+        .formrecap-container h4 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .formrecap-container .form-text {
+            margin-bottom: 15px;
+            font-size: 1.01rem
+        }
+.form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 2px;
+            box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+        }
+        .form-container h4 {
+            margin-bottom: 20px;
+            color: #000;
+        }
+        .form-container .form-text {
+            margin-bottom: 15px;
+            font-size: 1.01rem
+        }
+        .new-section {
+            padding: 60px 0; 
+            background-color: #f8f9fa; 
+        }
+        .hero-section {
+            padding-top: 100px; 
+        }
+        .form-control-icon {
+            position: relative;
+        }
+        .form-control-icon input {
+            padding-right: 2.5rem;
+        }
+        .form-control-icon .icon {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: #52566f;
+            border-color: #000;
+        }
+        .btn-primary:hover {
+            background-color: #52566f;
+            border-color: #52566f;
+        }
+        .form-container .form-label {
+            font-weight: bold;
+        }
+        .navbar {
+            background-color: #C4B990; /* Set background color */
+ 
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+            color: #000; /* Set text color */
+        }
+        .navbar .navbar-icon {
+            font-size: 1.5rem;
+        }
+        .navbar .navbar-icon.bi-person {
+            color: #000 !important;
+        }
+  .navbar .btn-outline-dark {
+    margin-right: 12px;
+  }
+        @media (max-width: 767px) {
+            .form-container {
+                background: none;
+                box-shadow: none;
+                border: none;
+            }
+        }
+        .order-summary p {
+            margin-bottom: 10px;
+            color: #333; /* Text color changed to a darker shade */
+        }
+        .form-control.card-number {
+            font-size: 1.2rem; /* Increase font size for better visibility */
+            padding: 10px;
+            border: 2px solid #8781dc; /* Add border for better visibility */
+            border-radius: 5px;
+        }
+    </style>    
 </head>
-<body>
+<body id="top">
 
 <noscript>
   <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
   height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-
-<nav class="navbar navbar-expand-lg fixed-top">
+    <main>
+        <body id="top">
+    <main>
+             <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
-    <a class="navbar-brand" href="/<%= locale %>">UAP Immo</a>
+    <a class="navbar-brand" href="/<%= locale %>">
+      <span>UAP Immo</span>
+    </a>
+
+    <!-- Bouton Burger -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <!-- Menu collapsé -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- 🟢 Liens à gauche -->
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
+        </li>
+      </ul>
+
+     <% if (isAuthenticated) { %>
+  <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+    <i class="bi bi-person-circle"></i>
+    <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+  </a>
+
+  <form action="/logout" method="POST" class="d-inline">
+    <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+      <i class="bi bi-box-arrow-right"></i>
+      <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+    </button>
+  </form>
+<% } else { %>
+<a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+  <i class="bi bi-person-fill"></i>
+  <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+</a>
+<% } %>
+
+
+
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+<%
+  const cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '';
+%>
+<% if (locale === 'fr') { %>
+  <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">🇬🇧 <span>EN</span></a></li>
+<% } else { %>
+  <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">🇫🇷 <span>FR</span></a></li>
+<% } %>
+
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
 </nav>
+        <section class="new-section" id="section_4">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-6 col-12">
+                    <div class="formun-container">
+                        <h4><%= i18n.payment_title %></h4>
+                        <p class="form-text"><%= i18n.payment_description_1 %></p>
+                        <p class="form-text"><%= i18n.payment_description_2 %></p>
+                        <p class="form-text"><%= i18n.payment_description_3 %></p>
+                    </div>
+<div class="form-container">
+                        <h4><%= i18n.payment_card %></h4>
+                        <form id="payment-form" autocomplete="off">
+                            <div class="mb-3">
+                                <label for="name" class="form-label"><%= i18n.card_name %></label>
+                                <input type="text" class="form-control" id="name" name="name" autocomplete="off" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="email" class="form-label"><%= i18n.email %></label>
+                                <input type="email" class="form-control" id="email" name="email" autocomplete="off" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="address" class="form-label"><%= i18n.address %></label>
+                                <input type="text" class="form-control" id="address" name="address" autocomplete="off" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="city" class="form-label"><%= i18n.city %></label>
+                                <input type="text" class="form-control" id="city" name="city" autocomplete="off" required>
+                            </div>
+   <div class="mb-3">
+                                <label for="zip" class="form-label"><%= i18n.zip %></label>
+                                <input type="text" class="form-control" id="zip" name="zip" autocomplete="off" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="country" class="form-label"><%= i18n.country %></label>
+                                <input type="text" class="form-control" id="country" name="country" autocomplete="off" required>
+                            </div>
+                         
+                            <div class="mb-3">
+                                <label for="card-element" class="form-label"><%= i18n.card_number %></label>
+                                <div id="card-element" class="form-control card-number" autocomplete="off" autocorrect="off" spellcheck="false" tabindex="0">
+                                    <!-- Stripe Element will be inserted here -->
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-block"><%= i18n.pay_now %></button>
+                        </form>
+                    </div>
+<div id="payment-success-message" class="alert alert-success d-none text-center mt-3" style="display: none;">
+    <h4>Paiement réussi !</h4>
+    <p>Votre paiement a été validé avec succès.</p>
+    <p>Vous allez être redirigé vers votre <b>espace utilisateur</b> dans quelques secondes.</p>
+    <p>Le statut de votre commande et ses détails sont accessibles dans <b>“Mes Commandes”</b> et vous recevrez un e-mail de confirmation.</p>
+</div>
 
-<main class="container" style="padding-top: 100px;">
-  <div class="row">
-    <div class="col-lg-6 col-12">
-      <div class="form-container">
-        <h4><%= i18n.payment_title %></h4>
-        <p class="form-text"><%= i18n.payment_description_1 %></p>
-        <p class="form-text"><%= i18n.payment_description_2 %></p>
-        <p class="form-text"><%= i18n.payment_description_3 %></p>
-
-        <div id="paypal-button-container"></div>
+                </div>
+           <div class="col-lg-6 col-12">
+                    <div class="formunr-container">
+                        <h4><%= i18n.order_summary %></h4>
+                        <p><%= i18n.rooms %>: <%= rooms %></p>
+                        <p><%= i18n.surface %>: <%= surface %> m²</p>
+                        <p><%= i18n.price %>: <%= price %> €</p>
+                        <p><%= i18n.city %>: <%= city %></p>
+                        <p><%= i18n.country %>: <%= country %></p>
+                        <p>URL:</strong> <a href="<%= url %>"><%= url %></a></p>
+                        <hr>
+                        <p><%= i18n.total %>: 500€/3 mois</p>
+                    </div>
+            
+                </div>
+            </div>
+        </div>
+</section>
+    </main>
+<footer class="site-footer section-padding">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-12 mb-4 pb-2">
+        <a class="navbar-brand mb-2" href="/<%= locale %>">
+          <span>UAP Immo</span>
+        </a>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3">Informations</h6>
+        <ul class="site-footer-links">
+          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3">Accès</h6>
+        <ul class="site-footer-links">
+          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+            <% } else { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+            <% } %>
+          </ul>
+        </div>
       </div>
     </div>
-
-    <div class="col-lg-6 col-12">
-      <div class="form-container">
-        <h4><%= i18n.order_summary %></h4>
-        <p><%= i18n.rooms %>: <%= rooms %></p>
-        <p><%= i18n.surface %>: <%= surface %> m²</p>
-        <p><%= i18n.price %>: <%= price %> €</p>
-        <p><%= i18n.city %>: <%= city %></p>
-        <p><%= i18n.country %>: <%= country %></p>
-        <hr>
-        <p><%= i18n.total %>: 500€ / 3 mois</p>
-      </div>
-    </div>
+    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %>
+</p>
   </div>
-</main>
-
-<footer class="text-center mt-5">
-  <p>© 2025 UAP Immo</p>
 </footer>
+    <!-- JAVASCRIPT FILES -->
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/jquery.sticky.js"></script>
+    <script src="/js/click-scroll.js"></script>
+    <script src="/js/custom.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script>
+      async function initializeStripe() {
+    const response = await fetch('/config');
+    const { publicKey } = await response.json();
+    const stripe = Stripe(publicKey);
+    const elements = stripe.elements();
+    
+    const cardElement = elements.create('card', {
+        hidePostalCode: true,
+        style: {
+            base: {
+                fontSize: '16px',
+                color: '#32325d',
+                '::placeholder': { color: '#aab7c4' },
+            },
+            invalid: { color: '#fa755a', iconColor: '#fa755a' },
+        },
+    });
+    
+    cardElement.mount('#card-element');
 
-<!-- JS -->
-<script src="/js/bootstrap.bundle.min.js"></script>
+    const form = document.getElementById('payment-form');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+
+        // 🔥 Créer un PaymentMethod via Stripe
+        const { paymentMethod, error } = await stripe.createPaymentMethod({
+            type: 'card',
+            card: cardElement,
+        });
+
+        if (error) {
+            console.error('❌ Erreur de création PaymentMethod:', error);
+            alert('Erreur lors de la saisie des données.');
+            return;
+        }
+
+        const formData = {
+            propertyId: "<%= propertyId %>",
+            stripeToken: paymentMethod.id,
+            amount: 50000 // Montant en centimes (500€)
+        };
+
+        try {
+            const response = await fetch('/process-payment', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert('✅ Paiement réussi !');
+                window.location.href = data.redirectUrl;
+            } else {
+                const errorData = await response.json();
+                console.error('❌ Erreur paiement:', errorData.error);
+                alert('Erreur de paiement : ' + errorData.error);
+            }
+        } catch (error) {
+            console.error('❌ Erreur AJAX:', error);
+            alert('Une erreur est survenue.');
+        }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initializeStripe);
+    </script>
 <script>
-paypal.Buttons({
-  createOrder: function(data, actions) {
-    return actions.order.create({
-      purchase_units: [{
-        amount: {
-          value: '500.00'
-        }
-      }]
-    });
-  },
-  onApprove: function(data, actions) {
-    return actions.order.capture().then(function(details) {
-      fetch('/process-paypal-payment', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderID: data.orderID,
-          propertyId: "<%= propertyId %>",
-          amount: 50000
-        })
-      })
-      .then(res => res.json())
-      .then(result => {
-        if (result.success) {
-          window.location.href = result.redirectUrl;
-        } else {
-          alert("Erreur : " + result.message);
-        }
-      });
-    });
-  }
-}).render('#paypal-button-container');
+    console.log("Property ID:", "<%= propertyId %>");
 </script>
 
 </body>
