@@ -25,5 +25,6 @@
   "rooms": "Nombre de pièces",
   "surface": "Surface",
   "price": "Prix",
-  "total": "Total"
+  "total": "Total",
+"pay_with_paypal": "Payer avec PayPal"
 }
