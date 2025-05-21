@@ -107,12 +107,15 @@ router.get('/:locale/login', ensureNotAuthenticated, async (req, res) => {
         console.error("Erreur chargement traduction login :", error);
         return res.status(500).send("Erreur chargement traduction.");
     }
-res.render('login', {
-    locale,
-    i18n,
-    messages: req.flash(),
-    currentPath: req.path
-});
+
+    res.render('login', {
+        locale,
+        i18n,
+        messages: req.flash(),
+        currentPath: req.path
+    });
+}); // 👈 C'est cette accolade fermante + parenthèse qui manquait
+
 
 
 // ✅ Réinitialiser la 2FA (nouveau QR code)
