@@ -69,20 +69,18 @@ router.post('/:locale/2fa', async (req, res, next) => {
     });
 
     if (isVerified) {
-      // ✅ Connecter manuellement l'utilisateur
-      req.login(user, function(err) {
-        if (err) {
-          console.error("Erreur login après 2FA :", err);
-          return res.redirect(`/${locale}/login`);
-        }
+  req.login(user, function(err) {
+    if (err) {
+      console.error("Erreur login après 2FA :", err);
+      return res.redirect(`/${locale}/login`);
+    }
 
-        // ✅ Supprimer la session temporaire
-        req.session.tmpUserId = null;
-
-        // ✅ Redirection vers la page utilisateur
-        return res.redirect(`/${locale}/user`);
-      });
-    } else {
+    console.log("✅ Connexion réussie après 2FA pour :", user.email);
+    req.session.tmpUserId = null;
+    return res.redirect(`/${locale}/user`);
+  });
+}
+else {
       const i18n = JSON.parse(fs.readFileSync(
         path.join(__dirname, '../locales', locale, '2fa.json'), 'utf8'
       ));
