@@ -579,11 +579,11 @@ app.post('/set-cookie-consent', (req, res) => {
 });
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
-  const locale = req.params.locale || req.cookies.locale || 'fr';
-  if (req.isAuthenticated()) {
+  if (req.user) {
     return next();
   }
-  return res.redirect(`/${locale}/login`);
+  const locale = req.params.locale || 'fr';
+  res.redirect(`/${locale}/login`);
 }
 
 app.post('/logout', (req, res) => {
