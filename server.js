@@ -581,13 +581,6 @@ app.post('/set-cookie-consent', (req, res) => {
     res.json({ message: 'Consentement enregistré', maxAge: maxAge });
 });
 // Middleware d'authentification
-function isAuthenticated(req, res, next) {
-  if (req.user) {
-    return next();
-  }
-  const locale = req.params.locale || 'fr';
-  res.redirect(`/${locale}/login`);
-}
 
 app.post('/logout', (req, res) => {
   req.logout?.(); // si tu utilises passport
