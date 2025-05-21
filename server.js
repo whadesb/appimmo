@@ -83,14 +83,22 @@ app.use(helmet()); // Sécurité headers HTTP
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // max 100 requêtes par IP
-  message: 'Trop de requêtes, réessayez plus tard.'
+  message: 'Trop de requêtes, réessayez plus tard.',
+  skip: (req) => {
+    return req.url.match(/\.(css|js|png|jpg|jpeg|gif|svg|ico)$/);
+  }
 });
 
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
-app.use(limiter); // Global, ou seulement sur /login, /register
-// Middleware global pour rendre disponible `isAuthenticated` et `currentPath` dans TOUTES les vues
+// Appliquer la limitation SEULEMENT aux routes sensibles
+app.use('/login', limiter);
+app.use('/register', limiter);
+app.use('/forgot-password', limiter);
+app.use('/verify-2fa', limiter);
+app.use('/reset-password', limiter);
+
 app.use((req, res, next) => {
   res.locals.isAuthenticated = req.isAuthenticated && req.isAuthenticated();
   res.locals.currentPath = req.path;
