@@ -78,8 +78,20 @@ app.use(cookieParser());
 app.use(flash());
 app.use(i18n.init);
 
-app.use(helmet()); // Sécurité headers HTTP
-//ajouter en dessous
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
+        imgSrc: ["'self'", "data:", "https:"],
+        connectSrc: ["'self'", "https:"],
+        frameSrc: ["'self'", "https:"]
+      }
+    }
+  })
+);
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // max 100 requêtes par IP
