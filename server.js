@@ -23,7 +23,7 @@ const rateLimit = require('express-rate-limit');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo');
 
-const LocalStrategy = require('passport-local').Strategy;
+
 
 const User = require('./models/User');
 passport.serializeUser(User.serializeUser());
@@ -123,6 +123,12 @@ app.use((req, res, next) => {
 
 app.use('/', authRoutes);
 
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
 
 
@@ -570,13 +576,6 @@ app.post('/set-cookie-consent', (req, res) => {
     res.json({ message: 'Consentement enregistré', maxAge: maxAge });
 });
 // Middleware d'authentification
-
-app.post('/logout', (req, res) => {
-  req.logout?.(); // si tu utilises passport
-  req.session.destroy(() => {
-    res.redirect('/');
-  });
-});
 
 
 
