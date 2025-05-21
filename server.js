@@ -420,15 +420,15 @@ app.get('/:locale/login', (req, res) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-       res.render('login', {
-  layout: 'layout',
+res.render('login', {
   title: 'UAP Immo | Connexion',
   nonce: res.locals.nonce,
-  locale: req.locale || 'fr',
-  i18n: req.i18n.__, // ou ta méthode d’internationalisation
+  locale: req.locale,
+  i18n: req.i18n.__,
   isAuthenticated: req.isAuthenticated?.(),
   messages: req.flash()
 });
+
 
 
 });
