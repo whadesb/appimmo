@@ -108,12 +108,13 @@ router.get('/:locale/login', ensureNotAuthenticated, async (req, res) => {
         return res.status(500).send("Erreur chargement traduction.");
     }
 
-    res.render('login', {
-        locale,
-        i18n,
-        messages: req.flash(),
-        currentPath: req.path
-    });
+   res.render('login', {
+    locale,
+    i18n,
+    messages: req.flash(),
+    currentPath: req.path,
+    isAuthenticated: req.isAuthenticated && req.isAuthenticated()
+});
 }); // 👈 C'est cette accolade fermante + parenthèse qui manquait
 
 
