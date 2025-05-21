@@ -157,11 +157,17 @@ router.post('/:locale/login', (req, res, next) => {
 
 router.get('/:locale/register', (req, res) => {
   const { locale } = req.params;
- const translations = JSON.parse(fs.readFileSync(
-  path.join(__dirname, '../locales', locale, 'register.json'), 'utf8'
-));
-  res.render('register', { i18n: translations, errors: [], locale });
+  const translations = JSON.parse(fs.readFileSync(
+    path.join(__dirname, '../locales', locale, 'register.json'), 'utf8'
+  ));
+  res.render('register', {
+    i18n: translations,
+    errors: [],
+    locale,
+    currentPath: req.path // 👈 ajoute ceci
+  });
 });
+
 router.post('/:locale/register', async (req, res) => {
   const { name, email, password } = req.body;
   const { locale } = req.params;
