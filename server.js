@@ -124,8 +124,19 @@ app.use('/', authRoutes);
 app.use('/property', require('./routes/property'));
 
 passport.use(User.createStrategy());
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
+
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
