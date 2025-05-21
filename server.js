@@ -68,8 +68,7 @@ app.use(session({
   sameSite: 'lax'
 }
 }));
-app.use(passport.initialize());
-app.use(passport.session());
+
 // Middleware
 app.use(compression());
 app.use(cookieParser());
@@ -136,7 +135,8 @@ passport.deserializeUser(async (id, done) => {
     done(err, null);
   }
 });
-
+app.use(passport.initialize());
+app.use(passport.session());
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
