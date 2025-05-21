@@ -83,9 +83,14 @@ router.post('/:locale/2fa', async (req, res, next) => {
 
     console.log("✅ Connexion réussie après 2FA pour :", user.email);
     req.session.tmpUserId = null;
+
+    // 👇 AJOUTE CECI
+    console.log("🔐 Session après login 2FA :", req.session);
+
     return res.redirect(`/${locale}/user`);
   });
 }
+
 else {
       const i18n = JSON.parse(fs.readFileSync(
         path.join(__dirname, '../locales', locale, '2fa.json'), 'utf8'
