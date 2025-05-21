@@ -1,18 +1,17 @@
 <!DOCTYPE html>
-<html lang="<%= locale %>">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title><%= title %></title>
+<html lang="<%= locale || 'fr' %>">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title><%= typeof title !== 'undefined' ? title : 'UAP Immo' %></title>
 
-    <!-- Exemple de script inline sécurisé -->
-    <script nonce="<%= nonce %>">
-      window.locale = "<%= locale %>";
-    </script>
+  <% if (typeof head !== 'undefined') { %>
+    <%- head %>
+  <% } %>
+</head>
+<body>
 
-    <%- head %> <!-- Bloc pour inclure des CSS ou scripts spécifiques -->
-  </head>
-  <body>
-    <%- body %> <!-- Ici le contenu de chaque page -->
-  </body>
+  <%- body %>
+
+</body>
 </html>
