@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="<%= locale %>">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><%= title %></title>
+
+    <!-- Exemple de script inline sécurisé -->
+    <script nonce="<%= nonce %>">
+      window.locale = "<%= locale %>";
+    </script>
+
+    <%- head %> <!-- Bloc pour inclure des CSS ou scripts spécifiques -->
+  </head>
+  <body>
+    <%- body %> <!-- Ici le contenu de chaque page -->
+  </body>
+</html>
