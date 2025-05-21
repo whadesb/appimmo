@@ -421,25 +421,22 @@ app.get('/:locale/login', (req, res) => {
     }
 
 res.render('login', {
+  layout: 'layout',
   title: `UAP Immo | ${res.__('title')}`,
   nonce: res.locals.nonce,
-  locale: req.getLocale(), // ou req.cookies.locale selon ta config
+  locale: req.getLocale(),
   i18n: {
+    title: res.__('title'),
     heading: res.__('login.heading'),
     email: res.__('login.email'),
+    email_help: res.__('login.email_help'),
     password: res.__('login.password'),
     login_button: res.__('login.button'),
-    register_prompt: res.__('login.register_prompt'),
-    register_link: res.__('login.register_link'),
     forgot_password: res.__('login.forgot_password'),
-    menu: {
-      home: res.__('menu.home'),
-      contact: res.__('menu.contact')
-    },
-    footer: {
-      all_rights: res.__('footer.all_rights')
-    }
+    register_prompt: res.__('login.register_prompt'),
+    register_link: res.__('login.register_link')
   },
+  currentPath: req.originalUrl,
   isAuthenticated: req.isAuthenticated?.(),
   messages: req.flash()
 });
