@@ -422,23 +422,31 @@ app.get('/:locale/login', (req, res) => {
 
 res.render('login', {
   layout: 'layout',
-  title: `UAP Immo | ${res.__('title')}`,
+  locale: req.locale,
+  i18n: res.__,
+  isAuthenticated: req.isAuthenticated(),
+  currentPath: req.path,
   nonce: res.locals.nonce,
-  locale: req.getLocale(),
-  i18n: {
-    title: res.__('title'),
-    heading: res.__('login.heading'),
-    email: res.__('login.email'),
-    email_help: res.__('login.email_help'),
-    password: res.__('login.password'),
-    login_button: res.__('login.button'),
-    forgot_password: res.__('login.forgot_password'),
-    register_prompt: res.__('login.register_prompt'),
-    register_link: res.__('login.register_link')
-  },
-  currentPath: req.originalUrl,
-  isAuthenticated: req.isAuthenticated?.(),
-  messages: req.flash()
+  messages: req.flash(),
+  title: 'UAP Immo | Connexion',
+  head: `
+    <!-- Google Tag Manager -->
+    <script nonce="${res.locals.nonce}">
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id=' + i + dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-TF7HSC3N');
+    </script>
+    <!-- Fin Google Tag Manager -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preload" href="/css/styles-main.css" as="style">
+    <link rel="stylesheet" href="/css/styles-main.css">
+  `
 });
 
 
