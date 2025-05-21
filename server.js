@@ -102,9 +102,7 @@ const limiter = rateLimit({
   }
 });
 
-passport.use(new LocalStrategy({
-  usernameField: 'email'
-}, User.authenticate()));
+
 // Appliquer la limitation SEULEMENT aux routes sensibles
 app.use('/login', limiter);
 app.use('/register', limiter);
@@ -157,13 +155,6 @@ app.post('/logout', isAuthenticated, (req, res) => {
 });
 
 
-// Middleware d'authentification
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
-}
 
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
@@ -575,6 +566,15 @@ app.post('/set-cookie-consent', (req, res) => {
     res.cookie('cookie_consent', 'accepted', { maxAge: maxAge, httpOnly: true });
     res.json({ message: 'Consentement enregistré', maxAge: maxAge });
 });
+// Middleware d'authentification
+function isAuthenticated(req, res, next) {
+  const locale = req.params.locale || req.cookies.locale || 'fr';
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  return res.redirect(`/${locale}/login`);
+}
+
 app.post('/logout', (req, res) => {
   req.logout?.(); // si tu utilises passport
   req.session.destroy(() => {
