@@ -91,6 +91,50 @@ else {
     res.status(500).send('Erreur vérification 2FA.');
   }
 });
+app.post('/:locale/verify-2fa', async (req, res, next) => {
+  const locale = req.params.locale;
+  const { token } = req.body;
+
+  try {
+    const tmpUserId = req.session.tmpUserId;
+    if (!tmpUserId) {
+      return res.redirect(`/${locale}/login`);
+    }
+
+    const user = await User.findById(tmpUserId);
+    if (!user) {
+      return res.redirect(`/${locale}/login`);
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: token
+    });
+
+    if (!verified) {
+      req.flash('error', 'Code invalide. Veuillez réessayer.');
+      return res.redirect(`/${locale}/verify-2fa`);
+    }
+
+    // ✅ AUTHENTIFICATION EFFECTIVE
+    req.login(user, function(err) {
+      if (err) {
+        console.error("Erreur lors du login après 2FA :", err);
+        return next(err);
+      }
+
+      // Supprimer le tmpUserId de session
+      delete req.session.tmpUserId;
+
+      return res.redirect(`/${locale}/user`);
+    });
+
+  } catch (error) {
+    console.error("Erreur 2FA :", error);
+    return res.status(500).send('Erreur serveur');
+  }
+});
 
 
 // ✅ Désactiver la 2FA
