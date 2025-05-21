@@ -10,7 +10,6 @@ process.on('unhandledRejection', function (err, promise) {
   console.error('Unhandled Rejection:', err);
 });
 //ajout 2 lignes en dessous
-const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const express = require('express');
 const path = require('path');
@@ -34,6 +33,7 @@ const validator = require('validator');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 const crypto = require('crypto');
+const helmet = require('helmet');
 const { getPageStats } = require('./getStats');
 const Page = require('./models/Page');
 const nodemailer = require('nodemailer');
@@ -61,14 +61,7 @@ app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
 
-app.use(helmet()); // Sécurité headers HTTP
-//ajouter en dessous
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requêtes par IP
-  message: 'Trop de requêtes, réessayez plus tard.'
-});
-app.use(limiter); // Global, ou seulement sur /login, /register
+app.use(helmet()); 
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
@@ -83,6 +76,15 @@ app.use(
     },
   })
 );
+// Sécurité headers HTTP
+//ajouter en dessous
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // max 100 requêtes par IP
+  message: 'Trop de requêtes, réessayez plus tard.'
+});
+app.use(limiter); // Global, ou seulement sur /login, /register
+
 
 
 
