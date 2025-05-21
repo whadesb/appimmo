@@ -54,33 +54,46 @@ router.get('/:locale/2fa', (req, res) => {
 
 // ✅ Vérification du code après login
 router.post('/:locale/2fa', async (req, res, next) => {
-    const { token } = req.body;
-    const userId = req.session.tmpUserId;
-    const { locale } = req.params;
+  const { token } = req.body;
+  const userId = req.session.tmpUserId;
+  const { locale } = req.params;
 
-    try {
-        const user = await User.findById(userId);
-        if (!user) return res.redirect(`/${locale}/login`);
+  try {
+    const user = await User.findById(userId);
+    if (!user) return res.redirect(`/${locale}/login`);
 
-        const isVerified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,
-            encoding: 'base32',
-            token: token
-        });
+    const isVerified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: token
+    });
 
-        if (isVerified) {
-            req.login(user, (err) => {
-                if (err) return next(err);
-                req.session.tmpUserId = null;
-                return res.redirect(`/${locale}/user`);
-            });
-        } else {
-            res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale });
+    if (isVerified) {
+      // ✅ Connecter manuellement l'utilisateur
+      req.login(user, function(err) {
+        if (err) {
+          console.error("Erreur login après 2FA :", err);
+          return res.redirect(`/${locale}/login`);
         }
-    } catch (error) {
-        res.status(500).send('Erreur vérification 2FA.');
+
+        // ✅ Supprimer la session temporaire
+        req.session.tmpUserId = null;
+
+        // ✅ Redirection vers la page utilisateur
+        return res.redirect(`/${locale}/user`);
+      });
+    } else {
+      const i18n = JSON.parse(fs.readFileSync(
+        path.join(__dirname, '../locales', locale, '2fa.json'), 'utf8'
+      ));
+      return res.render('2fa', { error: 'Code incorrect, veuillez réessayer.', locale, i18n, isAuthenticated: false });
     }
+  } catch (error) {
+    console.error("Erreur 2FA :", error);
+    res.status(500).send('Erreur vérification 2FA.');
+  }
 });
+
 
 // ✅ Désactiver la 2FA
 router.post('/disable-2fa', isAuthenticated, async (req, res) => {
