@@ -87,6 +87,12 @@ passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
 app.use(limiter); // Global, ou seulement sur /login, /register
+// Middleware global pour rendre disponible `isAuthenticated` et `currentPath` dans TOUTES les vues
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated && req.isAuthenticated();
+  res.locals.currentPath = req.path;
+  next();
+});
 
 app.use('/', authRoutes);
 
