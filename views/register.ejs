@@ -285,7 +285,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                         </div>
                                     </div>
                                 </div>
-
+<div class="mb-3">
+ <div class="g-recaptcha" data-sitekey="<%= RECAPTCHA_SITE_KEY %>"></div>
+</div>
 
                                 <button type="submit" class="btn btn-primary w-100"><%= i18n.register_button %></button>
                             </form>
@@ -343,5 +345,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </footer>
 <script src="/js/bootstrap.bundle.min.js"></script>
+<script src="https://www.google.com/recaptcha/api.js" async defer></script>
 </body>
 </html>
