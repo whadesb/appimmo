@@ -160,28 +160,34 @@ router.get('/:locale/register', (req, res) => {
   const translations = JSON.parse(fs.readFileSync(
     path.join(__dirname, '../locales', locale, 'register.json'), 'utf8'
   ));
+
   res.render('register', {
     i18n: translations,
     errors: [],
     locale,
-    currentPath: req.path // 👈 ajoute ceci
+    currentPath: req.path, // ✅ déjà présent
+    isAuthenticated: req.isAuthenticated && req.isAuthenticated() // ✅ ajoute ceci
   });
 });
+
 
 router.post('/:locale/register', async (req, res) => {
   const { name, email, password } = req.body;
   const { locale } = req.params;
 
   const existingUser = await User.findOne({ email });
-  if (existingUser) {
-    return res.render('register', {
-     i18n: JSON.parse(fs.readFileSync(
-  path.join(__dirname, '../locales', locale, 'register.json'), 'utf8'
-)),
-      errors: ['Adresse email déjà utilisée'],
-      locale
-    });
-  }
+ if (existingUser) {
+  return res.render('register', {
+    i18n: JSON.parse(fs.readFileSync(
+      path.join(__dirname, '../locales', locale, 'register.json'), 'utf8'
+    )),
+    errors: ['Adresse email déjà utilisée'],
+    locale,
+    currentPath: req.path, // ✅ pour la navbar
+    isAuthenticated: req.isAuthenticated && req.isAuthenticated() // ✅ pour éviter crash
+  });
+}
+
 
   const hashedPassword = await bcrypt.hash(password, 10);
   const user = new User({ name, email, password: hashedPassword });
