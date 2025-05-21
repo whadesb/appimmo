@@ -36,7 +36,6 @@ const QRCode = require('qrcode');
 const crypto = require('crypto');
 const { getPageStats } = require('./getStats');
 const Page = require('./models/Page');
-const nodemailer = require('nodemailer');
 const { getMultiplePageStats } = require('./getStats');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const invalidLocales = [
@@ -1509,15 +1508,7 @@ align-items: stretch;
     return `/landing-pages/${property._id}.html`;
 }
 
-const transporter = nodemailer.createTransport({
-  host: 'smtp.ionos.fr',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS
-  }
-});
+
 
 async function getLandingPagesFromDB(userId) {
   return await Property.find({ createdBy: userId });
@@ -1525,42 +1516,7 @@ async function getLandingPagesFromDB(userId) {
 
 
 
-async function sendEmail(mailOptions) {
-  try {
-    await transporter.sendMail(mailOptions);
-    console.log('Email envoyé avec succès à :', mailOptions.to);
-  } catch (error) {
-    console.error('Erreur lors de l\'envoi de l\'email :', error);
-  }
-}
 
-async function sendAccountCreationEmail(email) {
-  const mailOptions = {
-    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-    to: email,
-    subject: 'Bienvenue chez UAP Immo',
-    html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2 style="color: #52566f;">Bienvenue chez UAP Immo!</h2>
-        <p>Bonjour,</p>
-        <p>Nous sommes ravis de vous compter parmi nos nouveaux utilisateurs. Votre compte a été créé avec succès !</p>
-        <p>Vous avez reçu cet email parce que vous vous êtes inscrit sur notre plateforme. Vous pouvez dès maintenant vous connecter en utilisant l'adresse email et le mot de passe que vous avez choisis lors de l'inscription.</p>
-        <p style="font-size: 16px;">Voici un récapitulatif :</p>
-        <ul style="font-size: 16px;">
-          <li><strong>Email :</strong> ${email}</li>
-          <li><strong>Plateforme :</strong> <a href="https://uap.immo/login" style="color: #52566f;">Se connecter à votre espace UAP Immo</a></li>
-        </ul>
-        <p>Si vous avez des questions ou besoin d'aide, n'hésitez pas à nous contacter à tout moment.</p>
-        <p>Cordialement,</p>
-        <p>L'équipe UAP Immo</p>
-        <hr>
-        <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company">support@uap.company</a>.</p>
-      </div>
-    `,
-  };
-
-  await sendEmail(mailOptions);
-}
 
 app.post('/user/orders/renew', isAuthenticated, async (req, res) => {
   try {
