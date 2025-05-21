@@ -1231,24 +1231,6 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
     }
 });
 
-app.post('/process-payment', isAuthenticated, async (req, res) => {
-    try {
-        const { Token, amount, propertyId } = req.body;
-        const userId = req.user._id;
-
-        console.log("🔍 Paiement en cours...");
-        console.log(" Token:", Token);
-        console.log("Amount:", amount);
-        console.log("Property ID:", propertyId);
-        console.log("User ID:", userId);
-
-        if (!Token || !amount || !propertyId) {
-            console.error("❌ Données manquantes pour le paiement.");
-            return res.status(400).json({ error: 'Données manquantes' });
-        }
-
-        
-        });
 
         console.log("✅ Paiement réussi:", paymentIntent);
 
