@@ -48,6 +48,10 @@ const pdfRoutes = require('./routes/pdf');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
 const app = express();
+app.use((req, res, next) => {
+  res.locals.nonce = crypto.randomBytes(16).toString('base64');
+  next();
+});
 
 // Middleware
 app.use(compression());
@@ -80,10 +84,6 @@ app.use(
   })
 );
 
-app.use((req, res, next) => {
-  res.locals.nonce = crypto.randomBytes(16).toString('base64');
-  next();
-});
 
 
 app.use(session({
