@@ -1247,16 +1247,7 @@ app.post('/process-payment', isAuthenticated, async (req, res) => {
             return res.status(400).json({ error: 'Données manquantes' });
         }
 
-        const paymentIntent = await .paymentIntents.create({
-            amount: parseInt(amount, 10) * 100,
-            currency: 'eur',
-            payment_method: Token,
-            confirm: true,
-            return_url: `https://uap.immo/payment-success?propertyId=${propertyId}`,
-            automatic_payment_methods: {
-                enabled: true,
-                allow_redirects: "always"
-            }
+        
         });
 
         console.log("✅ Paiement réussi:", paymentIntent);
