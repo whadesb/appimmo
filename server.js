@@ -1232,17 +1232,6 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
 });
 
 
-        console.log("✅ Paiement réussi:", paymentIntent);
-
-        const order = new Order({
-    userId,
-    propertyId,
-    amount: parseInt(amount, 10),
-    status: 'paid',
-    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-});
-
-
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
