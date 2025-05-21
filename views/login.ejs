@@ -1,3 +1,85 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+  <!-- Google Tag Manager -->
+  <script nonce="<%= nonce %>">
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id=' + i + dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TF7HSC3N');
+  </script>
+  <!-- Fin Google Tag Manager -->
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#C4B990"> 
+  <title>UAP Immo | <%= i18n.title %></title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/styles-main.css" rel="stylesheet">
+
+  <style nonce="<%= nonce %>">
+    #error-message {
+      font-size: 16px;
+      font-weight: bold;
+      padding: 12px;
+      margin-top: 15px;
+      border-radius: 5px;
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      width: 100%;
+      text-align: center;
+    }
+    .form-container {
+      max-width: 600px;
+      margin: 110px auto;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .form-control-icon {
+      position: relative;
+    }
+    .form-control-icon input {
+      padding-right: 2.5rem;
+    }
+    .form-control-icon .icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
+    .btn-primary {
+      background-color: #52566f;
+      border-color: #000;
+    }
+    .btn-primary:hover {
+      background-color: #52566f;
+      border-color: #52566f;
+    }
+    @media (max-width: 767px) {
+      .form-container {
+        background: none;
+        box-shadow: none;
+        border: none;
+      }
+    }
+  </style>
+</head>
+<body>
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+
+<main>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
 
 <section class="new-section">
@@ -46,7 +128,15 @@
     </div>
   </div>
 </section>
+</main>
 
+<footer class="text-center mt-5">
+  <p>&copy; 2025 UAP Company. <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %></p>
+</footer>
+
+<!-- JS -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
 <script nonce="<%= nonce %>">
   document.getElementById('togglePassword').addEventListener('click', function () {
     const passwordInput = document.getElementById('password');
@@ -66,3 +156,5 @@
     }
   });
 </script>
+</body>
+</html>
