@@ -226,16 +226,17 @@ router.get('/:locale/logout', (req, res) => {
 });
 router.get('/:locale/user', isAuthenticated, (req, res) => {
   const { locale } = req.params;
- const translations = JSON.parse(fs.readFileSync(
-  path.join(__dirname, '../locales', locale, 'user.json'), 'utf8'
-));
-console.log('Rendering user page for:', req.user.email);
+  const translations = JSON.parse(fs.readFileSync(
+    path.join(__dirname, '../locales', locale, 'user.json'), 'utf8'
+  ));
+  console.log('Rendering user page for:', req.user.email);
 
-  res.render('2fa', {
-  error: 'Code incorrect, veuillez réessayer.',
-  locale,
-  i18n,
-  isAuthenticated: false
+  res.render('user', {
+    user: req.user,
+    locale,
+    i18n: translations,
+    isAuthenticated: true
+  });
 });
 
 });
