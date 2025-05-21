@@ -18,7 +18,7 @@ function ensureNotAuthenticated(req, res, next) {
   }
   next();
 }
-app.post('/:locale/verify-2fa', async (req, res) => {
+router.post('/:locale/verify-2fa', async (req, res) => {
   const { locale } = req.params;
   const { token } = req.body;
 
