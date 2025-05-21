@@ -13,6 +13,12 @@ const nodemailer = require('nodemailer');
 const Recaptcha = require('express-recaptcha').RecaptchaV2; // si utilisé
 const { sendEmail, sendAccountCreationEmail } = require('../services/email');
 
+function ensureNotAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return res.redirect(`/${req.params.locale || 'fr'}/user`);
+  }
+  next();
+}
 
 // Route pour activer 2FA et générer le QR code
 router.get('/enable-2fa', isAuthenticated, async (req, res) => {
@@ -148,7 +154,9 @@ router.post('/:locale/login', (req, res, next) => {
 
 router.get('/:locale/register', (req, res) => {
   const { locale } = req.params;
-  const translations = require(`../locales/${locale}/register.json`);
+ const translations = JSON.parse(fs.readFileSync(
+  path.join(__dirname, '../locales', locale, 'register.json'), 'utf8'
+));
   res.render('register', { i18n: translations, errors: [], locale });
 });
 router.post('/:locale/register', async (req, res) => {
@@ -158,7 +166,9 @@ router.post('/:locale/register', async (req, res) => {
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return res.render('register', {
-      i18n: require(`../locales/${locale}/register.json`),
+     i18n: JSON.parse(fs.readFileSync(
+  path.join(__dirname, '../locales', locale, 'register.json'), 'utf8'
+)),
       errors: ['Adresse email déjà utilisée'],
       locale
     });
@@ -178,7 +188,9 @@ router.get('/:locale/logout', (req, res) => {
 });
 router.get('/:locale/user', isAuthenticated, (req, res) => {
   const { locale } = req.params;
-  const translations = require(`../locales/${locale}/user.json`);
+ const translations = JSON.parse(fs.readFileSync(
+  path.join(__dirname, '../locales', locale, 'user.json'), 'utf8'
+));
   res.render('user', { user: req.user, i18n: translations, locale });
 });
 
