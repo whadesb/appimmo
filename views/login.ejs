@@ -355,7 +355,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 this.classList.toggle('bi-eye-slash-fill');
             });
         </script>
-<script>
+<script nonce="<%= nonce %>">
 document.addEventListener("DOMContentLoaded", function () {
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has("error")) {
@@ -366,6 +366,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+
 
     </body>
 </html>
