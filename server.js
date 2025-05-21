@@ -1,5 +1,5 @@
 require('dotenv').config();
-
+console.log("Stripe Public Key:", process.env.STRIPE_PUBLIC_KEY);
 
 process.on('uncaughtException', function (err) {
   console.error('Uncaught Exception:', err);
@@ -10,6 +10,7 @@ process.on('unhandledRejection', function (err, promise) {
   console.error('Unhandled Rejection:', err);
 });
 //ajout 2 lignes en dessous
+const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const express = require('express');
 const path = require('path');
@@ -33,10 +34,8 @@ const validator = require('validator');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 const crypto = require('crypto');
-const helmet = require('helmet');
 const { getPageStats } = require('./getStats');
 const Page = require('./models/Page');
-const expressLayouts = require('express-ejs-layouts');
 const nodemailer = require('nodemailer');
 const { getMultiplePageStats } = require('./getStats');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
@@ -49,10 +48,6 @@ const pdfRoutes = require('./routes/pdf');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
 const app = express();
-app.use((req, res, next) => {
-  res.locals.nonce = crypto.randomBytes(16).toString('base64');
-  next();
-});
 
 // Middleware
 app.use(compression());
@@ -62,33 +57,7 @@ app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
 
-app.use(helmet()); 
-app.use(
-  helmet.contentSecurityPolicy({
-    directives: {
-      defaultSrc: ["'self'"],
-      scriptSrc: [
-        "'self'",
-        (req, res) => `'nonce-${res.locals.nonce}'`,
-        'https://www.googletagmanager.com',
-        'https://www.google-analytics.com'
-      ],
-      styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
-      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc: ["'self'", 'data:', 'https://flagcdn.com'],
-      connectSrc: [
-        "'self'",
-        'https://www.google-analytics.com',
-        'https://region1.google-analytics.com'
-      ],
-      objectSrc: ["'none'"],
-      upgradeInsecureRequests: [],
-    },
-  })
-);
-app.use(expressLayouts);
-app.set('layout', 'layout');
-// Sécurité headers HTTP
+app.use(helmet()); // Sécurité headers HTTP
 //ajouter en dessous
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -96,7 +65,6 @@ const limiter = rateLimit({
   message: 'Trop de requêtes, réessayez plus tard.'
 });
 app.use(limiter); // Global, ou seulement sur /login, /register
-
 
 
 
@@ -124,7 +92,6 @@ passport.use(new LocalStrategy({
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 app.set('view engine', 'ejs');
-app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')));
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
@@ -420,35 +387,12 @@ app.get('/:locale/login', (req, res) => {
         return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-res.render('login', {
-  layout: 'layout',
-  locale: req.locale,
-  i18n: res.__,
-  isAuthenticated: req.isAuthenticated(),
-  currentPath: req.path,
-  nonce: res.locals.nonce,
+        res.render('login', {
+  locale,
+  i18n,
   messages: req.flash(),
-  title: 'UAP Immo | Connexion',
-  head: `
-    <!-- Google Tag Manager -->
-    <script nonce="${res.locals.nonce}">
-      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-      'https://www.googletagmanager.com/gtm.js?id=' + i + dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer','GTM-TF7HSC3N');
-    </script>
-    <!-- Fin Google Tag Manager -->
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="/css/bootstrap.min.css" rel="stylesheet">
-    <link href="/css/bootstrap-icons.css" rel="stylesheet">
-    <link rel="preload" href="/css/styles-main.css" as="style">
-    <link rel="stylesheet" href="/css/styles-main.css">
-  `
+  currentPath: req.path // 👈 ici !
 });
-
 
 });
 
@@ -1269,7 +1213,63 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
     }
 });
 
+app.post('/process-payment', isAuthenticated, async (req, res) => {
+    try {
+        const { stripeToken, amount, propertyId } = req.body;
+        const userId = req.user._id;
 
+        console.log("🔍 Paiement en cours...");
+        console.log("Stripe Token:", stripeToken);
+        console.log("Amount:", amount);
+        console.log("Property ID:", propertyId);
+        console.log("User ID:", userId);
+
+        if (!stripeToken || !amount || !propertyId) {
+            console.error("❌ Données manquantes pour le paiement.");
+            return res.status(400).json({ error: 'Données manquantes' });
+        }
+
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: parseInt(amount, 10) * 100,
+            currency: 'eur',
+            payment_method: stripeToken,
+            confirm: true,
+            return_url: `https://uap.immo/payment-success?propertyId=${propertyId}`,
+            automatic_payment_methods: {
+                enabled: true,
+                allow_redirects: "always"
+            }
+        });
+
+        console.log("✅ Paiement réussi:", paymentIntent);
+
+        const order = new Order({
+    userId,
+    propertyId,
+    amount: parseInt(amount, 10),
+    status: 'paid',
+    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+});
+
+console.log("🔍 Nouvelle commande enregistrée :", order);
+
+await order.save();
+
+
+        // Déterminer la redirection en fonction de la langue
+        const locale = req.cookies.locale || 'fr';
+        const redirectUrl = `/${locale}/user#`;
+
+        res.status(200).json({
+            message: 'Paiement réussi',
+            orderId: order._id,
+            redirectUrl // ✅ Correction de la redirection
+        });
+    } catch (error) {
+        console.error("❌ Erreur lors du paiement :", error);
+        res.status(500).json({ error: error.message || 'Erreur de paiement' });
+    }
+});
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
