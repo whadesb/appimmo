@@ -39,6 +39,7 @@ router.post('/:locale/verify-2fa', async (req, res) => {
     req.flash('error', 'Code invalide.');
     return res.redirect(`/${locale}/verify-2fa`);
   }
+req.session.tmpUserId = null;
 
   // 🔐 Authentifier manuellement l'utilisateur après 2FA
   req.login(user, (err) => {
