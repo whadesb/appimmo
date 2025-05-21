@@ -36,19 +36,32 @@ router.post('/:locale/verify-2fa', async (req, res) => {
   });
 
   if (!verified) {
-    req.flash('error', 'Code invalide.');
-    return res.redirect(`/${locale}/verify-2fa`);
+    req.flash('error', 'Code invalide. Réessayez.');
+    return res.redirect(`/${locale}/2fa`);
   }
-req.session.tmpUserId = null;
 
-  // 🔐 Authentifier manuellement l'utilisateur après 2FA
-  req.login(user, (err) => {
+  // ✅ Supprimer tmpUserId après validation réussie
+  req.session.tmpUserId = null;
+
+  // ✅ Login et sauvegarde de session
+  req.login(user, function(err) {
     if (err) {
-      console.error('Erreur login après 2FA:', err);
+      console.error('Erreur login après 2FA :', err);
+      req.flash('error', 'Erreur d’authentification. Veuillez réessayer.');
       return res.redirect(`/${locale}/login`);
     }
-console.log("✅ Redirection vers /" + locale + "/user après 2FA réussie");
-    return res.redirect(`/${locale}/user`);
+
+    // ✅ Sauvegarder la session pour s'assurer que req.user est disponible
+    req.session.save((err) => {
+      if (err) {
+        console.error('Erreur session.save() :', err);
+        req.flash('error', 'Erreur de session. Veuillez réessayer.');
+        return res.redirect(`/${locale}/login`);
+      }
+
+      console.log("✅ Redirection vers /" + locale + "/user après 2FA réussie");
+      return res.redirect(`/${locale}/user`);
+    });
   });
 });
 
