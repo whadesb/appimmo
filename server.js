@@ -1970,6 +1970,16 @@ app.post('/send-contact', async (req, res) => {
     res.status(500).send('Erreur lors de l\'envoi de l\'email.');
   }
 });
+// Gestion globale des erreurs (dernière ligne avant app.listen)
+app.use((err, req, res, next) => {
+  console.error('Erreur serveur :', err); // Log utile en interne
+  if (process.env.NODE_ENV === 'production') {
+    res.status(500).send('Erreur interne.');
+  } else {
+    // En développement, on affiche l'erreur complète pour debug
+    res.status(500).send(`<pre>${err.stack}</pre>`);
+  }
+});
 
 
 const port = process.env.PORT || 3000;
