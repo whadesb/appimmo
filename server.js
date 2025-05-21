@@ -143,32 +143,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Middleware de déconnexion automatique après expiration de la session
-app.use((req, res, next) => {
-  if (req.session && req.session.cookie.expires < new Date()) {
-    req.logout((err) => {
-      if (err) {
-        return next(err);
-      }
-      req.session.destroy((err) => {
-        if (err) {
-          return next(err);
-        }
-        res.clearCookie('connect.sid');
 
-        // Détecter la langue du cookie, sinon utiliser 'fr' par défaut
-        const locale = req.cookies.locale || req.acceptsLanguages('en', 'fr') || 'fr';
-
-        // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
-        const validLocale = ['fr', 'en'].includes(locale) ? locale : 'fr';
-
-        res.redirect(`/${validLocale}/login`);
-      });
-    });
-  } else {
-    next();
-  }
-});
 
 app.get('/user', (req, res) => {
   // Si l'utilisateur est authentifié, on redirige vers la bonne locale
