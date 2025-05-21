@@ -68,7 +68,21 @@ app.use(session({
   sameSite: 'lax'
 }
 }));
+passport.use(User.createStrategy());
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
 
+passport.deserializeUser(async (id, done) => {
+  try {
+    const user = await User.findById(id);
+    done(null, user);
+  } catch (err) {
+    done(err, null);
+  }
+});
+app.use(passport.initialize());
+app.use(passport.session());
 // Middleware
 app.use(compression());
 app.use(cookieParser());
@@ -122,21 +136,7 @@ app.use('/', authRoutes);
 
 app.use('/property', require('./routes/property'));
 
-passport.use(User.createStrategy());
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
 
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await User.findById(id);
-    done(null, user);
-  } catch (err) {
-    done(err, null);
-  }
-});
-app.use(passport.initialize());
-app.use(passport.session());
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
