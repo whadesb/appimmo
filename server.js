@@ -9,7 +9,9 @@ process.on('uncaughtException', function (err) {
 process.on('unhandledRejection', function (err, promise) {
   console.error('Unhandled Rejection:', err);
 });
-
+//ajout 2 lignes en dessous
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const express = require('express');
 const path = require('path');
 const mongoose = require('mongoose');
@@ -55,6 +57,14 @@ app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
 
+app.use(helmet()); // Sécurité headers HTTP
+//ajouter en dessous
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // max 100 requêtes par IP
+  message: 'Trop de requêtes, réessayez plus tard.'
+});
+app.use(limiter); // Global, ou seulement sur /login, /register
 
 
 
@@ -63,7 +73,12 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
+  cookie: {
+  maxAge: 1000 * 60 * 60 * 2,
+  secure: process.env.NODE_ENV === 'production', // HTTPS
+  httpOnly: true,
+  sameSite: 'lax'
+}
 }));
 
 
