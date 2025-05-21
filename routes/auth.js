@@ -18,6 +18,37 @@ function ensureNotAuthenticated(req, res, next) {
   }
   next();
 }
+app.post('/:locale/verify-2fa', async (req, res) => {
+  const { locale } = req.params;
+  const { token } = req.body;
+
+  const user = await User.findById(req.session.tmpUserId);
+
+  if (!user) {
+    req.flash('error', 'Utilisateur introuvable.');
+    return res.redirect(`/${locale}/login`);
+  }
+
+  const verified = speakeasy.totp.verify({
+    secret: user.twoFactorSecret,
+    encoding: 'base32',
+    token
+  });
+
+  if (!verified) {
+    req.flash('error', 'Code invalide.');
+    return res.redirect(`/${locale}/verify-2fa`);
+  }
+
+  // 🔐 Authentifier manuellement l'utilisateur après 2FA
+  req.login(user, (err) => {
+    if (err) {
+      console.error('Erreur login après 2FA:', err);
+      return res.redirect(`/${locale}/login`);
+    }
+    return res.redirect(`/${locale}/user`);
+  });
+});
 
 // Route pour activer 2FA et générer le QR code
 router.get('/enable-2fa', isAuthenticated, async (req, res) => {
