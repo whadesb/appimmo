@@ -11,7 +11,7 @@ const passport = require('passport');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const Recaptcha = require('express-recaptcha').RecaptchaV2; // si utilisé
-const { sendEmail } = require('../services/email'); // tu créeras ce fichier ensuite
+const { sendEmail, sendAccountCreationEmail } = require('../services/email');
 
 
 // Route pour activer 2FA et générer le QR code
