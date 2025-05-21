@@ -107,12 +107,11 @@ router.get('/:locale/login', ensureNotAuthenticated, async (req, res) => {
         console.error("Erreur chargement traduction login :", error);
         return res.status(500).send("Erreur chargement traduction.");
     }
-
-    res.render('login', {
-        locale,
-        i18n,
-        messages: req.flash()
-    });
+res.render('login', {
+    locale,
+    i18n,
+    messages: req.flash(),
+    currentPath: req.path
 });
 
 
