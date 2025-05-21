@@ -74,13 +74,18 @@ app.use(
       ],
       styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc: ["'self'", "data:", "https://flagcdn.com"],
-      connectSrc: ["'self'", 'https://www.google-analytics.com'],
+      imgSrc: ["'self'", 'data:', 'https://flagcdn.com'],
+      connectSrc: [
+        "'self'",
+        'https://www.google-analytics.com',
+        'https://region1.google-analytics.com'
+      ],
       objectSrc: ["'none'"],
       upgradeInsecureRequests: [],
     },
   })
 );
+
 // Sécurité headers HTTP
 //ajouter en dessous
 const limiter = rateLimit({
