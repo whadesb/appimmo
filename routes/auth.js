@@ -239,6 +239,5 @@ router.get('/:locale/user', isAuthenticated, (req, res) => {
   });
 });
 
-});
 
 module.exports = router;
