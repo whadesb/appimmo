@@ -47,6 +47,7 @@ req.session.tmpUserId = null;
       console.error('Erreur login après 2FA:', err);
       return res.redirect(`/${locale}/login`);
     }
+console.log("✅ Redirection vers /" + locale + "/user après 2FA réussie");
     return res.redirect(`/${locale}/user`);
   });
 });
