@@ -10,16 +10,21 @@ process.on('unhandledRejection', function (err, promise) {
   console.error('Unhandled Rejection:', err);
 });
 //ajout 2 lignes en dessous
+const express = require('express');
+const session = require('express-session');
+const passport = require('passport');
+const flash = require('express-flash');
+
+const path = require('path');
+
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const express = require('express');
-const path = require('path');
+
 const mongoose = require('mongoose');
-const session = require('express-session');
 const MongoStore = require('connect-mongo');
-const passport = require('passport');
+
 const LocalStrategy = require('passport-local').Strategy;
-const flash = require('express-flash');
+
 const User = require('./models/User');
 const Property = require('./models/Property');
 const Order = require('./models/Order');
@@ -47,26 +52,8 @@ const pdfRoutes = require('./routes/pdf');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const authRoutes = require('./routes/auth');
 const app = express();
-
-// Middleware
-app.use(compression());
-app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(flash());
-app.use(i18n.init);
-
-app.use(helmet()); // Sécurité headers HTTP
-//ajouter en dessous
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requêtes par IP
-  message: 'Trop de requêtes, réessayez plus tard.'
-});
-app.use(limiter); // Global, ou seulement sur /login, /register
-
-app.use('/', authRoutes);
-
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -79,15 +66,36 @@ app.use(session({
   sameSite: 'lax'
 }
 }));
+// Middleware
+app.use(compression());
+app.use(cookieParser());
 
 
-app.use('/property', require('./routes/property'));
+app.use(flash());
+app.use(i18n.init);
 
+app.use(helmet()); // Sécurité headers HTTP
+//ajouter en dessous
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // max 100 requêtes par IP
+  message: 'Trop de requêtes, réessayez plus tard.'
+});
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
+app.use(limiter); // Global, ou seulement sur /login, /register
+
+app.use('/', authRoutes);
+
+
+
+
+app.use('/property', require('./routes/property'));
+
+
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 app.set('view engine', 'ejs');
