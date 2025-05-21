@@ -68,6 +68,8 @@ app.use(session({
   sameSite: 'lax'
 }
 }));
+app.use(passport.initialize());
+app.use(passport.session());
 // Middleware
 app.use(compression());
 app.use(cookieParser());
@@ -83,8 +85,7 @@ const limiter = rateLimit({
   max: 100, // max 100 requêtes par IP
   message: 'Trop de requêtes, réessayez plus tard.'
 });
-app.use(passport.initialize());
-app.use(passport.session());
+
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
@@ -103,7 +104,7 @@ app.use('/', authRoutes);
 
 app.use('/property', require('./routes/property'));
 
-
+passport.use(User.createStrategy());
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 app.set('view engine', 'ejs');
