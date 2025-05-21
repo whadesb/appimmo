@@ -171,7 +171,7 @@ router.get('/:locale/register', (req, res) => {
 
 
 router.post('/:locale/register', async (req, res) => {
-  const { name, email, password } = req.body;
+  const { firstName, lastName, email, password, role } = req.body;
   const { locale } = req.params;
 
   const existingUser = await User.findOne({ email });
@@ -189,8 +189,14 @@ router.post('/:locale/register', async (req, res) => {
 
 
   const hashedPassword = await bcrypt.hash(password, 10);
-  const user = new User({ name, email, password: hashedPassword });
-  await user.save();
+  const user = new User({
+  firstName,
+  lastName,
+  email,
+  role
+});
+
+await User.register(user, password); 
 
   await sendEmail(email, 'Bienvenue sur UAP Immo', '<p>Bienvenue !</p>');
   res.redirect(`/${locale}/login`);
