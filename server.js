@@ -49,6 +49,8 @@ const invalidLocales = [
 ];
 const tempAuthStore = {}; // { sessionId: user }
 const pdfRoutes = require('./routes/pdf');
+const { sendEmail } = require('./services/email');
+
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const authRoutes = require('./routes/auth');
 const app = express();
