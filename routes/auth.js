@@ -91,11 +91,24 @@ router.post('/disable-2fa', isAuthenticated, async (req, res) => {
         res.status(500).json({ error: "Erreur serveur lors de la désactivation de la 2FA." });
     }
 });
-router.get('/:locale/login', (req, res) => {
-  const { locale } = req.params;
-  const translations = require(`../locales/${locale}/login.json`);
-  res.render('login', { i18n: translations, message: req.flash('error'), locale });
+router.get('/:locale/login', ensureNotAuthenticated, async (req, res) => {
+    const { locale } = req.params;
+    let i18n = {};
+
+    try {
+        i18n = JSON.parse(fs.readFileSync(`./locales/${locale}/login.json`, 'utf8'));
+    } catch (error) {
+        console.error("Erreur chargement traduction login :", error);
+        return res.status(500).send("Erreur chargement traduction.");
+    }
+
+    res.render('login', {
+        locale,
+        i18n,
+        messages: req.flash()
+    });
 });
+
 
 // ✅ Réinitialiser la 2FA (nouveau QR code)
 router.get('/reset-2fa', isAuthenticated, async (req, res) => {
