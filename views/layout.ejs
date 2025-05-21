@@ -1,17 +1,120 @@
 <!DOCTYPE html>
 <html lang="<%= locale || 'fr' %>">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= typeof title !== 'undefined' ? title : 'UAP Immo' %></title>
 
+  <!-- CSS commun -->
+  <link rel="stylesheet" href="/css/bootstrap.min.css">
+  <link rel="stylesheet" href="/css/bootstrap-icons.css">
+  <link rel="stylesheet" href="/css/styles-main.css">
+
+  <!-- Bloc facultatif de scripts ou CSS spécifiques -->
   <% if (typeof head !== 'undefined') { %>
     <%- head %>
   <% } %>
 </head>
-<body>
 
+<body id="top">
+
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
+          height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg fixed-top" style="background-color: #C4B990;">
+  <div class="container">
+    <a class="navbar-brand" href="/<%= locale %>">UAP Immo</a>
+
+    <div class="mobile-lang-selector">
+      <div class="dropdown">
+        <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+          <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
+          <% if (locale === 'fr') { %>
+            <li><a class="dropdown-item" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> English</a></li>
+          <% } else { %>
+            <li><a class="dropdown-item" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> Français</a></li>
+          <% } %>
+        </ul>
+      </div>
+    </div>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item"><a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a></li>
+        <li class="nav-item"><a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a></li>
+      </ul>
+
+      <% if (isAuthenticated) { %>
+        <a href="/<%= locale %>/user" class="btn btn-outline-dark me-3 rounded-pill"><i class="bi bi-person-circle"></i> <%= locale === 'fr' ? 'Mon compte' : 'My Account' %></a>
+        <form action="/logout" method="POST" class="d-inline">
+          <button type="submit" class="btn btn-outline-dark rounded-pill"><i class="bi bi-box-arrow-right"></i> <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></button>
+        </form>
+      <% } else { %>
+        <a href="/<%= locale %>/login" class="btn btn-outline-dark me-3 rounded-pill"><i class="bi bi-person-fill"></i> <%= locale === 'fr' ? 'Connexion' : 'Login' %></a>
+      <% } %>
+    </div>
+  </div>
+</nav>
+
+<!-- ✅ CONTENU -->
+<main style="margin-top: 90px;">
   <%- body %>
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer section-padding mt-5">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-12 mb-4 pb-2">
+        <a class="navbar-brand mb-2" href="/<%= locale %>">UAP Immo</a>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3">Informations</h6>
+        <ul class="site-footer-links">
+          <li><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
+          <li><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3">Accès</h6>
+        <ul class="site-footer-links">
+          <li><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> English</a></li>
+            <% } else { %>
+              <li><a class="dropdown-item" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> Français</a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <p class="copyright-text mt-4">Copyright © 2025 UAP Company. <%= i18n.footer?.all_rights || 'Tous droits réservés.' %></p>
+  </div>
+</footer>
+
+<!-- JS -->
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/custom.js"></script>
 
 </body>
 </html>
