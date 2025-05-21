@@ -10,7 +10,6 @@ const path = require('path');
 const passport = require('passport');
 const bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
-const Recaptcha = require('express-recaptcha').RecaptchaV2; // si utilisé
 const { sendEmail, sendAccountCreationEmail } = require('../services/email');
 
 function ensureNotAuthenticated(req, res, next) {
