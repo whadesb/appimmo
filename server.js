@@ -10,25 +10,17 @@ process.on('unhandledRejection', function (err, promise) {
   console.error('Unhandled Rejection:', err);
 });
 //ajout 2 lignes en dessous
-const express = require('express');
-const session = require('express-session');
-const passport = require('passport');
-const flash = require('express-flash');
-
-const path = require('path');
-
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-
+const express = require('express');
+const path = require('path');
 const mongoose = require('mongoose');
+const session = require('express-session');
 const MongoStore = require('connect-mongo');
-
-
-
+const passport = require('passport');
+const LocalStrategy = require('passport-local').Strategy;
+const flash = require('express-flash');
 const User = require('./models/User');
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
-
 const Property = require('./models/Property');
 const Order = require('./models/Order');
 const fs = require('fs');
@@ -44,6 +36,7 @@ const QRCode = require('qrcode');
 const crypto = require('crypto');
 const { getPageStats } = require('./getStats');
 const Page = require('./models/Page');
+const nodemailer = require('nodemailer');
 const { getMultiplePageStats } = require('./getStats');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const invalidLocales = [
@@ -52,13 +45,29 @@ const invalidLocales = [
 ];
 const tempAuthStore = {}; // { sessionId: user }
 const pdfRoutes = require('./routes/pdf');
-const { sendEmail } = require('./services/email');
-
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-const authRoutes = require('./routes/auth');
+
 const app = express();
+
+// Middleware
+app.use(compression());
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(flash());
+app.use(i18n.init);
+
+app.use(helmet()); // Sécurité headers HTTP
+//ajouter en dessous
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // max 100 requêtes par IP
+  message: 'Trop de requêtes, réessayez plus tard.'
+});
+app.use(limiter); // Global, ou seulement sur /login, /register
+
+
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -71,70 +80,17 @@ app.use(session({
   sameSite: 'lax'
 }
 }));
-passport.use(User.createStrategy());
-
-app.use(passport.initialize());
-app.use(passport.session());
-// Middleware
-app.use(compression());
-app.use(cookieParser());
-
-
-app.use(flash());
-app.use(i18n.init);
-
-app.use(
-  helmet({
-    contentSecurityPolicy: {
-      directives: {
-        defaultSrc: ["'self'"],
-        scriptSrc: ["'self'", "'unsafe-inline'"],
-        styleSrc: ["'self'", "'unsafe-inline'", 'https:'],
-        imgSrc: ["'self'", "data:", "https:"],
-        connectSrc: ["'self'", "https:"],
-        frameSrc: ["'self'", "https:"]
-      }
-    }
-  })
-);
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // max 100 requêtes par IP
-  message: 'Trop de requêtes, réessayez plus tard.',
-  skip: (req) => {
-    return req.url.match(/\.(css|js|png|jpg|jpeg|gif|svg|ico)$/);
-  }
-});
-
-
-// Appliquer la limitation SEULEMENT aux routes sensibles
-app.use('/login', limiter);
-app.use('/register', limiter);
-app.use('/forgot-password', limiter);
-app.use('/verify-2fa', limiter);
-app.use('/reset-password', limiter);
-
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.isAuthenticated && req.isAuthenticated();
-  res.locals.currentPath = req.path;
-  next();
-});
-
-app.use('/', authRoutes);
-
-function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
-}
-
 
 
 app.use('/property', require('./routes/property'));
 
-
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy({
+  usernameField: 'email'
+}, User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -150,7 +106,32 @@ app.use((req, res, next) => {
   next();
 });
 
+// Middleware de déconnexion automatique après expiration de la session
+app.use((req, res, next) => {
+  if (req.session && req.session.cookie.expires < new Date()) {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      req.session.destroy((err) => {
+        if (err) {
+          return next(err);
+        }
+        res.clearCookie('connect.sid');
 
+        // Détecter la langue du cookie, sinon utiliser 'fr' par défaut
+        const locale = req.cookies.locale || req.acceptsLanguages('en', 'fr') || 'fr';
+
+        // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
+        const validLocale = ['fr', 'en'].includes(locale) ? locale : 'fr';
+
+        res.redirect(`/${validLocale}/login`);
+      });
+    });
+  } else {
+    next();
+  }
+});
 
 app.get('/user', (req, res) => {
   // Si l'utilisateur est authentifié, on redirige vers la bonne locale
@@ -164,6 +145,13 @@ app.post('/logout', isAuthenticated, (req, res) => {
 });
 
 
+// Middleware d'authentification
+function isAuthenticated(req, res, next) {
+  if (req.isAuthenticated()) {
+    return next();
+  }
+  res.redirect('/login');
+}
 
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
@@ -353,6 +341,21 @@ app.get('/:locale/verify-2fa', async (req, res) => {
     error: 'Code invalide. Veuillez réessayer.' // ← affiché dans la vue
 });
 });
+app.post('/disable-2fa', isAuthenticated, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ error: 'Utilisateur introuvable' });
+
+    user.twoFactorEnabled = false;
+    user.twoFactorSecret = undefined;
+    await user.save();
+
+    res.json({ success: true });
+  } catch (err) {
+    console.error("Erreur lors de la désactivation 2FA :", err);
+    res.status(500).json({ success: false, error: 'Erreur serveur' });
+  }
+});
 
 
 
@@ -372,7 +375,26 @@ function ensureNotAuthenticated(req, res, next) {
   res.redirect(`/${req.params.locale || 'fr'}/dashboard`); // ou autre page pour les membres
 }
 
+app.get('/:locale/login', (req, res) => {
+    const locale = req.params.locale || 'fr';
+    const translationsPath = `./locales/${locale}/login.json`;
+    let i18n = {};
 
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+        res.render('login', {
+  locale,
+  i18n,
+  messages: req.flash(),
+  currentPath: req.path // 👈 ici !
+});
+
+});
 
 
 app.get('/stats/:urlPath', async (req, res) => {
@@ -546,6 +568,32 @@ app.get('/api/stats/:id', async (req, res) => {
   }
 });
 
+
+app.post('/:locale/login', (req, res, next) => {
+    const locale = req.params.locale || 'fr';
+
+    passport.authenticate('local', (err, user, info) => {
+        if (err) return next(err);
+        if (!user) {
+            req.flash('error', 'Identifiants incorrects.');
+            return res.redirect(`/${locale}/login`);
+        }
+
+        req.logIn(user, (err) => {
+            if (err) return next(err);
+
+            if (user.twoFactorEnabled) {
+                req.session.tmpUserId = user._id;
+                return res.redirect(`/${locale}/2fa`);
+            }
+
+            // Si la 2FA n’est pas activée, on va directement sur /user
+            return res.redirect(`/${locale}/user`);
+        });
+    })(req, res, next);
+});
+
+
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
     const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
@@ -575,8 +623,130 @@ app.post('/set-cookie-consent', (req, res) => {
     res.cookie('cookie_consent', 'accepted', { maxAge: maxAge, httpOnly: true });
     res.json({ message: 'Consentement enregistré', maxAge: maxAge });
 });
-// Middleware d'authentification
+app.post('/logout', (req, res) => {
+  req.logout?.(); // si tu utilises passport
+  req.session.destroy(() => {
+    res.redirect('/');
+  });
+});
 
+app.get('/:locale/logout', (req, res, next) => {
+    req.logout((err) => {
+        if (err) {
+            return next(err);
+        }
+        req.session.destroy((err) => {
+            if (err) {
+                return next(err);
+            }
+            res.clearCookie('connect.sid');
+            // Redirige vers la page de login avec la bonne langue
+            res.redirect(`/${req.params.locale}/login`);
+        });
+    });
+});
+
+// Route pour la page utilisateur avec locale et récupération des propriétés
+app.get('/:locale/user', isAuthenticated, async (req, res) => {
+    const { locale } = req.params;
+    const user = req.user;
+    if (!user) {
+        return res.redirect(`/${locale}/login`);
+    }
+    
+    const userTranslationsPath = `./locales/${locale}/user.json`;
+    let userTranslations = {};
+
+    try {
+        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    res.render('user', {
+        locale,
+        user,
+        i18n: userTranslations,
+currentPath: req.originalUrl 
+    });
+});
+
+app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
+  const locale = req.params.locale || 'fr';
+
+  try {
+    const user = await User.findById(req.user._id);
+
+    // Si l'utilisateur a déjà un secret, on ne le régénère pas
+    if (!user.twoFactorSecret) {
+      const secret = speakeasy.generateSecret({ name: `UAP Immo (${user.email})` });
+      user.twoFactorSecret = secret.base32;
+      await user.save();
+    }
+
+    const otpAuthUrl = speakeasy.otpauthURL({
+      secret: user.twoFactorSecret,
+      label: `UAP Immo (${user.email})`,
+      issuer: 'UAP Immo',
+      encoding: 'base32'
+    });
+
+    const qrCode = await QRCode.toDataURL(otpAuthUrl);
+
+    const translationsPath = `./locales/${locale}/enable-2fa.json`;
+    const i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+
+    res.render('enable-2fa', {
+      locale,
+      i18n,
+      user,
+      qrCode,
+      messages: req.flash(),
+currentPath: req.originalUrl 
+    });
+  } catch (error) {
+    console.error("Erreur dans GET /enable-2fa :", error);
+    req.flash('error', 'Erreur lors de la génération du code QR.');
+    res.redirect(`/${locale}/user`);
+  }
+});
+
+
+app.post('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
+  const locale = req.params.locale || 'fr';
+  const { code } = req.body;
+
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (!user.twoFactorSecret) {
+      req.flash('error', 'Secret 2FA manquant. Rechargez la page.');
+      return res.redirect(`/${locale}/enable-2fa`);
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code
+    });
+
+    if (!verified) {
+      req.flash('error', 'Code invalide. Veuillez réessayer.');
+      return res.redirect(`/${locale}/enable-2fa`);
+    }
+
+    user.twoFactorEnabled = true;
+    await user.save();
+
+    req.flash('success', '2FA activée avec succès.');
+    res.redirect(`/${locale}/user`);
+  } catch (err) {
+    console.error("Erreur POST enable-2fa :", err);
+    req.flash('error', 'Une erreur est survenue.');
+    res.redirect(`/${locale}/enable-2fa`);
+  }
+});
 
 
 
@@ -644,18 +814,193 @@ res.redirect(`/${locale}/contact?messageEnvoye=true`);
         res.status(500).send('Erreur lors de l\'envoi de l\'email.');
     }
 });
+app.get('/:locale/register', (req, res) => {
+    const locale = req.params.locale || 'fr'; // Récupérer la langue dans l'URL ou 'fr' par défaut
+    const translationsPath = path.join(__dirname, 'locales', locale, 'register.json');
+    let i18n = {};
 
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8')); // Charger les traductions
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
 
+    res.render('register', {
+        locale: locale,
+        i18n: i18n,
+        messages: req.flash(),
+currentPath: req.originalUrl,
+RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY 
+    });
+});
+
+app.get('/:locale/register', (req, res) => {
+    const locale = req.params.locale || 'fr'; // Récupérer la langue dans l'URL ou 'fr' par défaut
+    const translationsPath = path.join(__dirname, 'locales', locale, 'register.json');
+    let i18n = {};
+
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8')); // Charger les traductions
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    res.render('register', {
+        locale: locale,
+        i18n: i18n,
+        messages: req.flash() // Pour afficher d'éventuelles erreurs d'inscription
+    });
+});
 
 app.use('/pdf', pdfRoutes);
 
 const axios = require('axios'); // tout en haut de ton fichier
 
+app.post('/:locale/register', async (req, res) => {
+  const { email, firstName, lastName, role, password, confirmPassword, 'g-recaptcha-response': captcha } = req.body;
+  const locale = req.params.locale;
+
+  // ⚠️ Si captcha vide
+  if (!captcha) {
+    req.flash('error', 'Veuillez valider le CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // 🔍 Vérification reCAPTCHA
+  try {
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
+
+const response = await axios.post(verificationURL, null, {
+  params: {
+    secret: secretKey,
+    response: captcha,
+  },
+});
+
+
+    if (!response.data.success) {
+      req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
+      return res.redirect(`/${locale}/register`);
+    }
+  } catch (err) {
+    console.error("Erreur reCAPTCHA :", err);
+    req.flash('error', 'Erreur de vérification CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // ✅ Validation email et mot de passe
+  if (!validator.isEmail(email)) {
+    req.flash('error', 'L\'adresse email n\'est pas valide.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  if (password !== confirmPassword) {
+    req.flash('error', 'Les mots de passe ne correspondent pas.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRequirements.test(password)) {
+    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  try {
+    const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
+    await sendAccountCreationEmail(newUser.email);
+
+    req.login(newUser, (err) => {
+      if (err) {
+        console.error('Erreur lors de la connexion automatique après inscription :', err);
+        req.flash('error', 'Erreur de connexion automatique.');
+        return res.redirect(`/${locale}/login`);
+      }
+
+      res.redirect(`/${locale}/enable-2fa`);
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription :', error.message);
+    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
+    res.redirect(`/${locale}/register`);
+  }
+});
+
+app.get('/:locale/2fa', (req, res) => {
+  const { locale } = req.params;
+
+  if (!req.session.tmpUserId) {
+    return res.redirect(`/${locale}/login`);
+  }
+
+  const translationsPath = `./locales/${locale}/2fa.json`;
+  let i18n = {};
+  try {
+    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
+
+   res.render('2fa', {
+    locale,
+    i18n,
+    messages: req.flash(),
+    currentPath: req.originalUrl // ✅ Ajout ici
+  });
+
+});
 
 
 
+app.post('/:locale/2fa', async (req, res) => {
+  const { locale } = req.params;
+  const { code } = req.body;
 
+  const tmpUserId = req.session.tmpUserId;
 
+  if (!tmpUserId) {
+    return res.redirect(`/${locale}/login`);
+  }
+
+  try {
+    const user = await User.findById(tmpUserId);
+    if (!user || !user.twoFactorSecret) {
+      req.flash('error', 'Erreur de validation 2FA.');
+      return res.redirect(`/${locale}/login`);
+    }
+
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code,
+      window: 1
+    });
+
+    if (!verified) {
+      req.flash('error', 'Code 2FA invalide.');
+      return res.redirect(`/${locale}/2fa`);
+    }
+
+    // Connexion réussie
+    delete req.session.tmpUserId;
+    req.login(user, (err) => {
+      if (err) {
+        req.flash('error', 'Erreur de connexion.');
+        return res.redirect(`/${locale}/login`);
+      }
+      return res.redirect(`/${locale}/user`);
+    });
+
+  } catch (err) {
+    console.error('Erreur 2FA:', err);
+    req.flash('error', 'Une erreur est survenue.');
+    res.redirect(`/${locale}/login`);
+  }
+});
 
 
 app.post('/add-property', isAuthenticated, upload.fields([
@@ -1516,7 +1861,15 @@ align-items: stretch;
     return `/landing-pages/${property._id}.html`;
 }
 
-
+const transporter = nodemailer.createTransport({
+  host: 'smtp.ionos.fr',
+  port: 587,
+  secure: false,
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
 
 async function getLandingPagesFromDB(userId) {
   return await Property.find({ createdBy: userId });
@@ -1524,7 +1877,42 @@ async function getLandingPagesFromDB(userId) {
 
 
 
+async function sendEmail(mailOptions) {
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log('Email envoyé avec succès à :', mailOptions.to);
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi de l\'email :', error);
+  }
+}
 
+async function sendAccountCreationEmail(email) {
+  const mailOptions = {
+    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+    to: email,
+    subject: 'Bienvenue chez UAP Immo',
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2 style="color: #52566f;">Bienvenue chez UAP Immo!</h2>
+        <p>Bonjour,</p>
+        <p>Nous sommes ravis de vous compter parmi nos nouveaux utilisateurs. Votre compte a été créé avec succès !</p>
+        <p>Vous avez reçu cet email parce que vous vous êtes inscrit sur notre plateforme. Vous pouvez dès maintenant vous connecter en utilisant l'adresse email et le mot de passe que vous avez choisis lors de l'inscription.</p>
+        <p style="font-size: 16px;">Voici un récapitulatif :</p>
+        <ul style="font-size: 16px;">
+          <li><strong>Email :</strong> ${email}</li>
+          <li><strong>Plateforme :</strong> <a href="https://uap.immo/login" style="color: #52566f;">Se connecter à votre espace UAP Immo</a></li>
+        </ul>
+        <p>Si vous avez des questions ou besoin d'aide, n'hésitez pas à nous contacter à tout moment.</p>
+        <p>Cordialement,</p>
+        <p>L'équipe UAP Immo</p>
+        <hr>
+        <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company">support@uap.company</a>.</p>
+      </div>
+    `,
+  };
+
+  await sendEmail(mailOptions);
+}
 
 app.post('/user/orders/renew', isAuthenticated, async (req, res) => {
   try {
