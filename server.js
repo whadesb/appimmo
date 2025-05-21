@@ -26,6 +26,9 @@ const MongoStore = require('connect-mongo');
 const LocalStrategy = require('passport-local').Strategy;
 
 const User = require('./models/User');
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
 const Property = require('./models/Property');
 const Order = require('./models/Order');
 const fs = require('fs');
