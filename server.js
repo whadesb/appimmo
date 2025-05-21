@@ -65,7 +65,25 @@ const limiter = rateLimit({
   message: 'Trop de requêtes, réessayez plus tard.'
 });
 app.use(limiter); // Global, ou seulement sur /login, /register
+app.use(
+  helmet.contentSecurityPolicy({
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", (req, res) => `'nonce-${res.locals.nonce}'`],
+      styleSrc: ["'self'", 'https://fonts.googleapis.com', "'unsafe-inline'"],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+      imgSrc: ["'self'", "data:", "https://flagcdn.com"],
+      connectSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  })
+);
 
+app.use((req, res, next) => {
+  res.locals.nonce = crypto.randomBytes(16).toString('base64');
+  next();
+});
 
 
 app.use(session({
