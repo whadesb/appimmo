@@ -7,6 +7,12 @@ const User = require('../models/User');
 const isAuthenticated = require('../middleware/auth');
 const fs = require('fs');
 const path = require('path');
+const passport = require('passport');
+const bcrypt = require('bcrypt');
+const nodemailer = require('nodemailer');
+const Recaptcha = require('express-recaptcha').RecaptchaV2; // si utilisé
+const { sendEmail } = require('../services/email'); // tu créeras ce fichier ensuite
+
 
 // Route pour activer 2FA et générer le QR code
 router.get('/enable-2fa', isAuthenticated, async (req, res) => {
@@ -85,6 +91,11 @@ router.post('/disable-2fa', isAuthenticated, async (req, res) => {
         res.status(500).json({ error: "Erreur serveur lors de la désactivation de la 2FA." });
     }
 });
+router.get('/:locale/login', (req, res) => {
+  const { locale } = req.params;
+  const translations = require(`../locales/${locale}/login.json`);
+  res.render('login', { i18n: translations, message: req.flash('error'), locale });
+});
 
 // ✅ Réinitialiser la 2FA (nouveau QR code)
 router.get('/reset-2fa', isAuthenticated, async (req, res) => {
@@ -101,6 +112,61 @@ router.get('/reset-2fa', isAuthenticated, async (req, res) => {
     } catch (error) {
         res.status(500).send('Erreur réinitialisation 2FA');
     }
+});
+
+router.post('/:locale/login', (req, res, next) => {
+  passport.authenticate('local', (err, user, info) => {
+    const { locale } = req.params;
+
+    if (err) return next(err);
+    if (!user) return res.redirect(`/${locale}/login`);
+
+    if (user.twoFactorEnabled) {
+      req.session.tmpUserId = user._id;
+      return res.redirect(`/${locale}/2fa`);
+    }
+
+    req.login(user, (err) => {
+      if (err) return next(err);
+      return res.redirect(`/${locale}/user`);
+    });
+  })(req, res, next);
+});
+
+router.get('/:locale/register', (req, res) => {
+  const { locale } = req.params;
+  const translations = require(`../locales/${locale}/register.json`);
+  res.render('register', { i18n: translations, errors: [], locale });
+});
+router.post('/:locale/register', async (req, res) => {
+  const { name, email, password } = req.body;
+  const { locale } = req.params;
+
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
+    return res.render('register', {
+      i18n: require(`../locales/${locale}/register.json`),
+      errors: ['Adresse email déjà utilisée'],
+      locale
+    });
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const user = new User({ name, email, password: hashedPassword });
+  await user.save();
+
+  await sendEmail(email, 'Bienvenue sur UAP Immo', '<p>Bienvenue !</p>');
+  res.redirect(`/${locale}/login`);
+});
+router.get('/:locale/logout', (req, res) => {
+  req.logout(() => {
+    res.redirect('/');
+  });
+});
+router.get('/:locale/user', isAuthenticated, (req, res) => {
+  const { locale } = req.params;
+  const translations = require(`../locales/${locale}/user.json`);
+  res.render('user', { user: req.user, i18n: translations, locale });
 });
 
 module.exports = router;
