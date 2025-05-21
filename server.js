@@ -36,6 +36,7 @@ const crypto = require('crypto');
 const helmet = require('helmet');
 const { getPageStats } = require('./getStats');
 const Page = require('./models/Page');
+const expressLayouts = require('express-ejs-layouts');
 const nodemailer = require('nodemailer');
 const { getMultiplePageStats } = require('./getStats');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
@@ -85,7 +86,8 @@ app.use(
     },
   })
 );
-
+app.use(expressLayouts);
+app.set('layout', 'layout');
 // Sécurité headers HTTP
 //ajouter en dessous
 const limiter = rateLimit({
