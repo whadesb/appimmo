@@ -191,6 +191,8 @@ router.get('/:locale/user', isAuthenticated, (req, res) => {
  const translations = JSON.parse(fs.readFileSync(
   path.join(__dirname, '../locales', locale, 'user.json'), 'utf8'
 ));
+console.log('Rendering user page for:', req.user.email);
+
   res.render('user', { user: req.user, i18n: translations, locale });
 });
 
