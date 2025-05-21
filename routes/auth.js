@@ -74,22 +74,28 @@ router.post('/:locale/2fa', async (req, res, next) => {
       token: token
     });
 
-    if (isVerified) {
+   if (isVerified) {
   req.login(user, function(err) {
     if (err) {
       console.error("Erreur login après 2FA :", err);
       return res.redirect(`/${locale}/login`);
     }
 
-    console.log("✅ Connexion réussie après 2FA pour :", user.email);
     req.session.tmpUserId = null;
 
-    // 👇 AJOUTE CECI
-    console.log("🔐 Session après login 2FA :", req.session);
+    // ✅ Ajoute cette ligne pour forcer l’enregistrement de la session
+    req.session.save((err) => {
+      if (err) {
+        console.error("Erreur lors de la sauvegarde session :", err);
+        return res.redirect(`/${locale}/login`);
+      }
 
-    return res.redirect(`/${locale}/user`);
+      console.log("✅ Connexion réussie après 2FA pour :", user.email);
+      return res.redirect(`/${locale}/user`);
+    });
   });
 }
+
 
 else {
       const i18n = JSON.parse(fs.readFileSync(
