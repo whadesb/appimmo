@@ -23,6 +23,7 @@
     "express": "^4.19.2",
     "express-flash": "^0.0.2",
     "express-rate-limit": "^7.5.0",
+    "express-recaptcha": "^5.1.0",
     "express-session": "^1.18.0",
     "google-auth-library": "^9.15.1",
     "googleapis": "^146.0.0",
