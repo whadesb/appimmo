@@ -1242,25 +1242,7 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
     expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
 });
 
-console.log("🔍 Nouvelle commande enregistrée :", order);
 
-await order.save();
-
-
-        // Déterminer la redirection en fonction de la langue
-        const locale = req.cookies.locale || 'fr';
-        const redirectUrl = `/${locale}/user#`;
-
-        res.status(200).json({
-            message: 'Paiement réussi',
-            orderId: order._id,
-            redirectUrl // ✅ Correction de la redirection
-        });
-    } catch (error) {
-        console.error("❌ Erreur lors du paiement :", error);
-        res.status(500).json({ error: error.message || 'Erreur de paiement' });
-    }
-});
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
