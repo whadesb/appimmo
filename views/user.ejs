@@ -1296,6 +1296,9 @@ async function loadLandingPages() {
   <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
     <i class="bi bi-clipboard"></i>
   </button>
+  <button class="btn btn-sm btn-outline-info me-1" onclick="window.open('/qr/${page._id}', '_blank')" title="QR Code">
+  <i class="bi bi-qr-code"></i>
+</button>
   <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}'); showToast();" title="Diffuser">
     <i class="bi bi-megaphone"></i>
   </button>
