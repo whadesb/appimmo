@@ -640,15 +640,18 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
   if (!user) {
     return res.redirect(`/${locale}/login`);
   }
-  // 👇 Début du debug
-  const userLandingPages = await Property.find({}); // récupère toutes les annonces
+
+  // ✅ Débug : on récupère les annonces de tous les utilisateurs
+  let userLandingPages = await Property.find({}); // TEMPORAIRE pour debug
 
   console.log("Liste brute des userId en base :");
   userLandingPages.forEach(page => {
     console.log("➡️", page.userId?.toString());
   });
   console.log("Utilisateur connecté :", user._id.toString());
-  // 👆 Fin du debug
+
+  // ✅ Puis on récupère uniquement celles du user connecté (on réutilise la même variable)
+  userLandingPages = await Property.find({ userId: user._id }); // REÉCRITURE de la variable
 
   const userTranslationsPath = `./locales/${locale}/user.json`;
   let userTranslations = {};
@@ -660,23 +663,15 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     return res.status(500).send('Erreur lors du chargement des traductions.');
   }
 
-  // ✅ Ajout ici : récupération des pages créées par l'utilisateur
-  let userLandingPages = [];
-  try {
-    userLandingPages = await Property.find({ userId: user._id }); // Adapté à ton modèle
-  } catch (err) {
-    console.error("Erreur lors de la récupération des annonces :", err);
-  }
-
-  // ✅ Injection dans le rendu de la vue
   res.render('user', {
     locale,
     user,
     i18n: userTranslations,
     currentPath: req.originalUrl,
-    userLandingPages // <--- cette ligne manquait
+    userLandingPages
   });
 });
+
 
 
 
