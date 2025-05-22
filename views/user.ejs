@@ -629,6 +629,20 @@ progress {
             </p>
 
             <div id="disable-2fa-message" class="alert alert-success" style="display: none;"></div>
+<hr class="my-4">
+<div class="alert alert-info">
+  <h6 class="mb-2"><i class="bi bi-house-door-fill me-2"></i>Vos Annonces</h6>
+  <% if (userLandingPages && userLandingPages.length > 0) { %>
+    <p>✅ Vous avez généré <strong><%= userLandingPages.length %></strong> page(s) d'annonce immobilière.</p>
+    <p>📣 N'oubliez pas de <strong>diffuser</strong> vos annonces pour plus de visibilité !</p>
+  <% } else { %>
+    <p>🚫 Vous n'avez pas encore généré d'annonce.</p>
+    <a href="#" onclick="showSection('landing')" class="btn btn-sm btn-outline-dark mt-2">
+      <i class="bi bi-plus-circle"></i> Créer ma première annonce
+    </a>
+  <% } %>
+</div>
+
           </div>
         </div>
 
