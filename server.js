@@ -10,7 +10,7 @@ process.on('unhandledRejection', function (err, promise) {
   console.error('Unhandled Rejection:', err);
 });
 //ajout 2 lignes en dessous
-const helmet = require('helmet');
+// const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const express = require('express');
 const path = require('path');
@@ -57,7 +57,7 @@ app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
 
-app.use(helmet()); // Sécurité headers HTTP
+//app.use(helmet()); // Sécurité headers HTTP
 //ajouter en dessous
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
