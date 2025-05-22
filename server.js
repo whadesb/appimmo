@@ -1030,7 +1030,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
       caretakerHouse: req.body.caretakerHouse === 'true',
       electricShutters: req.body.electricShutters === 'true',
       outdoorLighting: req.body.outdoorLighting === 'true',
-      createdBy: req.user._id,
+      userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
       photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
     });
