@@ -113,7 +113,7 @@ router.post('/add-property', authMiddleware, upload.fields([
             city,
             propertyType,
             description,
-            createdBy: req.user._id,
+             userId: req.user._id,
             photos: [photo1, photo2]
         });
 
