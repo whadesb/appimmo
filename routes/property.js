@@ -614,7 +614,7 @@ router.post('/add-property', authMiddleware, upload.fields([
             country,
             dpe: dpe || 'En cours',
     description: description || '',
-            createdBy: req.user._id,
+            userId: req.user._id,
             photos: [photo1, photo2]
         });
 
