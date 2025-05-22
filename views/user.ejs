@@ -1296,7 +1296,7 @@ async function loadLandingPages() {
   <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
     <i class="bi bi-clipboard"></i>
   </button>
-  <button class="btn btn-sm btn-outline-info me-1" onclick="window.open('/qr/${page._id}', '_blank')" title="QR Code">
+<button class="btn btn-sm btn-outline-info me-1" onclick="showQRCode('${page._id}')" title="QR Code">
   <i class="bi bi-qr-code"></i>
 </button>
   <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}'); showToast();" title="Diffuser">
@@ -1504,5 +1504,48 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+<!-- Modal QR Code -->
+<div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-sm modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="qrModalLabel">QR Code</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body text-center" id="qrCodeContainer">
+        <!-- QR code généré s'affichera ici -->
+        <div class="spinner-border text-primary" role="status">
+          <span class="visually-hidden">Chargement...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+function showQRCode(propertyId) {
+  const qrContainer = document.getElementById('qrCodeContainer');
+  qrContainer.innerHTML = `
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Chargement...</span>
+    </div>
+  `;
+
+  // Affiche la modale
+  const qrModal = new bootstrap.Modal(document.getElementById('qrModal'));
+  qrModal.show();
+
+  // Charge le QR Code
+  fetch(`/qr/${propertyId}`)
+    .then(response => response.text())
+    .then(html => {
+      qrContainer.innerHTML = html;
+    })
+    .catch(err => {
+      qrContainer.innerHTML = `<p class="text-danger">Erreur de génération du QR code</p>`;
+      console.error(err);
+    });
+}
+</script>
+
 </body>
 </html>
