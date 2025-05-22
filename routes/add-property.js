@@ -110,16 +110,16 @@ if (!userId) {
   return res.status(400).json({ error: "Utilisateur non identifié, veuillez vous reconnecter." });
 }
         // Création de la propriété
-        const property = new Property({
-            price: parseFloat(price),
-            surface: parseInt(surface),
-            country,
-            city,
-            propertyType,
-            description,
-            userId,
-            photos: [photo1, photo2]
-        });
+       const property = new Property({
+  price: parseFloat(price),
+  surface: parseInt(surface),
+  country,
+  city,
+  propertyType,
+  description,
+  userId: req.user._id || req.user.id || (req.user._doc && req.user._doc._id),
+  photos: [photo1, photo2]
+});
 
         await property.save();
         console.log("Propriété enregistrée avec succès.");
