@@ -668,6 +668,15 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     userLandingPages // <--- cette ligne manquait
   });
 });
+  // 👇 Début du debug
+  const userLandingPages = await Property.find({}); // récupère toutes les annonces
+
+  console.log("Liste brute des userId en base :");
+  userLandingPages.forEach(page => {
+    console.log("➡️", page.userId?.toString());
+  });
+  console.log("Utilisateur connecté :", user._id.toString());
+  // 👆 Fin du debug
 
 
 app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
