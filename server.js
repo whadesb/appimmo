@@ -43,6 +43,7 @@ const invalidLocales = [
 ];
 const tempAuthStore = {}; // { sessionId: user }
 const pdfRoutes = require('./routes/pdf');
+const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
 const app = express();
@@ -66,7 +67,7 @@ app.use(session({
   cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
 }));
 
-
+app.use('/', qrRoutes);
 app.use('/property', require('./routes/property'));
 
 app.use(passport.initialize());
