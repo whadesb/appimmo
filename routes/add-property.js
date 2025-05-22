@@ -104,7 +104,11 @@ router.post('/add-property', authMiddleware, upload.fields([
             fs.unlinkSync(req.files.photo2[0].path);
             console.log("Photo2 traitée et enregistrée.");
         }
-
+const userId = req.user?._id;
+if (!userId) {
+  console.warn("⚠️ Alerte : req.user._id est manquant !");
+  return res.status(400).json({ error: "Utilisateur non identifié, veuillez vous reconnecter." });
+}
         // Création de la propriété
         const property = new Property({
             price: parseFloat(price),
@@ -113,7 +117,7 @@ router.post('/add-property', authMiddleware, upload.fields([
             city,
             propertyType,
             description,
-             userId: new mongoose.Types.ObjectId(req.user._id), 
+            userId,
             photos: [photo1, photo2]
         });
 
