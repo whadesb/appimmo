@@ -701,14 +701,14 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
     const i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
 
     res.render('enable-2fa', {
-      locale,
-      i18n,
-      user,
-      qrCode,
-      messages: req.flash(),
-currentPath: req.originalUrl,
- cleanPath: req.originalUrl.replace(/^\/(fr|en)/, '')  
-    });
+  locale,
+  i18n,
+  user,
+  qrCode,
+  messages: req.flash(),
+  currentPath: req.originalUrl,
+  cleanPath: req.originalUrl.replace(/^\/(fr|en)/, '')
+});
   } catch (error) {
     console.error("Erreur dans GET /enable-2fa :", error);
     req.flash('error', 'Erreur lors de la génération du code QR.');
