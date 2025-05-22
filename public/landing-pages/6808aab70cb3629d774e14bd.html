@@ -1,5 +1,5 @@
 
-           <!DOCTYPE html>
+          <!DOCTYPE html>
 <html lang="fr">
 <head>
   <!-- Google Tag Manager -->
@@ -334,6 +334,19 @@ align-items: stretch;
       opacity: 1 !important;
       box-shadow: none !important;
     }
+.extra-info-desktop h2 {
+  font-size: 1.6rem;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+.extra-col .info-label {
+  font-size: 1.35rem;
+  font-weight: 400;
+  font-family: "Lora", serif;
+  margin-bottom: 12px;
+}
+
 
     /* Responsive mobile */
     @media screen and (max-width: 768px) {
@@ -390,6 +403,25 @@ align-items: stretch;
   flex: 1.5; /* un peu plus que les autres colonnes */
 }
 
+.extra-col .info-label,
+.dpe-label {
+  font-size: 1.35rem;
+  font-weight: 400;
+  margin-bottom: 12px;
+  font-family: "Lora", serif;
+}
+
+.extra-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+}
+
+.extra-columns {
+  align-items: flex-start;
+}
+
+
     }
   </style>
 </head>
@@ -417,7 +449,7 @@ align-items: stretch;
       <div class="property-details one-line">
   <div class="detail">
     <i class="fal fa-ruler-combined"></i>
-    <p>110 m²</p>
+    <p>500 m²</p>
   </div>
   <div class="detail">
     <i class="fal fa-bed"></i>
@@ -447,46 +479,44 @@ align-items: stretch;
   <h2>Informations complémentaires</h2>
 
   <div class="extra-columns">
-    <!-- Colonne 1 : DPE -->
-    <div class="extra-col">
-      <div class="dpe-section">
-        <div class="dpe-label">DPE : A</div>
-        <div class="dpe-bar">
-          
-            <div class="bar A active ">
-              A
-            </div>
-          
-            <div class="bar B  ">
-              B
-            </div>
-          
-            <div class="bar C  ">
-              C
-            </div>
-          
-            <div class="bar D  ">
-              D
-            </div>
-          
-            <div class="bar E  ">
-              E
-            </div>
-          
-            <div class="bar F  ">
-              F
-            </div>
-          
-            <div class="bar G  ">
-              G
-            </div>
-          
-        </div>
+<!-- Colonne 1 : DPE -->
+<div class="extra-col">
+  <div class="info-label">DPE</div>
+  <div class="dpe-bar">
+    
+      <div class="bar A active ">
+        A
       </div>
-    </div>
-    <!-- Colonne 2 : Autres infos -->
-   <!-- Colonne 2 : Infos principales réutilisées -->
-<div class="main-info-section">
+    
+      <div class="bar B  ">
+        B
+      </div>
+    
+      <div class="bar C  ">
+        C
+      </div>
+    
+      <div class="bar D  ">
+        D
+      </div>
+    
+      <div class="bar E  ">
+        E
+      </div>
+    
+      <div class="bar F  ">
+        F
+      </div>
+    
+      <div class="bar G  ">
+        G
+      </div>
+    
+  </div>
+</div>
+
+<!-- Colonne 2 : Informations clés -->
+<div class="extra-col">
   <div class="info-label">Informations clés</div>
   <div class="info-item">Prix : 750 000 €</div>
   <div class="info-item">Pièces : 1</div>
@@ -494,13 +524,12 @@ align-items: stretch;
   <div class="info-item">Année : 2000</div>
 </div>
 
-
-    <!-- Colonne 3 : Vide -->
-<!-- Colonne 3 : Carte -->
+<!-- Colonne 3 : Localisation -->
 <div class="extra-col map-col">
   <div class="info-label">Localisation</div>
   <div id="map"></div>
 </div>
+
   </div>
 </div>
 
