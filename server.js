@@ -634,29 +634,41 @@ app.get('/:locale/logout', (req, res, next) => {
 
 // Route pour la page utilisateur avec locale et récupération des propriétés
 app.get('/:locale/user', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;
-    const user = req.user;
-    if (!user) {
-        return res.redirect(`/${locale}/login`);
-    }
-    
-    const userTranslationsPath = `./locales/${locale}/user.json`;
-    let userTranslations = {};
+  const { locale } = req.params;
+  const user = req.user;
 
-    try {
-        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
+  if (!user) {
+    return res.redirect(`/${locale}/login`);
+  }
 
-    res.render('user', {
-        locale,
-        user,
-        i18n: userTranslations,
-currentPath: req.originalUrl 
-    });
+  const userTranslationsPath = `./locales/${locale}/user.json`;
+  let userTranslations = {};
+
+  try {
+    userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions : ${error}`);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
+
+  // ✅ Ajout ici : récupération des pages créées par l'utilisateur
+  let userLandingPages = [];
+  try {
+    userLandingPages = await Property.find({ userId: user._id }); // Adapté à ton modèle
+  } catch (err) {
+    console.error("Erreur lors de la récupération des annonces :", err);
+  }
+
+  // ✅ Injection dans le rendu de la vue
+  res.render('user', {
+    locale,
+    user,
+    i18n: userTranslations,
+    currentPath: req.originalUrl,
+    userLandingPages // <--- cette ligne manquait
+  });
 });
+
 
 app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   const locale = req.params.locale || 'fr';
