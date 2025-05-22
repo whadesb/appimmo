@@ -113,7 +113,7 @@ router.post('/add-property', authMiddleware, upload.fields([
             city,
             propertyType,
             description,
-             userId: req.user._id,
+             userId: new mongoose.Types.ObjectId(req.user._id), 
             photos: [photo1, photo2]
         });
 
