@@ -33,7 +33,11 @@ const propertySchema = new Schema({
 },
   url: { type: String },
   views: { type: Number, default: 0 },
-  createdBy: { type: Schema.Types.ObjectId, ref: 'User' },
+  userId: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'User',
+  required: true
+},
   photos: [String]
 });
 
