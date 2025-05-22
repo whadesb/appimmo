@@ -706,7 +706,8 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
       user,
       qrCode,
       messages: req.flash(),
-currentPath: req.originalUrl 
+currentPath: req.originalUrl,
+ cleanPath: req.originalUrl.replace(/^\/(fr|en)/, '')  
     });
   } catch (error) {
     console.error("Erreur dans GET /enable-2fa :", error);
