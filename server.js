@@ -1923,22 +1923,77 @@ async function sendAccountCreationEmail(email) {
   await sendEmail(mailOptions);
 }
 async function sendPropertyCreationEmail(user, property) {
-  const mailOptions = {
-    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-    to: user.email,
-    subject: 'Votre annonce a été créée avec succès',
-    html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2 style="color: #52566f;">Bonjour ${user.firstName || ''},</h2>
-        <p>Votre annonce pour un bien situé à <b>${property.city}, ${property.country}</b> a bien été publiée.</p>
-        <p>Vous pouvez la consulter ici :</p>
-        <p><a href="https://uap.immo${property.url}" target="_blank">${property.url}</a></p>
-        <p>Merci d'utiliser UAP Immo.</p>
-        <hr>
-        <p style="font-size: 12px; color: #888;">Cet email est automatique. Pour toute question, contactez <a href="mailto:support@uap.company">support@uap.company</a>.</p>
-      </div>
-    `
-  };
+const creationDate = new Date(property.createdAt || Date.now()).toLocaleDateString('fr-FR');
+
+const mailOptions = {
+  from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+  to: user.email,
+  subject: 'Votre annonce a bien été publiée sur UAP Immo',
+  html: `
+  <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <h2 style="color: #2c3e50;">Bonjour ${user.firstName} ${user.lastName},</h2>
+    <p>Nous avons le plaisir de vous confirmer que votre annonce a été générée avec succès le <strong>${creationDate}</strong>.</p>
+
+    <h3 style="color: #2c3e50;">📄 Détails de votre annonce :</h3>
+    <ul style="list-style-type: none; padding: 0;">
+      <li><strong>Type de bien :</strong> ${property.propertyType}</li>
+      <li><strong>Ville :</strong> ${property.city}</li>
+      <li><strong>Pays :</strong> ${property.country}</li>
+      <li><strong>Surface :</strong> ${property.surface} m²</li>
+      <li><strong>Prix :</strong> ${Number(property.price).toLocaleString('fr-FR')} €</li>
+      <li><strong>Nombre de pièces :</strong> ${property.rooms}</li>
+      <li><strong>Chambres :</strong> ${property.bedrooms}</li>
+    </ul>
+
+    <p>Vous pouvez consulter votre annonce ici :<br />
+    <a href="https://uap.immo${property.url}" style="color: #1e87f0;" target="_blank">https://uap.immo${property.url}</a></p>
+
+    <hr />
+
+    <p>✅ <strong>Partage gratuit :</strong> Vous pouvez librement partager cette URL sur vos réseaux ou à vos contacts.</p>
+    <p>📈 <strong>Référencement inclus :</strong> Votre annonce est optimisée pour le SEO dès sa mise en ligne.</p>
+    <p>📊 <strong>Statistiques :</strong> Depuis votre espace personnel, vous pouvez consulter le nombre de vues, la source du trafic, etc.</p>
+    <p>✏️ <strong>Modifications :</strong> Vous pouvez corriger ou mettre à jour votre annonce à tout moment, gratuitement.</p>
+    <p>🚀 <strong>Boost de visibilité :</strong> Vous pouvez également acheter un <strong>pack de diffusion</strong> depuis votre tableau de bord pour augmenter la visibilité de votre annonce.</p>
+    <p>📱 <strong>QR Code :</strong> Depuis votre espace, scannez le QR code de votre annonce pour l’imprimer, l’intégrer dans un flyer ou la partager en vitrine.</p>
+
+    <p style="margin-top: 30px;">Merci de votre confiance,<br />
+    <strong>L’équipe UAP Immo</strong></p>
+
+    <hr style="margin-top: 40px;" />
+
+    <h2 style="color: #2c3e50;">Hello ${user.firstName} ${user.lastName},</h2>
+    <p>Your property listing was successfully created on <strong>${creationDate}</strong>.</p>
+
+    <h3 style="color: #2c3e50;">📄 Listing Details:</h3>
+    <ul style="list-style-type: none; padding: 0;">
+      <li><strong>Property type:</strong> ${property.propertyType}</li>
+      <li><strong>City:</strong> ${property.city}</li>
+      <li><strong>Country:</strong> ${property.country}</li>
+      <li><strong>Surface:</strong> ${property.surface} m²</li>
+      <li><strong>Price:</strong> €${Number(property.price).toLocaleString('en-US')}</li>
+      <li><strong>Rooms:</strong> ${property.rooms}</li>
+      <li><strong>Bedrooms:</strong> ${property.bedrooms}</li>
+    </ul>
+
+    <p>You can view your listing here:<br />
+    <a href="https://uap.immo${property.url}" style="color: #1e87f0;" target="_blank">https://uap.immo${property.url}</a></p>
+
+    <hr />
+
+    <p>✅ <strong>Free sharing:</strong> Share this URL with your network or contacts at no cost.</p>
+    <p>📈 <strong>SEO optimized:</strong> Your page is automatically optimized for search engine visibility.</p>
+    <p>📊 <strong>View stats:</strong> You can see your listing views and traffic sources from your dashboard.</p>
+    <p>✏️ <strong>Edit freely:</strong> You can update your listing anytime for free.</p>
+    <p>🚀 <strong>Visibility boost:</strong> Buy a <strong>promotion pack</strong> from your dashboard to get more exposure.</p>
+    <p>📱 <strong>QR Code:</strong> Scan your listing’s QR code to share it, print it, or add it to flyers and posters.</p>
+
+    <p style="margin-top: 30px;">Thank you for using UAP Immo,<br />
+    <strong>The UAP Immo Team</strong></p>
+  </div>
+  `
+};
+
 
   await sendEmail(mailOptions);
 }
