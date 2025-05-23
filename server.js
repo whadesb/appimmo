@@ -1167,16 +1167,9 @@ await property.save();
   }
 });
 
-
-
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
-    console.log("🔍 Requête reçue pour /user/properties, utilisateur :", req.user);
-    
-    const properties = await Property.find({ createdBy: req.user._id });
-    
-    console.log("✅ Propriétés récupérées :", properties);
-
+    const properties = await Property.find({ userId: req.user._id });
     res.json(properties);
   } catch (error) {
     console.error("❌ Erreur lors de la récupération des propriétés :", error);
@@ -1185,16 +1178,15 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 });
 
 app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
-    try {
-        // Récupère les propriétés créées par l'utilisateur connecté
-        const landingPages = await Property.find({ createdBy: req.user._id });
-
-        res.json(landingPages);
-    } catch (error) {
-        console.error("Erreur lors de la récupération des landing pages :", error);
-        res.status(500).json({ error: "Une erreur est survenue lors de la récupération des landing pages." });
-    }
+  try {
+    const landingPages = await Property.find({ userId: req.user._id });
+    res.json(landingPages);
+  } catch (error) {
+    console.error("❌ Erreur lors de la récupération des landing pages :", error);
+    res.status(500).json({ error: "Une erreur est survenue lors de la récupération des landing pages." });
+  }
 });
+
 app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
     try {
         const { orderID, propertyId, amount } = req.body;
