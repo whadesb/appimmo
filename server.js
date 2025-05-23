@@ -1016,7 +1016,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
       rooms: req.body.rooms,
       bedrooms: req.body.bedrooms,
       surface: req.body.surface,
-      price: parseFloat(req.body.price), // ✅ Convertir en nombre avant d'enregistrer
+      price: parseFloat(req.body.price),
       city: req.body.city,
       country: req.body.country,
       description: req.body.description,
@@ -1041,6 +1041,10 @@ app.post('/add-property', isAuthenticated, upload.fields([
     property.url = landingPageUrl;
     await property.save();
 
+    // ✅ Envoi d’email après sauvegarde complète
+    const user = await User.findById(req.user._id);
+    await sendPropertyCreationEmail(user, property);
+
     const successMessage = `
       <div class="alert alert-success" role="alert">
         Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>
@@ -1052,6 +1056,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
     res.status(500).send('Erreur lors de l\'ajout de la propriété.');
   }
 });
+
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
@@ -1917,6 +1922,27 @@ async function sendAccountCreationEmail(email) {
 
   await sendEmail(mailOptions);
 }
+async function sendPropertyCreationEmail(user, property) {
+  const mailOptions = {
+    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+    to: user.email,
+    subject: 'Votre annonce a été créée avec succès',
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+        <h2 style="color: #52566f;">Bonjour ${user.firstName || ''},</h2>
+        <p>Votre annonce pour un bien situé à <b>${property.city}, ${property.country}</b> a bien été publiée.</p>
+        <p>Vous pouvez la consulter ici :</p>
+        <p><a href="https://uap.immo${property.url}" target="_blank">${property.url}</a></p>
+        <p>Merci d'utiliser UAP Immo.</p>
+        <hr>
+        <p style="font-size: 12px; color: #888;">Cet email est automatique. Pour toute question, contactez <a href="mailto:support@uap.company">support@uap.company</a>.</p>
+      </div>
+    `
+  };
+
+  await sendEmail(mailOptions);
+}
+
 
 app.post('/user/orders/renew', isAuthenticated, async (req, res) => {
   try {
