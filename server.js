@@ -1945,17 +1945,22 @@ const mailOptions = {
       <li><strong>Chambres :</strong> ${property.bedrooms}</li>
     </ul>
 
-    <p>Vous pouvez consulter votre annonce ici :<br />
+    <p>🔗 Vous pouvez consulter votre annonce ici :<br />
     <a href="https://uap.immo${property.url}" style="color: #1e87f0;" target="_blank">https://uap.immo${property.url}</a></p>
 
     <hr />
 
-    <p>✅ <strong>Partage gratuit :</strong> Vous pouvez librement partager cette URL sur vos réseaux ou à vos contacts.</p>
+    <p>✅ <strong>Partage gratuit :</strong> Vous pouvez librement partager cette URL.</p>
     <p>📈 <strong>Référencement inclus :</strong> Votre annonce est optimisée pour le SEO dès sa mise en ligne.</p>
-    <p>📊 <strong>Statistiques :</strong> Depuis votre espace personnel, vous pouvez consulter le nombre de vues, la source du trafic, etc.</p>
-    <p>✏️ <strong>Modifications :</strong> Vous pouvez corriger ou mettre à jour votre annonce à tout moment, gratuitement.</p>
-    <p>🚀 <strong>Boost de visibilité :</strong> Vous pouvez également acheter un <strong>pack de diffusion</strong> depuis votre tableau de bord pour augmenter la visibilité de votre annonce.</p>
-    <p>📱 <strong>QR Code :</strong> Depuis votre espace, scannez le QR code de votre annonce pour l’imprimer, l’intégrer dans un flyer ou la partager en vitrine.</p>
+    <p>📊 <strong>Statistiques :</strong> Depuis votre espace personnel, consultez les vues, sources de trafic, etc.</p>
+    <p>✏️ <strong>Modification gratuite :</strong> Corrigez ou mettez à jour votre annonce à tout moment.</p>
+    <p>🚀 <strong>Boost de diffusion :</strong> Achetez un <strong>pack de diffusion</strong> depuis votre tableau de bord pour une visibilité maximale.</p>
+    <p>📱 <strong>QR Code :</strong> Scannez votre QR code pour le partager, l’imprimer ou l’intégrer dans un flyer.</p>
+
+    <p style="margin-top: 20px;">
+      👉 Accédez à votre espace : <a href="https://uap.immo/fr/login" target="_blank">https://uap.immo/fr/login</a><br>
+      🌐 Site officiel : <a href="https://uap.immo" target="_blank">https://uap.immo</a>
+    </p>
 
     <p style="margin-top: 30px;">Merci de votre confiance,<br />
     <strong>L’équipe UAP Immo</strong></p>
@@ -1976,23 +1981,29 @@ const mailOptions = {
       <li><strong>Bedrooms:</strong> ${property.bedrooms}</li>
     </ul>
 
-    <p>You can view your listing here:<br />
+    <p>🔗 You can view your listing here:<br />
     <a href="https://uap.immo${property.url}" style="color: #1e87f0;" target="_blank">https://uap.immo${property.url}</a></p>
 
     <hr />
 
-    <p>✅ <strong>Free sharing:</strong> Share this URL with your network or contacts at no cost.</p>
-    <p>📈 <strong>SEO optimized:</strong> Your page is automatically optimized for search engine visibility.</p>
-    <p>📊 <strong>View stats:</strong> You can see your listing views and traffic sources from your dashboard.</p>
-    <p>✏️ <strong>Edit freely:</strong> You can update your listing anytime for free.</p>
-    <p>🚀 <strong>Visibility boost:</strong> Buy a <strong>promotion pack</strong> from your dashboard to get more exposure.</p>
-    <p>📱 <strong>QR Code:</strong> Scan your listing’s QR code to share it, print it, or add it to flyers and posters.</p>
+    <p>✅ <strong>Free sharing:</strong> Share this link freely.</p>
+    <p>📈 <strong>SEO ready:</strong> Your page is optimized for search engines.</p>
+    <p>📊 <strong>Analytics:</strong> Track views and traffic sources from your dashboard.</p>
+    <p>✏️ <strong>Free edits:</strong> Update your listing anytime, for free.</p>
+    <p>🚀 <strong>Boost listing:</strong> Purchase a <strong>promotion pack</strong> to increase visibility.</p>
+    <p>📱 <strong>QR Code:</strong> Use your QR code to share, print, or display your listing.</p>
 
-    <p style="margin-top: 30px;">Thank you for using UAP Immo,<br />
+    <p style="margin-top: 20px;">
+      👉 Go to your dashboard: <a href="https://uap.immo/fr/login" target="_blank">https://uap.immo/fr/login</a><br>
+      🌐 Website: <a href="https://uap.immo" target="_blank">https://uap.immo</a>
+    </p>
+
+    <p style="margin-top: 30px;">Thank you for choosing UAP Immo,<br />
     <strong>The UAP Immo Team</strong></p>
   </div>
   `
 };
+
 
 
   await sendEmail(mailOptions);
