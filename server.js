@@ -186,7 +186,7 @@ app.get('/api/stats/:pageId', async (req, res) => {
     const endDate = req.query.endDate || '2025-03-21';
     console.log('🔍 Récupération des stats pour', pageId);
 
-   const landingPages = await LandingPage.find({});
+   const landingPages = await Page.find({});
     console.log('✅ Landing pages récupérées :', landingPages.length);
 
     const matchingPage = await Page.findById(pageId);
