@@ -189,7 +189,7 @@ app.get('/api/stats/:pageId', async (req, res) => {
    const landingPages = await LandingPage.find({});
     console.log('✅ Landing pages récupérées :', landingPages.length);
 
-    const matchingPage = await LandingPage.findById(pageId);
+    const matchingPage = await Page.findById(pageId);
     if (!matchingPage) {
       console.error('❌ Page non trouvée pour l’ID :', pageId);
       return res.status(404).json({ error: 'Page non trouvée' });
