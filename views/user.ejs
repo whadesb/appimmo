@@ -827,14 +827,29 @@ progress {
     <div class="table-responsive">
       <table class="table table-striped">
         <thead class="table-dark">
-          <tr>
-            <th scope="col">Page</th>
-            <th scope="col">Vues</th>
-            <th scope="col">Utilisateurs</th>
-            <th scope="col">Source</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
+  <tr>
+    <th>Pièces</th>
+    <th>Chambres</th>
+    <th>Surface</th>
+    <th>Prix</th>
+    <th>Ville</th>
+    <th>Pays</th>
+    <th>Type</th>
+    <th>Année</th>
+    <th>DPE</th>
+    <th>Piscine</th>
+    <th>Arrosage</th>
+    <th>Abri</th>
+    <th>Parking</th>
+    <th>Gardien</th>
+    <th>Stores</th>
+    <th>Lumière ext</th>
+    <th>Vues</th>
+    <th>Description</th>
+    <th>URL</th>
+    <th>Actions</th>
+  </tr>
+</thead>
         <tbody id="statsTableBody"></tbody>
       </table>
     </div>
@@ -1300,11 +1315,24 @@ async function loadLandingPages() {
       landingPages.forEach(page => {
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td>${page.rooms}</td>
-          <td>${page.surface} m²</td>
-          <td>${page.price.toLocaleString('fr-FR')} €</td>
-          <td>${page.city}</td>
-          <td>${page.country}</td>
+          <td>${page.rooms ?? ''}</td>
+          <td>${page.bedrooms ?? ''}</td>
+          <td>${page.surface ?? ''} m²</td>
+          <td>${page.price?.toLocaleString('fr-FR') ?? ''} €</td>
+          <td>${page.city ?? ''}</td>
+          <td>${page.country ?? ''}</td>
+          <td>${page.propertyType ?? ''}</td>
+          <td>${page.yearBuilt ?? ''}</td>
+          <td>${page.dpe ?? ''}</td>
+          <td>${page.pool ? '✅' : '❌'}</td>
+          <td>${page.wateringSystem ? '✅' : '❌'}</td>
+          <td>${page.carShelter ? '✅' : '❌'}</td>
+          <td>${page.parking ? '✅' : '❌'}</td>
+          <td>${page.caretakerHouse ? '✅' : '❌'}</td>
+          <td>${page.electricShutters ? '✅' : '❌'}</td>
+          <td>${page.outdoorLighting ? '✅' : '❌'}</td>
+          <td>${page.views ?? 0}</td>
+          <td style="max-width: 300px; white-space: normal;">${page.description}</td>
           <td><a href="${page.url}" target="_blank">${page.url}</a></td>
           <td>
   <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
