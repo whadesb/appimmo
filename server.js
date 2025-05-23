@@ -43,7 +43,7 @@ const invalidLocales = [
 ];
 const tempAuthStore = {}; // { sessionId: user }
 const pdfRoutes = require('./routes/pdf');
-const LandingPage = require('./models/LandingPage');
+const LandingPage = require('./models/Page'); // nom du fichier réel
 const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 
