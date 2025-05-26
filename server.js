@@ -1063,7 +1063,7 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
 
-    if (!property || !property.createdBy.equals(req.user._id)) {
+    if (!property || !property.userId.equals(req.user._id)) {
       return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
     }
 
@@ -1097,7 +1097,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
   try {
     const property = await Property.findById(req.params.id);
 
-    if (!property || !property.createdBy.equals(req.user._id)) {
+    if (!property || !property.userId.equals(req.user._id)) {
       return res.status(403).send("Vous n'êtes pas autorisé à modifier cette propriété.");
     }
 
