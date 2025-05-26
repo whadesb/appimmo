@@ -887,6 +887,19 @@ progress {
 
 
 
+
+
+<!-- Toast de confirmation -->
+<div id="toast-confirm" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999; display: none;">
+  <div class="toast align-items-center text-white bg-success border-0 show" role="alert">
+    <div class="d-flex">
+      <div class="toast-body">
+        🎉 Redirection vers le paiement en cours...
+      </div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="document.getElementById('toast-confirm').style.display='none';"></button>
+    </div>
+  </div>
+</div>
                         <!-- Section Created Pages -->
                      <div id="created-pages" class="card" style="display: none;">
   <div class="card-body">
@@ -929,19 +942,6 @@ progress {
     </div>
   </div>
 </div>
-
-<!-- Toast de confirmation -->
-<div id="toast-confirm" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999; display: none;">
-  <div class="toast align-items-center text-white bg-success border-0 show" role="alert">
-    <div class="d-flex">
-      <div class="toast-body">
-        🎉 Redirection vers le paiement en cours...
-      </div>
-      <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="document.getElementById('toast-confirm').style.display='none';"></button>
-    </div>
-  </div>
-</div>
-
                     </div> <!-- Fin de main-section -->
                 </div>
             </div>
