@@ -10,120 +10,138 @@
   <link href="/css/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles-main.css">
   <style>
-     html, body {
-      height: 100%;
+      body {
+      font-family: 'Inter', sans-serif;
+      background-color: #fff;
+      color: #212529;
       margin: 0;
-      background-color: #f4f5f7;
+      padding: 0;
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
     }
-
     main {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
+      min-height: calc(100vh - 80px);
+      padding: 120px 20px 60px;
+      background-color: #fff;
     }
-
-    .form-container {
-      width: 100%;
-      max-width: 600px;
-      padding: 30px;
-      background: #ffffff;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-      margin: 50px 0;
+    .twofa-container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 60px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
     }
-
-    .form-container h2 {
-      font-size: 1.8rem;
+    .twofa-left {
+      flex: 1 1 48%;
+    }
+    .twofa-left h2 {
+      font-size: 1.9rem;
       font-weight: 600;
-      color: #333;
+      margin-bottom: 14px;
+    }
+    .twofa-left p {
+      font-size: 1rem;
+      color: #6c757d;
       margin-bottom: 20px;
     }
-
-    .form-container p,
-    .form-container label {
-      color: #555;
-    }
-
-    .instruction-block {
-      background-color: #f9fafc;
-      border-left: 4px solid #8f97c4;
-      padding: 15px 20px;
-      margin-bottom: 20px;
-      border-radius: 8px;
-      text-align: left;
-    }
-
-    .instruction-block ul {
+    .twofa-left ul {
       list-style: none;
       padding-left: 0;
+      border-left: 3px solid #dee2e6;
+      padding-left: 16px;
+      margin-top: 12px;
     }
-
-    .instruction-block li::before {
-      content: '✅';
+    .twofa-left li {
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+      color: #444;
+    }
+    .twofa-left li::before {
+      content: "✓";
+      color: #8f97c4;
       margin-right: 8px;
     }
-
+    .twofa-form-wrapper {
+      flex: 1 1 40%;
+      background-color: #f8f9fa;
+      padding: 32px;
+      border-radius: 10px;
+      border: 1px solid #e2e6ea;
+    }
+    .twofa-form-wrapper label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
     .btn-primary {
-      background-color: #52566f;
+      width: 100%;
+      background-color: #8f97c4;
       border: none;
+      padding: 14px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 8px;
+      transition: background-color 0.2s ease;
     }
-
     .btn-primary:hover {
-      background-color: #43465b;
+      background-color: #7a81b8;
     }
-
-    @media (max-width: 576px) {
-      .form-container {
-        padding: 20px;
+    @media (max-width: 768px) {
+      .twofa-container {
+        flex-direction: column;
+        gap: 40px;
       }
-
-      .form-container h2 {
-        font-size: 1.5rem;
+      .twofa-form-wrapper {
+        width: 100%;
+      }
+      .twofa-left {
+        text-align: center;
+      }
+      .twofa-left ul {
+        margin: auto;
+        max-width: 320px;
       }
     }
   </style>
 </head>
 <body id="top">
   <main>
-       <%- include('partials/navbar', { locale, isAuthenticated, currentPath }) %>
-
-    <div class="form-container text-center">
-      <h2><%= i18n.instruction %></h2>
-
-      <div class="instruction-block text-start">
-        <h6 class="fw-bold mb-2"><%= i18n.step_title %></h6>
+    <div class="twofa-container">
+      <div class="twofa-left">
+        <h2><%= i18n.instruction %></h2>
         <ul>
           <% i18n.steps.forEach(function(step) { %>
             <li><%= step %></li>
           <% }); %>
         </ul>
       </div>
-
-      <img src="<%= qrCode %>" alt="QR Code 2FA" class="img-fluid my-3">
-
-      <p><strong><%= i18n.secret_label %> :</strong> <code><%= user.twoFactorSecret %></code></p>
-
-      <% if (messages.error && messages.error.length > 0) { %>
-        <p class="text-danger fw-bold"><%= messages.error[0] %></p>
-      <% } %>
-
-      <% if (messages.success && messages.success.length > 0) { %>
-        <p class="text-success fw-bold"><%= messages.success[0] %></p>
-      <% } %>
-
-      <form action="/<%= locale %>/enable-2fa" method="POST">
-        <div class="mb-3 text-start">
-          <label for="code" class="form-label"><%= i18n.codeLabel %></label>
-          <input type="text" class="form-control" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="123456">
-        </div>
-        <button type="submit" class="btn btn-primary w-100"><%= i18n.verify %></button>
-      </form>
+      <div class="twofa-form-wrapper">
+        <img src="<%= qrCode %>" alt="QR Code 2FA" class="img-fluid my-3 d-block mx-auto">
+        <p class="text-center"><strong><%= i18n.secret_label %> :</strong> <code><%= user.twoFactorSecret %></code></p>
+        <% if (messages.error && messages.error.length > 0) { %>
+          <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
+        <% } %>
+        <% if (messages.success && messages.success.length > 0) { %>
+          <p class="text-success text-center fw-bold"><%= messages.success[0] %></p>
+        <% } %>
+        <form action="/<%= locale %>/enable-2fa" method="POST">
+          <div class="mb-3">
+            <label for="code" class="form-label"><%= i18n.codeLabel %></label>
+            <input type="text" class="form-control" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="123456">
+          </div>
+          <button type="submit" class="btn btn-primary"> <%= i18n.verify %> </button>
+        </form>
+      </div>
     </div>
   </main>
-
 <footer class="site-footer section-padding">
   <div class="container">
     <div class="row">
