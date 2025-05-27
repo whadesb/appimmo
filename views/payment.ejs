@@ -304,6 +304,10 @@
 </footer>
    <script src="/js/bootstrap.bundle.min.js"></script>
 <script>
+  console.log("📦 propertyId :", "<%= propertyId %>");
+</script>
+
+<script>
 paypal.Buttons({
   createOrder: function(data, actions) {
     return actions.order.create({
