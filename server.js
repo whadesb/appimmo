@@ -1190,31 +1190,34 @@ app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
 });
 
 app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
-    try {
-        const { orderID, propertyId, amount } = req.body;
+  try {
+    const { orderID, propertyId, amount } = req.body;
 
-        // Tu peux faire une requête à l’API PayPal pour vérifier la validité du paiement ici (facultatif avec capture())
-
-        const newOrder = new Order({
-            userId: req.user._id,
-            propertyId,
-            amount: parseInt(amount, 10),
-            status: 'paid',
-            expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-        });
-
-        await newOrder.save();
-
-        const locale = req.cookies.locale || 'fr';
-        const redirectUrl = `/${locale}/user`;
-
-        res.json({ success: true, redirectUrl });
-
-    } catch (err) {
-        console.error("❌ Erreur process-paypal-payment :", err);
-        res.status(500).json({ success: false, message: 'Erreur serveur' });
+    const existing = await Order.findOne({ paypalOrderId: orderID });
+    if (existing) {
+      return res.json({ success: true, redirectUrl: `/${req.cookies.locale || 'fr'}/user` });
     }
+
+    const newOrder = new Order({
+      userId: req.user._id,
+      propertyId,
+      amount: parseInt(amount, 10),
+      status: 'pending',
+      paypalOrderId: orderID,
+      expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+    });
+
+    await newOrder.save();
+
+    const locale = req.cookies.locale || 'fr';
+    res.json({ success: true, redirectUrl: `/${locale}/user` });
+
+  } catch (err) {
+    console.error("❌ Erreur process-paypal-payment :", err);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
 });
+
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
     try {
@@ -2068,50 +2071,57 @@ app.post('/paypal/webhook', express.json(), async (req, res) => {
     if (event.event_type === 'CHECKOUT.ORDER.APPROVED') {
       const orderId = event.resource.id;
 
-      // Étape 1 : Obtenir un access token PayPal
+      // Étape 1 : Token PayPal
       const { data: tokenData } = await axios({
         method: 'post',
         url: 'https://api-m.sandbox.paypal.com/v1/oauth2/token',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         auth: {
           username: process.env.PAYPAL_CLIENT_ID,
-          password: process.env.PAYPAL_SECRET,
+          password: process.env.PAYPAL_SECRET
         },
-        data: 'grant_type=client_credentials',
+        data: 'grant_type=client_credentials'
       });
 
       const accessToken = tokenData.access_token;
 
-      // Étape 2 : Capturer la commande
+      // Étape 2 : Capture paiement
       const captureRes = await axios({
         method: 'post',
         url: `https://api-m.sandbox.paypal.com/v2/checkout/orders/${orderId}/capture`,
         headers: {
           Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
       });
 
       const captureData = captureRes.data;
 
-      // Étape 3 : Extraire email et montant
+      // Étape 3 : Infos paiement
       const email = captureData.payer.email_address;
       const amount = captureData.purchase_units[0].payments.captures[0].amount.value;
       const currency = captureData.purchase_units[0].payments.captures[0].amount.currency_code;
       const transactionId = captureData.purchase_units[0].payments.captures[0].id;
 
-      // Étape 4 : Enregistrer en BDD (si nécessaire)
-      // Exemple : Order.updateOne({paypalOrderId: orderId}, { status: 'paid' })
+      // Étape 4 : Mettre à jour la commande
+      const updated = await Order.findOneAndUpdate(
+        { paypalOrderId: orderId },
+        { status: 'paid' }
+      );
 
-      // Étape 5 : Envoyer la facture par e-mail
+      if (!updated) {
+        console.warn(`⚠️ Aucune commande trouvée avec PayPal ID : ${orderId}`);
+      }
+
+      // Étape 5 : Envoyer la facture
       await sendInvoiceByEmail(email, transactionId, amount, currency);
 
-      return res.sendStatus(200);
+      res.sendStatus(200);
+    } else {
+      res.sendStatus(200); // Ignorer autres événements
     }
-
-    res.sendStatus(200); // Autres types d'événements
   } catch (error) {
-    console.error('❌ Erreur webhook PayPal :', error.response?.data || error.message);
+    console.error("❌ Erreur dans le webhook PayPal :", error.response?.data || error.message);
     res.sendStatus(500);
   }
 });
