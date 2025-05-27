@@ -38,17 +38,53 @@ async function sendInvoiceByEmail(to, transactionId, amount, currency) {
   await new Promise((resolve) => doc.on('finish', resolve));
 
   const mailOptions = {
-    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-    to,
-    subject: "Votre reçu de paiement UAP Immo",
-    text: `Merci pour votre paiement. Veuillez trouver votre reçu en pièce jointe.`,
-    attachments: [
-      {
-        filename: `facture-${transactionId}.pdf`,
-        path: invoicePath,
-      },
-    ],
-  };
+  from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+  to,
+  subject: 'Confirmation de votre commande - En attente de validation',
+  html: `
+  <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <h2 style="color: #2c3e50;">Bonjour,</h2>
+    <p>Nous vous remercions pour votre commande d’un pack de diffusion sur UAP Immo.</p>
+    <p><strong>Montant :</strong> 500 € TTC<br>
+    <strong>Durée :</strong> 3 mois</p>
+
+    <p>Votre commande est actuellement en cours de validation. Une fois le paiement confirmé, vous recevrez automatiquement votre facture par e-mail.</p>
+
+    <hr>
+
+    <p>💡 <strong>Rappel :</strong> Vous pouvez à tout moment accéder à votre tableau de bord pour suivre l’état de vos annonces et commandes.</p>
+
+    <p style="margin-top: 20px;">
+      👉 Accéder à votre espace : <a href="https://uap.immo/fr/login" target="_blank">https://uap.immo/fr/login</a><br>
+      🌐 Site officiel : <a href="https://uap.immo" target="_blank">https://uap.immo</a>
+    </p>
+
+    <p style="margin-top: 30px;">Merci pour votre confiance,<br />
+    <strong>L’équipe UAP Immo</strong></p>
+
+    <hr style="margin-top: 40px;" />
+
+    <h2 style="color: #2c3e50;">Hello,</h2>
+    <p>Thank you for your order of a promotion pack on UAP Immo.</p>
+    <p><strong>Amount:</strong> €500 (tax included)<br>
+    <strong>Duration:</strong> 3 months</p>
+
+    <p>Your order is currently pending validation. Once the payment is confirmed, your invoice will be sent to you automatically by email.</p>
+
+    <hr>
+
+    <p>💡 <strong>Reminder:</strong> You can always access your dashboard to manage your listings and orders.</p>
+
+    <p style="margin-top: 20px;">
+      👉 Go to your dashboard: <a href="https://uap.immo/fr/login" target="_blank">https://uap.immo/fr/login</a><br>
+      🌐 Website: <a href="https://uap.immo" target="_blank">https://uap.immo</a>
+    </p>
+
+    <p style="margin-top: 30px;">Thank you for choosing UAP Immo,<br />
+    <strong>The UAP Immo Team</strong></p>
+  </div>
+  `
+};
 
   await transporter.sendMail(mailOptions);
   console.log(`📧 Facture envoyée à ${to}`);
@@ -67,20 +103,53 @@ async function sendMailPending(to, propertyId, amount) {
 
 
   const mailOptions = {
-    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-    to,
-    subject: 'Confirmation de votre commande (en attente)',
-    text: `Bonjour,
+  from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+  to,
+  subject: 'Confirmation de votre commande - En attente de validation',
+  html: `
+  <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+    <h2 style="color: #2c3e50;">Bonjour,</h2>
+    <p>Nous vous remercions pour votre commande d’un pack de diffusion sur UAP Immo.</p>
+    <p><strong>Montant :</strong> 500 € TTC<br>
+    <strong>Durée :</strong> 3 mois</p>
 
-Nous avons bien reçu votre demande de commande pour le bien ${propertyId}.
-Montant : ${amount} EUR.
+    <p>Votre commande est actuellement en cours de validation. Une fois le paiement confirmé, vous recevrez automatiquement votre facture par e-mail.</p>
 
-Une fois le paiement confirmé par PayPal, vous recevrez votre facture.
+    <hr>
 
-Merci pour votre confiance.
+    <p>💡 <strong>Rappel :</strong> Vous pouvez à tout moment accéder à votre tableau de bord pour suivre l’état de vos annonces et commandes.</p>
 
-L’équipe UAP Immo`,
-  };
+    <p style="margin-top: 20px;">
+      👉 Accéder à votre espace : <a href="https://uap.immo/fr/login" target="_blank">https://uap.immo/fr/login</a><br>
+      🌐 Site officiel : <a href="https://uap.immo" target="_blank">https://uap.immo</a>
+    </p>
+
+    <p style="margin-top: 30px;">Merci pour votre confiance,<br />
+    <strong>L’équipe UAP Immo</strong></p>
+
+    <hr style="margin-top: 40px;" />
+
+    <h2 style="color: #2c3e50;">Hello,</h2>
+    <p>Thank you for your order of a promotion pack on UAP Immo.</p>
+    <p><strong>Amount:</strong> €500 (tax included)<br>
+    <strong>Duration:</strong> 3 months</p>
+
+    <p>Your order is currently pending validation. Once the payment is confirmed, your invoice will be sent to you automatically by email.</p>
+
+    <hr>
+
+    <p>💡 <strong>Reminder:</strong> You can always access your dashboard to manage your listings and orders.</p>
+
+    <p style="margin-top: 20px;">
+      👉 Go to your dashboard: <a href="https://uap.immo/fr/login" target="_blank">https://uap.immo/fr/login</a><br>
+      🌐 Website: <a href="https://uap.immo" target="_blank">https://uap.immo</a>
+    </p>
+
+    <p style="margin-top: 30px;">Thank you for choosing UAP Immo,<br />
+    <strong>The UAP Immo Team</strong></p>
+  </div>
+  `
+};
 
   await transporter.sendMail(mailOptions);
   console.log(`📩 Mail de confirmation en attente envoyé à ${to}`);
