@@ -1299,18 +1299,19 @@ async function loadLandingPages() {
       noPropertiesMessage.style.display = 'none';
       landingPages.forEach(page => {
   const row = document.createElement('tr');
-  row.innerHTML = `
-    <td>${page._id}</td>
-    <td>${page.propertyType ?? ''}</td>
-    <td>${page.country ?? ''}</td>
-    <td>${page.city ?? ''}</td>
-    <td>${page.price?.toLocaleString('fr-FR') ?? ''} €</td>
-    <td>
-      <button class="btn btn-sm btn-outline-primary" onclick="showPageDetails(${encodeURIComponent(JSON.stringify(page))})">
-        <i class="bi bi-info-circle"></i> Détails
-      </button>
-    </td>
-    <td>
+row.innerHTML = `
+  <td>${page._id}</td>
+  <td>${page.propertyType ?? ''}</td>
+  <td>${page.country ?? ''}</td>
+  <td>${page.city ?? ''}</td>
+  <td>${page.price?.toLocaleString('fr-FR') ?? ''} €</td>
+  <td>
+    <button class="btn btn-sm btn-outline-primary show-details-btn" 
+            data-details='${JSON.stringify(page).replace(/'/g, "&apos;")}'>
+      <i class="bi bi-info-circle"></i> Détails
+    </button>
+  </td>
+  <td>
       <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
         <i class="bi bi-clipboard"></i>
       </button>
@@ -1368,7 +1369,19 @@ function showToast() {
   }, 3000);
 }
 </script>
-
+<script>
+document.addEventListener('click', function (event) {
+  if (event.target.closest('.show-details-btn')) {
+    const btn = event.target.closest('.show-details-btn');
+    try {
+      const data = JSON.parse(btn.dataset.details.replace(/&apos;/g, "'"));
+      showPageDetails(data);
+    } catch (e) {
+      console.error("Erreur lors du parsing JSON :", e);
+    }
+  }
+});
+</script>
 
 <script>
 async function renewOrder(orderId) { 
