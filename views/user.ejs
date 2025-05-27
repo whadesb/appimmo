@@ -1328,9 +1328,9 @@ row.innerHTML = `
   <td>${page.city ?? ''}</td>
   <td>${page.price?.toLocaleString('fr-FR') ?? ''} €</td>
   <td>
-    <button class="btn btn-sm btn-outline-primary show-details-btn" 
+    <button class="btn btn-sm btn-outline-dark show-details-btn" 
             data-details='${JSON.stringify(page).replace(/'/g, "&apos;")}'>
-      <i class="bi bi-info-circle"></i> Détails
+      <i class="bi bi-info-circle"></i> <span style="color: black;">Détails</span>
     </button>
   </td>
   <td>
