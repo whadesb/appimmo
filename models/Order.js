@@ -4,16 +4,12 @@ const orderSchema = new mongoose.Schema({
   orderId: {
     type: String,
     unique: true,
-    required: true,
-    default: () => `ORD-${Date.now()}`,
-    set: function (value) {
-      return value.startsWith('ORD-') ? value : `ORD-${value}`;
-    }
+    required: true
   },
   paypalOrderId: {
     type: String,
     unique: true,
-    sparse: true // utile uniquement pour les paiements PayPal
+    sparse: true
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -44,5 +40,16 @@ const orderSchema = new mongoose.Schema({
     default: () => new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
   }
 });
+
+// Générer orderId automatiquement
+orderSchema.pre('save', function (next) {
+  if (!this.orderId) {
+    this.orderId = `ORD-${Date.now()}`;
+  }
+  next();
+});
+
+module.exports = mongoose.model('Order', orderSchema);
+
 
 module.exports = mongoose.model('Order', orderSchema);
