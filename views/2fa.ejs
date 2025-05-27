@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Two-Factor Authentication page for UAP Immo.">
   <title>UAP Immo | <%= i18n.title %></title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/bootstrap-icons.css" rel="stylesheet">
@@ -25,11 +26,13 @@
 main {
   flex: 1;
   display: flex;
-  align-items: center;     /* vertical */
-  justify-content: center; /* horizontal */
-  padding: 60px 20px;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 70px - 80px); /* 70px navbar, 80px footer (ajuste selon ta structure) */
+  padding: 40px 20px;
   background-color: #fff;
 }
+
 
 .twofa-container {
   max-width: 1100px;
