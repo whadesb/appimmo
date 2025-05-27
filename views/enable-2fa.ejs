@@ -114,6 +114,7 @@
 </head>
 <body id="top">
   <main>
+ <%- include('partials/navbar', { locale, isAuthenticated, currentPath }) %>
     <div class="twofa-container">
       <div class="twofa-left">
         <h2><%= i18n.instruction %></h2>
