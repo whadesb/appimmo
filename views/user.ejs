@@ -1257,12 +1257,13 @@ async function loadOrders() {
           <td>${order.orderId || order._id}</td>
           <td>${orderDate.toLocaleDateString('fr-FR')}</td>
           <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-          <td>
-            ${adjustedDaysRemaining} jours restants
-            <div class="progress" style="height: 10px; margin-top: 5px;">
-              <div class="progress-bar" role="progressbar" style="width: ${progress}%; background-color: ${progressBarColor};"></div>
-            </div>
-          </td>
+          <td title="Nombre de jours de diffusion restants">
+  ${adjustedDaysRemaining} jours restants
+  <div class="progress" style="height: 10px; margin-top: 5px;">
+    <div class="progress-bar" role="progressbar" style="width: ${progress}%; background-color: ${progressBarColor};"></div>
+  </div>
+</td>
+
           <td>${expiryDate.toLocaleDateString('fr-FR')}</td>
           <td>
             <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${url}" title="Copier l'URL">
@@ -1648,5 +1649,14 @@ function showPageDetails(page) {
   modal.show();
 }
 </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[title]'));
+    tooltipTriggerList.forEach(function (el) {
+      new bootstrap.Tooltip(el);
+    });
+  });
+</script>
+
 </body>
 </html>
