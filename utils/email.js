@@ -35,7 +35,7 @@ async function sendInvoiceByEmail(to, transactionId, amount, currency) {
   await new Promise((resolve) => doc.on('finish', resolve));
 
   const mailOptions = {
-    from: `"UAP Immo" <${process.env.MAIL_USER}>`,
+    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
     to,
     subject: "Votre reçu de paiement UAP Immo",
     text: `Merci pour votre paiement. Veuillez trouver votre reçu en pièce jointe.`,
@@ -62,7 +62,7 @@ pass: process.env.EMAIL_PASS,
   });
 
   const mailOptions = {
-    from: `"UAP Immo" <${process.env.MAIL_USER}>`,
+    from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
     to,
     subject: 'Confirmation de votre commande (en attente)',
     text: `Bonjour,
