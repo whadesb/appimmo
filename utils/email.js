@@ -4,12 +4,15 @@ const fs = require('fs');
 const path = require('path');
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.ionos.fr', 
+  port: 465, 
+  secure: true, 
   auth: {
     user: process.env.EMAIL_USER,
-pass: process.env.EMAIL_PASS,
+    pass: process.env.EMAIL_PASS,
   },
 });
+
 
 async function sendInvoiceByEmail(to, transactionId, amount, currency) {
   const doc = new PDFDocument();
@@ -53,13 +56,15 @@ async function sendInvoiceByEmail(to, transactionId, amount, currency) {
 
 async function sendMailPending(to, propertyId, amount) {
   const transporter = nodemailer.createTransport({
-    service: 'gmail', // ou ton service SMTP
-    auth: {
-      user: process.env.EMAIL_USER,
-pass: process.env.EMAIL_PASS,
+  host: 'smtp.ionos.fr',
+  port: 465, 
+  secure: true, 
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 
-    },
-  });
 
   const mailOptions = {
     from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
