@@ -1193,6 +1193,9 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
   try {
     const { orderID, propertyId, amount } = req.body;
 
+    // ✅ Corriger le montant en centimes si nécessaire
+    const realAmount = parseInt(amount, 10) / 100;
+
     const existing = await Order.findOne({ paypalOrderId: orderID });
     if (existing) {
       return res.json({ success: true, redirectUrl: `/${req.cookies.locale || 'fr'}/user` });
@@ -1201,21 +1204,25 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
     const newOrder = new Order({
       userId: req.user._id,
       propertyId,
-      amount: parseInt(amount, 10),
+      amount: realAmount, // 🔁 Stocke 500, pas 50000
       status: 'pending',
       paypalOrderId: orderID,
       expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
     });
 
-await newOrder.save();
+    await newOrder.save();
 
-try {
-  await sendMailPending(req.user.email, propertyId, amount);
-} catch (emailErr) {
-  console.warn("📭 Erreur lors de l'envoi de l'e-mail d'attente :", emailErr.message);
-}
-
-await sendMailPending(req.user.email, propertyId, amount);
+    // ✅ Envoi de mail de commande en attente
+    try {
+      await sendMailPending(
+        req.user.email,
+        `${req.user.firstName} ${req.user.lastName}`,
+        newOrder._id,
+        realAmount
+      );
+    } catch (err) {
+      console.warn("📭 Erreur envoi mail d'attente :", err.message);
+    }
 
     const locale = req.cookies.locale || 'fr';
     res.json({ success: true, redirectUrl: `/${locale}/user` });
@@ -1225,6 +1232,7 @@ await sendMailPending(req.user.email, propertyId, amount);
     res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
+
 
 
 app.post('/process-payment', isAuthenticated, async (req, res) => {
