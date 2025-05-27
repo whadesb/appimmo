@@ -3,19 +3,23 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.MAIL_USER,
+    pass: process.env.MAIL_PASS,
+  },
+});
+
 async function sendInvoiceByEmail(to, transactionId, amount, currency) {
   const doc = new PDFDocument();
   const invoicePath = path.join(__dirname, `../invoices/invoice-${transactionId}.pdf`);
 
-  // Créer un dossier "invoices" s’il n'existe pas
   if (!fs.existsSync(path.join(__dirname, '../invoices'))) {
     fs.mkdirSync(path.join(__dirname, '../invoices'));
   }
 
-  // Écriture dans le fichier
   doc.pipe(fs.createWriteStream(invoicePath));
-
-  // Contenu du PDF
   doc
     .fontSize(20)
     .text('Reçu de paiement - UAP Immo', { align: 'center' })
@@ -26,20 +30,9 @@ async function sendInvoiceByEmail(to, transactionId, amount, currency) {
     .text(`Date : ${new Date().toLocaleDateString('fr-FR')}`)
     .moveDown()
     .text('Merci pour votre achat.', { align: 'left' });
-
   doc.end();
 
-  // Attendre que le fichier soit bien généré
   await new Promise((resolve) => doc.on('finish', resolve));
-
-  // Envoi par e-mail
-  const transporter = nodemailer.createTransport({
-    service: 'gmail', // Ou 'smtp.ionos.fr', etc.
-    auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
-    },
-  });
 
   const mailOptions = {
     from: `"UAP Immo" <${process.env.MAIL_USER}>`,
@@ -58,4 +51,21 @@ async function sendInvoiceByEmail(to, transactionId, amount, currency) {
   console.log(`📧 Facture envoyée à ${to}`);
 }
 
-module.exports = { sendInvoiceByEmail };
+async function sendMailPending(to, propertyId, amount) {
+  const mailOptions = {
+    from: `"UAP Immo" <${process.env.MAIL_USER}>`,
+    to,
+    subject: "Commande en attente - UAP Immo",
+    html: `
+      <p>Bonjour,</p>
+      <p>Nous avons bien reçu votre commande pour la propriété <strong>${propertyId}</strong>.</p>
+      <p>Montant estimé : <strong>${amount / 100} €</strong></p>
+      <p>Elle est en attente de confirmation de paiement par PayPal.</p>
+      <p>Vous recevrez un email une fois le paiement validé.</p>
+    `,
+  };
+  await transporter.sendMail(mailOptions);
+  console.log(`📧 Email d'attente envoyé à ${to}`);
+}
+
+module.exports = { sendInvoiceByEmail, sendMailPending };
