@@ -70,6 +70,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             border: none;
             box-shadow: none;
         }
+button.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 .progress {
     background-color: #d7d7d7 !important; 
     width: 7.6rem;
@@ -1320,43 +1326,46 @@ async function loadLandingPages() {
     } else {
       noPropertiesMessage.style.display = 'none';
       landingPages.forEach(page => {
-  const row = document.createElement('tr');
-row.innerHTML = `
-  <td>${page._id}</td>
-  <td>${page.propertyType ?? ''}</td>
-  <td>${page.country ?? ''}</td>
-  <td>${page.city ?? ''}</td>
-  <td>${page.price?.toLocaleString('fr-FR') ?? ''} €</td>
-  <td>
-    <button class="btn btn-sm btn-outline-dark hover-grey show-details-btn" 
-            data-details='${JSON.stringify(page).replace(/'/g, "&apos;")}'>
-      <i class="bi bi-info-circle"></i>Détails
-    </button>
-  </td>
-  <td>
-      <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
-        <i class="bi bi-clipboard"></i>
-      </button>
-      <button class="btn btn-sm btn-outline-info me-1" onclick="showQRCode('${page._id}')">
-        <i class="bi bi-qr-code"></i>
-      </button>
-      <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}')">
-        <i class="bi bi-megaphone"></i>
-      </button>
-      <button class="btn btn-sm btn-dark me-1" onclick="editProperty('${page._id}')">
-        <i class="bi bi-pencil-square"></i>
-      </button>
-      <a class="btn btn-sm btn-outline-primary" href="/pdf/${page._id}" target="_blank" title="PDF">
-        <i class="bi bi-file-earmark-pdf"></i>
-      </a>
-    </td>
-  `;
-  landingPagesList.appendChild(row);
-});
+        const disabled = page.hasActiveOrder;
 
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td>${page._id}</td>
+          <td>${page.propertyType ?? ''}</td>
+          <td>${page.country ?? ''}</td>
+          <td>${page.city ?? ''}</td>
+          <td>${page.price?.toLocaleString('fr-FR') ?? ''} €</td>
+          <td>
+            <button class="btn btn-sm btn-outline-dark hover-grey show-details-btn" 
+                    data-details='${JSON.stringify(page).replace(/'/g, "&apos;")}'>
+              <i class="bi bi-info-circle"></i> Détails
+            </button>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
+              <i class="bi bi-clipboard"></i>
+            </button>
+            <button class="btn btn-sm ${disabled ? 'btn-warning disabled' : 'btn-dark'} me-1" 
+                    ${disabled ? 'disabled' : ''} 
+                    title="${disabled ? 'Commande active en cours' : 'Diffuser'}" 
+                    ${disabled ? '' : `onclick="redirectToPayment('${page._id}')"`}>
+              <i class="bi bi-megaphone"></i>
+            </button>
+            <button class="btn btn-sm ${disabled ? 'btn-secondary disabled' : 'btn-dark'} me-1" 
+                    ${disabled ? 'disabled' : ''} 
+                    title="${disabled ? 'Modification temporairement désactivée' : 'Modifier'}" 
+                    ${disabled ? '' : `onclick="editProperty('${page._id}')"`}>
+              <i class="bi bi-pencil-square"></i>
+            </button>
+            <a class="btn btn-sm btn-outline-primary" href="/pdf/${page._id}" target="_blank" title="PDF">
+              <i class="bi bi-file-earmark-pdf"></i>
+            </a>
+          </td>
+        `;
+        landingPagesList.appendChild(row);
+      });
     }
 
-    // Ajouter effet de copie avec icône verte
     document.querySelectorAll('.copy-btn').forEach(button => {
       button.addEventListener('click', function () {
         const url = `https://uap.immo${this.dataset.url}`;
@@ -1364,7 +1373,6 @@ row.innerHTML = `
           const icon = this.querySelector('i');
           icon.classList.remove('bi-clipboard');
           icon.classList.add('bi-check-circle-fill', 'text-success');
-
           setTimeout(() => {
             icon.classList.remove('bi-check-circle-fill', 'text-success');
             icon.classList.add('bi-clipboard');
@@ -1373,7 +1381,7 @@ row.innerHTML = `
       });
     });
   } catch (error) {
-    console.error("Erreur lors du chargement des landing pages :", error);
+    console.error("❌ Erreur lors du chargement des landing pages :", error);
     document.getElementById('properties-list').innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
   }
 }
