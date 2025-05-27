@@ -349,6 +349,20 @@ main {
   <!-- Scripts -->
   <script src="/js/bootstrap.bundle.min.js"></script>
   <script src="/js/jquery.min.js"></script>
+<script>
+  let countdown = 30;
+  const timerDisplay = document.getElementById("timer");
+
+  const interval = setInterval(() => {
+    countdown--;
+    timerDisplay.textContent = countdown;
+    if (countdown <= 0) {
+      clearInterval(interval);
+      document.getElementById("submit-code").disabled = true;
+      alert("Code expiré. Rechargez la page pour recommencer.");
+    }
+  }, 1000);
+</script>
 
 <script>
 document.getElementById('submit-code').addEventListener('click', function (e) {
@@ -394,6 +408,8 @@ document.getElementById('submit-code').addEventListener('click', function (e) {
           const btn = document.createElement("button");
           btn.className = "btn btn-light";
           btn.textContent = digit;
+btn.setAttribute("aria-label", `Chiffre ${digit}`);
+
           btn.type = "button";
           btn.onclick = () => enterDigit(digit);
           keypad.appendChild(btn);
