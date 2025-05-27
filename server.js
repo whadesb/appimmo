@@ -1193,45 +1193,40 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
   try {
     const { orderID, propertyId, amount } = req.body;
 
-    // ✅ Corriger le montant en centimes si nécessaire
-    const realAmount = parseInt(amount, 10) / 100;
+    // 🔎 Étape 1 : Vérifier s’il y a déjà une commande active
+    const existingActiveOrder = await Order.findOne({
+      userId: req.user._id,
+      propertyId,
+      status: { $in: ['pending', 'paid'] },
+      expiryDate: { $gt: new Date() }
+    });
 
-    const existing = await Order.findOne({ paypalOrderId: orderID });
-    if (existing) {
-      return res.json({ success: true, redirectUrl: `/${req.cookies.locale || 'fr'}/user` });
+    if (existingActiveOrder) {
+      return res.status(400).json({
+        success: false,
+        message: "Vous avez déjà une commande active pour cette annonce."
+      });
     }
 
+    // 🔄 Étape 2 : Créer la nouvelle commande
     const newOrder = new Order({
       userId: req.user._id,
       propertyId,
-      amount: realAmount, // 🔁 Stocke 500, pas 50000
+      amount: parseInt(amount, 10),
       status: 'pending',
       paypalOrderId: orderID,
-      expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+      expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 jours
     });
-const existingActiveOrder = await Order.findOne({
-  userId: req.user._id,
-  propertyId,
-  status: { $in: ['pending', 'paid'] }, // en attente ou payée
-  expiryDate: { $gt: new Date() } // pas encore expirée
-});
-
-if (existingActiveOrder) {
-  return res.status(400).json({
-    success: false,
-    message: "Vous avez déjà une commande active pour ce bien."
-  });
-}
 
     await newOrder.save();
 
-    // ✅ Envoi de mail de commande en attente
+    // 📧 Étape 3 : Envoyer l’e-mail
     try {
       await sendMailPending(
         req.user.email,
         `${req.user.firstName} ${req.user.lastName}`,
         newOrder._id,
-        realAmount
+        amount
       );
     } catch (err) {
       console.warn("📭 Erreur envoi mail d'attente :", err.message);
