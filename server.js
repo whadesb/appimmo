@@ -1242,11 +1242,11 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
     // 📧 Étape 3 : Envoyer l’e-mail
     try {
       await sendMailPending(
-        req.user.email,
-        `${req.user.firstName} ${req.user.lastName}`,
-        newOrder._id,
-        amount
-      );
+  req.user.email,
+  `${req.user.firstName} ${req.user.lastName}`,
+  newOrder.orderId,
+  amount
+);
     } catch (err) {
       console.warn("📭 Erreur envoi mail d'attente :", err.message);
     }
