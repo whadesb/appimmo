@@ -1182,12 +1182,31 @@ app.get('/user/properties', isAuthenticated, async (req, res) => {
 app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
   try {
     const landingPages = await Property.find({ userId: req.user._id });
-    res.json(landingPages);
+
+    // Enrichir chaque propriété avec "hasActiveOrder"
+    const enrichedPages = await Promise.all(
+      landingPages.map(async (page) => {
+        const activeOrder = await Order.findOne({
+          userId: req.user._id,
+          propertyId: page._id,
+          status: { $in: ['pending', 'paid'] },
+          expiryDate: { $gt: new Date() }
+        });
+
+        return {
+          ...page.toObject(),
+          hasActiveOrder: !!activeOrder // true ou false
+        };
+      })
+    );
+
+    res.json(enrichedPages);
   } catch (error) {
     console.error("❌ Erreur lors de la récupération des landing pages :", error);
     res.status(500).json({ error: "Une erreur est survenue lors de la récupération des landing pages." });
   }
 });
+
 
 app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
   try {
