@@ -22,16 +22,16 @@
   flex-direction: column;
   min-height: 100vh;
 }
-
 main {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: calc(100vh - 70px - 80px); /* 70px navbar, 80px footer (ajuste selon ta structure) */
-  padding: 40px 20px;
+  min-height: calc(100vh - 80px); /* On retire juste le footer, le padding-top compense la navbar */
+  padding: 120px 20px 60px; /* top | horizontal | bottom */
   background-color: #fff;
 }
+
 
 
 .twofa-container {
