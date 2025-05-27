@@ -174,6 +174,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   transform: translateX(-50%) translateY(-5px);
 }
 
+#detailsModal .modal-body {
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+  color: #333; /* Finement foncé */
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+#detailsModal .modal-body p {
+  margin-bottom: 0.75rem;
+}
 
         .footer {
             background-color: #343a40;
@@ -1598,16 +1608,21 @@ function showQRCode(propertyId) {
 function showPageDetails(page) {
   const data = typeof page === 'string' ? JSON.parse(decodeURIComponent(page)) : page;
   const html = `
-    <p><strong>ID :</strong> ${data._id}</p>
-    <p><strong>Type :</strong> ${data.propertyType ?? 'N/A'}</p>
-    <p><strong>Pays :</strong> ${data.country ?? 'N/A'}</p>
-    <p><strong>Ville :</strong> ${data.city ?? 'N/A'}</p>
-    <p><strong>Surface :</strong> ${data.surface ?? 'N/A'} m²</p>
-    <p><strong>Prix :</strong> ${data.price?.toLocaleString('fr-FR') ?? 'N/A'} €</p>
-    <p><strong>Année :</strong> ${data.yearBuilt ?? 'N/A'}</p>
-    <p><strong>DPE :</strong> ${data.dpe ?? 'N/A'}</p>
-    <p><strong>Description :</strong><br>${data.description ?? ''}</p>
-  `;
+  <p><strong>ID :</strong> ${data._id}</p>
+  <p><strong>Type :</strong> ${data.propertyType ?? 'N/A'}</p>
+  <p><strong>Pays :</strong> ${data.country ?? 'N/A'}</p>
+  <p><strong>Ville :</strong> ${data.city ?? 'N/A'}</p>
+  <p><strong>Surface :</strong> ${data.surface ?? 'N/A'} m²</p>
+  <p><strong>Prix :</strong> ${data.price?.toLocaleString('fr-FR') ?? 'N/A'} €</p>
+  <p><strong>Année :</strong> ${data.yearBuilt ?? 'N/A'}</p>
+  <p><strong>DPE :</strong> ${data.dpe ?? 'N/A'}</p>
+  <p><strong>Description :</strong><br>${data.description ?? ''}</p>
+  <div class="text-end mt-4">
+    <button class="btn btn-outline-secondary" onclick="editProperty('${data._id}')">
+      <i class="bi bi-pencil-square me-1"></i> Modifier
+    </button>
+  </div>
+`;
   document.getElementById('modalDetailsBody').innerHTML = html;
   const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
   modal.show();
