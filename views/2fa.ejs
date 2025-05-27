@@ -14,79 +14,86 @@
   
 
 body {
-  background: #fff;
-  font-family: 'Inter', 'Segoe UI', sans-serif;
+  font-family: 'Inter', sans-serif;
+  background-color: #fff;
   color: #212529;
+  margin: 0;
+  padding: 0;
 }
 
-.twofa-wrapper {
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  gap: 60px;
-  padding: 120px 20px 80px;
+.twofa-container {
   max-width: 1100px;
-  margin: auto;
+  margin: 120px auto 80px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
   flex-wrap: wrap;
 }
 
-.twofa-infos {
-  flex: 1 1 420px;
-  max-width: 480px;
+.twofa-left {
+  flex: 1 1 48%;
+  padding-right: 10px;
 }
 
-.twofa-infos h2 {
+.twofa-left h2 {
   font-size: 2rem;
   font-weight: 600;
   margin-bottom: 12px;
 }
 
-.twofa-infos p {
+.twofa-left p {
   color: #6c757d;
-  font-size: 1rem;
   margin-bottom: 20px;
 }
 
-.instruction-list {
+.twofa-left ul {
+  list-style: none;
+  padding-left: 0;
   border-left: 4px solid #8f97c4;
   padding-left: 16px;
+}
+
+.twofa-left ul li {
+  margin-bottom: 10px;
   font-size: 0.95rem;
   color: #444;
-  margin-top: 12px;
+  position: relative;
 }
 
-.instruction-list li {
-  margin-bottom: 6px;
-  list-style: none;
-}
-
-.instruction-list li::before {
-  content: "✔";
+.twofa-left ul li::before {
+  content: "✓";
   color: #8f97c4;
-  margin-right: 8px;
+  margin-right: 10px;
 }
 
-.twofa-form {
-  flex: 1 1 320px;
-  max-width: 400px;
+.twofa-form-wrapper {
+  flex: 1 1 40%;
 }
 
-.twofa-form label {
+.twofa-form-wrapper form {
+  background-color: #f9f9f9;
+  padding: 30px;
+  border-radius: 12px;
+  border: 1px solid #e2e6ea;
+}
+
+.twofa-form-wrapper label {
   font-weight: 500;
-  font-size: 0.95rem;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   display: block;
 }
 
 #code {
   width: 100%;
-  padding: 14px;
+  padding: 16px;
   font-size: 1.6rem;
   font-weight: 600;
   text-align: center;
   border: 1px solid #ced4da;
   border-radius: 8px;
   letter-spacing: 4px;
+  margin-bottom: 12px;
 }
 
 #code:focus {
@@ -96,31 +103,16 @@ body {
 }
 
 #countdown {
-  font-size: 0.875rem;
+  font-size: 0.85rem;
   color: #999;
-  margin-top: 10px;
   text-align: center;
-}
-
-.btn-primary {
-  background-color: #8f97c4;
-  border: none;
-  padding: 12px;
-  font-size: 1rem;
-  font-weight: 600;
-  width: 100%;
-  border-radius: 8px;
-  margin-top: 20px;
-}
-
-.btn-primary:hover {
-  background-color: #7a81b8;
+  margin-bottom: 20px;
 }
 
 #success-check {
   display: none;
   text-align: center;
-  margin-top: 20px;
+  margin-bottom: 16px;
 }
 
 #success-check i {
@@ -133,6 +125,19 @@ body {
   font-weight: 500;
   color: #28a745;
 }
+
+.btn-primary {
+  width: 100%;
+  background-color: #8f97c4;
+  color: #fff;
+  border: none;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
 .btn-primary:hover {
   background-color: #7a81b8;
 }
@@ -140,36 +145,12 @@ body {
 .text-muted a {
   text-decoration: none;
   color: #6c757d;
+  font-size: 0.875rem;
 }
 
 .text-muted a:hover {
   color: #444;
 }
-
-    .form-container .form-label {
-      font-weight: 500;
-    }
-
-   
-    .instruction-block ul {
-      padding-left: 0;
-      list-style: none;
-      margin: 0;
-    }
-
-    .instruction-block li {
-      margin-bottom: 8px;
-      color: #444;
-    }
-
-    .btn-primary {
-      background-color: #52566f;
-      border: none;
-    }
-
-    .btn-primary:hover {
-      background-color: #43465b;
-    }
 @media (max-width: 768px) {
   .twofa-wrapper {
     flex-direction: column;
@@ -190,17 +171,17 @@ body {
     max-width: 320px;
   }
 }
+@media (max-width: 768px) {
+  .twofa-container {
+    flex-direction: column;
+    padding: 80px 20px;
+  }
 
-    @media (max-width: 576px) {
-      .form-container {
-        margin-top: 80px;
-        padding: 20px;
-      }
-
-      .form-container h2 {
-        font-size: 1.5rem;
-      }
-    }
+  .twofa-left,
+  .twofa-form-wrapper {
+    flex: 1 1 100%;
+  }
+}
   </style>
 </head>
 <body>
