@@ -10,17 +10,29 @@
   <link href="/css/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles-main.css">
   <style>
-    body {
+     html, body {
+      height: 100%;
+      margin: 0;
       background-color: #f4f5f7;
+      display: flex;
+      flex-direction: column;
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .form-container {
+      width: 100%;
       max-width: 600px;
-      margin: 110px auto 50px;
       padding: 30px;
       background: #ffffff;
       border-radius: 12px;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+      margin: 50px 0;
     }
 
     .form-container h2 {
@@ -65,7 +77,6 @@
 
     @media (max-width: 576px) {
       .form-container {
-        margin-top: 80px;
         padding: 20px;
       }
 
@@ -77,48 +88,40 @@
 </head>
 <body id="top">
   <main>
-    <%- include('partials/navbar', { locale, isAuthenticated, currentPath }) %>
+       <%- include('partials/navbar', { locale, isAuthenticated, currentPath }) %>
 
-    <section class="new-section">
-      <div class="container">
-        <div class="row">
-          <div class="col-12 col-lg-8 mx-auto">
-            <div class="form-container text-center">
-              <h2><%= i18n.instruction %></h2>
+    <div class="form-container text-center">
+      <h2><%= i18n.instruction %></h2>
 
-              <div class="instruction-block text-start">
-                <h6 class="fw-bold mb-2"><%= i18n.step_title %></h6>
-                <ul>
-                  <% i18n.steps.forEach(function(step) { %>
-                    <li><%= step %></li>
-                  <% }); %>
-                </ul>
-              </div>
-
-              <img src="<%= qrCode %>" alt="QR Code 2FA" class="img-fluid my-3">
-
-              <p><strong><%= i18n.secret_label %> :</strong> <code><%= user.twoFactorSecret %></code></p>
-
-              <% if (messages.error && messages.error.length > 0) { %>
-                <p class="text-danger fw-bold"><%= messages.error[0] %></p>
-              <% } %>
-
-              <% if (messages.success && messages.success.length > 0) { %>
-                <p class="text-success fw-bold"><%= messages.success[0] %></p>
-              <% } %>
-
-              <form action="/<%= locale %>/enable-2fa" method="POST">
-                <div class="mb-3 text-start">
-                  <label for="code" class="form-label"><%= i18n.codeLabel %></label>
-                  <input type="text" class="form-control" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="123456">
-                </div>
-                <button type="submit" class="btn btn-primary w-100"><%= i18n.verify %></button>
-              </form>
-            </div>
-          </div>
-        </div>
+      <div class="instruction-block text-start">
+        <h6 class="fw-bold mb-2"><%= i18n.step_title %></h6>
+        <ul>
+          <% i18n.steps.forEach(function(step) { %>
+            <li><%= step %></li>
+          <% }); %>
+        </ul>
       </div>
-    </section>
+
+      <img src="<%= qrCode %>" alt="QR Code 2FA" class="img-fluid my-3">
+
+      <p><strong><%= i18n.secret_label %> :</strong> <code><%= user.twoFactorSecret %></code></p>
+
+      <% if (messages.error && messages.error.length > 0) { %>
+        <p class="text-danger fw-bold"><%= messages.error[0] %></p>
+      <% } %>
+
+      <% if (messages.success && messages.success.length > 0) { %>
+        <p class="text-success fw-bold"><%= messages.success[0] %></p>
+      <% } %>
+
+      <form action="/<%= locale %>/enable-2fa" method="POST">
+        <div class="mb-3 text-start">
+          <label for="code" class="form-label"><%= i18n.codeLabel %></label>
+          <input type="text" class="form-control" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="123456">
+        </div>
+        <button type="submit" class="btn btn-primary w-100"><%= i18n.verify %></button>
+      </form>
+    </div>
   </main>
 
 <footer class="site-footer section-padding">
