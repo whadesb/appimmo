@@ -162,6 +162,15 @@ button.disabled {
   font-size: 13px;
   line-height: 1.4;
 }
+.tooltip.show {
+  outline: none !important;
+  box-shadow: none !important;
+}
+.has-tooltip:focus,
+[data-bs-toggle="tooltip"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
 
 .tooltip-text::after {
   content: "";
