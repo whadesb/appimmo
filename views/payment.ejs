@@ -308,14 +308,13 @@ paypal.Buttons({
   createOrder: function(data, actions) {
     return actions.order.create({
       purchase_units: [{
-        amount: {
-          value: '500.00'
-        }
+        amount: { value: '500.00' }
       }]
     });
   },
   onApprove: function(data, actions) {
     const simulatedOrderID = data.orderID || 'SIMULATED12345';
+
     return fetch('/process-paypal-payment', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -334,8 +333,9 @@ paypal.Buttons({
       }
     });
   }
-}).render('#paypal-button-container'); // ✅ ici
+}).render('#paypal-button-container'); 
 </script>
+
 
 
 
