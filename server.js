@@ -46,7 +46,7 @@ const pdfRoutes = require('./routes/pdf');
 const LandingPage = require('./models/Page'); // nom du fichier réel
 const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-const { sendInvoiceByEmail } = require('./utils/email');
+const { sendInvoiceByEmail, sendMailPending } = require('./utils/email');
 
 const app = express();
 
@@ -1207,7 +1207,6 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
       expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
     });
 
-    await newOrder.save();
 await newOrder.save();
 
 try {
