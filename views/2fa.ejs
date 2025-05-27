@@ -17,11 +17,18 @@
   color: #212529;
   margin: 0;
   padding: 0;
+ display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 main {
-  padding: 100px 0 60px;
-  min-height: calc(100vh - 220px); /* empêche l'espace blanc sous le footer */
+  flex: 1;
+  display: flex;
+  align-items: center;     /* vertical */
+  justify-content: center; /* horizontal */
+  padding: 60px 20px;
+  background-color: #fff;
 }
 
 .twofa-container {
