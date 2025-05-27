@@ -1,14 +1,19 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-   orderId: { 
-    type: String, 
-    unique: true, 
-    required: true, 
+  orderId: {
+    type: String,
+    unique: true,
+    required: true,
     default: () => `ORD-${Date.now()}`,
-    set: function(value) {
+    set: function (value) {
       return value.startsWith('ORD-') ? value : `ORD-${value}`;
     }
+  },
+  paypalOrderId: {
+    type: String,
+    unique: true,
+    sparse: true // utile uniquement pour les paiements PayPal
   },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
@@ -33,12 +38,10 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now
   },
-  expiryDate: {  
+  expiryDate: {
     type: Date,
     required: true,
-    default: function () {
-      return new Date(Date.now() + (90 * 24 * 60 * 60 * 1000)); // ✅ Expiration à 90 jours
-    }
+    default: () => new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
   }
 });
 
