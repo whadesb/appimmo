@@ -886,45 +886,34 @@ progress {
 </div>
 
 <!-- SECTION CREATED PAGES -->
-  <div id="created-pages" class="card" style="display: none;">
-    <div class="card-body">
-      <h5 class="card-title"><%= i18n.created_pages %></h5>
-      <p class="card-text"><%= i18n.created_pages_info %></p>
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <thead class="table-dark">
-            <tr>
-              <th>Pièces</th>
-              <th>Chambres</th>
-              <th>Surface</th>
-              <th>Prix</th>
-              <th>Ville</th>
-              <th>Pays</th>
-              <th>Type</th>
-              <th>Année</th>
-              <th>DPE</th>
-              <th>Piscine</th>
-              <th>Arrosage</th>
-              <th>Abri</th>
-              <th>Parking</th>
-              <th>Gardien</th>
-              <th>Stores</th>
-              <th>Lumière ext</th>
-              <th>Vues</th>
-              <th>Description</th>
-              <th>URL</th>
-              <th>Photos</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody id="properties-list"></tbody>
-        </table>
-      </div>
-      <div id="no-properties-message" style="display: none;" class="text-center">
-        <p>Aucune landing page trouvée.</p>
-      </div>
+ <div id="created-pages" class="card" style="display: none;">
+  <div class="card-body">
+    <h5 class="card-title"><%= i18n.created_pages %></h5>
+    <p class="card-text"><%= i18n.created_pages_info %></p>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Type</th>
+            <th>Pays</th>
+            <th>Ville</th>
+            <th>Prix</th>
+            <th>Détails</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="properties-list"></tbody>
+      </table>
+    </div>
+
+    <div id="no-properties-message" class="text-center" style="display: none;">
+      <p>Aucune landing page trouvée.</p>
     </div>
   </div>
+</div>
+
 
 <!-- Toast de confirmation -->
 <div id="toast-confirm" class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999; display: none;">
@@ -1309,47 +1298,39 @@ async function loadLandingPages() {
     } else {
       noPropertiesMessage.style.display = 'none';
       landingPages.forEach(page => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td>${page.rooms ?? ''}</td>
-          <td>${page.bedrooms ?? ''}</td>
-          <td>${page.surface ?? ''} m²</td>
-          <td>${page.price?.toLocaleString('fr-FR') ?? ''} €</td>
-          <td>${page.city ?? ''}</td>
-          <td>${page.country ?? ''}</td>
-          <td>${page.propertyType ?? ''}</td>
-          <td>${page.yearBuilt ?? ''}</td>
-          <td>${page.dpe ?? ''}</td>
-          <td>${page.pool ? '✅' : '❌'}</td>
-          <td>${page.wateringSystem ? '✅' : '❌'}</td>
-          <td>${page.carShelter ? '✅' : '❌'}</td>
-          <td>${page.parking ? '✅' : '❌'}</td>
-          <td>${page.caretakerHouse ? '✅' : '❌'}</td>
-          <td>${page.electricShutters ? '✅' : '❌'}</td>
-          <td>${page.outdoorLighting ? '✅' : '❌'}</td>
-          <td>${page.views ?? 0}</td>
-          <td style="max-width: 300px; white-space: normal;">${page.description}</td>
-          <td><a href="${page.url}" target="_blank">${page.url}</a></td>
-          <td>
-  <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
-    <i class="bi bi-clipboard"></i>
-  </button>
-<button class="btn btn-sm btn-outline-info me-1" onclick="showQRCode('${page._id}')" title="QR Code">
-  <i class="bi bi-qr-code"></i>
-</button>
-  <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}'); showToast();" title="Diffuser">
-    <i class="bi bi-megaphone"></i>
-  </button>
-  <button class="btn btn-sm btn-secondary me-1" onclick="editProperty('${page._id}')" title="Éditer">
-    <i class="bi bi-pencil-square"></i>
-  </button>
-  <a class="btn btn-sm btn-outline-primary" href="/pdf/${page._id}" target="_blank" title="Télécharger PDF">
-    <i class="bi bi-file-earmark-pdf"></i>
-  </a>
-</td>
-        `;
-        landingPagesList.appendChild(row);
-      });
+  const row = document.createElement('tr');
+  row.innerHTML = `
+    <td>${page._id}</td>
+    <td>${page.propertyType ?? ''}</td>
+    <td>${page.country ?? ''}</td>
+    <td>${page.city ?? ''}</td>
+    <td>${page.price?.toLocaleString('fr-FR') ?? ''} €</td>
+    <td>
+      <button class="btn btn-sm btn-outline-primary" onclick="showPageDetails(${encodeURIComponent(JSON.stringify(page))})">
+        <i class="bi bi-info-circle"></i> Détails
+      </button>
+    </td>
+    <td>
+      <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
+        <i class="bi bi-clipboard"></i>
+      </button>
+      <button class="btn btn-sm btn-outline-info me-1" onclick="showQRCode('${page._id}')">
+        <i class="bi bi-qr-code"></i>
+      </button>
+      <button class="btn btn-sm btn-dark me-1" onclick="redirectToPayment('${page._id}')">
+        <i class="bi bi-megaphone"></i>
+      </button>
+      <button class="btn btn-sm btn-secondary me-1" onclick="editProperty('${page._id}')">
+        <i class="bi bi-pencil-square"></i>
+      </button>
+      <a class="btn btn-sm btn-outline-primary" href="/pdf/${page._id}" target="_blank" title="PDF">
+        <i class="bi bi-file-earmark-pdf"></i>
+      </a>
+    </td>
+  `;
+  landingPagesList.appendChild(row);
+});
+
     }
 
     // Ajouter effet de copie avec icône verte
@@ -1542,6 +1523,20 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 });
 </script>
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="detailsModalLabel">Détails de la propriété</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body" id="modalDetailsBody">
+        <!-- Contenu injecté par JS -->
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- Modal QR Code -->
 <div class="modal fade" id="qrModal" tabindex="-1" aria-labelledby="qrModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-sm modal-dialog-centered">
@@ -1586,6 +1581,24 @@ function showQRCode(propertyId) {
     });
 }
 </script>
-
+<script>
+function showPageDetails(page) {
+  const data = typeof page === 'string' ? JSON.parse(decodeURIComponent(page)) : page;
+  const html = `
+    <p><strong>ID :</strong> ${data._id}</p>
+    <p><strong>Type :</strong> ${data.propertyType ?? 'N/A'}</p>
+    <p><strong>Pays :</strong> ${data.country ?? 'N/A'}</p>
+    <p><strong>Ville :</strong> ${data.city ?? 'N/A'}</p>
+    <p><strong>Surface :</strong> ${data.surface ?? 'N/A'} m²</p>
+    <p><strong>Prix :</strong> ${data.price?.toLocaleString('fr-FR') ?? 'N/A'} €</p>
+    <p><strong>Année :</strong> ${data.yearBuilt ?? 'N/A'}</p>
+    <p><strong>DPE :</strong> ${data.dpe ?? 'N/A'}</p>
+    <p><strong>Description :</strong><br>${data.description ?? ''}</p>
+  `;
+  document.getElementById('modalDetailsBody').innerHTML = html;
+  const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
+  modal.show();
+}
+</script>
 </body>
 </html>
