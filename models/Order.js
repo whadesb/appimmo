@@ -1,11 +1,12 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
-  orderId: {
-    type: String,
-    unique: true,
-    required: true
-  },
+ orderId: {
+  type: String,
+  unique: true,
+  required: true,
+  default: () => `ORD-${Date.now()}`
+},
   paypalOrderId: {
     type: String,
     unique: true,
@@ -41,13 +42,7 @@ const orderSchema = new mongoose.Schema({
   }
 });
 
-// Générer orderId automatiquement
-orderSchema.pre('save', function (next) {
-  if (!this.orderId) {
-    this.orderId = `ORD-${Date.now()}`;
-  }
-  next();
-});
+
 
 module.exports = mongoose.model('Order', orderSchema);
 
