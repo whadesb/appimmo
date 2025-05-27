@@ -1209,6 +1209,19 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
       paypalOrderId: orderID,
       expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
     });
+const existingActiveOrder = await Order.findOne({
+  userId: req.user._id,
+  propertyId,
+  status: { $in: ['pending', 'paid'] }, // en attente ou payée
+  expiryDate: { $gt: new Date() } // pas encore expirée
+});
+
+if (existingActiveOrder) {
+  return res.status(400).json({
+    success: false,
+    message: "Vous avez déjà une commande active pour ce bien."
+  });
+}
 
     await newOrder.save();
 
