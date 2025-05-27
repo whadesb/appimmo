@@ -95,6 +95,11 @@ main {
   font-weight: 500;
   margin-bottom: 8px;
 }
+#numeric-keypad button {
+  font-size: 1.5rem;
+  padding: 14px 0;
+  border-radius: 8px;
+}
 
 #code {
   width: 100%;
@@ -361,52 +366,22 @@ main {
   });
 </script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const keypad = document.getElementById("numeric-keypad");
-    const codeDisplay = document.getElementById("code-display");
-    const hiddenCode = document.getElementById("hidden-code");
-    const clearBtn = document.getElementById("clear-code");
-    const submitBtn = document.getElementById("submit-code");
+  document.querySelector('form').addEventListener('submit', (e) => {
+    e.preventDefault();
 
-    function generateRandomDigits() {
-      const digits = [...Array(10).keys()];
-      for (let i = digits.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [digits[i], digits[j]] = [digits[j], digits[i]];
-      }
-      return digits;
+    const code = document.getElementById('hidden-code').value.trim(); // ✅ on lit bien le code saisi via le clavier
+    if (code.match(/^\d{6}$/)) {
+      document.getElementById('success-check').style.display = 'block';
+      document.querySelector('form button[type="submit"]').disabled = true;
+
+      setTimeout(() => {
+        e.target.submit(); // Soumission réelle après animation
+      }, 1500);
+    } else {
+      alert("Veuillez entrer un code à 6 chiffres valide.");
     }
-
-    function renderKeypad() {
-      keypad.innerHTML = "";
-      const digits = generateRandomDigits();
-      digits.forEach(digit => {
-        const btn = document.createElement("button");
-        btn.className = "btn btn-light";
-        btn.textContent = digit;
-        btn.onclick = () => enterDigit(digit);
-        keypad.appendChild(btn);
-      });
-    }
-
-    function enterDigit(digit) {
-      if (hiddenCode.value.length < 6) {
-        hiddenCode.value += digit;
-        codeDisplay.textContent = "*".repeat(hiddenCode.value.length);
-      }
-      submitBtn.disabled = hiddenCode.value.length !== 6;
-    }
-
-    clearBtn.onclick = () => {
-      hiddenCode.value = "";
-      codeDisplay.textContent = "";
-      submitBtn.disabled = true;
-    };
-
-    renderKeypad(); // initial load
   });
 </script>
-
 
 </body>
 </html>
