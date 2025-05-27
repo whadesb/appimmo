@@ -255,8 +255,17 @@ main {
       <% } %>
 
       <form method="POST" action="/<%= locale %>/2fa">
-        <label for="code"><%= i18n.label %></label>
-        <input type="text" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="<%= i18n.placeholder %>">
+        <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
+
+<div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;">
+  <!-- Touches générées par JS -->
+</div>
+
+<button id="clear-code" class="btn btn-outline-secondary w-100 mt-2">Effacer</button>
+<button id="submit-code" type="submit" class="btn btn-primary w-100 mt-3" disabled>Valider</button>
+
+<input type="hidden" name="code" id="hidden-code">
+
 
         <div id="countdown">Le code expire dans <span id="timer">30</span> secondes.</div>
 
@@ -351,6 +360,53 @@ main {
     }
   });
 </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const keypad = document.getElementById("numeric-keypad");
+    const codeDisplay = document.getElementById("code-display");
+    const hiddenCode = document.getElementById("hidden-code");
+    const clearBtn = document.getElementById("clear-code");
+    const submitBtn = document.getElementById("submit-code");
+
+    function generateRandomDigits() {
+      const digits = [...Array(10).keys()];
+      for (let i = digits.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [digits[i], digits[j]] = [digits[j], digits[i]];
+      }
+      return digits;
+    }
+
+    function renderKeypad() {
+      keypad.innerHTML = "";
+      const digits = generateRandomDigits();
+      digits.forEach(digit => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-light";
+        btn.textContent = digit;
+        btn.onclick = () => enterDigit(digit);
+        keypad.appendChild(btn);
+      });
+    }
+
+    function enterDigit(digit) {
+      if (hiddenCode.value.length < 6) {
+        hiddenCode.value += digit;
+        codeDisplay.textContent = "*".repeat(hiddenCode.value.length);
+      }
+      submitBtn.disabled = hiddenCode.value.length !== 6;
+    }
+
+    clearBtn.onclick = () => {
+      hiddenCode.value = "";
+      codeDisplay.textContent = "";
+      submitBtn.disabled = true;
+    };
+
+    renderKeypad(); // initial load
+  });
+</script>
+
 
 </body>
 </html>
