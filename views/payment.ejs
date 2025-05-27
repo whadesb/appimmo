@@ -314,31 +314,27 @@ paypal.Buttons({
       }]
     });
   },
- onApprove: function(data, actions) {
-  // ⚠️ Simulation directe sans capture réelle PayPal
-  // Tu peux définir un faux orderID ou garder celui généré
-  const simulatedOrderID = data.orderID || 'SIMULATED12345';
-
-  // On envoie directement les données à ton backend comme si le paiement était validé
-  return fetch('/process-paypal-payment', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      orderID: simulatedOrderID,
-      propertyId: "<%= propertyId %>",
-      amount: 50000
+  onApprove: function(data, actions) {
+    const simulatedOrderID = data.orderID || 'SIMULATED12345';
+    return fetch('/process-paypal-payment', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        orderID: simulatedOrderID,
+        propertyId: "<%= propertyId %>",
+        amount: 50000
+      })
     })
-  })
-  .then(res => res.json())
-  .then(result => {
-    if (result.success) {
-      window.location.href = result.redirectUrl;
-    } else {
-      alert("Erreur : " + result.message);
-    }
-  });
-}
-
+    .then(res => res.json())
+    .then(result => {
+      if (result.success) {
+        window.location.href = result.redirectUrl;
+      } else {
+        alert("Erreur : " + result.message);
+      }
+    });
+  }
+}).render('#paypal-button-container'); // ✅ ici
 </script>
 
 
