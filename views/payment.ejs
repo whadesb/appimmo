@@ -244,6 +244,8 @@
 
         <!-- ✅ PayPal Button Container -->
         <div id="paypal-button-container"></div>
+<input type="hidden" id="propertyId" value="<%= propertyId %>">
+
       </div>
     </div>
 
@@ -318,13 +320,14 @@ paypal.Buttons({
   },
   onApprove: function(data, actions) {
     const simulatedOrderID = data.orderID || 'SIMULATED12345';
+    const propertyId = document.getElementById('propertyId').value;
 
     return fetch('/process-paypal-payment', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         orderID: simulatedOrderID,
-        propertyId: "<%= propertyId %>",
+        propertyId: propertyId,
         amount: 50000
       })
     })
@@ -335,11 +338,14 @@ paypal.Buttons({
       } else {
         alert("Erreur : " + result.message);
       }
+    })
+    .catch(err => {
+      console.error("Erreur PayPal :", err);
+      alert("Une erreur s'est produite avec PayPal.");
     });
   }
-}).render('#paypal-button-container'); 
+}).render('#paypal-button-container');
 </script>
-
 
 
 
