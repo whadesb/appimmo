@@ -280,7 +280,7 @@ main {
   <!-- Touches générées par JS -->
 </div>
 
-<button id="clear-code" class="btn btn-outline-secondary w-100 mt-2">Effacer</button>
+<button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mt-2">Effacer</button>
 <button id="submit-code" type="submit" class="btn btn-primary w-100 mt-3" disabled>Valider</button>
 
 <input type="hidden" name="code" id="hidden-code">
@@ -393,6 +393,7 @@ document.getElementById('submit-code').addEventListener('click', function (e) {
       const btn = document.createElement("button");
       btn.className = "btn btn-light";
       btn.textContent = digit;
+      btn.setAttribute("type", "button");
       btn.onclick = () => enterDigit(digit);
       keypad.appendChild(btn);
     });
