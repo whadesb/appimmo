@@ -52,20 +52,37 @@ async function sendInvoiceByEmail(to, transactionId, amount, currency) {
 }
 
 async function sendMailPending(to, propertyId, amount) {
+  const transporter = nodemailer.createTransport({
+    service: 'gmail', // ou ton service SMTP
+    auth: {
+      user: process.env.MAIL_USER,
+      pass: process.env.MAIL_PASS,
+    },
+  });
+
   const mailOptions = {
     from: `"UAP Immo" <${process.env.MAIL_USER}>`,
     to,
-    subject: "Commande en attente - UAP Immo",
-    html: `
-      <p>Bonjour,</p>
-      <p>Nous avons bien reçu votre commande pour la propriété <strong>${propertyId}</strong>.</p>
-      <p>Montant estimé : <strong>${amount / 100} €</strong></p>
-      <p>Elle est en attente de confirmation de paiement par PayPal.</p>
-      <p>Vous recevrez un email une fois le paiement validé.</p>
-    `,
+    subject: 'Confirmation de votre commande (en attente)',
+    text: `Bonjour,
+
+Nous avons bien reçu votre demande de commande pour le bien ${propertyId}.
+Montant : ${amount} EUR.
+
+Une fois le paiement confirmé par PayPal, vous recevrez votre facture.
+
+Merci pour votre confiance.
+
+L’équipe UAP Immo`,
   };
+
   await transporter.sendMail(mailOptions);
-  console.log(`📧 Email d'attente envoyé à ${to}`);
+  console.log(`📩 Mail de confirmation en attente envoyé à ${to}`);
 }
 
-module.exports = { sendInvoiceByEmail, sendMailPending };
+
+module.exports = {
+  sendInvoiceByEmail,
+  sendMailPending
+};
+
