@@ -11,9 +11,7 @@
   <link rel="stylesheet" href="/css/styles-main.css">
 
   <style>
-  
-
-body {
+ body {
   font-family: 'Inter', sans-serif;
   background-color: #fff;
   color: #212529;
@@ -21,28 +19,34 @@ body {
   padding: 0;
 }
 
+main {
+  padding: 100px 0 60px;
+  min-height: calc(100vh - 220px); /* empêche l'espace blanc sous le footer */
+}
+
 .twofa-container {
   max-width: 1100px;
-  margin: 120px auto 80px;
+  margin: auto;
   padding: 0 20px;
   display: flex;
-  justify-content: space-between;
   gap: 60px;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .twofa-left {
   flex: 1 1 48%;
-  padding-right: 10px;
 }
 
 .twofa-left h2 {
-  font-size: 2rem;
+  font-size: 1.9rem;
   font-weight: 600;
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .twofa-left p {
+  font-size: 1rem;
   color: #6c757d;
   margin-bottom: 20px;
 }
@@ -50,50 +54,48 @@ body {
 .twofa-left ul {
   list-style: none;
   padding-left: 0;
-  border-left: 4px solid #8f97c4;
+  border-left: 3px solid #dee2e6;
   padding-left: 16px;
+  margin-top: 12px;
 }
 
-.twofa-left ul li {
-  margin-bottom: 10px;
+.twofa-left li {
   font-size: 0.95rem;
+  margin-bottom: 8px;
   color: #444;
   position: relative;
 }
 
-.twofa-left ul li::before {
+.twofa-left li::before {
   content: "✓";
   color: #8f97c4;
-  margin-right: 10px;
+  margin-right: 8px;
 }
 
 .twofa-form-wrapper {
   flex: 1 1 40%;
-}
-
-.twofa-form-wrapper form {
-  background-color: #f9f9f9;
-  padding: 30px;
-  border-radius: 12px;
+  background-color: #f8f9fa;
+  padding: 32px;
+  border-radius: 10px;
   border: 1px solid #e2e6ea;
 }
 
 .twofa-form-wrapper label {
+  display: block;
   font-weight: 500;
   margin-bottom: 8px;
-  display: block;
 }
 
 #code {
   width: 100%;
-  padding: 16px;
+  padding: 14px;
   font-size: 1.6rem;
   font-weight: 600;
   text-align: center;
   border: 1px solid #ced4da;
   border-radius: 8px;
-  letter-spacing: 4px;
-  margin-bottom: 12px;
+  letter-spacing: 6px;
+  background-color: #fff;
 }
 
 #code:focus {
@@ -103,16 +105,17 @@ body {
 }
 
 #countdown {
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: #999;
   text-align: center;
+  margin-top: 12px;
   margin-bottom: 20px;
 }
 
 #success-check {
   display: none;
   text-align: center;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
 }
 
 #success-check i {
@@ -121,15 +124,14 @@ body {
 }
 
 #success-check p {
-  margin-top: 10px;
   font-weight: 500;
   color: #28a745;
+  margin-top: 8px;
 }
 
 .btn-primary {
   width: 100%;
   background-color: #8f97c4;
-  color: #fff;
   border: none;
   padding: 14px;
   font-size: 1rem;
@@ -151,35 +153,24 @@ body {
 .text-muted a:hover {
   color: #444;
 }
-@media (max-width: 768px) {
-  .twofa-wrapper {
-    flex-direction: column;
-    gap: 40px;
-    padding: 80px 20px;
-  }
 
-  .twofa-infos h2 {
-    text-align: center;
-  }
-
-  .twofa-infos p {
-    text-align: center;
-  }
-
-  .instruction-list {
-    margin: auto;
-    max-width: 320px;
-  }
-}
 @media (max-width: 768px) {
   .twofa-container {
     flex-direction: column;
-    padding: 80px 20px;
+    gap: 40px;
   }
 
-  .twofa-left,
   .twofa-form-wrapper {
-    flex: 1 1 100%;
+    width: 100%;
+  }
+
+  .twofa-left {
+    text-align: center;
+  }
+
+  .twofa-left ul {
+    margin: auto;
+    max-width: 320px;
   }
 }
   </style>
@@ -236,43 +227,42 @@ body {
       </div>
     </div>
   </nav>
+<main>
+  <div class="twofa-container">
+    <div class="twofa-left">
+      <h2><%= i18n.heading %></h2>
+      <p><%= i18n.description %></p>
+      <ul>
+        <% i18n.instruction_steps.forEach(function(step) { %>
+          <li><%= step %></li>
+        <% }); %>
+      </ul>
+    </div>
 
-  <main>
- <div class="twofa-container">
-  <div class="twofa-left">
-    <h2><%= i18n.heading %></h2>
-    <p><%= i18n.description %></p>
-    <ul>
-      <% i18n.instruction_steps.forEach(function(step) { %>
-        <li><%= step %></li>
-      <% }); %>
-    </ul>
-  </div>
+    <div class="twofa-form-wrapper">
+      <% if (messages.error && messages.error.length > 0) { %>
+        <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
+      <% } %>
 
-  <div class="twofa-form-wrapper">
-    <% if (messages.error && messages.error.length > 0) { %>
-      <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
-    <% } %>
+      <form method="POST" action="/<%= locale %>/2fa">
+        <label for="code"><%= i18n.label %></label>
+        <input type="text" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="<%= i18n.placeholder %>">
 
-    <form method="POST" action="/<%= locale %>/2fa">
-      <label for="code"><%= i18n.label %></label>
-      <input type="text" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="<%= i18n.placeholder %>">
+        <div id="countdown">Le code expire dans <span id="timer">30</span> secondes.</div>
 
-      <div id="countdown">Le code expire dans <span id="timer">30</span> secondes.</div>
+        <div id="success-check">
+          <i class="bi bi-check-circle-fill"></i>
+          <p>Code accepté, redirection en cours...</p>
+        </div>
 
-      <div id="success-check">
-        <i class="bi bi-check-circle-fill"></i>
-        <p>Code accepté, redirection en cours...</p>
+        <button type="submit" class="btn btn-primary"><%= i18n.submit_button %></button>
+      </form>
+
+      <div class="text-center mt-3">
+        <a href="/<%= locale %>/logout" class="text-muted"><%= i18n.logout %></a>
       </div>
-
-      <button type="submit" class="btn btn-primary"><%= i18n.submit_button %></button>
-    </form>
-
-    <div class="text-center mt-3">
-      <a href="/<%= locale %>/logout" class="text-muted"><%= i18n.logout %></a>
     </div>
   </div>
-</div>
 </main>
 
   <!-- Footer -->
