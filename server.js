@@ -2060,6 +2060,26 @@ app.post('/send-contact', async (req, res) => {
   }
 });
 
+app.post('/paypal/webhook', express.json(), async (req, res) => {
+  try {
+    const event = req.body;
+    console.log("📩 Webhook reçu :", event.event_type);
+
+    if (event.event_type === 'PAYMENT.CAPTURE.COMPLETED') {
+      const orderID = event.resource.supplementary_data?.related_ids?.order_id;
+
+      // ➕ Ici tu peux mettre à jour la commande dans ta DB, par exemple :
+      // const order = await Order.findOneAndUpdate({ orderId: orderID }, { status: 'paid' });
+
+      console.log("💰 Paiement confirmé via Webhook, orderID :", orderID);
+    }
+
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('❌ Erreur Webhook PayPal :', error);
+    res.status(500).send('Erreur serveur webhook');
+  }
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
