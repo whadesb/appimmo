@@ -6,8 +6,8 @@ const path = require('path');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: process.env.MAIL_USER,
-    pass: process.env.MAIL_PASS,
+    user: process.env.EMAIL_USER,
+pass: process.env.EMAIL_PASS,
   },
 });
 
@@ -55,8 +55,9 @@ async function sendMailPending(to, propertyId, amount) {
   const transporter = nodemailer.createTransport({
     service: 'gmail', // ou ton service SMTP
     auth: {
-      user: process.env.MAIL_USER,
-      pass: process.env.MAIL_PASS,
+      user: process.env.EMAIL_USER,
+pass: process.env.EMAIL_PASS,
+
     },
   });
 
