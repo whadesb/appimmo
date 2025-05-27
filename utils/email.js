@@ -48,7 +48,7 @@ async function sendInvoiceByEmail(to, fullName, orderId, transactionId, amount, 
         <h2 style="color: #2c3e50;">Bonjour ${fullName},</h2>
         <p>Nous avons bien reçu votre paiement pour la commande <strong>${orderId}</strong>.</p>
         <p><strong>Montant :</strong> 500 € TTC<br>
-        <strong>Durée :</strong> 3 mois</p>
+        <strong>Durée :</strong> 90 jours</p>
         <p>📎 Votre facture est en pièce jointe.</p>
 
         <hr>
@@ -68,7 +68,7 @@ async function sendInvoiceByEmail(to, fullName, orderId, transactionId, amount, 
         <h2 style="color: #2c3e50;">Hello ${fullName},</h2>
         <p>We have received your payment for order <strong>${orderId}</strong>.</p>
         <p><strong>Amount:</strong> €500 (incl. VAT)<br>
-        <strong>Duration:</strong> 3 months</p>
+        <strong>Duration:</strong> 90 days</p>
         <p>📎 Your invoice is attached.</p>
 
         <p style="margin-top: 20px;">
