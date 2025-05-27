@@ -168,6 +168,13 @@ main {
 .text-muted a:hover {
   color: #444;
 }
+#code-display {
+  height: 50px;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  line-height: 50px;
+}
 
 @media (max-width: 768px) {
   .twofa-container {
@@ -335,36 +342,7 @@ main {
   <!-- Scripts -->
   <script src="/js/bootstrap.bundle.min.js"></script>
   <script src="/js/jquery.min.js"></script>
-<script>
-  // ✅ TIMER VISUEL 30 SECONDES
-  let timeLeft = 30;
-  const timerDisplay = document.getElementById('timer');
-  const interval = setInterval(() => {
-    timeLeft--;
-    timerDisplay.textContent = timeLeft;
-    if (timeLeft <= 0) {
-      clearInterval(interval);
-      document.getElementById('countdown').innerHTML = "⏱️ Le code a expiré. Générez un nouveau code.";
-    }
-  }, 1000);
 
-  // ✅ ANIMATION DE VALIDATION
-  document.querySelector('form').addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const code = document.getElementById('code').value.trim();
-    if (code.match(/^\d{6}$/)) {
-      document.getElementById('success-check').style.display = 'block';
-      document.querySelector('form button[type="submit"]').disabled = true;
-
-      setTimeout(() => {
-        e.target.submit(); // Soumission réelle après animation
-      }, 1500);
-    } else {
-      alert("Veuillez entrer un code à 6 chiffres valide.");
-    }
-  });
-</script>
 <script>
   document.querySelector('form').addEventListener('submit', (e) => {
     e.preventDefault();
@@ -380,6 +358,52 @@ main {
     } else {
       alert("Veuillez entrer un code à 6 chiffres valide.");
     }
+  });
+</script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const keypad = document.getElementById("numeric-keypad");
+    const codeDisplay = document.getElementById("code-display");
+    const hiddenCode = document.getElementById("hidden-code");
+    const clearBtn = document.getElementById("clear-code");
+    const submitBtn = document.getElementById("submit-code");
+
+    function generateRandomDigits() {
+      const digits = [...Array(10).keys()];
+      for (let i = digits.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [digits[i], digits[j]] = [digits[j], digits[i]];
+      }
+      return digits;
+    }
+
+    function renderKeypad() {
+      keypad.innerHTML = "";
+      const digits = generateRandomDigits();
+      digits.forEach(digit => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-light";
+        btn.textContent = digit;
+        btn.onclick = () => enterDigit(digit);
+        keypad.appendChild(btn);
+      });
+    }
+
+    function enterDigit(digit) {
+      if (hiddenCode.value.length < 6) {
+        hiddenCode.value += digit;
+        codeDisplay.textContent = "*".repeat(hiddenCode.value.length);
+      }
+      submitBtn.disabled = hiddenCode.value.length !== 6;
+    }
+
+    clearBtn.onclick = () => {
+      hiddenCode.value = "";
+      codeDisplay.textContent = "";
+      submitBtn.disabled = true;
+    };
+
+    renderKeypad();
   });
 </script>
 
