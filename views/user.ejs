@@ -900,19 +900,41 @@ progress {
 
     <div class="table-responsive">
       <table class="table table-striped">
-        <thead class="table-dark">
-          <tr>
-            <th>Commandes</th>
-            <th>Date</th>
-            <th>Statut</th>
-           <th>
-  <span data-bs-toggle="tooltip" title="Pack de diffusion de 3 mois">Jours restants</span>
-</th>
+       <thead class="table-dark">
+  <tr>
+    <th>
+      <span data-bs-toggle="tooltip" title="Numéro de votre commande">
+        Commandes
+      </span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Date de votre commande">
+        Date
+      </span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Statut de la commande (payée ou en attente)">
+        Statut
+      </span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Nombre de jours de diffusion restants (max 90 jours)">
+        Jours restants
+      </span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Fin de la diffusion publicitaire (90 jours après l'achat)">
+        Expiration
+      </span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Copier l’URL, voir la page, télécharger la facture">
+        Actions
+      </span>
+    </th>
+  </tr>
+</thead>
 
-            <th>Expiration</th>
-            <th>Actions</th>
-          </tr>
-        </thead>
         <tbody id="orders-list"></tbody>
       </table>
     </div>
