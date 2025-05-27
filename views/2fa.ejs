@@ -238,42 +238,41 @@ body {
   </nav>
 
   <main>
-  <section class="twofa-wrapper">
-    <div class="twofa-infos">
-      <h2><%= i18n.heading %></h2>
-      <p><%= i18n.description %></p>
+ <div class="twofa-container">
+  <div class="twofa-left">
+    <h2><%= i18n.heading %></h2>
+    <p><%= i18n.description %></p>
+    <ul>
+      <% i18n.instruction_steps.forEach(function(step) { %>
+        <li><%= step %></li>
+      <% }); %>
+    </ul>
+  </div>
 
-      <ul class="instruction-list">
-        <% i18n.instruction_steps.forEach(function(step) { %>
-          <li><%= step %></li>
-        <% }); %>
-      </ul>
-    </div>
+  <div class="twofa-form-wrapper">
+    <% if (messages.error && messages.error.length > 0) { %>
+      <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
+    <% } %>
 
-    <div class="twofa-form">
-      <% if (messages.error && messages.error.length > 0) { %>
-        <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
-      <% } %>
+    <form method="POST" action="/<%= locale %>/2fa">
+      <label for="code"><%= i18n.label %></label>
+      <input type="text" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="<%= i18n.placeholder %>">
 
-      <form method="POST" action="/<%= locale %>/2fa">
-        <label for="code"><%= i18n.label %></label>
-        <input type="text" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="<%= i18n.placeholder %>">
+      <div id="countdown">Le code expire dans <span id="timer">30</span> secondes.</div>
 
-        <div id="countdown">Le code expire dans <span id="timer">30</span> secondes.</div>
-
-        <div id="success-check">
-          <i class="bi bi-check-circle-fill"></i>
-          <p>Code accepté, redirection en cours...</p>
-        </div>
-
-        <button type="submit" class="btn btn-primary"><%= i18n.submit_button %></button>
-      </form>
-
-      <div class="text-center mt-3">
-        <a href="/<%= locale %>/logout" class="text-muted"><%= i18n.logout %></a>
+      <div id="success-check">
+        <i class="bi bi-check-circle-fill"></i>
+        <p>Code accepté, redirection en cours...</p>
       </div>
+
+      <button type="submit" class="btn btn-primary"><%= i18n.submit_button %></button>
+    </form>
+
+    <div class="text-center mt-3">
+      <a href="/<%= locale %>/logout" class="text-muted"><%= i18n.logout %></a>
     </div>
-  </section>
+  </div>
+</div>
 </main>
 
   <!-- Footer -->
