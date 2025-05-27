@@ -352,6 +352,8 @@ main {
 
 <script>
 document.getElementById('submit-code').addEventListener('click', function (e) {
+  e.preventDefault(); // ✅ empêche la soumission immédiate
+
   const code = document.getElementById('hidden-code').value.trim();
 
   if (code.length === 6 && countdown > 0) {
@@ -359,10 +361,9 @@ document.getElementById('submit-code').addEventListener('click', function (e) {
     this.disabled = true;
 
     setTimeout(() => {
-      this.closest("form").submit(); // Soumission réelle
+      this.closest("form").submit(); // ✅ soumission après succès visuel
     }, 1500);
   } else {
-    e.preventDefault();
     alert("Le code est invalide ou a expiré. Veuillez recommencer.");
   }
 });
