@@ -1208,6 +1208,15 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
     });
 
     await newOrder.save();
+await newOrder.save();
+
+try {
+  await sendMailPending(req.user.email, propertyId, amount);
+} catch (emailErr) {
+  console.warn("📭 Erreur lors de l'envoi de l'e-mail d'attente :", emailErr.message);
+}
+
+await sendMailPending(req.user.email, propertyId, amount);
 
     const locale = req.cookies.locale || 'fr';
     res.json({ success: true, redirectUrl: `/${locale}/user` });
