@@ -52,4 +52,3 @@ orderSchema.pre('save', function (next) {
 module.exports = mongoose.model('Order', orderSchema);
 
 
-module.exports = mongoose.model('Order', orderSchema);
