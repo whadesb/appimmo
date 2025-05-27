@@ -351,22 +351,22 @@ main {
   <script src="/js/jquery.min.js"></script>
 
 <script>
- document.querySelector('form').addEventListener('submit', (e) => {
-  e.preventDefault();
-
+document.getElementById('submit-code').addEventListener('click', function (e) {
   const code = document.getElementById('hidden-code').value.trim();
 
   if (code.length === 6 && countdown > 0) {
     document.getElementById('success-check').style.display = 'block';
-    document.querySelector('form button[type="submit"]').disabled = true;
+    this.disabled = true;
 
     setTimeout(() => {
-      e.target.submit(); // Soumission réelle après animation
+      this.closest("form").submit(); // Soumission réelle
     }, 1500);
   } else {
+    e.preventDefault();
     alert("Le code est invalide ou a expiré. Veuillez recommencer.");
   }
 });
+
 
 </script>
 <script>
