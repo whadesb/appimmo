@@ -38,7 +38,7 @@
     .twofa-left ul {
       list-style: none;
       padding-left: 0;
-      border-left: 3px solid #dee2e6;
+      border-left: 3px solid #000;
       padding-left: 16px;
       margin-top: 12px;
     }
@@ -49,7 +49,8 @@
     }
     .twofa-left li::before {
       content: "✓";
-      color: #8f97c4;
+      color: #0e7e41;
+      font-weight: 500;
       margin-right: 8px;
     }
    .twofa-container {
@@ -75,7 +76,34 @@
   border: 1px solid #e2e6ea;
 }
 
-  
+  #numeric-keypad button {
+  font-size: 1.6rem;
+  padding: 18px 0;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #fff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+#numeric-keypad button:active {
+  transform: translateY(2px);
+  box-shadow: none;
+}
+
+#clear-code {
+  border: 2px solid #212529 !important;
+  color: #212529 !important;
+  background-color: #fff !important;
+  font-weight: 600;
+}
+
+#submit-code {
+  background-color: #212529 !important;
+  color: #fff;
+  font-weight: 600;
+}
+
 #code-display {
   height: 50px;
   line-height: 50px;
