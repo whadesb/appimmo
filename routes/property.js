@@ -33,26 +33,7 @@ async function generateLandingPage(property) {
   const lang = property.language || 'fr';
   const city = property.city || '';
   const country = property.country || '';
-      const jsonLD = {
-    "@context": "https://schema.org",
-    "@type": "Residence",
-    "name": `${property.propertyType} à vendre à ${city}`,
-    "description": property.description?.slice(0, 160) || '',
-    "address": {
-      "@type": "PostalAddress",
-      "addressLocality": city,
-      "addressCountry": country
-    },
-    "floorSize": {
-      "@type": "QuantitativeValue",
-      "value": property.surface || 0,
-      "unitCode": "MTR"
-    },
-    "numberOfRooms": property.rooms || 1,
-    "price": property.price || 0,
-    "priceCurrency": "EUR"
-  };
-
+     
 const keywordsList = seoKeywords[lang]?.[country] || [];
 const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
     const GTM_ID = 'GTM-TF7HSC3N'; 
