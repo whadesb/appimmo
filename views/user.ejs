@@ -1214,7 +1214,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
 <script>
   document.getElementById('add-property-form').addEventListener('submit', function(event) {
       let missingFields = [];
-      const requiredFields = ['price', 'surface', 'country', 'city', 'propertyType', 'description'];
+      const requiredFields = ['price', 'surface', 'country', 'city', 'postalCode', 'propertyType', 'description'];
       
       requiredFields.forEach(field => {
           const input = document.getElementById(field);
