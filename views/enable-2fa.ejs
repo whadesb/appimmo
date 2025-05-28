@@ -175,14 +175,13 @@ align-items: flex-start;
             <p class="text-center"><strong><%= i18n.secret_label %> :</strong> <code><%= user.twoFactorSecret %></code></p>
           </div>
           <div class="keypad-container">
-            <div id="keypad" class="mt-3 d-flex flex-wrap justify-content-center gap-2">
-              <% for (let i = 1; i <= 9; i++) { %>
-                <button type="button" class="btn btn-outline-secondary digit-button" data-digit="<%= i %>"><%= i %></button>
-              <% } %>
-              <button type="button" class="btn btn-outline-secondary digit-button" data-digit="0">0</button>
-              <button type="button" class="btn btn-outline-danger" id="delete-digit">←</button>
-            </div>
-          </div>
+           <div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;">
+  <!-- Touches générées dynamiquement -->
+</div>
+
+<button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mt-2">Effacer</button>
+<button id="submit-code" type="submit" class="btn btn-primary w-100 mt-3" disabled>Valider</button>
+
         </div>
         <% if (messages.error && messages.error.length > 0) { %>
           <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
@@ -190,13 +189,13 @@ align-items: flex-start;
         <% if (messages.success && messages.success.length > 0) { %>
           <p class="text-success text-center fw-bold"><%= messages.success[0] %></p>
         <% } %>
-        <form action="/<%= locale %>/enable-2fa" method="POST">
-          <div class="mb-3">
-            <label for="code" class="form-label"><%= i18n.codeLabel %></label>
-            <input type="text" class="form-control" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="123456">
-          </div>
-          <button type="submit" class="btn btn-primary mt-3"> <%= i18n.verify %> </button>
-        </form>
+       <form action="/<%= locale %>/enable-2fa" method="POST">
+  <input type="hidden" name="code" id="hidden-code">
+  <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
+
+
+</form>
+
       </div>
     </div>
   </main>
@@ -244,25 +243,67 @@ align-items: flex-start;
 </footer>
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.bundle.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const input = document.getElementById("code");
-      const digitButtons = document.querySelectorAll(".digit-button");
-      const deleteBtn = document.getElementById("delete-digit");
+ <script>
+  document.getElementById('submit-code').addEventListener('click', function (e) {
+    e.preventDefault();
+    const code = document.getElementById('hidden-code').value.trim();
+    if (code.length === 6) {
+      this.disabled = true;
+      this.closest("form").submit();
+    } else {
+      alert("Veuillez entrer un code à 6 chiffres.");
+    }
+  });
+</script>
 
-      digitButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          if (input.value.length < 6) {
-            input.value += btn.dataset.digit;
-          }
-        });
-      });
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const keypad = document.getElementById("numeric-keypad");
+    const codeDisplay = document.getElementById("code-display");
+    const hiddenCode = document.getElementById("hidden-code");
+    const clearBtn = document.getElementById("clear-code");
+    const submitBtn = document.getElementById("submit-code");
 
-      deleteBtn.addEventListener("click", () => {
-        input.value = input.value.slice(0, -1);
+    function generateRandomDigits() {
+      const digits = [...Array(10).keys()];
+      for (let i = digits.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [digits[i], digits[j]] = [digits[j], digits[i]];
+      }
+      return digits;
+    }
+
+    function renderKeypad() {
+      keypad.innerHTML = "";
+      const digits = generateRandomDigits();
+      digits.forEach(digit => {
+        const btn = document.createElement("button");
+        btn.className = "btn btn-light";
+        btn.textContent = digit;
+        btn.type = "button";
+        btn.setAttribute("aria-label", `Chiffre ${digit}`);
+        btn.onclick = () => enterDigit(digit);
+        keypad.appendChild(btn);
       });
-    });
-  </script>
+    }
+
+    function enterDigit(digit) {
+      if (hiddenCode.value.length < 6) {
+        hiddenCode.value += digit;
+        codeDisplay.textContent = "*".repeat(hiddenCode.value.length);
+      }
+      submitBtn.disabled = hiddenCode.value.length !== 6;
+    }
+
+    clearBtn.onclick = () => {
+      hiddenCode.value = "";
+      codeDisplay.textContent = "";
+      submitBtn.disabled = true;
+    };
+
+    renderKeypad();
+  });
+</script>
 
 </body>
 </html>
