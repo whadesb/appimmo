@@ -228,7 +228,7 @@ app.get('/api/stats/:pageId', async (req, res) => {
     const startDate = req.query.startDate || '2024-03-01';
     const endDate = req.query.endDate || '2025-03-21';
     console.log('🔍 Récupération des stats pour', pageId);
-
+  console.log("👤 Utilisateur connecté :", req.user);
    const landingPages = await Page.find({ userId: req.user._id });
     console.log('✅ Landing pages récupérées :', landingPages.length);
 
