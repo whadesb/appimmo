@@ -47,7 +47,7 @@ const LandingPage = require('./models/Page'); // nom du fichier réel
 const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const { sendInvoiceByEmail, sendMailPending } = require('./utils/email');
-
+const supportedLocales = ['fr', 'en'];
 const app = express();
 
 // Middleware
@@ -120,7 +120,19 @@ app.use((req, res, next) => {
     next();
   }
 });
+app.use((req, res, next) => {
+  const firstSegment = req.path.split('/')[1];
 
+  // Si c'est une locale supportée, on continue avec
+  if (supportedLocales.includes(firstSegment)) {
+    req.locale = firstSegment;
+    return next();
+  }
+
+  // Sinon, on définit la locale par défaut
+  req.locale = 'fr';
+  next();
+});
 app.get('/user', (req, res) => {
   // Si l'utilisateur est authentifié, on redirige vers la bonne locale
   const locale = req.user?.locale || 'fr';
@@ -2173,9 +2185,9 @@ app.get('/check-email', async (req, res) => {
     const email = req.query.email;
     const user = await User.findOne({ email });
     res.json({ exists: !!user });
-  } catch (error) {
-    console.error("Erreur dans /check-email :", error);
-    res.status(500).json({ error: 'Server error' });
+  } catch (err) {
+    console.error('Erreur dans /check-email:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
   }
 });
 
