@@ -1062,6 +1062,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
       surface: req.body.surface,
       price: parseFloat(req.body.price),
       city: req.body.city,
+postalCode: req.body.postalCode,
       country: req.body.country,
       description: req.body.description,
       yearBuilt: req.body.yearBuilt || null,
