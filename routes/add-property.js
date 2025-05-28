@@ -7,7 +7,8 @@ const fs = require('fs');
 const path = require('path');
 const authMiddleware = require('../middleware/auth');
 const slugify = require('slugify');
-const { addToSitemap } = require('../utils/seo');
+const { addToSitemap, pingSearchEngines } = require('../utils/seo');
+
 
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
@@ -63,8 +64,9 @@ const GTM_ID = 'GTM-TF7HSC3N';
     const filePath = path.join(__dirname, '../public/landing-pages', `${property._id}.html`);
      fs.writeFileSync(filePath, template);
 
-    const fullUrl = `https://uap.immo/landing-pages/${filename}`;
-    addToSitemap(fullUrl);
+  const fullUrl = `https://uap.immo${property.url}`;
+addToSitemap(fullUrl);
+pingSearchEngines(`https://uap.immo/sitemap.xml`);
 
 return `/landing-pages/${filename}`;
 }
