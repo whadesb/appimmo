@@ -2169,9 +2169,14 @@ app.post('/paypal/webhook', express.json(), async (req, res) => {
   }
 });
 app.get('/check-email', async (req, res) => {
-  const email = req.query.email;
-  const user = await User.findOne({ email });
-  res.json({ exists: !!user });
+  try {
+    const email = req.query.email;
+    const user = await User.findOne({ email });
+    res.json({ exists: !!user });
+  } catch (error) {
+    console.error("Erreur dans /check-email :", error);
+    res.status(500).json({ error: 'Server error' });
+  }
 });
 
 const port = process.env.PORT || 3000;
