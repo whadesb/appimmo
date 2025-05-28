@@ -311,6 +311,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </label>
   <input type="text" class="form-control" id="firstName" name="firstName" required autocomplete="off">
 </div>
+<div class="mb-3">
+  <label for="lastName" class="form-label">
+    <%= i18n.last_name %> <span class="text-danger">*</span>
+    <span class="label-info" data-info="Indiquez votre nom de famille tel qu’il figure sur vos documents officiels.">
+      <i class="bi bi-info-circle-fill" aria-label="Information"></i>
+    </span>
+  </label>
+  <input type="text" class="form-control" id="lastName" name="lastName" required autocomplete="off">
+</div>
 
 <div class="mb-3">
   <label for="role" class="form-label">
