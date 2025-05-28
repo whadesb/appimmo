@@ -62,7 +62,6 @@ const GTM_ID = 'GTM-TF7HSC3N';
 ${JSON.stringify(jsonLD)}
 </script>
 </body>
-    </body>
     </html>`;
 
     const filePath = path.join(__dirname, '../public/landing-pages', `${property._id}.html`);
