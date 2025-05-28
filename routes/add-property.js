@@ -95,9 +95,9 @@ router.post('/add-property', authMiddleware, upload.fields([
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
   try {
-    const { price, surface, country, city, propertyType, description } = req.body;
+   const { price, surface, country, city, postalCode, propertyType, description } = req.body;
 
-    if (!price || !surface || !country || !city || !propertyType || !description) {
+   if (!price || !surface || !country || !city || !postalCode || !propertyType || !description) {
       return res.status(400).json({ error: 'Tous les champs doivent être remplis.' });
     }
 
@@ -126,6 +126,7 @@ router.post('/add-property', authMiddleware, upload.fields([
       price: parseFloat(price),
       surface: parseInt(surface),
       country,
+postalCode,
       city,
       propertyType,
       description,
