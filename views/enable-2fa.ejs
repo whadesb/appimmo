@@ -231,34 +231,62 @@
     .btn-primary:hover {
       background-color: #7a81b8;
     }
-    @media (max-width: 768px) {
-      .twofa-container {
-          flex-direction: row;
-        gap: 40px;
-      }
-      .twofa-form-wrapper {
-        width: 100%;
-      }
-      .twofa-left {
-        text-align: center;
-      }
-      .twofa-left ul {
-        margin: auto;
-        max-width: 320px;
-      }
-      .twofa-content-columns {
-        flex-direction: column;
-      }
-#numeric-keypad {
-  grid-template-columns: repeat(3, 1fr) !important;
-  gap: 12px !important;
-  padding: 0 10px;
-}
 
-#numeric-keypad button {
-  font-size: 1.6rem;
-  padding: 16px 0;
-  border-radius: 8px;
+    @media (max-width: 768px) {
+  .twofa-container {
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  .twofa-left {
+    text-align: center;
+  }
+
+  .twofa-left ul {
+    margin: auto;
+    max-width: 320px;
+  }
+
+  .twofa-form-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 24px 16px;
+    margin: auto;
+  }
+
+  #numeric-keypad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 300px;
+    margin: auto;
+    margin-bottom: 20px;
+    padding: 0 10px;
+  }
+
+  #numeric-keypad button {
+    font-size: 1.6rem;
+    padding: 16px 0;
+    border-radius: 8px;
+    touch-action: manipulation;
+  }
+
+  #code-display {
+    font-size: 1.8rem;
+    height: 52px;
+    line-height: 52px;
+    letter-spacing: 12px;
+  }
+
+  #clear-code,
+  #submit-code {
+    font-size: 1.1rem;
+    padding: 14px;
+  }
+
+  main {
+    padding: 120px 20px 100px; /* top - sides - bottom */
+  }
 }
 
     }
