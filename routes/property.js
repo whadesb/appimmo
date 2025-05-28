@@ -22,6 +22,7 @@ const lang = property.language || 'fr'; // langue détectée ou par défaut
 const country = property.country;
 const keywordsList = seoKeywords[lang]?.[country] || [];
 const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
+const seoKeywords = require('./utils/seoKeywords'); // adapte le chemin selon l’emplacement
 
 function slugify(str) {
   return str.toLowerCase()
