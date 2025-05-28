@@ -93,7 +93,16 @@ app.use((req, res, next) => {
   res.locals.user = req.user || null;
   next();
 });
-
+app.get('/check-email', async (req, res) => {
+  try {
+    const email = req.query.email;
+    const user = await User.findOne({ email });
+    res.json({ exists: !!user });
+  } catch (err) {
+    console.error('Erreur dans /check-email:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
 // Middleware de déconnexion automatique après expiration de la session
 app.use((req, res, next) => {
   if (req.session && req.session.cookie.expires < new Date()) {
@@ -2180,16 +2189,7 @@ app.post('/paypal/webhook', express.json(), async (req, res) => {
     res.sendStatus(500);
   }
 });
-app.get('/check-email', async (req, res) => {
-  try {
-    const email = req.query.email;
-    const user = await User.findOne({ email });
-    res.json({ exists: !!user });
-  } catch (err) {
-    console.error('Erreur dans /check-email:', err);
-    res.status(500).json({ error: 'Erreur serveur' });
-  }
-});
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
