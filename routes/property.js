@@ -28,7 +28,7 @@ function slugify(str) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
-const seoKeywords = require('./utils/seoKeywords'); 
+const seoKeywords = require('../utils/seoKeywords'); 
 async function generateLandingPage(property) {
 const lang = property.language || 'fr'; // langue détectée ou par défaut
 const country = property.country;
