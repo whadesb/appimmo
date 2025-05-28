@@ -227,27 +227,24 @@ app.get('/api/stats/:pageId', async (req, res) => {
     const { pageId } = req.params;
     const startDate = req.query.startDate || '2024-03-01';
     const endDate = req.query.endDate || '2025-03-21';
+
     console.log('🔍 Récupération des stats pour', pageId);
-  console.log("👤 Utilisateur connecté :", req.user);
-   const landingPages = await Page.find({ userId: req.user._id });
-    console.log('✅ Landing pages récupérées :', landingPages.length);
+    console.log("👤 Utilisateur connecté :", req.user);
 
-    const matchingPage = await Page.findOne({ _id: pageId, userId: req.user._id });
-    if (!matchingPage) {
-      console.error('❌ Page non trouvée pour l’ID :', pageId);
-      return res.status(404).json({ error: 'Page non trouvée' });
+
+    const matchingProperty = await Property.findOne({ _id: pageId, userId: req.user._id });
+
+    if (!matchingProperty) {
+      return res.status(404).json({ error: 'Propriété non trouvée' });
     }
 
-    if (!matchingPage.url) {
-      console.error('❌ Aucun champ "url" pour la page :', matchingPage._id);
-      return res.status(500).json({ error: 'Champ "url" manquant pour cette page' });
+    if (!matchingProperty.url) {
+      return res.status(500).json({ error: 'Champ "url" manquant' });
     }
 
-    const pagePath = matchingPage.url.startsWith('/landing-pages/')
-      ? matchingPage.url
-      : `/landing-pages/${matchingPage.url}`;
-
-    console.log('📊 Statistiques pour le chemin :', pagePath);
+    const pagePath = matchingProperty.url.startsWith('/landing-pages/')
+      ? matchingProperty.url
+      : `/landing-pages/${matchingProperty.url}`;
 
     const stats = await getPageStats(pagePath, startDate, endDate);
 
@@ -257,12 +254,14 @@ app.get('/api/stats/:pageId', async (req, res) => {
     }
 
     console.log('✅ Stats récupérées :', stats);
-    res.json(stats);
+    return res.json(stats);
+
   } catch (err) {
     console.error('❌ Erreur API /api/stats/:pageId =>', err.message || err);
     res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
   }
 });
+
 
 
 
