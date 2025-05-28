@@ -6,6 +6,8 @@ const Property = require('../models/Property');
 const fs = require('fs');
 const path = require('path');
 const authMiddleware = require('../middleware/auth');
+const slugify = require('slugify');
+const { addToSitemap } = require('../utils/seo');
 
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
@@ -21,7 +23,10 @@ const upload = multer({ storage: storage });
 
 async function generateLandingPage(property) {
     const GTM_ID = 'GTM-TF7HSC3N'; 
-
+const GTM_ID = 'GTM-TF7HSC3N';
+    const slug = slugify(`${property.propertyType}-${property.city}-${property.country}`, { lower: true });
+    const filename = `${property._id}-${slug}.html`;
+    const filePath = path.join(__dirname, '../public/landing-pages', filename);
     const template = `
     <!DOCTYPE html>
     <html lang="fr">
@@ -56,9 +61,12 @@ async function generateLandingPage(property) {
     </html>`;
 
     const filePath = path.join(__dirname, '../public/landing-pages', `${property._id}.html`);
-    fs.writeFileSync(filePath, template);
+     fs.writeFileSync(filePath, template);
 
-    return `/landing-pages/${property._id}.html`;
+    const fullUrl = `https://uap.immo/landing-pages/${filename}`;
+    addToSitemap(fullUrl);
+
+return `/landing-pages/${filename}`;
 }
 
 // Route pour ajouter une nouvelle propriété
