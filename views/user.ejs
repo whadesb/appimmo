@@ -894,18 +894,40 @@ progress {
     </form>
 
    <div class="table-responsive">
-      <table class="table table-striped">
-        <thead class="table-dark">
-          <tr>
-            <th scope="col">Page</th>
-            <th scope="col">Vues</th>
-            <th scope="col">Utilisateurs</th>
-            <th scope="col">Source</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="statsTableBody"></tbody>
-      </table>
+      <table class="table table-striped mt-4">
+  <thead>
+    <tr>
+      <th>Page</th>
+      <th>Vues</th>
+      <th>Utilisateurs</th>
+      <th>Scrolls</th>
+      <th>Source</th>
+      <th>Géolocalisation</th>
+      <th>Appareil</th>
+      <th>OS</th>
+      <th>Navigateur</th>
+      <th>Langue</th>
+    </tr>
+  </thead>
+  <tbody id="stats-table-body">
+    <% stats.forEach(stat => { %>
+      <tr>
+        <td><%= stat.page %></td>
+        <td><%= stat.views %></td>
+        <td><%= stat.users %></td>
+        <td><%= stat.scrolls %></td>
+        <td><%= stat.source %></td>
+        <td>
+          <%= stat.geo.city %>, <%= stat.geo.region %>, <%= stat.geo.country %>
+        </td>
+        <td><%= stat.device %></td>
+        <td><%= stat.os %></td>
+        <td><%= stat.browser %></td>
+        <td><%= stat.language %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
     </div>
   </div>
 </div>
