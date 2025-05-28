@@ -192,19 +192,60 @@
         flex-direction: column;
       }
     }
-@media (min-width: 992px) {
-   .twofa-container {
-    flex-direction: row; /* ✅ En deux colonnes à partir de 992px */
-
+/* Adaptation mobile complète */
+@media (max-width: 991.98px) {
+  .twofa-container {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 40px;
   }
 
   .twofa-left,
   .twofa-form-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
+    width: 100%;
+    flex: unset;
+    padding: 0 10px;
+  }
+
+  .twofa-left {
+    text-align: center;
+  }
+
+  .twofa-left ul {
+    margin: auto;
+    max-width: 100%;
+  }
+
+  #numeric-keypad {
+    width: 100%;
+    max-width: 100%;
+    padding: 0 10px;
+  }
+
+  #numeric-keypad button {
+    font-size: 1.2rem;
+    padding: 12px 0;
+  }
+
+  #code-display {
+    font-size: 1.4rem;
+    height: 48px;
+    line-height: 48px;
+    letter-spacing: 8px;
+  }
+
+  #clear-code,
+  #submit-code {
+    font-size: 1rem;
+    padding: 12px;
   }
 }
+
+/* Toujours occuper tout l'espace horizontal sur petit écran */
+.twofa-form-wrapper form {
+  width: 100%;
+}
+
    
   </style>
 </head>
@@ -241,11 +282,13 @@
         <!-- Zone de code et clavier -->
         <input type="hidden" name="code" id="hidden-code">
         <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
-        <div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;"></div>
+        <<div class="mb-4">
+  <div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;"></div>
+</div>
 
         <!-- Boutons -->
         <button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mb-2">Effacer</button>
-        <button id="submit-code" type="submit" class="btn btn-primary w-100" disabled>Valider</button>
+<button id="submit-code" type="submit" class="btn btn-primary w-100" disabled>Valider</button>
       </form>
     </div>
   </div>
