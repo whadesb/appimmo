@@ -706,13 +706,25 @@ app.get('/:locale/user', isAuthenticated, async (req, res) => {
     return res.status(500).send('Erreur lors du chargement des traductions.');
   }
 
-  res.render('user', {
-    locale,
-    user,
-    i18n: userTranslations,
-    currentPath: req.originalUrl,
-    userLandingPages
-  });
+const statsArray = await Promise.all(
+  userLandingPages.map(async (property) => {
+    const stats = await getPageStats(property.url);
+    return {
+      page: property.url,
+      ...stats
+    };
+  })
+);
+
+res.render('user', {
+  locale,
+  user,
+  i18n: userTranslations,
+  currentPath: req.originalUrl,
+  userLandingPages,
+  stats: statsArray
+});
+
 });
 
 
