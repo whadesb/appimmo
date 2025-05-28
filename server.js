@@ -88,48 +88,6 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.error('Error connecting to MongoDB', err);
 });
 // Middleware global pour rendre isAuthenticated et user accessibles dans toutes les vues EJS
-app.use((req, res, next) => {
-  res.locals.isAuthenticated = req.isAuthenticated?.() || false;
-  res.locals.user = req.user || null;
-  next();
-});
-app.get('/check-email', async (req, res) => {
-  try {
-    const email = req.query.email;
-    const user = await User.findOne({ email });
-    res.json({ exists: !!user });
-  } catch (err) {
-    console.error('Erreur dans /check-email:', err);
-    res.status(500).json({ error: 'Erreur serveur' });
-  }
-});
-// Middleware de déconnexion automatique après expiration de la session
-app.use((req, res, next) => {
-  if (req.session && req.session.cookie.expires < new Date()) {
-    req.logout((err) => {
-      if (err) {
-        return next(err);
-      }
-      req.session.destroy((err) => {
-        if (err) {
-          return next(err);
-        }
-        res.clearCookie('connect.sid');
-
-        // Détecter la langue du cookie, sinon utiliser 'fr' par défaut
-        const locale = req.cookies.locale || req.acceptsLanguages('en', 'fr') || 'fr';
-
-        // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
-        const validLocale = ['fr', 'en'].includes(locale) ? locale : 'fr';
-
-        res.redirect(`/${validLocale}/login`);
-      });
-    });
-  } else {
-    next();
-  }
-});
-const supportedLocales = ['fr', 'en'];
 
 app.use((req, res, next) => {
   const path = req.path;
@@ -156,6 +114,49 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.isAuthenticated?.() || false;
+  res.locals.user = req.user || null;
+  next();
+});
+app.get('/check-email', async (req, res) => {
+  try {
+    const email = req.query.email;
+    const user = await User.findOne({ email });
+    res.json({ exists: !!user });
+  } catch (err) {
+    console.error('Erreur dans /check-email:', err);
+    res.status(500).json({ error: 'Erreur serveur' });
+  }
+});
+// Middleware de déconnexion automatique après expiration de la session
+app.use((req, res, next) => {
+if (req.session && req.session.cookie && req.session.cookie.expires < new Date()) {
+    req.logout((err) => {
+      if (err) {
+        return next(err);
+      }
+      req.session.destroy((err) => {
+        if (err) {
+          return next(err);
+        }
+        res.clearCookie('connect.sid');
+
+        // Détecter la langue du cookie, sinon utiliser 'fr' par défaut
+        const locale = req.cookies.locale || req.acceptsLanguages('en', 'fr') || 'fr';
+
+        // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
+        const validLocale = ['fr', 'en'].includes(locale) ? locale : 'fr';
+
+        res.redirect(`/${validLocale}/login`);
+      });
+    });
+  } else {
+    next();
+  }
+});
+
 
 app.get('/user', (req, res) => {
   // Si l'utilisateur est authentifié, on redirige vers la bonne locale
