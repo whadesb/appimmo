@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="/css/styles-main.css">
   <style>
       body {
-      font-family: 'Inter', sans-serif;
+     font-family: 'Inter', sans-serif;
       background-color: #fff;
       color: #212529;
       margin: 0;
@@ -19,28 +19,26 @@
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-  scroll-padding-top: 80px
     }
-    main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 60px 20px;
-  background-color: #fff;
- padding: 120px 20px 60px;
-}
-.twofa-container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 60px 20px; /* Ajoute du padding en haut */
-  display: flex;
-  gap: 60px;
-  flex-wrap: nowrap;
-  align-items: flex-start;
-  justify-content: space-between;
-}
-
+   main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: calc(100vh - 80px);
+      padding: 120px 20px 60px;
+      background-color: #fff;
+    }
+    .twofa-container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 0 20px;
+      display: flex;
+      gap: 60px;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+    }
     .twofa-left {
       flex: 1 1 48%;
     }
@@ -96,19 +94,6 @@
     .btn-primary:hover {
       background-color: #7a81b8;
     }
-@media (min-width: 992px) {
-  .twofa-container {
-    min-height: 600px;
-    align-items: center;
-  }
-
-  .twofa-left,
-  .twofa-form-wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-}
     @media (max-width: 768px) {
       .twofa-container {
         flex-direction: column;
@@ -125,6 +110,20 @@
         max-width: 320px;
       }
     }
+@media (min-width: 992px) {
+  .twofa-container {
+    min-height: 600px;
+    align-items: center;
+  }
+
+  .twofa-left,
+  .twofa-form-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+   
   </style>
 </head>
 <body id="top">
