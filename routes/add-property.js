@@ -97,9 +97,14 @@ router.post('/add-property', authMiddleware, upload.fields([
   try {
    const { price, surface, country, city, postalCode, propertyType, description } = req.body;
 
-   if (!price || !surface || !country || !city || !postalCode || !propertyType || !description) {
-      return res.status(400).json({ error: 'Tous les champs doivent être remplis.' });
-    }
+  if (!price || !surface || !country || !city || !postalCode || !propertyType || !description) {
+  return res.status(400).json({ error: 'Tous les champs doivent être remplis.' });
+}
+
+if (!/^\d{5}$/.test(postalCode)) {
+  return res.status(400).json({ error: 'Le code postal doit contenir exactement 5 chiffres.' });
+}
+
 
     const userId = req.user?._id;
     if (!userId) {
