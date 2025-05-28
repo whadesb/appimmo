@@ -24,10 +24,29 @@ const upload = multer({ storage: storage });
 
 async function generateLandingPage(property) {
     const GTM_ID = 'GTM-TF7HSC3N'; 
-const GTM_ID = 'GTM-TF7HSC3N';
     const slug = slugify(`${property.propertyType}-${property.city}-${property.country}`, { lower: true });
     const filename = `${property._id}-${slug}.html`;
     const filePath = path.join(__dirname, '../public/landing-pages', filename);
+const jsonLD = {
+  "@context": "https://schema.org",
+  "@type": "Residence",
+  "name": `${property.propertyType} à ${property.city}, ${property.country}`,
+  "description": property.description,
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": property.city,
+    "addressCountry": property.country
+  },
+  "floorSize": {
+    "@type": "QuantitativeValue",
+    "value": property.surface,
+    "unitCode": "MTR"
+  },
+  "price": property.price,
+  "priceCurrency": "EUR",
+  "url": `https://uap.immo/landing-pages/${property._id}-${slugify(`${property.propertyType}-${property.city}-${property.country}`, { lower: true })}.html`
+};
+
     const template = `
     <!DOCTYPE html>
     <html lang="fr">
