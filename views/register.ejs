@@ -162,6 +162,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 .label-info:hover::after {
   opacity: 1;
 }
+.password-match-message {
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
+.password-match-message.success {
+  color: #28a745; /* vert */
+}
+.password-match-message.error {
+  color: #dc3545; /* rouge clair */
+}
 
         @media (max-width: 767px) {
             .form-container {
@@ -286,34 +296,64 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 <div class="mb-3">
                                     <label for="email" class="form-label">
   <%= i18n.email %> <span class="text-danger">*</span>
-  <span class="label-info" data-info="Votre adresse e-mail professionnelle ou personnelle.">i</span>
+ <span class="label-info" data-info="Votre adresse e-mail professionnelle ou personnelle.">
+  <i class="bi bi-info-circle-fill" aria-label="Informations" role="tooltip"></i>
+</span>
 </label>
                                     <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
                                 </div>
-                                <div class="mb-3">
-                                    <label for="firstName" class="form-label"><%= i18n.first_name %></label>
-                                    <input type="text" class="form-control" id="firstName" name="firstName" required autocomplete="off">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="lastName" class="form-label"><%= i18n.last_name %></label>
-                                    <input type="text" class="form-control" id="lastName" name="lastName" required autocomplete="off">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="role" class="form-label"><%= i18n.role %></label>
-                                    <input type="text" class="form-control" id="role" name="role" required autocomplete="off">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="password" class="form-label"><%= i18n.password %></label>
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text toggle-password" id="togglePassword"><i class="bi bi-eye"></i></span>
-                                        </div>
-                                    </div>
+                               <div class="mb-3">
+  <label for="firstName" class="form-label">
+    <%= i18n.first_name %> <span class="text-danger">*</span>
+    <span class="label-info" data-info="Entrez votre prénom tel qu'il apparaît sur vos documents officiels.">
+      <i class="bi bi-info-circle-fill"></i>
+    </span>
+  </label>
+  <input type="text" class="form-control" id="firstName" name="firstName" required autocomplete="off">
+</div>
+
+<div class="mb-3">
+  <label for="lastName" class="form-label">
+    <%= i18n.last_name %> <span class="text-danger">*</span>
+    <span class="label-info" data-info="Indiquez votre nom de famille pour l'identification de votre compte.">
+      <i class="bi bi-info-circle-fill"></i>
+    </span>
+  </label>
+  <input type="text" class="form-control" id="lastName" name="lastName" required autocomplete="off">
+</div>
+
+<div class="mb-3">
+  <label for="role" class="form-label">
+    <%= i18n.role %> <span class="text-danger">*</span>
+    <span class="label-info" data-info="Spécifiez votre rôle ou fonction (exemple : investisseur, agent, administrateur...).">
+      <i class="bi bi-info-circle-fill" aria-label="Information"></i>
+    </span>
+  </label>
+  <input type="text" class="form-control" id="role" name="role" required autocomplete="off">
+</div>
+
+
+                                   <div class="input-group">
+  <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
+  <div class="input-group-append">
+    <span class="input-group-text toggle-password" id="togglePassword"><i class="bi bi-eye"></i></span>
+  </div>
+  <div id="passwordStrength" class="password-match-message"></div>
+  <div id="passwordMatchMessage" class="password-match-message"></div>
+</div>
+
+
+                    
                                     <small class="form-text text-muted"><%= i18n.password_help %></small>
                                 </div>
                                 <div class="mb-3">
-                                    <label for="confirmPassword" class="form-label"><%= i18n.confirm_password %></label>
+                                    <label for="confirmPassword" class="form-label">
+  <%= i18n.confirm_password %> <span class="text-danger">*</span>
+  <span class="label-info" data-info="Ressaisissez exactement le même mot de passe pour confirmation.">
+    <i class="bi bi-info-circle-fill" aria-label="Information"></i>
+  </span>
+</label>
+
                                     <div class="input-group">
                                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required autocomplete="off">
                                         <div class="input-group-append">
@@ -420,12 +460,57 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <script>
   const password = document.getElementById('password');
   const confirmPassword = document.getElementById('confirmPassword');
+  const messageDiv = document.getElementById('passwordMatchMessage');
 
-  confirmPassword.addEventListener('input', () => {
+  function checkPasswordMatch() {
+    if (confirmPassword.value === '') {
+      messageDiv.textContent = '';
+      confirmPassword.setCustomValidity('');
+      return;
+    }
+
     if (confirmPassword.value !== password.value) {
+      messageDiv.textContent = "❌ Les mots de passe ne correspondent pas.";
+      messageDiv.className = 'password-match-message error';
       confirmPassword.setCustomValidity("Les mots de passe ne correspondent pas.");
     } else {
-      confirmPassword.setCustomValidity("");
+      messageDiv.textContent = "✅ Les mots de passe correspondent.";
+      messageDiv.className = 'password-match-message success';
+      confirmPassword.setCustomValidity('');
+    }
+  }
+
+  password.addEventListener('input', checkPasswordMatch);
+  confirmPassword.addEventListener('input', checkPasswordMatch);
+</script>
+
+<script>
+  const passwordStrength = document.getElementById('passwordStrength');
+
+  password.addEventListener('input', function () {
+    const value = password.value;
+    let strength = 0;
+
+    if (value.length >= 8) strength++;
+    if (/[A-Z]/.test(value)) strength++;
+    if (/[0-9]/.test(value)) strength++;
+    if (/[^A-Za-z0-9]/.test(value)) strength++;
+
+    switch (strength) {
+      case 0:
+      case 1:
+        passwordStrength.textContent = "🔴 Mot de passe trop faible.";
+        passwordStrength.className = "password-match-message error";
+        break;
+      case 2:
+      case 3:
+        passwordStrength.textContent = "🟠 Sécurité moyenne.";
+        passwordStrength.className = "password-match-message";
+        break;
+      case 4:
+        passwordStrength.textContent = "🟢 Mot de passe sécurisé.";
+        passwordStrength.className = "password-match-message success";
+        break;
     }
   });
 </script>
