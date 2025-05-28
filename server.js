@@ -1942,8 +1942,8 @@ align-items: stretch;
   </div>
 </div>
 <script type="application/ld+json">
-      ${JSON.stringify(jsonLD)}
-      </script>
+${JSON.stringify(jsonLD)}
+</script>
 </body>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
