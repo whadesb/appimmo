@@ -10,18 +10,26 @@ const propertyId = 'properties/448283789';
 // ✅ Initialisation correcte du client
 const analyticsDataClient = new BetaAnalyticsDataClient({ keyFilename });
 
-async function getPageStats(pagePath) {
+async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today') {
   try {
     const [response] = await analyticsDataClient.runReport({
       property: propertyId,
-      dateRanges: [{ startDate: '30daysAgo', endDate: 'today' }],
+      dateRanges: [{ startDate, endDate }],
       dimensions: [
         { name: 'pagePath' },
-        { name: 'sessionSourceMedium' }
+        { name: 'country' },
+        { name: 'region' },
+        { name: 'city' },
+        { name: 'deviceCategory' },
+        { name: 'operatingSystem' },
+        { name: 'browser' },
+        { name: 'language' },
+        { name: 'sessionDefaultChannelGroup' }
       ],
       metrics: [
         { name: 'screenPageViews' },
-        { name: 'activeUsers' }
+        { name: 'activeUsers' },
+        { name: 'scrolls' }
       ],
       dimensionFilter: {
         filter: {
@@ -34,18 +42,44 @@ async function getPageStats(pagePath) {
       },
     });
 
+    // 🔁 Résumé global : première ligne
     const row = response.rows?.[0];
-    return {
-      views: parseInt(row?.metricValues?.[0]?.value || '0'),
-      users: parseInt(row?.metricValues?.[1]?.value || '0'),
-      source: row?.dimensionValues?.[1]?.value || 'Inconnu'
+
+    if (!row) return {
+      views: 0,
+      users: 0,
+      scrolls: 0,
+      source: 'Aucune donnée',
     };
+
+    return {
+      views: parseInt(row.metricValues[0]?.value || '0'),
+      users: parseInt(row.metricValues[1]?.value || '0'),
+      scrolls: parseInt(row.metricValues[2]?.value || '0'),
+      source: row.dimensionValues[8]?.value || 'Non défini',
+      device: row.dimensionValues[4]?.value || 'Inconnu',
+      os: row.dimensionValues[5]?.value || 'Inconnu',
+      browser: row.dimensionValues[6]?.value || 'Inconnu',
+      language: row.dimensionValues[7]?.value || 'Inconnu',
+      geo: {
+        country: row.dimensionValues[1]?.value || 'Inconnu',
+        region: row.dimensionValues[2]?.value || 'Inconnu',
+        city: row.dimensionValues[3]?.value || 'Inconnu'
+      }
+    };
+
   } catch (error) {
     console.error('❌ Erreur dans getPageStats :', error.message || error);
     return {
       views: 0,
       users: 0,
-      source: 'Erreur'
+      scrolls: 0,
+      source: 'Erreur',
+      device: 'Erreur',
+      os: 'Erreur',
+      browser: 'Erreur',
+      language: 'Erreur',
+      geo: { country: 'Erreur', region: 'Erreur', city: 'Erreur' }
     };
   }
 }
