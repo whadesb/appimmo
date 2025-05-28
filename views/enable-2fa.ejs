@@ -29,22 +29,7 @@
       padding: 120px 20px 60px;
       background-color: #fff;
     }
-    .twofa-container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 0 20px;
-  display: flex;
-  gap: 60px;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-}
-    .twofa-left {
-      flex: 1 1 48%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
+  
     .twofa-left h2 {
       font-size: 1.9rem;
       font-weight: 600;
@@ -67,28 +52,32 @@
       color: #8f97c4;
       margin-right: 8px;
     }
-    .twofa-form-wrapper {
-      flex: 1 1 48%;
-      background-color: #f8f9fa;
-      padding: 32px;
-      border-radius: 10px;
-      border: 1px solid #e2e6ea;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    }
-    .twofa-content-columns {
-      display: flex;
-      flex-wrap: wrap;
-align-items: flex-start;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-.qr-code-container,
-.keypad-container {
-  flex: 1 1 48%;
-  min-width: 240px;
+   .twofa-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 60px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
+
+.twofa-left {
+  flex: 1 1 48%;
+  text-align: left;
+}
+
+.twofa-form-wrapper {
+  flex: 1 1 40%;
+  background-color: #f8f9fa;
+  padding: 32px;
+  border-radius: 10px;
+  border: 1px solid #e2e6ea;
+}
+
+  
+
 #keypad {
   max-width: 280px;
   margin: auto;
@@ -103,9 +92,7 @@ align-items: flex-start;
 .twofa-form-wrapper {
   flex: 1 1 48%;
 }
-    .qr-code-container, .keypad-container {
-      flex: 1 1 48%;
-    }
+   
     .twofa-form-wrapper label {
       display: block;
       font-weight: 500;
@@ -173,7 +160,7 @@ align-items: flex-start;
       </ul>
     </div>
 
-    <!-- Colonne droite (formulaire complet) -->
+    <!-- Colonne droite (comme dans 2fa) -->
     <div class="twofa-form-wrapper">
       <% if (messages.error && messages.error.length > 0) { %>
         <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
@@ -183,18 +170,16 @@ align-items: flex-start;
       <% } %>
 
       <form action="/<%= locale %>/enable-2fa" method="POST">
-        <!-- QR code -->
+        <!-- Code QR -->
         <div class="text-center mb-3">
           <img src="<%= qrCode %>" alt="QR Code 2FA" class="img-fluid" style="max-width: 220px;">
           <p class="mt-2"><strong><%= i18n.secret_label %> :</strong> <code><%= user.twoFactorSecret %></code></p>
         </div>
 
-        <!-- Code affiché -->
+        <!-- Zone de code et clavier -->
         <input type="hidden" name="code" id="hidden-code">
         <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
-
-        <!-- Clavier -->
-        <div id="numeric-keypad" class="d-grid gap-2 mb-3" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;"></div>
+        <div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;"></div>
 
         <!-- Boutons -->
         <button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mb-2">Effacer</button>
