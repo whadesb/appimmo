@@ -1410,7 +1410,7 @@ async function generateLandingPage(property) {
 
   const slug = slugify(`${property.propertyType}-${city}-${country}`, { lower: true });
   const filename = `${property._id}-${slug}.html`;
-  const filePath = path.join(__dirname, '../public/landing-pages', filename);
+  const filePath = path.join(__dirname, 'public/landing-pages', filename);
   const fullUrl = `https://uap.immo/landing-pages/${filename}`;
 
   const GTM_ID = 'GTM-TF7HSC3N';
