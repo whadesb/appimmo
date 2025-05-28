@@ -1430,6 +1430,26 @@ const keywordsList = seoKeywords[lang]?.[country] || [];
 const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
     const GTM_ID = 'GTM-TF7HSC3N'; 
     const GA_MEASUREMENT_ID = 'G-0LN60RQ12K';  
+const jsonLD = {
+  "@context": "https://schema.org",
+  "@type": "Residence",
+  "name": `${property.propertyType} à ${property.city}, ${property.country}`,
+  "description": property.description,
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": property.city,
+    "addressCountry": property.country
+  },
+  "floorSize": {
+    "@type": "QuantitativeValue",
+    "value": property.surface,
+    "unitCode": "MTR"
+  },
+  "price": property.price,
+  "priceCurrency": "EUR",
+  "url": `https://uap.immo/landing-pages/${property._id}-${slugify(`${property.propertyType}-${property.city}-${property.country}`, { lower: true })}.html`
+};
+
     const template = `
               <!DOCTYPE html>
     <html lang="${lang}">
