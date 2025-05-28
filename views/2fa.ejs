@@ -201,8 +201,8 @@ main {
 }
 
 #countdown {
-  font-size: 0.875rem;
-  color: #999;
+ font-size: 0.875rem;
+  color: #000; /* Noir */
   text-align: center;
   margin-top: 12px;
   margin-bottom: 20px;
@@ -241,8 +241,7 @@ main {
 }
 
 .text-muted a {
-  text-decoration: none;
-  color: #6c757d;
+  color: #000 !important; /* Forcer noir */
   font-size: 0.875rem;
 }
 
@@ -310,12 +309,31 @@ main {
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  #clear-code,
-  #submit-code {
-    font-size: 1.1rem;
-    padding: 14px;
-  }
+#clear-code {
+  border: 1px solid #000;
+  color: #000;
+  background-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+#clear-code:hover,
+#clear-code:active {
+  background-color: #000;
+  color: #fff;
+}
+#submit-code:enabled {
+  background-color: #212529; /* Gris très foncé */
+  color: #fff;
+  border: none;
+}
+#clear-code,
+#submit-code {
+  font-size: 1.1rem;
+  padding: 14px;
+}
 
+#submit-code:enabled {
+  background-color: #212529; /* même en mobile */
+}
   main {
     padding-bottom: 100px;
   }
