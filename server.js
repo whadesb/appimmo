@@ -48,6 +48,8 @@ const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const { sendInvoiceByEmail, sendMailPending } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
+const { addToSitemap, pingSearchEngines } = require('../utils/seo');
+
 
 const app = express();
 
@@ -1986,7 +1988,9 @@ property.url = `/landing-pages/${filename}`;
 
 
     fs.writeFileSync(filePath, template);
-
+const fullUrl = `https://uap.immo${property.url}`;
+addToSitemap(fullUrl);
+pingSearchEngines(`https://uap.immo/sitemap.xml`);
  return `/landing-pages/${filename}`;
 
 }
