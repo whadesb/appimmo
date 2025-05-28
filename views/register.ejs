@@ -130,6 +130,39 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   .navbar .btn-outline-dark {
     margin-right: 12px;
   }
+.label-info {
+  position: relative;
+  display: inline-block;
+  margin-left: 5px;
+  color: #888;
+  cursor: pointer;
+}
+
+.label-info::after {
+  content: attr(data-info);
+  position: absolute;
+  width: max-content;
+  min-width: 180px;
+  top: -5px;
+  left: 120%;
+  z-index: 10;
+  background: #fff;
+  color: #000;
+  border: 1px solid #ddd;
+  padding: 8px 10px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  font-size: 0.85rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  white-space: normal;
+}
+
+.label-info:hover::after {
+  opacity: 1;
+}
+
         @media (max-width: 767px) {
             .form-container {
                 background: none;
@@ -251,7 +284,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                             <% } %>
                             <form action="/<%= locale %>/register" method="POST" autocomplete="off">
                                 <div class="mb-3">
-                                    <label for="email" class="form-label"><%= i18n.email %></label>
+                                    <label for="email" class="form-label">
+  <%= i18n.email %> <span class="text-danger">*</span>
+  <span class="label-info" data-info="Votre adresse e-mail professionnelle ou personnelle.">i</span>
+</label>
                                     <input type="email" class="form-control" id="email" name="email" required autocomplete="off">
                                 </div>
                                 <div class="mb-3">
@@ -380,6 +416,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 
   handlePasswordToggle('togglePassword', 'password');
   handlePasswordToggle('toggleConfirmPassword', 'confirmPassword');
+</script>
+<script>
+  const password = document.getElementById('password');
+  const confirmPassword = document.getElementById('confirmPassword');
+
+  confirmPassword.addEventListener('input', () => {
+    if (confirmPassword.value !== password.value) {
+      confirmPassword.setCustomValidity("Les mots de passe ne correspondent pas.");
+    } else {
+      confirmPassword.setCustomValidity("");
+    }
+  });
 </script>
 
 
