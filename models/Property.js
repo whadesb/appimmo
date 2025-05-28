@@ -15,6 +15,10 @@ const propertySchema = new Schema({
   surface: { type: Number, required: true },
   price: { type: Number, required: true },
   city: { type: String, required: true },
+postalCode: {
+  type: String,
+  required: true
+},
   country: { type: String, required: true },
   description: { type: String, required: true, maxlength: 820 },
   yearBuilt: { type: Number },
