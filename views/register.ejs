@@ -313,16 +313,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </div>
 
 <div class="mb-3">
-  <label for="lastName" class="form-label">
-    <%= i18n.last_name %> <span class="text-danger">*</span>
-    <span class="label-info" data-info="Indiquez votre nom de famille pour l'identification de votre compte.">
-      <i class="bi bi-info-circle-fill"></i>
-    </span>
-  </label>
-  <input type="text" class="form-control" id="lastName" name="lastName" required autocomplete="off">
-</div>
-
-<div class="mb-3">
   <label for="role" class="form-label">
     <%= i18n.role %> <span class="text-danger">*</span>
     <span class="label-info" data-info="Spécifiez votre rôle ou fonction (exemple : investisseur, agent, administrateur...).">
@@ -332,37 +322,44 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <input type="text" class="form-control" id="role" name="role" required autocomplete="off">
 </div>
 
-
-                                   <div class="input-group">
-  <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
-  <div class="input-group-append">
-    <span class="input-group-text toggle-password" id="togglePassword"><i class="bi bi-eye"></i></span>
+<!-- Champ Mot de passe -->
+<div class="mb-3">
+  <label for="password" class="form-label">
+    <%= i18n.password %> <span class="text-danger">*</span>
+    <span class="label-info" data-info="Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un symbole.">
+      <i class="bi bi-info-circle-fill" aria-label="Information"></i>
+    </span>
+  </label>
+  <div class="input-group">
+    <input type="password" class="form-control" id="password" name="password" required autocomplete="off">
+    <div class="input-group-append">
+      <span class="input-group-text toggle-password" id="togglePassword"><i class="bi bi-eye"></i></span>
+    </div>
   </div>
-  <div id="passwordStrength" class="password-match-message"></div>
-  <div id="passwordMatchMessage" class="password-match-message"></div>
+  <div id="passwordStrength" class="password-match-message mt-1"></div>
+  <small class="form-text text-muted"><%= i18n.password_help %></small>
 </div>
 
-
-                    
-                                    <small class="form-text text-muted"><%= i18n.password_help %></small>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="confirmPassword" class="form-label">
-  <%= i18n.confirm_password %> <span class="text-danger">*</span>
-  <span class="label-info" data-info="Ressaisissez exactement le même mot de passe pour confirmation.">
-    <i class="bi bi-info-circle-fill" aria-label="Information"></i>
-  </span>
-</label>
-
-                                    <div class="input-group">
-                                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required autocomplete="off">
-                                        <div class="input-group-append">
-                                            <span class="input-group-text toggle-password" id="toggleConfirmPassword"><i class="bi bi-eye"></i></span>
-                                        </div>
-                                    </div>
-                                </div>
+<!-- Champ Confirmation Mot de passe -->
 <div class="mb-3">
- <div class="g-recaptcha" data-sitekey="<%= RECAPTCHA_SITE_KEY %>"></div>
+  <label for="confirmPassword" class="form-label">
+    <%= i18n.confirm_password %> <span class="text-danger">*</span>
+    <span class="label-info" data-info="Ressaisissez exactement le même mot de passe pour confirmation.">
+      <i class="bi bi-info-circle-fill" aria-label="Information"></i>
+    </span>
+  </label>
+  <div class="input-group">
+    <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required autocomplete="off">
+    <div class="input-group-append">
+      <span class="input-group-text toggle-password" id="toggleConfirmPassword"><i class="bi bi-eye"></i></span>
+    </div>
+  </div>
+  <div id="passwordMatchMessage" class="password-match-message mt-1"></div>
+</div>
+
+<!-- reCAPTCHA -->
+<div class="mb-3">
+  <div class="g-recaptcha" data-sitekey="<%= RECAPTCHA_SITE_KEY %>"></div>
 </div>
 
                                 <button type="submit" class="btn btn-primary w-100"><%= i18n.register_button %></button>
