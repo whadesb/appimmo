@@ -151,8 +151,16 @@
         <form action="/<%= locale %>/enable-2fa" method="POST">
           <div class="mb-3">
             <label for="code" class="form-label"><%= i18n.codeLabel %></label>
-            <input type="text" class="form-control" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="123456">
+            <input type="text" class="form-control text-center" name="code" id="code" required maxlength="6" pattern="\d{6}" placeholder="123456" readonly>
           </div>
+<div id="keypad" class="mt-3 d-flex flex-wrap justify-content-center gap-2">
+  <% for (let i = 1; i <= 9; i++) { %>
+    <button type="button" class="btn btn-outline-secondary digit-button" data-digit="<%= i %>"><%= i %></button>
+  <% } %>
+  <button type="button" class="btn btn-outline-secondary digit-button" data-digit="0">0</button>
+  <button type="button" class="btn btn-outline-danger" id="delete-digit">←</button>
+</div>
+
           <button type="submit" class="btn btn-primary"> <%= i18n.verify %> </button>
         </form>
       </div>
@@ -203,5 +211,25 @@
 
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.bundle.min.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const input = document.getElementById("code");
+    const digitButtons = document.querySelectorAll(".digit-button");
+    const deleteBtn = document.getElementById("delete-digit");
+
+    digitButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        if (input.value.length < 6) {
+          input.value += btn.dataset.digit;
+        }
+      });
+    });
+
+    deleteBtn.addEventListener("click", () => {
+      input.value = input.value.slice(0, -1);
+    });
+  });
+</script>
+
 </body>
 </html>
