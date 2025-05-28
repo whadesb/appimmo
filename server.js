@@ -2168,6 +2168,11 @@ app.post('/paypal/webhook', express.json(), async (req, res) => {
     res.sendStatus(500);
   }
 });
+app.get('/check-email', async (req, res) => {
+  const email = req.query.email;
+  const user = await User.findOne({ email });
+  res.json({ exists: !!user });
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
