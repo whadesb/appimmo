@@ -123,7 +123,7 @@ align-items: flex-start;
     }
     @media (max-width: 768px) {
       .twofa-container {
-        flex-direction: column;
+          flex-direction: row;
         gap: 40px;
       }
       .twofa-form-wrapper {
@@ -158,47 +158,49 @@ align-items: flex-start;
 </head>
 <body id="top">
   <%- include('partials/navbar', { locale, isAuthenticated, currentPath }) %>
-  <main>
-    <div class="twofa-container">
-      <div class="twofa-left">
-        <h2><%= i18n.instruction %></h2>
-        <ul>
-          <% i18n.steps.forEach(function(step) { %>
-            <li><%= step %></li>
-          <% }); %>
-        </ul>
-      </div>
-      <div class="twofa-form-wrapper">
-        <div class="twofa-content-columns">
-          <div class="qr-code-container">
-            <img src="<%= qrCode %>" alt="QR Code 2FA" class="img-fluid my-3">
-            <p class="text-center"><strong><%= i18n.secret_label %> :</strong> <code><%= user.twoFactorSecret %></code></p>
-          </div>
-          <div class="keypad-container">
-           <div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;">
-  <!-- Touches générées dynamiquement -->
-</div>
-
-<button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mt-2">Effacer</button>
-<button id="submit-code" type="submit" class="btn btn-primary w-100 mt-3" disabled>Valider</button>
-
-        </div>
-        <% if (messages.error && messages.error.length > 0) { %>
-          <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
-        <% } %>
-        <% if (messages.success && messages.success.length > 0) { %>
-          <p class="text-success text-center fw-bold"><%= messages.success[0] %></p>
-        <% } %>
-       <form action="/<%= locale %>/enable-2fa" method="POST">
-  <input type="hidden" name="code" id="hidden-code">
-  <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
-
-
-</form>
-
-      </div>
+ <main>
+  <div class="twofa-container">
+    <!-- Colonne gauche -->
+    <div class="twofa-left">
+      <h2><%= i18n.instruction %></h2>
+      <ul>
+        <% i18n.steps.forEach(function(step) { %>
+          <li><%= step %></li>
+        <% }); %>
+      </ul>
     </div>
-  </main>
+
+    <!-- Colonne droite (formulaire complet) -->
+    <div class="twofa-form-wrapper">
+      <% if (messages.error && messages.error.length > 0) { %>
+        <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
+      <% } %>
+      <% if (messages.success && messages.success.length > 0) { %>
+        <p class="text-success text-center fw-bold"><%= messages.success[0] %></p>
+      <% } %>
+
+      <form action="/<%= locale %>/enable-2fa" method="POST">
+        <!-- QR code -->
+        <div class="text-center mb-3">
+          <img src="<%= qrCode %>" alt="QR Code 2FA" class="img-fluid" style="max-width: 220px;">
+          <p class="mt-2"><strong><%= i18n.secret_label %> :</strong> <code><%= user.twoFactorSecret %></code></p>
+        </div>
+
+        <!-- Code affiché -->
+        <input type="hidden" name="code" id="hidden-code">
+        <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
+
+        <!-- Clavier -->
+        <div id="numeric-keypad" class="d-grid gap-2 mb-3" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;"></div>
+
+        <!-- Boutons -->
+        <button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mb-2">Effacer</button>
+        <button id="submit-code" type="submit" class="btn btn-primary w-100" disabled>Valider</button>
+      </form>
+    </div>
+  </div>
+</main>
+
    <!-- Footer -->
 <footer class="site-footer section-padding">
   <div class="container">
