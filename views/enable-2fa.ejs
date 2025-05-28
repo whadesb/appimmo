@@ -97,13 +97,19 @@
   box-shadow: none;
 }
 
+/* Espacement entre clavier et boutons */
+#numeric-keypad {
+  margin-bottom: 20px;
+}
+
 /* Bouton "Effacer" */
 #clear-code {
-  border: 2px solid #212529 !important;
+  border: 1px solid #212529 !important; /* ✅ Bordure plus fine */
   color: #212529 !important;
   background-color: #fff !important;
   font-weight: 600;
   transition: all 0.2s ease;
+  margin-bottom: 12px; /* ✅ Espace entre Effacer et Valider */
 }
 
 #clear-code:hover {
