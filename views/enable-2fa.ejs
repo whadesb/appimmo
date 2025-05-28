@@ -249,6 +249,18 @@
       .twofa-content-columns {
         flex-direction: column;
       }
+#numeric-keypad {
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 12px !important;
+  padding: 0 10px;
+}
+
+#numeric-keypad button {
+  font-size: 1.6rem;
+  padding: 16px 0;
+  border-radius: 8px;
+}
+
     }
 /* Adaptation mobile complète */
 @media (max-width: 991.98px) {
@@ -422,7 +434,7 @@
         <!-- Zone de code et clavier -->
         <input type="hidden" name="code" id="hidden-code">
         <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
-        <<div class="mb-4">
+        <div class="mb-4">
   <div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;"></div>
 </div>
 
