@@ -80,9 +80,26 @@
     .twofa-content-columns {
       display: flex;
       flex-wrap: wrap;
+align-items: flex-start;
       gap: 20px;
       margin-bottom: 20px;
     }
+.qr-code-container,
+.keypad-container {
+  flex: 1 1 48%;
+  min-width: 240px;
+}
+#keypad {
+  max-width: 280px;
+  margin: auto;
+}
+.qr-code-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: auto;
+}
+
     .qr-code-container, .keypad-container {
       flex: 1 1 48%;
     }
