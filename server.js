@@ -129,19 +129,34 @@ app.use((req, res, next) => {
     next();
   }
 });
-app.use((req, res, next) => {
-  const firstSegment = req.path.split('/')[1];
+const supportedLocales = ['fr', 'en'];
 
-  // Si c'est une locale supportée, on continue avec
-  if (supportedLocales.includes(firstSegment)) {
-    req.locale = firstSegment;
+app.use((req, res, next) => {
+  const path = req.path;
+
+  // ✅ Ignorer certaines routes techniques / API
+  const ignoredPaths = [
+    '/check-email',
+    '/api',
+    '/webhook',
+    '/uploads', // tu peux ajouter ici tous les chemins non liés à des vues
+  ];
+
+  if (ignoredPaths.some(prefix => path.startsWith(prefix))) {
     return next();
   }
 
-  // Sinon, on définit la locale par défaut
-  req.locale = 'fr';
+  const firstSegment = path.split('/')[1];
+
+  if (supportedLocales.includes(firstSegment)) {
+    req.locale = firstSegment;
+  } else {
+    req.locale = 'fr';
+  }
+
   next();
 });
+
 app.get('/user', (req, res) => {
   // Si l'utilisateur est authentifié, on redirige vers la bonne locale
   const locale = req.user?.locale || 'fr';
