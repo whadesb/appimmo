@@ -135,24 +135,26 @@ app.get('/check-email', async (req, res) => {
 });
 // Middleware de déconnexion automatique après expiration de la session
 app.use((req, res, next) => {
-if (req.session && req.session.cookie && req.session.cookie.expires < new Date()) {
+  const isExpired = req.session?.cookie?.expires < new Date();
+
+  if (isExpired) {
     req.logout((err) => {
-      if (err) {
-        return next(err);
-      }
+      if (err) return next(err);
+
       req.session.destroy((err) => {
-        if (err) {
-          return next(err);
-        }
+        if (err) return next(err);
+
         res.clearCookie('connect.sid');
 
-        // Détecter la langue du cookie, sinon utiliser 'fr' par défaut
-        const locale = req.cookies.locale || req.acceptsLanguages('en', 'fr') || 'fr';
+        // Détection de la langue à partir de l'URL visitée ou cookie
+        let locale = req.cookies.locale || req.acceptsLanguages('en', 'fr') || 'fr';
+        const urlLocale = req.originalUrl.split('/')[1];
+        if (['fr', 'en'].includes(urlLocale)) {
+          locale = urlLocale;
+        }
 
-        // Vérifier si la langue est bien 'fr' ou 'en', sinon forcer 'fr'
-        const validLocale = ['fr', 'en'].includes(locale) ? locale : 'fr';
-
-        res.redirect(`/${validLocale}/login`);
+        // Redirige proprement vers la bonne page de login
+        res.redirect(`/${locale}/login`);
       });
     });
   } else {
