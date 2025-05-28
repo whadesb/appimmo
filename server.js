@@ -48,7 +48,7 @@ const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const { sendInvoiceByEmail, sendMailPending } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
-const { addToSitemap, pingSearchEngines } = require('../utils/seo');
+const { addToSitemap, pingSearchEngines } = require('./utils/seo');
 
 
 const app = express();
