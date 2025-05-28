@@ -1397,7 +1397,7 @@ function slugify(str) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
-const seoKeywords = require('../utils/seoKeywords'); 
+const seoKeywords = require('./utils/seoKeywords'); 
 async function generateLandingPage(property) {
   const lang = property.language || 'fr';
   const city = property.city || '';
