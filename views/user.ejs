@@ -856,8 +856,20 @@ progress {
       </div>
 
       <button type="submit" class="btn btn-dark py-2 mt-3">
-  <i class="fa fa-check-circle me-2"></i>Créer l'annonce
+  <i class="fa fa-check-circle me-2"></i>Créer l'annonce>
 </button>
+<script>
+  document.querySelector('form').addEventListener('submit', function (e) {
+    const postalCode = document.getElementById('postalCode').value;
+    const postalCodePattern = /^\d{5}$/;
+
+    if (!postalCodePattern.test(postalCode)) {
+      e.preventDefault();
+      alert('Le code postal doit contenir exactement 5 chiffres.');
+    }
+  });
+</script>
+
     </form>
 
     <div id="generatedLink" class="mt-3"></div>
