@@ -48,6 +48,7 @@ const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const { sendInvoiceByEmail, sendMailPending } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
+const seoKeywords = require('./utils/seoKeywords'); // adapte le chemin selon l’emplacement
 const app = express();
 
 // Middleware
@@ -1387,6 +1388,18 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
     }
 });
 
+const lang = property.language || 'fr'; // langue détectée ou par défaut
+const country = property.country;
+const keywordsList = seoKeywords[lang]?.[country] || [];
+const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+function slugify(str) {
+  return str.toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
 
 async function generateLandingPage(property) {
      const GTM_ID = 'GTM-TF7HSC3N'; 
@@ -1411,7 +1424,10 @@ async function generateLandingPage(property) {
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Propriété à ${property.city}, ${property.country}</title>
+  <title>${keywords[0]} – ${property.propertyType} à ${property.city}</title>
+<meta name="description" content="${keywords[0]} à ${property.city}. ${property.description?.slice(0, 150) || ''}">
+<meta name="keywords" content="${keywords.join(', ')}">
+
 
   <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
 
@@ -1941,10 +1957,16 @@ align-items: stretch;
 </html>`;
 
     
-    const filePath = path.join(__dirname, 'public', 'landing-pages', `${property._id}.html`);
+    const slug = slugify(`${property.propertyType}-${property.city}-${property.country}`);
+const filename = `${property._id}-${slug}.html`;
+const filePath = path.join(__dirname, 'public', 'landing-pages', filename);
+property.url = `/landing-pages/${filename}`;
+
+
     fs.writeFileSync(filePath, template);
 
-    return `/landing-pages/${property._id}.html`;
+ return `/landing-pages/${filename}`;
+
 }
 
 const transporter = nodemailer.createTransport({
