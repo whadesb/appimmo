@@ -909,24 +909,26 @@ progress {
       <th>Langue</th>
     </tr>
   </thead>
-  <tbody id="stats-table-body">
+ <tbody id="stats-table-body">
+  <% if (stats && stats.length > 0) { %>
     <% stats.forEach(stat => { %>
       <tr>
         <td><%= stat.page %></td>
         <td><%= stat.views %></td>
         <td><%= stat.users %></td>
         <td><%= stat.scrolls %></td>
-        <td><%= stat.source %></td>
-        <td>
-          <%= stat.geo.city %>, <%= stat.geo.region %>, <%= stat.geo.country %>
-        </td>
+        <td><%= stat.geo.country %></td>
         <td><%= stat.device %></td>
         <td><%= stat.os %></td>
         <td><%= stat.browser %></td>
         <td><%= stat.language %></td>
+        <td><%= stat.source %></td>
       </tr>
-    <% }) %>
-  </tbody>
+    <% }); %>
+  <% } else { %>
+    <tr><td colspan="10">Aucune statistique disponible</td></tr>
+  <% } %>
+</tbody>
 </table>
     </div>
   </div>
