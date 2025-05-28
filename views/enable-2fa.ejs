@@ -36,8 +36,8 @@
       display: flex;
       flex-wrap: wrap;
       gap: 60px;
-      align-items: stretch;
-      justify-content: space-between;
+      align-items: flex-start;
+  flex-direction: column; 
     }
     .twofa-left {
       flex: 1 1 48%;
@@ -99,7 +99,10 @@ align-items: flex-start;
   display: block;
   margin: auto;
 }
-
+.twofa-left,
+.twofa-form-wrapper {
+  flex: 1 1 48%;
+}
     .qr-code-container, .keypad-container {
       flex: 1 1 48%;
     }
@@ -142,8 +145,9 @@ align-items: flex-start;
     }
 @media (min-width: 992px) {
   .twofa-container {
-    min-height: 600px;
-    align-items: center;
+   .twofa-container {
+    flex-direction: row; /* ✅ En deux colonnes à partir de 992px */
+  }
   }
 
   .twofa-left,
