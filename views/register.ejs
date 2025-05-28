@@ -23,6 +23,20 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
     <style>
+@keyframes shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  40% { transform: translateX(5px); }
+  60% { transform: translateX(-5px); }
+  80% { transform: translateX(5px); }
+  100% { transform: translateX(0); }
+}
+
+input.is-invalid {
+  border-color: #dc3545;
+  animation: shake 0.3s;
+}
+
 .lang-flag {
       width: 24px;
       height: 16px;
@@ -293,6 +307,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                 </div>
                             <% } %>
                             <form action="/<%= locale %>/register" method="POST" autocomplete="off">
+<div id="formErrorMessage" class="alert alert-danger d-none"></div>
                                 <div class="mb-3">
                                     <label for="email" class="form-label">
   <%= i18n.email %> <span class="text-danger">*</span>
@@ -521,6 +536,41 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   });
 </script>
 
+<script>
+  const form = document.querySelector('form');
+  const errorBox = document.getElementById('formErrorMessage');
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault(); // Empêche l'envoi immédiat
+    errorBox.classList.add('d-none');
+    errorBox.textContent = '';
+
+    // Réinitialise les styles
+    form.querySelectorAll('input').forEach(el => el.classList.remove('is-invalid'));
+
+    const email = form.querySelector('#email').value;
+
+    try {
+      const res = await fetch('/check-email?email=' + encodeURIComponent(email));
+      const { exists } = await res.json();
+
+      if (exists) {
+        const emailInput = document.querySelector('#email');
+        emailInput.classList.add('is-invalid');
+        errorBox.classList.remove('d-none');
+        errorBox.textContent = '❌ Cette adresse e-mail est déjà utilisée.';
+
+        return;
+      }
+
+      form.submit(); // Envoie si tout est bon
+
+    } catch (err) {
+      errorBox.classList.remove('d-none');
+      errorBox.textContent = 'Une erreur est survenue. Veuillez réessayer.';
+    }
+  });
+</script>
 
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
