@@ -48,7 +48,7 @@ const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const { sendInvoiceByEmail, sendMailPending } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
-const seoKeywords = require('./utils/seoKeywords'); // adapte le chemin selon l’emplacement
+
 const app = express();
 
 // Middleware
@@ -1388,10 +1388,7 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
     }
 });
 
-const lang = property.language || 'fr'; // langue détectée ou par défaut
-const country = property.country;
-const keywordsList = seoKeywords[lang]?.[country] || [];
-const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
+
 
 function slugify(str) {
   return str.toLowerCase()
@@ -1400,8 +1397,12 @@ function slugify(str) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
-
+const seoKeywords = require('./utils/seoKeywords');
 async function generateLandingPage(property) {
+  const lang = property.language || 'fr'; // langue détectée ou par défaut
+const country = property.country;
+const keywordsList = seoKeywords[lang]?.[country] || [];
+const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
      const GTM_ID = 'GTM-TF7HSC3N'; 
     const GA_MEASUREMENT_ID = 'G-0LN60RQ12K'; 
 
