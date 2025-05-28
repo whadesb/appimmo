@@ -30,15 +30,36 @@ function slugify(str) {
 }
 const seoKeywords = require('../utils/seoKeywords'); 
 async function generateLandingPage(property) {
-const lang = property.language || 'fr'; // langue détectée ou par défaut
-const country = property.country;
+  const lang = property.language || 'fr';
+  const city = property.city || '';
+  const country = property.country || '';
+      const jsonLD = {
+    "@context": "https://schema.org",
+    "@type": "Residence",
+    "name": `${property.propertyType} à vendre à ${city}`,
+    "description": property.description?.slice(0, 160) || '',
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": city,
+      "addressCountry": country
+    },
+    "floorSize": {
+      "@type": "QuantitativeValue",
+      "value": property.surface || 0,
+      "unitCode": "MTR"
+    },
+    "numberOfRooms": property.rooms || 1,
+    "price": property.price || 0,
+    "priceCurrency": "EUR"
+  };
+
 const keywordsList = seoKeywords[lang]?.[country] || [];
 const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
     const GTM_ID = 'GTM-TF7HSC3N'; 
     const GA_MEASUREMENT_ID = 'G-0LN60RQ12K';  
     const template = `
               <!DOCTYPE html>
-<html lang="fr">
+    <html lang="${lang}">
 <head>
   <!-- Google Tag Manager -->
   <script>
@@ -58,8 +79,8 @@ const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
  <title>${keywords[0]} – ${property.propertyType} à ${property.city}</title>
 <meta name="description" content="${keywords[0]} à ${property.city}. ${property.description?.slice(0, 150) || ''}">
 <meta name="keywords" content="${keywords.join(', ')}">
-
-
+<title>${property.propertyType} à vendre à ${city}</title>
+   <meta name="description" content="${property.description?.slice(0, 160)}">
   <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
 
   <style>
@@ -549,7 +570,9 @@ align-items: stretch;
 
   </div>
 </div>
-
+<script type="application/ld+json">
+      ${JSON.stringify(jsonLD)}
+      </script>
 </body>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
