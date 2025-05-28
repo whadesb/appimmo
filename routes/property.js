@@ -28,61 +28,65 @@ function slugify(str) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
-const seoKeywords = require('../utils/seoKeywords'); 
+const seoKeywords = require('./utils/seoKeywords'); 
 async function generateLandingPage(property) {
   const lang = property.language || 'fr';
   const city = property.city || '';
   const country = property.country || '';
-     
-const keywordsList = seoKeywords[lang]?.[country] || [];
-const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
-    const GTM_ID = 'GTM-TF7HSC3N'; 
-    const GA_MEASUREMENT_ID = 'G-0LN60RQ12K';  
-const jsonLD = {
-  "@context": "https://schema.org",
-  "@type": "Residence",
-  "name": `${property.propertyType} à ${property.city}, ${property.country}`,
-  "description": property.description,
-  "address": {
-    "@type": "PostalAddress",
-    "addressLocality": property.city,
-    "addressCountry": property.country
-  },
-  "floorSize": {
-    "@type": "QuantitativeValue",
-    "value": property.surface,
-    "unitCode": "MTR"
-  },
-  "price": property.price,
-  "priceCurrency": "EUR",
-  "url": `https://uap.immo/landing-pages/${property._id}-${slugify(`${property.propertyType}-${property.city}-${property.country}`, { lower: true })}.html`
-};
 
-    const template = `
-              <!DOCTYPE html>
+  const slug = slugify(`${property.propertyType}-${city}-${country}`, { lower: true });
+  const filename = `${property._id}-${slug}.html`;
+  const filePath = path.join(__dirname, '../public/landing-pages', filename);
+  const fullUrl = `https://uap.immo/landing-pages/${filename}`;
+
+  const GTM_ID = 'GTM-TF7HSC3N';
+  const GA_MEASUREMENT_ID = 'G-0LN60RQ12K';
+
+  const keywordsList = seoKeywords[lang]?.[country] || [];
+  const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+  const jsonLD = {
+    "@context": "https://schema.org",
+    "@type": "Residence",
+    "name": `${property.propertyType} à vendre à ${city}`,
+    "description": property.description?.slice(0, 160) || '',
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": city,
+      "addressCountry": country
+    },
+    "floorSize": {
+      "@type": "QuantitativeValue",
+      "value": property.surface || 0,
+      "unitCode": "MTR"
+    },
+    "numberOfRooms": property.rooms || 1,
+    "price": property.price || 0,
+    "priceCurrency": "EUR",
+    "url": fullUrl
+  };
+
+  const template = `
+    <!DOCTYPE html>
     <html lang="${lang}">
-<head>
-  <!-- Google Tag Manager -->
-  <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','${GTM_ID}');
-  </script>
-  <!-- Fin Google Tag Manager -->
-<!-- Leaflet CSS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-<!-- Leaflet JS -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
- <title>${keywords[0]} – ${property.propertyType} à ${property.city}</title>
-<meta name="description" content="${keywords[0]} à ${property.city}. ${property.description?.slice(0, 150) || ''}">
-<meta name="keywords" content="${keywords.join(', ')}">
-<title>${property.propertyType} à vendre à ${city}</title>
-   <meta name="description" content="${property.description?.slice(0, 160)}">
-  <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <meta name="description" content="${property.description?.slice(0, 160) || ''}">
+      <meta name="keywords" content="${keywords.join(', ')}">
+      <title>${property.propertyType} à ${city}, ${country}</title>
+
+      <!-- Google Tag Manager -->
+      <script>
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','${GTM_ID}');
+      </script>
+      <!-- Fin Google Tag Manager -->
+
+      <script type="application/ld+json">${JSON.stringify(jsonLD)}</script>
 
   <style>
     * {
@@ -609,13 +613,13 @@ ${JSON.stringify(jsonLD)}
       });
   });
 </script>
-</html>`;
- const slug = slugify(`${property.propertyType}-${property.city}-${property.country}`);
-const filename = `${property._id}-${slug}.html`;
-const filePath = path.join(__dirname, 'public', 'landing-pages', filename);
-property.url = `/landing-pages/${filename}`;
+ </html>
+  `;
 
   fs.writeFileSync(filePath, template);
+
+  addToSitemap(fullUrl);
+  pingSearchEngines("https://uap.immo/sitemap.xml");
 
   return `/landing-pages/${filename}`;
 }
