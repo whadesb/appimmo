@@ -76,32 +76,50 @@
   border: 1px solid #e2e6ea;
 }
 
-  #numeric-keypad button {
-  font-size: 1.6rem;
-  padding: 18px 0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  background-color: #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+#numeric-keypad button {
+  font-size: 1.3rem;
+  padding: 12px 0;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background-color: #f6f6f6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease-in-out;
+}
+
+#numeric-keypad button:hover {
+  background-color: #eaeaea;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 }
 
 #numeric-keypad button:active {
-  transform: translateY(2px);
+  transform: scale(0.98);
   box-shadow: none;
 }
 
+/* Bouton "Effacer" */
 #clear-code {
   border: 2px solid #212529 !important;
   color: #212529 !important;
   background-color: #fff !important;
   font-weight: 600;
+  transition: all 0.2s ease;
 }
 
+#clear-code:hover {
+  background-color: #f0f0f0 !important;
+}
+
+/* Bouton "Valider" */
 #submit-code {
   background-color: #212529 !important;
   color: #fff;
   font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+
+#submit-code:hover {
+  background-color: #000 !important;
 }
 
 #code-display {
