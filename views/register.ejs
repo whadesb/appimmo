@@ -345,26 +345,43 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </div>
 </footer>
 <script>
-  // Affichage/Masquage du mot de passe principal
-  document.getElementById('togglePassword').addEventListener('click', function () {
-    const passwordInput = document.getElementById('password');
-    const icon = this.querySelector('i');
-    const isPassword = passwordInput.type === 'password';
-    passwordInput.type = isPassword ? 'text' : 'password';
-    icon.classList.toggle('bi-eye');
-    icon.classList.toggle('bi-eye-slash');
-  });
+  function handlePasswordToggle(buttonId, inputId) {
+    const toggleBtn = document.getElementById(buttonId);
+    const input = document.getElementById(inputId);
+    const icon = toggleBtn.querySelector('i');
 
-  // Affichage/Masquage du mot de passe de confirmation
-  document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
-    const confirmPasswordInput = document.getElementById('confirmPassword');
-    const icon = this.querySelector('i');
-    const isPassword = confirmPasswordInput.type === 'password';
-    confirmPasswordInput.type = isPassword ? 'text' : 'password';
-    icon.classList.toggle('bi-eye');
-    icon.classList.toggle('bi-eye-slash');
-  });
+    // Appliquer animation initiale
+    icon.style.transition = 'transform 0.2s ease, opacity 0.2s ease';
+
+    toggleBtn.addEventListener('mousedown', () => {
+      input.type = 'text';
+      icon.classList.remove('bi-eye');
+      icon.classList.add('bi-eye-slash');
+      icon.style.transform = 'scale(1.2)';
+      icon.style.opacity = '0.7';
+    });
+
+    toggleBtn.addEventListener('mouseup', () => {
+      input.type = 'password';
+      icon.classList.remove('bi-eye-slash');
+      icon.classList.add('bi-eye');
+      icon.style.transform = 'scale(1)';
+      icon.style.opacity = '1';
+    });
+
+    toggleBtn.addEventListener('mouseleave', () => {
+      input.type = 'password';
+      icon.classList.remove('bi-eye-slash');
+      icon.classList.add('bi-eye');
+      icon.style.transform = 'scale(1)';
+      icon.style.opacity = '1';
+    });
+  }
+
+  handlePasswordToggle('togglePassword', 'password');
+  handlePasswordToggle('toggleConfirmPassword', 'confirmPassword');
 </script>
+
 
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="https://www.google.com/recaptcha/api.js" async defer></script>
