@@ -58,6 +58,10 @@ const GTM_ID = 'GTM-TF7HSC3N';
         <p>Surface : ${property.surface} m²</p>
         <p>Prix : ${Number(property.price).toLocaleString('fr-FR')} €</p>
         <img src="/uploads/${property.photos[0] || 'default.jpg'}" width="400">
+<script type="application/ld+json">
+${JSON.stringify(jsonLD)}
+</script>
+</body>
     </body>
     </html>`;
 
