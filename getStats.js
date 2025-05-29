@@ -15,14 +15,22 @@ async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today'
     const [response] = await analyticsDataClient.runReport({
       property: propertyId,
       dateRanges: [{ startDate, endDate }],
-      dimensions: [
+     dimensions: [
   { name: 'pagePath' },
-  { name: 'sessionSourceMedium' }
+  { name: 'country' },
+  { name: 'region' },
+  { name: 'city' },
+  { name: 'deviceCategory' },
+  { name: 'operatingSystem' },
+  { name: 'browser' },
+  { name: 'language' },
+  { name: 'sessionDefaultChannelGroup' }
 ],
 metrics: [
   { name: 'screenPageViews' },
-  { name: 'activeUsers' }
-],
+  { name: 'activeUsers' },
+  { name: 'scrolls' }
+]
 
       dimensionFilter: {
         filter: {
