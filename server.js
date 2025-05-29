@@ -585,17 +585,32 @@ app.post('/reset-password/:token', async (req, res) => {
   }
 });
 
-app.get('/api/stats/:id', async (req, res) => {
-  const pageId = req.params.id;
-  const pagePath = `/landing-pages/${pageId}.html`;
-
+router.get('/api/stats/:id', async (req, res) => {
   try {
-    const views = await getPageViews(pagePath);
-    res.json({ page: pagePath, views });
+    const { id } = req.params;
+    const { startDate = '30daysAgo', endDate = 'today' } = req.query;
+
+    const property = await Property.findOne({ _id: id, userId: req.user._id });
+    if (!property) return res.status(404).json({ error: 'Propriété non trouvée' });
+
+    const pagePath = property.url.startsWith('/landing-pages/')
+      ? property.url
+      : `/landing-pages/${property.url}`;
+
+    const stats = await getPageStats(pagePath, startDate, endDate);
+
+    if (!stats || typeof stats !== 'object') {
+      console.error('❌ Statistiques non valides pour :', pagePath, stats);
+      return res.status(500).json({ error: 'Statistiques non valides' });
+    }
+
+    res.json(stats);
   } catch (error) {
-    res.status(500).json({ error: 'Erreur API Analytics' });
+    console.error('❌ Erreur API /api/stats/:id =>', error.message || error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
   }
 });
+
 
 
 app.post('/:locale/login', (req, res, next) => {
