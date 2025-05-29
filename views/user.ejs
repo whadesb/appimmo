@@ -1532,19 +1532,21 @@ async function renewOrder(orderId) {
 <script>
 async function loadStats() {
   try {
+    const response = await fetch('/user/landing-pages');
+    const pages = await response.json();
     const statsList = document.getElementById('statsTableBody');
+
     if (!statsList) {
-      console.error('❌ Élément #statsTableBody non trouvé dans le DOM.');
+      console.warn('⚠️ statsTableBody non trouvé dans le DOM');
       return;
     }
 
     statsList.innerHTML = '';
 
-    const startDate = document.getElementById('startDate')?.value || '30daysAgo';
-    const endDate = document.getElementById('endDate')?.value || 'today';
+    const startDate = document.getElementById('startDate')?.value || '2024-03-01';
+    const endDate = document.getElementById('endDate')?.value || '2025-03-21';
 
-    const response = await fetch('/user/landing-pages');
-    const pages = await response.json();
+    let rowCount = 0;
 
     for (const page of pages) {
       const pageId = page._id;
@@ -1552,6 +1554,7 @@ async function loadStats() {
 
       const res = await fetch(`/api/stats/${pageId}?startDate=${startDate}&endDate=${endDate}`);
       const contentType = res.headers.get("content-type");
+
       if (!contentType || !contentType.includes("application/json")) {
         const text = await res.text();
         console.error("❌ Réponse non JSON :", text);
@@ -1568,7 +1571,7 @@ async function loadStats() {
       const users = data.users || 0;
       const source = data.channel || 'N/A';
 
-      // ✅ Masquer les lignes sans données
+      // ✅ Si aucune donnée : on ignore cette ligne
       if (views === 0 && users === 0) continue;
 
       const row = document.createElement('tr');
@@ -1587,9 +1590,20 @@ async function loadStats() {
         </td>
       `;
       statsList.appendChild(row);
+      rowCount++;
     }
 
-    // ✅ Activer les boutons de copie
+    // ✅ Si aucune ligne affichée
+    if (rowCount === 0) {
+      statsList.innerHTML = `
+        <tr>
+          <td colspan="5" class="text-center text-muted py-3">
+            Aucune donnée pour cette période.
+          </td>
+        </tr>`;
+    }
+
+    // ✅ Ajouter les événements de copie
     document.querySelectorAll('.copy-btn').forEach(button => {
       button.addEventListener('click', function () {
         const url = `https://uap.immo${this.dataset.url}`;
@@ -1597,6 +1611,7 @@ async function loadStats() {
           const icon = this.querySelector('i');
           icon.classList.remove('bi-clipboard');
           icon.classList.add('bi-check-circle-fill', 'text-success');
+
           setTimeout(() => {
             icon.classList.remove('bi-check-circle-fill', 'text-success');
             icon.classList.add('bi-clipboard');
@@ -1614,6 +1629,7 @@ async function loadStats() {
   }
 }
 </script>
+
 
 <script>
   // Lancer une première fois au chargement
