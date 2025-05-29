@@ -29,7 +29,7 @@ async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today'
       metrics: [
         { name: 'screenPageViews' },
         { name: 'activeUsers' },
-        { name: 'userEngagementDuration' } // scrolls est parfois indisponible
+        { name: 'userEngagementDuration' } // scrolls si dispo
       ],
       dimensionFilter: {
         filter: {
@@ -49,7 +49,7 @@ async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today'
     return {
       views: parseInt(metrics[0]?.value || '0'),
       users: parseInt(metrics[1]?.value || '0'),
-      scrolls: Math.round(parseFloat(metrics[2]?.value || '0')), // Fallback scrolls
+      scrolls: Math.round(parseFloat(metrics[2]?.value || '0')),
       channel: dims[8]?.value || 'Non défini',
       device: dims[4]?.value || 'Inconnu',
       os: dims[5]?.value || 'Inconnu',
