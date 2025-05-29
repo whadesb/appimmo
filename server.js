@@ -585,7 +585,7 @@ app.post('/reset-password/:token', async (req, res) => {
   }
 });
 
-router.get('/api/stats/:id', async (req, res) => {
+app.get('/api/stats/:id', async (req, res) => {
   try {
     const { id } = req.params;
     const { startDate = '30daysAgo', endDate = 'today' } = req.query;
