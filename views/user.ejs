@@ -885,13 +885,21 @@ progress {
     </p>
 
     <form id="statsFilter" class="mb-3">
-      <label class="form-label d-block">Période :</label>
-      <div class="d-flex flex-wrap align-items-center gap-2">
-        <input type="date" name="startDate" class="form-control" required style="max-width: 200px;">
-        <input type="date" name="endDate" class="form-control" required style="max-width: 200px;">
-        <button type="submit" class="btn btn-outline-dark">Filtrer</button>
-      </div>
-    </form>
+  <div class="row">
+    <div class="col-md-4">
+      <input type="date" id="startDate" name="startDate" class="form-control" required>
+    </div>
+    <div class="col-md-4">
+      <input type="date" id="endDate" name="endDate" class="form-control" required>
+    </div>
+    <div class="col-md-4">
+      <button type="submit" class="btn btn-dark w-100">
+        Filtrer les statistiques
+      </button>
+    </div>
+  </div>
+</form>
+
 
    <div class="table-responsive">
       <table class="table table-striped mt-4">
@@ -1607,6 +1615,22 @@ async function loadStats() {
 }
 </script>
 
+<script>
+  // Lancer une première fois au chargement
+  document.addEventListener('DOMContentLoaded', () => {
+    loadStats();
+
+    const statsForm = document.getElementById('statsFilter');
+    if (statsForm) {
+      statsForm.addEventListener('submit', (e) => {
+        e.preventDefault(); // Ne pas recharger la page
+        loadStats();        // Relancer la fonction avec les nouvelles dates
+      });
+    } else {
+      console.warn('⚠️ Formulaire #statsFilter introuvable.');
+    }
+  });
+</script>
 
 
 
