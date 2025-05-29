@@ -1524,10 +1524,17 @@ async function renewOrder(orderId) {
 <script>
 async function loadStats() {
   try {
+    const statsList = document.getElementById('statsTableBody');
+
+    if (!statsList) {
+      console.warn("⚠️ statsTableBody non trouvé dans le DOM.");
+      return; // On quitte la fonction pour éviter l'erreur
+    }
+
+    statsList.innerHTML = '';
+
     const response = await fetch('/user/landing-pages');
     const pages = await response.json();
-    const statsList = document.getElementById('statsTableBody');
-    statsList.innerHTML = '';
 
     for (const page of pages) {
       const pageId = page._id;
@@ -1589,10 +1596,13 @@ async function loadStats() {
   } catch (error) {
     console.error('❌ Erreur lors du chargement des statistiques:', error);
     const statsList = document.getElementById('statsTableBody');
-    statsList.innerHTML = '<tr><td colspan="5">❌ Erreur lors du chargement des statistiques.</td></tr>';
+    if (statsList) {
+      statsList.innerHTML = '<tr><td colspan="5">❌ Erreur lors du chargement des statistiques.</td></tr>';
+    }
   }
 }
 </script>
+
 
 
 <script>
