@@ -16,21 +16,14 @@ async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today'
       property: propertyId,
       dateRanges: [{ startDate, endDate }],
       dimensions: [
-        { name: 'pagePath' },
-        { name: 'country' },
-        { name: 'region' },
-        { name: 'city' },
-        { name: 'deviceCategory' },
-        { name: 'operatingSystem' },
-        { name: 'browser' },
-        { name: 'language' },
-        { name: 'sessionDefaultChannelGroup' }
-      ],
-      metrics: [
-        { name: 'screenPageViews' },
-        { name: 'activeUsers' },
-        { name: 'scrolls' }
-      ],
+  { name: 'pagePath' },
+  { name: 'sessionSourceMedium' }
+],
+metrics: [
+  { name: 'screenPageViews' },
+  { name: 'activeUsers' }
+],
+
       dimensionFilter: {
         filter: {
           fieldName: 'pagePath',
