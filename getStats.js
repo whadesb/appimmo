@@ -1,25 +1,35 @@
+const path = require('path');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 
 const keyFilename = '/home/ec2-user/secure/uapimmo-dashboard-service-85550a959b80.json';
-const propertyId = 'properties/448283789'; // GA4 format
+const propertyId = 'properties/448283789';
 
 const analyticsDataClient = new BetaAnalyticsDataClient({ keyFilename });
 
 async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today') {
   try {
+    if (!pagePath || typeof pagePath !== 'string') {
+      throw new Error('Paramètre pagePath invalide');
+    }
+
     const [response] = await analyticsDataClient.runReport({
       property: propertyId,
       dateRanges: [{ startDate, endDate }],
       dimensions: [
         { name: 'pagePath' },
-        { name: 'deviceCategory' },
         { name: 'country' },
+        { name: 'region' },
+        { name: 'city' },
+        { name: 'deviceCategory' },
+        { name: 'operatingSystem' },
+        { name: 'browser' },
+        { name: 'language' },
         { name: 'sessionDefaultChannelGroup' }
       ],
       metrics: [
         { name: 'screenPageViews' },
         { name: 'activeUsers' },
-        { name: 'scrolls' }
+        { name: 'userEngagementDuration' } // scrolls est parfois indisponible
       ],
       dimensionFilter: {
         filter: {
@@ -33,30 +43,25 @@ async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today'
     });
 
     const row = response.rows?.[0];
-
-    if (!row) {
-      return {
-        views: 0,
-        users: 0,
-        scrolls: 0,
-        channel: 'Aucune donnée',
-        device: 'Inconnu',
-        geo: {
-          country: 'Inconnu'
-        }
-      };
-    }
+    const dims = row?.dimensionValues || [];
+    const metrics = row?.metricValues || [];
 
     return {
-      views: parseInt(row.metricValues[0]?.value || '0'),
-      users: parseInt(row.metricValues[1]?.value || '0'),
-      scrolls: parseInt(row.metricValues[2]?.value || '0'),
-      channel: row.dimensionValues[3]?.value || 'Non défini',
-      device: row.dimensionValues[1]?.value || 'Inconnu',
+      views: parseInt(metrics[0]?.value || '0'),
+      users: parseInt(metrics[1]?.value || '0'),
+      scrolls: Math.round(parseFloat(metrics[2]?.value || '0')), // Fallback scrolls
+      channel: dims[8]?.value || 'Non défini',
+      device: dims[4]?.value || 'Inconnu',
+      os: dims[5]?.value || 'Inconnu',
+      browser: dims[6]?.value || 'Inconnu',
+      language: dims[7]?.value || 'Inconnu',
       geo: {
-        country: row.dimensionValues[2]?.value || 'Inconnu'
+        country: dims[1]?.value || 'Inconnu',
+        region: dims[2]?.value || 'Inconnu',
+        city: dims[3]?.value || 'Inconnu'
       }
     };
+
   } catch (error) {
     console.error('❌ Erreur dans getPageStats :', error.message || error);
     return {
@@ -65,7 +70,10 @@ async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today'
       scrolls: 0,
       channel: 'Erreur',
       device: 'Erreur',
-      geo: { country: 'Erreur' }
+      os: 'Erreur',
+      browser: 'Erreur',
+      language: 'Erreur',
+      geo: { country: 'Erreur', region: 'Erreur', city: 'Erreur' }
     };
   }
 }
