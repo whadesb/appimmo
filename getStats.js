@@ -8,10 +8,6 @@ const analyticsDataClient = new BetaAnalyticsDataClient({ keyFilename });
 
 async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today') {
   try {
-    if (!pagePath || typeof pagePath !== 'string') {
-      throw new Error('Paramètre pagePath invalide');
-    }
-
     const [response] = await analyticsDataClient.runReport({
       property: propertyId,
       dateRanges: [{ startDate, endDate }],
@@ -29,36 +25,44 @@ async function getPageStats(pagePath, startDate = '30daysAgo', endDate = 'today'
       metrics: [
         { name: 'screenPageViews' },
         { name: 'activeUsers' },
-        { name: 'userEngagementDuration' } // scrolls est parfois indisponible
-      ],
-      dimensionFilter: {
-        filter: {
-          fieldName: 'pagePath',
-          stringFilter: {
-            value: pagePath,
-            matchType: 'EXACT'
-          }
-        }
-      }
+        { name: 'scrolls' }
+      ]
+      // ❌ Pas de dimensionFilter ici (car bug dans GA4)
     });
 
-    const row = response.rows?.[0];
-    const dims = row?.dimensionValues || [];
-    const metrics = row?.metricValues || [];
+    const row = response.rows?.find(r => r.dimensionValues[0].value === pagePath);
+
+    if (!row) {
+      return {
+        views: 0,
+        users: 0,
+        scrolls: 0,
+        channel: 'Aucune donnée',
+        device: 'Inconnu',
+        os: 'Inconnu',
+        browser: 'Inconnu',
+        language: 'Inconnu',
+        geo: {
+          country: 'Inconnu',
+          region: 'Inconnu',
+          city: 'Inconnu'
+        }
+      };
+    }
 
     return {
-      views: parseInt(metrics[0]?.value || '0'),
-      users: parseInt(metrics[1]?.value || '0'),
-      scrolls: Math.round(parseFloat(metrics[2]?.value || '0')), // Fallback scrolls
-      channel: dims[8]?.value || 'Non défini',
-      device: dims[4]?.value || 'Inconnu',
-      os: dims[5]?.value || 'Inconnu',
-      browser: dims[6]?.value || 'Inconnu',
-      language: dims[7]?.value || 'Inconnu',
+      views: parseInt(row.metricValues[0]?.value || '0'),
+      users: parseInt(row.metricValues[1]?.value || '0'),
+      scrolls: parseInt(row.metricValues[2]?.value || '0'),
+      channel: row.dimensionValues[8]?.value || 'Non défini',
+      device: row.dimensionValues[4]?.value || 'Inconnu',
+      os: row.dimensionValues[5]?.value || 'Inconnu',
+      browser: row.dimensionValues[6]?.value || 'Inconnu',
+      language: row.dimensionValues[7]?.value || 'Inconnu',
       geo: {
-        country: dims[1]?.value || 'Inconnu',
-        region: dims[2]?.value || 'Inconnu',
-        city: dims[3]?.value || 'Inconnu'
+        country: row.dimensionValues[1]?.value || 'Inconnu',
+        region: row.dimensionValues[2]?.value || 'Inconnu',
+        city: row.dimensionValues[3]?.value || 'Inconnu'
       }
     };
 
