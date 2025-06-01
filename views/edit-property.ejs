@@ -184,22 +184,7 @@
         <li class="nav-item sidebar-mobile-links sidebar-links">
           <a class="nav-link" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
         </li>
-<!-- Sélecteur de langue version DESKTOP -->
-<div class="desktop-lang-selector d-none d-lg-block ms-3">
-  <div class="dropdown">
-    <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-      <i class="bi bi-chevron-down small"></i>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end shadow">
-      <% if (locale === 'fr') { %>
-        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> English</a></li>
-      <% } else { %>
-        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> Français</a></li>
-      <% } %>
-    </ul>
-  </div>
-</div>
+
 
         <!-- Connexion / Compte - version MOBILE -->
         <% if (isAuthenticated) { %>
@@ -250,7 +235,22 @@
         </div>
       <% } %>
 
-    
+    <!-- Sélecteur de langue version DESKTOP -->
+<div class="desktop-lang-selector d-none d-lg-block ms-3">
+  <div class="dropdown">
+    <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+      <i class="bi bi-chevron-down small"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow">
+      <% if (locale === 'fr') { %>
+        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> English</a></li>
+      <% } else { %>
+        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> Français</a></li>
+      <% } %>
+    </ul>
+  </div>
+</div>
     </div>
   </div>
 </nav>
