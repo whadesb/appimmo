@@ -1121,12 +1121,12 @@ postalCode: req.body.postalCode,
         Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>
       </div>
     `;
-    res.send(successMessage);
-  } catch (error) {
-    console.error("Erreur lors de l'ajout de la propriété :", error);
-    res.status(500).send('Erreur lors de l\'ajout de la propriété.');
-  }
+   res.render('user', {
+  user,
+  successMessage: `Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>`,
+  redirectToProfile: true
 });
+
 
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
