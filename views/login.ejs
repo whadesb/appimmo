@@ -386,6 +386,16 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 </script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Récupérer tous les boutons de langue avec .dropdown-toggle
+    const dropdownToggles = document.querySelectorAll('.mobile-lang-selector .dropdown-toggle');
+
+    dropdownToggles.forEach(btn => {
+      new bootstrap.Dropdown(btn); // Force l’activation manuelle du dropdown Bootstrap
+    });
+  });
+</script>
 
     </body>
 </html>
