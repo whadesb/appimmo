@@ -578,22 +578,27 @@ progress {
             </ul>
            
 <% if (isAuthenticated) { %>
-  <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
-    <i class="bi bi-person-circle"></i>
-    <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
-  </a>
-
-  <form action="/logout" method="POST" class="d-inline">
-    <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-      <i class="bi bi-box-arrow-right"></i>
-      <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
-    </button>
-  </form>
+  <li class="nav-item d-lg-none">
+    <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
+      <i class="bi bi-person-circle"></i>
+      <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+    </a>
+  </li>
+  <li class="nav-item d-lg-none">
+    <form action="/logout" method="POST" class="w-100">
+      <button type="submit" class="nav-link btn btn-link text-start d-flex align-items-center gap-2 w-100">
+        <i class="bi bi-box-arrow-right"></i>
+        <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+      </button>
+    </form>
+  </li>
 <% } else { %>
-  <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-    <i class="bi bi-person-fill"></i>
-    <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-  </a>
+  <li class="nav-item d-lg-none">
+    <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
+      <i class="bi bi-person-fill"></i>
+      <%= locale === 'fr' ? 'Connexion' : 'Login' %>
+    </a>
+  </li>
 <% } %>
 <!-- Desktop Language Selector -->
 <div class="desktop-lang-selector ms-3">
