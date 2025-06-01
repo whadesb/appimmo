@@ -229,18 +229,17 @@ input.is-invalid {
     <!-- Mobile Language Selector -->
     <div class="mobile-lang-selector">
       <div class="dropdown" data-bs-auto-close="outside">
-  <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end shadow">
-    <% if (locale === 'fr') { %>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
-    <% } else { %>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
-    <% } %>
-  </ul>
-</div>
-
+        <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+          <% if (locale === 'fr') { %>
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+          <% } else { %>
+            <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+          <% } %>
+        </ul>
+      </div>
     </div>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -255,21 +254,44 @@ input.is-invalid {
         <li class="nav-item">
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
+        <% if (isAuthenticated) { %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
+              <i class="bi bi-person-circle"></i>
+              <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+            </a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <form action="/logout" method="POST" class="w-100">
+              <button type="submit" class="nav-link btn btn-link text-start d-flex align-items-center gap-2 w-100">
+                <i class="bi bi-box-arrow-right"></i>
+                <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+              </button>
+            </form>
+          </li>
+        <% } else { %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
+              <i class="bi bi-person-fill"></i>
+              <%= locale === 'fr' ? 'Connexion' : 'Login' %>
+            </a>
+          </li>
+        <% } %>
       </ul>
 
       <% if (isAuthenticated) { %>
-        <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+        <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-none d-lg-flex align-items-center gap-2">
           <i class="bi bi-person-circle"></i>
           <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
         </a>
-        <form action="/logout" method="POST" class="d-inline">
+        <form action="/logout" method="POST" class="d-none d-lg-inline">
           <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
             <i class="bi bi-box-arrow-right"></i>
             <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
           </button>
         </form>
       <% } else { %>
-        <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+        <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-none d-lg-flex align-items-center gap-2">
           <i class="bi bi-person-fill"></i>
           <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
         </a>
