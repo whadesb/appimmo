@@ -1076,7 +1076,6 @@ app.post('/:locale/2fa', async (req, res) => {
   }
 });
 
-
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 }
@@ -1106,35 +1105,27 @@ postalCode: req.body.postalCode,
       photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
     });
 
-  await property.save();
+    await property.save();
 
     const landingPageUrl = await generateLandingPage(property);
     property.url = landingPageUrl;
     await property.save();
 
-  const user = await User.findById(req.user._id);
-const locale = req.getLocale();
-const userTranslations = require(`./locales/${locale}.json`);
-const userLandingPages = await Property.find({ userId: user._id }).sort({ createdAt: -1 });
-const statsArray = []; 
+    // ✅ Envoi d’email après sauvegarde complète
+    const user = await User.findById(req.user._id);
+    await sendPropertyCreationEmail(user, property);
 
-  res.render('user', {
-    user,
-    locale,
-    i18n: userTranslations,
-    currentPath: req.originalUrl,
-    userLandingPages,
-    stats: statsArray,
-    successMessage: `Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>`,
-    redirectToProfile: true
-  });
-
-} catch (error) {
-  console.error("Erreur lors de l'ajout de la propriété :", error);
-  res.status(500).send("Erreur lors de l'ajout de la propriété.");
-}
+    const successMessage = `
+      <div class="alert alert-success" role="alert">
+        Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>
+      </div>
+    `;
+    res.send(successMessage);
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de la propriété :", error);
+    res.status(500).send('Erreur lors de l\'ajout de la propriété.');
+  }
 });
-
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
