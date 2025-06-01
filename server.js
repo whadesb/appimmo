@@ -1118,15 +1118,21 @@ const userTranslations = require(`./locales/${locale}.json`);
 const userLandingPages = await Property.find({ userId: user._id }).sort({ createdAt: -1 });
 const statsArray = await getStatsForUser(user._id); // si tu l'utilises ailleurs
 
-res.render('user', {
-  user,
-  locale,
-  i18n: userTranslations,
-  currentPath: req.originalUrl,
-  userLandingPages,
-  stats: statsArray,
-  successMessage: `Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>`,
-  redirectToProfile: true
+  res.render('user', {
+    user,
+    locale,
+    i18n: userTranslations,
+    currentPath: req.originalUrl,
+    userLandingPages,
+    stats: statsArray,
+    successMessage: `Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>`,
+    redirectToProfile: true
+  });
+
+} catch (error) {
+  console.error("Erreur lors de l'ajout de la propriété :", error);
+  res.status(500).send("Erreur lors de l'ajout de la propriété.");
+}
 });
 
 
