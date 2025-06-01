@@ -770,14 +770,14 @@ app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
     const translationsPath = `./locales/${locale}/enable-2fa.json`;
     const i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
 
-    res.render('enable-2fa', {
+res.render('enable-2fa', {
   locale,
   i18n,
   user,
   qrCode,
   messages: req.flash(),
   currentPath: req.originalUrl,
-  cleanPath: req.originalUrl.replace(/^\/(fr|en)/, '')
+  showAccountButtons: false // 🔐 cache Mon compte / Déconnexion
 });
   } catch (error) {
     console.error("Erreur dans GET /enable-2fa :", error);
