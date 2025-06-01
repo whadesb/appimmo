@@ -1106,28 +1106,26 @@ postalCode: req.body.postalCode,
       photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
     });
 
-    await property.save();
+  await property.save();
 
     const landingPageUrl = await generateLandingPage(property);
     property.url = landingPageUrl;
     await property.save();
 
-    // ✅ Envoi d’email après sauvegarde complète
     const user = await User.findById(req.user._id);
     await sendPropertyCreationEmail(user, property);
 
-    const successMessage = `
-      <div class="alert alert-success" role="alert">
-        Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>
-      </div>
-    `;
-   res.render('user', {
-  user,
-  successMessage: `Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>`,
-  redirectToProfile: true
+    res.render('user', {
+      user,
+      successMessage: `Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>`,
+      redirectToProfile: true
+    });
+
+  } catch (error) {
+    console.error("Erreur lors de l'ajout de la propriété :", error);
+    res.status(500).send("Erreur lors de l'ajout de la propriété.");
+  }
 });
-
-
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
