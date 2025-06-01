@@ -344,10 +344,15 @@ main {
 
   </style>
 </head>
-<body>
+<body id="top">
+
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
   <main>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
-  <!-- Navbar -->
+<!-- NAVBAR -->
 
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
@@ -441,7 +446,6 @@ main {
   </div>
 </nav>
 
-<main>
   <div class="twofa-container">
     <div class="twofa-left">
       <h2><%= i18n.heading %></h2>
