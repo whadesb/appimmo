@@ -236,14 +236,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>
 
       <!-- Sélecteur de langue mobile (placé à l’intérieur de navbar-collapse) -->
+<!-- Sélecteur de langue mobile (copié depuis le footer pour fiabilité) -->
 <div class="mobile-lang-selector mt-3">
   <div class="dropdown">
-    <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-2" 
-        type="button" id="mobileLangDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-  <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-  <i class="bi bi-chevron-down small"></i> <!-- Ajout pour renforcer le clic -->
-</button>
-    <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="mobileLangDropdown">
+    <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2"
+            type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+      <i class="bi bi-chevron-down small"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow">
       <% if (locale === 'fr') { %>
         <li>
           <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
@@ -260,6 +261,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </ul>
   </div>
 </div>
+
 
     </div>
   </div>
