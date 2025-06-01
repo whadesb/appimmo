@@ -119,23 +119,12 @@
 </head>
 <body id="top">
     <main>
-       <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
+  <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
     <a class="navbar-brand" href="/<%= locale %>">
       <span>UAP Immo</span>
     </a>
-
-    <!-- Icône profil entre logo et burger (mobile) -->
-    <% if (isAuthenticated) { %>
-      <a href="/<%= locale %>/user" class="d-lg-none d-flex align-items-center me-2">
-        <i class="bi bi-person-circle fs-4"></i>
-      </a>
-    <% } else { %>
-      <a href="/<%= locale %>/login" class="d-lg-none d-flex align-items-center me-2">
-        <i class="bi bi-person-fill fs-4"></i>
-      </a>
-    <% } %>
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
       data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
@@ -144,7 +133,7 @@
     </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
-      <!-- Liens gauche -->
+      <!-- MENU PRINCIPAL -->
       <ul class="navbar-nav ms-lg-5 me-lg-auto">
         <li class="nav-item">
           <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
@@ -153,7 +142,24 @@
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
 
-        <!-- Menu mobile supplémentaire -->
+        <!-- 🟣 Liens supplémentaires version MOBILE -->
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link" href="/<%= locale %>/user"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link" href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i> <%= i18n.add_property %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link" href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i> <%= i18n.created_pages %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
+        </li>
+
+        <!-- Connexion / Compte - version MOBILE -->
         <% if (isAuthenticated) { %>
           <li class="nav-item d-lg-none">
             <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
@@ -179,7 +185,7 @@
         <% } %>
       </ul>
 
-      <!-- Desktop - Mon compte / Login -->
+      <!-- Connexion / Compte - version DESKTOP -->
       <% if (isAuthenticated) { %>
         <div class="d-none d-lg-flex align-items-center ms-auto">
           <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
@@ -202,8 +208,8 @@
         </div>
       <% } %>
 
-      <!-- Sélecteur de langue -->
-      <div class="desktop-lang-selector ms-3 d-none d-lg-block">
+      <!-- Sélecteur de langue - uniquement desktop -->
+      <div class="desktop-lang-selector ms-3">
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
@@ -221,6 +227,7 @@
     </div>
   </div>
 </nav>
+
        <section class="new-section" id="section_4">
     <div class="container">
         <div class="row">
