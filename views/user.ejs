@@ -536,47 +536,16 @@ progress {
   <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
   height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-<% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
-    <main>
-
+ <main>
       <body id="top">
     <main>
-<div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-        <div class="dropdown">
-          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-            <i class="bi bi-chevron-down small"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-            <% if (locale === 'fr') { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
-            <% } else { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
-            <% } %>
-          </ul>
-        </div>
-      </div>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
        <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
         <a class="navbar-brand" href="/">
             <span>UAP Immo</span>
         </a>
-       <!-- 🌐 Mobile Language Selector - visible uniquement sur mobile -->
-<div class="d-lg-none me-2">
-  <div class="dropdown">
-    <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end shadow">
-      <% if (locale === 'fr') { %>
-        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> English</a></li>
-      <% } else { %>
-        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> Français</a></li>
-      <% } %>
-    </ul>
-  </div>
-</div>
+       
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -591,10 +560,10 @@ progress {
         </li>
                 <!-- Sidebar links for mobile -->
                 <li class="nav-item sidebar-mobile-links sidebar-links">
-                    <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-pencil-alt"></i> <%= i18n.my_profile %></a>
                 </li>
                 <li class="nav-item sidebar-mobile-links sidebar-links">
-                    <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i> <%= i18n.add_property %></a>
+                    <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa-edit"></i> <%= i18n.add_property %></a>
                 </li>
                 <li class="nav-item sidebar-mobile-links sidebar-links">
                     <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
