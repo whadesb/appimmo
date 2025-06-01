@@ -909,19 +909,19 @@ progress {
   </button>
 
   <script>
-    document.querySelector('form').addEventListener('submit', function (e) {
-      const postalCode = document.getElementById('postalCode').value;
-      const postalCodePattern = /^\d{5}$/;
+ document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
+    const postalCode = document.getElementById('postalCode')?.value;
+    const postalCodePattern = /^\d{5}$/;
 
-      if (!postalCodePattern.test(postalCode)) {
-        e.preventDefault();
-        alert('Le code postal doit contenir exactement 5 chiffres.');
-      }
-    });
+    if (postalCode && !postalCodePattern.test(postalCode)) {
+      e.preventDefault();
+      alert('Le code postal doit contenir exactement 5 chiffres.');
+    }
+  });
 
-    // Active les tooltips Bootstrap
-    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-    tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+  // Active les tooltips Bootstrap
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
   </script>
 </form>
 
