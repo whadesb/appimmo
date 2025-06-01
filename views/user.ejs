@@ -1638,26 +1638,19 @@ async function loadStats() {
       if (views === 0 && users === 0) continue;
 
       const row = document.createElement('tr');
-      row.innerHTML = `
-        <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
-        <td>${views}</td>
-        <td>${users}</td>
-        <td>${scrolls}</td>
-        <td>${source}</td>
-        <td>${geo.country || '—'}${geo.region ? ', ' + geo.region : ''}${geo.city ? ', ' + geo.city : ''}</td>
-        <td>${device}</td>
-        <td>${os}</td>
-        <td>${browser}</td>
-        <td>${lang}</td>
-        <td>
-          <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${pageUrl}" title="Copier l'URL">
-            <i class="bi bi-clipboard"></i>
-          </button>
-          <button class="btn btn-sm btn-dark" onclick="window.open('${pageUrl}', '_blank')" title="Voir la page">
-            <i class="bi bi-box-arrow-up-right"></i>
-          </button>
-        </td>
-      `;
+     row.innerHTML = `
+  <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
+  <td>${views}</td>
+  <td>${users}</td>
+  <td>${scrolls}</td>
+  <td>${source}</td>
+  <td>${geo.country || '—'}${geo.region ? ', ' + geo.region : ''}${geo.city ? ', ' + geo.city : ''}</td>
+  <td>${device}</td>
+  <td>${os}</td>
+  <td>${browser}</td>
+  <td>${lang}</td>
+`;
+
       statsList.appendChild(row);
     }
 
