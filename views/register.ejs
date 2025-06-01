@@ -226,6 +226,13 @@ input.is-invalid {
       <span>UAP Immo</span>
     </a>
 
+    <!-- Profil icon mobile -->
+    <% if (!isAuthenticated) { %>
+      <a href="/<%= locale %>/login" class="d-lg-none me-2">
+        <i class="bi bi-person-fill navbar-icon"></i>
+      </a>
+    <% } %>
+
     <!-- Mobile Language Selector -->
     <div class="mobile-lang-selector">
       <div class="dropdown" data-bs-auto-close="outside">
@@ -316,6 +323,7 @@ input.is-invalid {
     </div>
   </div>
 </nav>
+
         <!-- Form Section -->
         <section class="new-section">
             <div class="container">
