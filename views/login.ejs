@@ -51,6 +51,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .lang-en {
       background-image: url('https://flagcdn.com/gb.svg');
     }
+footer .copyright-text {
+  font-size: 0.95rem;
+  color: #444;
+  margin-top: 20px;
+  text-align: center;
+}
 
         .form-container {
             max-width: 600px;
@@ -149,6 +155,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                 border: none;
             }
         }
+@media (max-width: 768px) {
+  .footer-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  .footer-link {
+    font-size: 1.1rem;
+    padding: 4px 0;
+    display: inline-block;
+  }
+}
  @media (max-width: 991.98px) {
       .mobile-lang-selector {
         display: flex !important;
@@ -320,29 +337,29 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <footer class="site-footer section-padding">
   <div class="container">
     <div class="row gy-4">
-      <!-- Colonne 1 -->
+      <!-- Colonne 1 : Informations -->
       <div class="col-12 col-md-4">
-        <h6 class="site-footer-title mb-3">Informations</h6>
+        <h6 class="site-footer-title footer-title">Informations</h6>
         <ul class="site-footer-links">
           <li class="site-footer-link-item">
-            <a href="/<%= locale %>" class="site-footer-link">Accueil</a>
+            <a href="/<%= locale %>" class="site-footer-link footer-link">Accueil</a>
           </li>
         </ul>
       </div>
 
-      <!-- Colonne 2 -->
+      <!-- Colonne 2 : Accès -->
       <div class="col-12 col-md-4">
-        <h6 class="site-footer-title mb-3">Accès</h6>
+        <h6 class="site-footer-title footer-title">Accès</h6>
         <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>/login" class="site-footer-link">Connexion</a></li>
-          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
-          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/login" class="site-footer-link footer-link">Connexion</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link footer-link">Créer un compte</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link footer-link">Contact</a></li>
         </ul>
       </div>
 
-      <!-- Colonne 3 -->
+      <!-- Colonne 3 : Langue -->
       <div class="col-12 col-md-4">
-        <h6 class="site-footer-title mb-3">Langue</h6>
+        <h6 class="site-footer-title footer-title">Langue</h6>
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
@@ -359,15 +376,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-12 text-center mt-4">
-        <p class="copyright-text">Copyright © 2025 UAP Company. 
+    <!-- Copyright -->
+    <div class="row mt-4">
+      <div class="col-12 text-center">
+        <p class="copyright-text">
+          Copyright © 2025 UAP Company. 
           <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %>
         </p>
       </div>
     </div>
   </div>
 </footer>
+
 
         <!-- JAVASCRIPT FILES -->
         <script src="/js/jquery.min.js"></script>
