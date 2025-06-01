@@ -238,10 +238,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <!-- Sélecteur de langue mobile (placé à l’intérieur de navbar-collapse) -->
 <div class="mobile-lang-selector mt-3">
   <div class="dropdown">
-    <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" 
-            type="button" id="mobileLangDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-      <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-    </button>
+    <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-2" 
+        type="button" id="mobileLangDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+  <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+  <i class="bi bi-chevron-down small"></i> <!-- Ajout pour renforcer le clic -->
+</button>
     <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="mobileLangDropdown">
       <% if (locale === 'fr') { %>
         <li>
