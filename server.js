@@ -1019,12 +1019,14 @@ app.get('/:locale/2fa', (req, res) => {
     return res.status(500).send('Erreur lors du chargement des traductions.');
   }
 
-   res.render('2fa', {
-    locale,
-    i18n,
-    messages: req.flash(),
-    currentPath: req.originalUrl // ✅ Ajout ici
-  });
+  res.render('2fa', {
+  locale,
+  i18n,
+  messages: req.flash(),
+  currentPath: req.originalUrl,
+  showAccountButtons: false 
+});
+
 
 });
 
