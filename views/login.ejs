@@ -164,6 +164,21 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         display: none !important;
       }
     }
+@media (max-width: 991.98px) {
+  .mobile-lang-selector .dropdown-menu {
+    position: static !important;
+    transform: none !important;
+    display: block !important;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+  }
+
+  .mobile-lang-selector .dropdown.show .dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+  }
+}
 
     </style>    
 </head>
@@ -384,6 +399,30 @@ document.addEventListener("DOMContentLoaded", function () {
             errorMessage.classList.remove("d-none"); // Afficher le message d'erreur
         }
     }
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  // Active manuellement le dropdown dans navbar collapse mobile
+  document.querySelectorAll('.mobile-lang-selector .dropdown-toggle').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      const parent = this.closest('.dropdown');
+      const menu = parent.querySelector('.dropdown-menu');
+
+      // toggle class manually
+      parent.classList.toggle('show');
+    });
+  });
+
+  // Close when clicking outside
+  document.addEventListener('click', function (e) {
+    document.querySelectorAll('.mobile-lang-selector .dropdown').forEach(drop => {
+      if (!drop.contains(e.target)) {
+        drop.classList.remove('show');
+      }
+    });
+  });
 });
 </script>
 
