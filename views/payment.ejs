@@ -137,6 +137,22 @@
   .navbar .btn-outline-dark {
     margin-right: 12px;
   }
+.lang-flag {
+  width: 24px;
+  height: 16px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.lang-fr {
+  background-image: url('https://flagcdn.com/fr.svg');
+}
+.lang-en {
+  background-image: url('https://flagcdn.com/gb.svg');
+}
+
         @media (max-width: 767px) {
             .form-container {
                 background: none;
@@ -163,75 +179,96 @@
   height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
     <main>
-        <body id="top">
-    <main>
-             <nav class="navbar navbar-expand-lg fixed-top">
+      <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
+    <!-- Logo -->
     <a class="navbar-brand" href="/<%= locale %>">
       <span>UAP Immo</span>
     </a>
 
-    <!-- Bouton Burger -->
+    <!-- Icône profil mobile (avant le burger) -->
+    <a href="/<%= locale %>/login" class="d-lg-none me-3">
+      <i class="bi bi-person navbar-icon"></i>
+    </a>
+
+    <!-- Bouton burger -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Menu collapsé -->
+    <!-- Menu principal -->
     <div class="collapse navbar-collapse" id="navbarNav">
-      <!-- 🟢 Liens à gauche -->
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav ms-lg-5 me-lg-auto">
         <li class="nav-item">
           <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
         </li>
         <li class="nav-item">
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
+
+        <!-- Liens uniquement version mobile -->
+        <% if (isAuthenticated) { %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="/<%= locale %>/user"><i class="bi bi-person-circle"></i> <%= locale === 'fr' ? 'Mon compte' : 'My Account' %></a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <form action="/logout" method="POST">
+              <button class="nav-link btn btn-link text-start w-100" type="submit" style="border: none; background: none;">
+                <i class="bi bi-box-arrow-right"></i> <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+              </button>
+            </form>
+          </li>
+        <% } else { %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="/<%= locale %>/login"><i class="bi bi-person-fill"></i> <%= locale === 'fr' ? 'Connexion' : 'Login' %></a>
+          </li>
+        <% } %>
       </ul>
 
-     <% if (isAuthenticated) { %>
-  <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
-    <i class="bi bi-person-circle"></i>
-    <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
-  </a>
+      <!-- Connexion / Mon compte - version desktop -->
+      <div class="d-none d-lg-flex align-items-center">
+        <% if (isAuthenticated) { %>
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+            <i class="bi bi-person-circle"></i>
+            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+          </a>
+          <form action="/logout" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+              <i class="bi bi-box-arrow-right"></i>
+              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+            </button>
+          </form>
+        <% } else { %>
+          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+            <i class="bi bi-person-fill"></i>
+            <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+          </a>
+        <% } %>
+      </div>
 
-  <form action="/logout" method="POST" class="d-inline">
-    <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-      <i class="bi bi-box-arrow-right"></i>
-      <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
-    </button>
-  </form>
-<% } else { %>
-<a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-  <i class="bi bi-person-fill"></i>
-  <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-</a>
-<% } %>
-
-
-
+      <!-- Sélecteur de langue -->
+      <div class="ms-3">
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
             data-bs-toggle="dropdown" aria-expanded="false">
-            <% if (locale === 'fr') { %> 🇫🇷 <% } else { %> 🇬🇧 <% } %>
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
             <i class="bi bi-chevron-down small"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow">
-<%
-  const cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '';
-%>
-<% if (locale === 'fr') { %>
-  <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">🇬🇧 <span>EN</span></a></li>
-<% } else { %>
-  <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">🇫🇷 <span>FR</span></a></li>
-<% } %>
-
+            <% const cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '' %>
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> English</a></li>
+            <% } else { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> Français</a></li>
+            <% } %>
           </ul>
         </div>
       </div>
     </div>
   </div>
 </nav>
+
         <main class="container" style="padding-top: 100px;">
   <div class="row">
     <div class="col-lg-6 col-12">
