@@ -2050,29 +2050,69 @@ async function sendEmail(mailOptions) {
   }
 }
 
-async function sendAccountCreationEmail(email) {
+async function sendAccountCreationEmail(email, firstName, lastName, locale = 'fr') {
+  const loginUrl = locale === 'fr' ? 'https://uap.immo/fr/login' : 'https://uap.immo/en/login';
+
   const mailOptions = {
     from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
     to: email,
-    subject: 'Bienvenue chez UAP Immo',
+    subject: 'Bienvenue chez UAP Immo / Welcome to UAP Immo',
     html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-        <h2 style="color: #52566f;">Bienvenue chez UAP Immo!</h2>
-        <p>Bonjour,</p>
-        <p>Nous sommes ravis de vous compter parmi nos nouveaux utilisateurs. Votre compte a été créé avec succès !</p>
-        <p>Vous avez reçu cet email parce que vous vous êtes inscrit sur notre plateforme. Vous pouvez dès maintenant vous connecter en utilisant l'adresse email et le mot de passe que vous avez choisis lors de l'inscription.</p>
-        <p style="font-size: 16px;">Voici un récapitulatif :</p>
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #52566f;">Bienvenue chez UAP Immo !</h2>
+        <p>Bonjour ${firstName} ${lastName},</p>
+
+        <p>Nous sommes ravis de vous compter parmi nos utilisateurs. Votre compte a été créé avec succès !</p>
+
+        <p style="font-size: 16px;"><strong>Récapitulatif :</strong></p>
         <ul style="font-size: 16px;">
+          <li><strong>Nom :</strong> ${lastName}</li>
+          <li><strong>Prénom :</strong> ${firstName}</li>
           <li><strong>Email :</strong> ${email}</li>
-          <li><strong>Plateforme :</strong> <a href="https://uap.immo/login" style="color: #52566f;">Se connecter à votre espace UAP Immo</a></li>
+          <li><strong>Accès plateforme :</strong> <a href="${loginUrl}" style="color: #52566f;">Se connecter à votre espace UAP Immo</a></li>
         </ul>
-        <p>Si vous avez des questions ou besoin d'aide, n'hésitez pas à nous contacter à tout moment.</p>
-        <p>Cordialement,</p>
-        <p>L'équipe UAP Immo</p>
+
+        <p>Nous vous invitons à vérifier vos informations dans votre espace personnel. Si vous constatez une erreur, n'hésitez pas à nous contacter.</p>
+
+        <h3 style="color: #52566f;">Comment fonctionne notre plateforme ?</h3>
+        <p>Depuis votre espace, vous pouvez créer une page dédiée à votre bien en enregistrant ses informations et en ajoutant deux photos de qualité.</p>
+        <p>La page est générée immédiatement, disponible depuis votre espace, et optimisée pour le référencement naturel (SEO). Ce service est <strong>gratuit</strong>.</p>
+        <p>Vous avez aussi la possibilité d’acheter un <strong>pack de diffusion</strong> professionnelle pour <strong>500€</strong>, incluant une <strong>diffusion ciblée sur 90 jours</strong>.</p>
+
+        <p>Si vous avez la moindre question, notre équipe est là pour vous accompagner.</p>
+
+        <p>Cordialement,<br>L’équipe UAP Immo</p>
+
         <hr>
-        <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement, merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company">support@uap.company</a>.</p>
+
+        <h2 style="color: #52566f;">Welcome to UAP Immo!</h2>
+        <p>Hello ${firstName} ${lastName},</p>
+
+        <p>We're excited to have you on board. Your account has been successfully created!</p>
+
+        <p style="font-size: 16px;"><strong>Summary:</strong></p>
+        <ul style="font-size: 16px;">
+          <li><strong>Last Name:</strong> ${lastName}</li>
+          <li><strong>First Name:</strong> ${firstName}</li>
+          <li><strong>Email:</strong> ${email}</li>
+          <li><strong>Platform access:</strong> <a href="${loginUrl}" style="color: #52566f;">Log in to your UAP Immo space</a></li>
+        </ul>
+
+        <p>Please verify your information in your dashboard. If you notice any mistake, feel free to contact us.</p>
+
+        <h3 style="color: #52566f;">How does the platform work?</h3>
+        <p>From your dashboard, you can create a page for your property by filling in its details and uploading two high-quality photos.</p>
+        <p>The page is generated instantly, SEO-optimized, and <strong>completely free</strong>.</p>
+        <p>You may also purchase a <strong>professional promotion pack</strong> for <strong>€500</strong>, which includes <strong>targeted distribution for 90 days</strong>.</p>
+
+        <p>If you need any assistance, our team is here to help.</p>
+
+        <p>Best regards,<br>The UAP Immo Team</p>
+
+        <hr>
+        <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement. Merci de ne pas y répondre. Pour toute assistance, contactez-nous à <a href="mailto:support@uap.company">support@uap.company</a>.</p>
       </div>
-    `,
+    `
   };
 
   await sendEmail(mailOptions);
