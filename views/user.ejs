@@ -722,149 +722,156 @@ progress {
     <p class="card-text"><%= i18n.property_details %></p>
 
 <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
-      <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
+  <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
 
-      <!-- SECTION: Informations générales -->
-      <hr class="my-4">
-      <h6 class="text-black mb-3"><i class="fa fa-home me-2"></i> Informations générales</h6>
+  <!-- SECTION: Informations générales -->
+  <hr class="my-4">
+  <h6 class="text-black mb-3"><i class="fa fa-home me-2"></i> Informations générales</h6>
 
-      <div class="form-group">
-        <label for="rooms" data-bs-toggle="tooltip" title="Inclut chambres, salon, cuisine, etc.">Nombre total de pièces</label>
-        <input type="number" class="form-control" id="rooms" name="rooms" required>
-        <small class="form-text text-muted">Inclut les chambres, salons, etc.</small>
-      </div>
+  <div class="form-group">
+    <label for="rooms">Nombre total de pièces</label>
+    <input type="number" class="form-control" id="rooms" name="rooms" required>
+    <small class="form-text text-muted">Inclut les chambres, salons, etc.</small>
+  </div>
 
-      <div class="form-group">
-        <label for="bedrooms" data-bs-toggle="tooltip" title="Nombre de chambres à coucher">Nombre de chambres</label>
-        <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
-        <small class="form-text text-muted">Indiquez uniquement les chambres à coucher.</small>
-      </div>
+  <div class="form-group">
+    <label for="bedrooms">Nombre de chambres</label>
+    <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
+    <small class="form-text text-muted">Indiquez uniquement les chambres à coucher.</small>
+  </div>
 
-      <div class="form-group">
-        <label for="surface" data-bs-toggle="tooltip" title="Surface habitable en m²">Surface habitable (m²) <span style="color:red">*</span></label>
-        <input type="number" class="form-control" id="surface" name="surface" required>
-        <small class="form-text text-muted">Exemple : 120</small>
-      </div>
+  <div class="form-group">
+    <label for="surface">Surface habitable (m²) <span style="color:red">*</span></label>
+    <input type="number" class="form-control" id="surface" name="surface" required>
+    <small class="form-text text-muted">Exemple : 120</small>
+  </div>
 
-      <div class="form-group">
-        <label for="price" data-bs-toggle="tooltip" title="Prix affiché sur l’annonce">Prix en € <span style="color:red">*</span></label>
-        <input type="number" class="form-control" id="price" name="price" required>
-        <small class="form-text text-muted">Exemple : 750000</small>
-      </div>
+  <div class="form-group">
+    <label for="price">Prix en € <span style="color:red">*</span></label>
+    <input type="number" class="form-control" id="price" name="price" required>
+    <small class="form-text text-muted">Exemple : 750000</small>
+  </div>
 
-      <div class="form-group">
-        <label for="country" data-bs-toggle="tooltip" title="Pays où se situe le bien">Pays <span style="color:red">*</span></label>
-        <input type="text" class="form-control" id="country" name="country" required>
-      </div>
+  <div class="form-group">
+    <label for="country">Pays <span style="color:red">*</span></label>
+    <input type="text" class="form-control" id="country" name="country" required>
+  </div>
 
-      <div class="mb-3">
-        <label for="postalCode" class="form-label" data-bs-toggle="tooltip" title="Code postal à 5 chiffres">Code postal</label>
-        <input type="text" name="postalCode" id="postalCode" class="form-control" required>
-      </div>
+  <div class="mb-3">
+    <label for="postalCode" class="form-label">Code postal</label>
+    <input type="text" name="postalCode" id="postalCode" class="form-control" required>
+  </div>
 
-      <div class="form-group">
-        <label for="city" data-bs-toggle="tooltip" title="Ville ou commune du bien">Ville <span style="color: red;">*</span></label>
-        <input type="text" class="form-control" id="city" name="city" required>
-      </div>
+  <div class="form-group">
+    <label for="city">Ville <span style="color: red;">*</span></label>
+    <input type="text" class="form-control" id="city" name="city" required>
+  </div>
 
-      <div class="form-group">
-        <label for="yearBuilt" data-bs-toggle="tooltip" title="Année de construction du bien">Année de construction</label>
-        <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
-        <small class="form-text text-muted">Exemple : 1995</small>
-      </div>
+  <div class="form-group">
+    <label for="yearBuilt">Année de construction</label>
+    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
+    <small class="form-text text-muted">Exemple : 1995</small>
+  </div>
 
-      <div class="form-group">
-        <label for="propertyType" data-bs-toggle="tooltip" title="Type de bien (villa, maison, appartement...)">Type de bien <span style="color:red">*</span></label>
-        <select class="form-control" id="propertyType" name="propertyType" required>
-          <option value="">-- Choisir --</option>
-          <option value="Propriété">Propriété</option>
-          <option value="Villa">Villa</option>
-          <option value="Hôtel particulier">Hôtel particulier</option>
-          <option value="Appartement">Appartement</option>
-          <option value="Chateau">Château</option>
-          <option value="Maison">Maison</option>
-        </select>
-      </div>
+  <div class="form-group">
+    <label for="propertyType">Type de bien <span style="color:red">*</span></label>
+    <select class="form-control" id="propertyType" name="propertyType" required>
+      <option value="">-- Choisir --</option>
+      <option value="Propriété">Propriété</option>
+      <option value="Villa">Villa</option>
+      <option value="Hôtel particulier">Hôtel particulier</option>
+      <option value="Appartement">Appartement</option>
+      <option value="Chateau">Château</option>
+      <option value="Maison">Maison</option>
+    </select>
+  </div>
 
-      <!-- SECTION: Équipements -->
-      <hr class="my-4">
-      <h6 class="text-black mb-3"><i class="fa fa-cogs me-2"></i> Équipements</h6>
+  <!-- SECTION: Équipements -->
+  <hr class="my-4">
+  <h6 class="text-black mb-3"><i class="fa fa-cogs me-2"></i> Équipements</h6>
 
-      <% equipmentOptions.forEach(e => { %>
-        <div class="form-group">
-          <label for="<%= e.id %>" data-bs-toggle="tooltip" title="Présence ou non de cet équipement."><%= e.label %></label>
-          <select class="form-control" id="<%= e.id %>" name="<%= e.id %>">
-            <option value="false">Non</option>
-            <option value="true">Oui</option>
-          </select>
-        </div>
-      <% }); %>
+  <% const equipmentOptions = [
+    { id: 'pool', label: 'Piscine' },
+    { id: 'doubleGlazing', label: 'Double vitrage' },
+    { id: 'wateringSystem', label: 'Arrosage automatique' },
+    { id: 'barbecue', label: 'Barbecue' },
+    { id: 'carShelter', label: 'Abri de voiture' },
+    { id: 'parking', label: 'Parking' },
+    { id: 'caretakerHouse', label: 'Maison de gardien' },
+    { id: 'electricShutters', label: 'Stores électriques' },
+    { id: 'outdoorLighting', label: 'Éclairage extérieur' }
+  ]; %>
 
-      <!-- SECTION: Photos -->
-      <hr class="my-4">
-      <h6 class="text-black mb-3"><i class="fa fa-image me-2"></i> Photos</h6>
+  <% equipmentOptions.forEach(e => { %>
+    <div class="form-group">
+      <label for="<%= e.id %>"><%= e.label %></label>
+      <select class="form-control" id="<%= e.id %>" name="<%= e.id %>">
+        <option value="false">Non</option>
+        <option value="true">Oui</option>
+      </select>
+    </div>
+  <% }); %>
 
-      <div class="form-group">
-        <label for="dpe" data-bs-toggle="tooltip" title="Classe énergétique du bien (obligatoire)">Diagnostic de Performance Énergétique (DPE) <span style="color:red">*</span></label>
-        <select class="form-control" id="dpe" name="dpe" required>
-          <option value="">-- Sélectionner --</option>
-          <option value="A">A - Excellent</option>
-          <option value="B">B - Très bon</option>
-          <option value="C">C - Bon</option>
-          <option value="D">D - Moyenne</option>
-          <option value="E">E - Passable</option>
-          <option value="F">F - Mauvais</option>
-          <option value="G">G - Très mauvais</option>
-          <option value="En cours">En cours</option>
-        </select>
-        <small class="form-text text-muted">Obligatoire pour les annonces, sauf si "En cours".</small>
-      </div>
+  <!-- SECTION: Photos -->
+  <hr class="my-4">
+  <h6 class="text-black mb-3"><i class="fa fa-image me-2"></i> Photos</h6>
 
-      <div class="form-group">
-        <label for="photo1" data-bs-toggle="tooltip" title="Image principale visible en première sur la page">Photo principale <span class="text-danger">*</span></label>
-        <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-        <progress id="progress1" value="0" max="100" class="hidden"></progress>
-        <span id="status1" class="hidden text-success">Chargement...</span>
-      </div>
+  <div class="form-group">
+    <label for="dpe">Diagnostic de Performance Énergétique (DPE) <span style="color:red">*</span></label>
+    <select class="form-control" id="dpe" name="dpe" required>
+      <option value="">-- Sélectionner --</option>
+      <option value="A">A - Excellent</option>
+      <option value="B">B - Très bon</option>
+      <option value="C">C - Bon</option>
+      <option value="D">D - Moyenne</option>
+      <option value="E">E - Passable</option>
+      <option value="F">F - Mauvais</option>
+      <option value="G">G - Très mauvais</option>
+      <option value="En cours">En cours</option>
+    </select>
+    <small class="form-text text-muted">Obligatoire pour les annonces, sauf si "En cours".</small>
+  </div>
 
-      <div class="form-group">
-        <label for="photo2" data-bs-toggle="tooltip" title="Image secondaire visible dans la galerie">Photo secondaire <span style="color:red">*</span></label>
-        <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-        <progress id="progress2" value="0" max="100" class="hidden"></progress>
-        <span id="status2" class="hidden text-success">Chargement...</span>
-      </div>
+  <div class="form-group">
+    <label for="photo1">Photo principale <span class="text-danger">*</span></label>
+    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
+    <progress id="progress1" value="0" max="100" class="hidden"></progress>
+    <span id="status1" class="hidden text-success">Chargement...</span>
+  </div>
 
-      <!-- SECTION: Description -->
-      <hr class="my-4">
-      <h6 class="text-black mb-3"><i class="fa fa-align-left me-2"></i> Description</h6>
+  <div class="form-group">
+    <label for="photo2">Photo secondaire <span style="color:red">*</span></label>
+    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
+    <progress id="progress2" value="0" max="100" class="hidden"></progress>
+    <span id="status2" class="hidden text-success">Chargement...</span>
+  </div>
 
-      <div class="form-group">
-        <label for="description" data-bs-toggle="tooltip" title="Résumé détaillé du bien (emplacement, caractéristiques, style...)">Description <span style="color:red">*</span></label>
-        <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
-        <small id="charCount">0/820 caractères</small>
-      </div>
+  <!-- SECTION: Description -->
+  <hr class="my-4">
+  <h6 class="text-black mb-3"><i class="fa fa-align-left me-2"></i> Description</h6>
 
-      <button type="submit" class="btn btn-dark py-2 mt-3">
-        <i class="fa fa-check-circle me-2"></i>Créer l'annonce
-      </button>
+  <div class="form-group">
+    <label for="description">Description <span style="color:red">*</span></label>
+    <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
+    <small id="charCount">0/820 caractères</small>
+  </div>
 
-      <script>
-        document.querySelector('form').addEventListener('submit', function (e) {
-          const postalCode = document.getElementById('postalCode').value;
-          const postalCodePattern = /^\d{5}$/;
+  <button type="submit" class="btn btn-dark py-2 mt-3">
+    <i class="fa fa-check-circle me-2"></i>Créer l'annonce
+  </button>
 
-          if (!postalCodePattern.test(postalCode)) {
-            e.preventDefault();
-            alert('Le code postal doit contenir exactement 5 chiffres.');
-          }
-        });
+  <script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+      const postalCode = document.getElementById('postalCode').value;
+      const postalCodePattern = /^\d{5}$/;
 
-        // Active les tooltips Bootstrap
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
-      </script>
-
-    </form>
+      if (!postalCodePattern.test(postalCode)) {
+        e.preventDefault();
+        alert('Le code postal doit contenir exactement 5 chiffres.');
+      }
+    });
+  </script>
+</form>
 
     <div id="generatedLink" class="mt-3"></div>
   </div>
