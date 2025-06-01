@@ -36,6 +36,9 @@ input.is-invalid {
   border-color: #dc3545;
   animation: shake 0.3s;
 }
+body {
+  overflow-x: hidden;
+}
 
 .lang-flag {
       width: 24px;
@@ -122,6 +125,11 @@ input.is-invalid {
             background-color: #C4B990;
             
         }
+.navbar .container {
+  flex-wrap: nowrap;
+  overflow-x: auto;
+}
+
         .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
             color: #000000;
             font-weight: 400;
@@ -203,6 +211,13 @@ input.is-invalid {
       .desktop-lang-selector {
         display: none !important;
       }
+.navbar .container {
+    flex-wrap: wrap;
+  }
+
+  .collapse .navbar-nav {
+    width: 100%;
+  }
     }
     @media (min-width: 992px) {
       .mobile-lang-selector {
@@ -221,20 +236,29 @@ input.is-invalid {
       <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg fixed-top">
-  <div class="container">
+  <div class="container d-flex justify-content-between align-items-center flex-wrap">
+    <!-- Logo -->
     <a class="navbar-brand" href="/<%= locale %>">
       <span>UAP Immo</span>
     </a>
 
-   
+    <!-- Icône profil mobile (visible uniquement si connecté) -->
+    <% if (isAuthenticated) { %>
+      <a href="/<%= locale %>/user" class="d-lg-none me-2">
+        <i class="bi bi-person-circle fs-4"></i>
+      </a>
+    <% } %>
+
     <!-- Burger -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Contenu menu -->
+    <!-- Contenu collapsé -->
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
+      <ul class="navbar-nav w-100">
+        <!-- Liens principaux -->
         <li class="nav-item">
           <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
         </li>
@@ -242,8 +266,8 @@ input.is-invalid {
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
 
+        <!-- Mobile : compte & logout -->
         <% if (isAuthenticated) { %>
-          <!-- Mobile: My Account & Logout -->
           <li class="nav-item d-lg-none">
             <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
               <i class="bi bi-person-circle"></i>
@@ -259,7 +283,7 @@ input.is-invalid {
             </form>
           </li>
         <% } else { %>
-          <!-- Mobile: Login -->
+          <!-- Mobile : login -->
           <li class="nav-item d-lg-none">
             <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
               <i class="bi bi-person-fill"></i>
@@ -269,9 +293,9 @@ input.is-invalid {
         <% } %>
       </ul>
 
-      <!-- Desktop: Account or Login -->
-      <% if (isAuthenticated) { %>
-        <div class="d-none d-lg-flex align-items-center ms-auto">
+      <!-- Desktop : boutons compte / login -->
+      <div class="d-none d-lg-flex align-items-center ms-auto">
+        <% if (isAuthenticated) { %>
           <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
             <i class="bi bi-person-circle"></i>
             <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
@@ -282,17 +306,15 @@ input.is-invalid {
               <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
             </button>
           </form>
-        </div>
-      <% } else { %>
-        <div class="d-none d-lg-flex align-items-center ms-auto">
+        <% } else { %>
           <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
             <i class="bi bi-person-fill"></i>
             <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
           </a>
-        </div>
-      <% } %>
+        <% } %>
+      </div>
 
-      <!-- Langue: uniquement desktop -->
+      <!-- Sélecteur de langue desktop -->
       <div class="desktop-lang-selector ms-3">
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -301,9 +323,9 @@ input.is-invalid {
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow">
             <% if (locale === 'fr') { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> English</a></li>
             <% } else { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> Français</a></li>
             <% } %>
           </ul>
         </div>
