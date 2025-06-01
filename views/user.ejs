@@ -539,6 +539,21 @@ progress {
     <main>
       <body id="top">
     <main>
+<div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+            <% } else { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
        <nav class="navbar navbar-expand-lg fixed-top">
     <div class="container">
