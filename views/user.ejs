@@ -720,6 +720,17 @@ progress {
   <div class="card-body">
     <h5 class="card-title"><%= i18n.add_property %></h5>
     <p class="card-text"><%= i18n.property_details %></p>
+<p class="card-text">
+  Veuillez compléter le formulaire ci-dessous avec les informations détaillées de votre bien immobilier. Les champs obligatoires sont signalés par une astérisque (*), notamment la surface habitable, le prix, la ville, le type de bien, ainsi que deux photos de qualité (photo principale et secondaire).<br><br>
+
+  Le <strong>Diagnostic de Performance Énergétique (DPE)</strong> est obligatoire pour toute mise en vente. Si celui-ci est en cours de réalisation, veuillez sélectionner l’option « En cours » dans le menu déroulant.<br><br>
+
+  Une fois validée, votre page d’annonce est générée automatiquement et accessible depuis votre espace personnel. Vous pourrez la modifier à tout moment en cas d’erreur ou de mise à jour à effectuer.<br><br>
+
+  La page est optimisée <strong>SEO <i class="fa fa-question-circle text-muted" data-bs-toggle="tooltip" title="SEO : amélioration de la visibilité sur Google et autres moteurs de recherche."></i></strong> pour maximiser sa visibilité sur les moteurs de recherche et attirer un maximum de prospects.<br><br>
+
+  Ce service de création de page est <strong>entièrement gratuit</strong>. Pour toute aide ou question, n’hésitez pas à contacter notre équipe via le formulaire de contact.
+</p>
 
 <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
   <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
