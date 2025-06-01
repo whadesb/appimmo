@@ -1112,20 +1112,23 @@ postalCode: req.body.postalCode,
     property.url = landingPageUrl;
     await property.save();
 
-    const user = await User.findById(req.user._id);
-    await sendPropertyCreationEmail(user, property);
+  const user = await User.findById(req.user._id);
+const locale = req.getLocale();
+const userTranslations = require(`./locales/${locale}.json`);
+const userLandingPages = await Property.find({ userId: user._id }).sort({ createdAt: -1 });
+const statsArray = await getStatsForUser(user._id); // si tu l'utilises ailleurs
 
-    res.render('user', {
-      user,
-      successMessage: `Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>`,
-      redirectToProfile: true
-    });
-
-  } catch (error) {
-    console.error("Erreur lors de l'ajout de la propriété :", error);
-    res.status(500).send("Erreur lors de l'ajout de la propriété.");
-  }
+res.render('user', {
+  user,
+  locale,
+  i18n: userTranslations,
+  currentPath: req.originalUrl,
+  userLandingPages,
+  stats: statsArray,
+  successMessage: `Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>`,
+  redirectToProfile: true
 });
+
 
 app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   try {
