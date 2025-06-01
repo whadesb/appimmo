@@ -176,33 +176,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <main>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
 <!-- NAVBAR -->
+<!-- Remplace ce bloc dans ta page HTML pour avoir une navbar unifiée mobile/desktop sans selecteur de langue mobile -->
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
+    <!-- Logo -->
     <a class="navbar-brand" href="/<%= locale %>">
       <span>UAP Immo</span>
     </a>
 
-    <!-- Mobile Language Selector -->
-    <div class="mobile-lang-selector">
-      <div class="dropdown" data-bs-auto-close="outside">
-  <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end shadow">
-    <% if (locale === 'fr') { %>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
-    <% } else { %>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
-    <% } %>
-  </ul>
-</div>
+    <!-- Icône profil mobile -->
+    <a href="/<%= locale %>/login" class="d-lg-none ms-2 me-auto">
+      <i class="bi bi-person-fill" style="font-size: 1.5rem; color: #000;"></i>
+    </a>
 
-    </div>
-
+    <!-- Burger -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Contenu menu -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
         <li class="nav-item">
@@ -211,27 +203,58 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <li class="nav-item">
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
+
+        <% if (isAuthenticated) { %>
+          <!-- Mobile: My Account & Logout -->
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
+              <i class="bi bi-person-circle"></i>
+              <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+            </a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <form action="/logout" method="POST" class="w-100">
+              <button type="submit" class="nav-link btn btn-link text-start d-flex align-items-center gap-2 w-100" style="border: none; background: none;">
+                <i class="bi bi-box-arrow-right"></i>
+                <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+              </button>
+            </form>
+          </li>
+        <% } else { %>
+          <!-- Mobile: Login -->
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
+              <i class="bi bi-person-fill"></i>
+              <%= locale === 'fr' ? 'Connexion' : 'Login' %>
+            </a>
+          </li>
+        <% } %>
       </ul>
 
+      <!-- Desktop: Account or Login -->
       <% if (isAuthenticated) { %>
-        <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-          <i class="bi bi-person-circle"></i>
-          <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
-        </a>
-        <form action="/logout" method="POST" class="d-inline">
-          <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-            <i class="bi bi-box-arrow-right"></i>
-            <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
-          </button>
-        </form>
+        <div class="d-none d-lg-flex align-items-center ms-auto">
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+            <i class="bi bi-person-circle"></i>
+            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+          </a>
+          <form action="/logout" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+              <i class="bi bi-box-arrow-right"></i>
+              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+            </button>
+          </form>
+        </div>
       <% } else { %>
-        <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-          <i class="bi bi-person-fill"></i>
-          <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-        </a>
+        <div class="d-none d-lg-flex align-items-center ms-auto">
+          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+            <i class="bi bi-person-fill"></i>
+            <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+          </a>
+        </div>
       <% } %>
 
-      <!-- Desktop Language Selector -->
+      <!-- Langue: uniquement desktop -->
       <div class="desktop-lang-selector ms-3">
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -250,6 +273,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
   </div>
 </nav>
+
               <section class="new-section">
       <div class="container">
         <div class="row">
