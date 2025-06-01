@@ -4,10 +4,14 @@
   "use strict";
 
     // MENU
-    $('.navbar-collapse a').on('click',function(){
-      $(".navbar-collapse").collapse('hide');
-    });
-    
+  $('.navbar-collapse a').on('click', function(e) {
+  // Ne ferme pas le menu si c'est un lien dans un dropdown de langue
+  if ($(this).closest('.dropdown-menu').length > 0) {
+    return; // ne rien faire
+  }
+  $(".navbar-collapse").collapse('hide');
+});
+
     // CUSTOM LINK
     $('.smoothscroll').click(function(){
       var el = $(this).attr('href');
