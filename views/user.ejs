@@ -1885,20 +1885,22 @@ function showPageDetails(page) {
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
   tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
 </script>
-<script>
-  // Affiche un second message après 2 secondes
-  setTimeout(() => {
-    const redirectMsg = document.createElement('div');
-    redirectMsg.className = 'alert alert-info mt-3';
-    redirectMsg.innerText = 'Vous allez être redirigé vers votre profil...';
-    document.body.appendChild(redirectMsg);
-  }, 2000);
+<% if (successMessage) { %>
+  <div class="alert alert-success mt-3"><%- successMessage %></div>
 
-  // Redirige automatiquement après 5 secondes
-  setTimeout(() => {
-    window.location.href = '/user';
-  }, 5000);
-</script>
+  <script>
+    setTimeout(() => {
+      const msg = document.createElement('div');
+      msg.className = 'alert alert-info mt-3 text-center';
+      msg.innerText = 'Vous allez être redirigé vers votre profil...';
+      document.body.appendChild(msg);
+    }, 2000);
+
+    setTimeout(() => {
+      window.location.href = '/user';
+    }, 5000);
+  </script>
+<% } %>
 
 </body>
 </html>
