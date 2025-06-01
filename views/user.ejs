@@ -661,16 +661,6 @@ progress {
         <div id="account" class="card">
           <div class="card-body">
             <h5 class="card-title"><%= i18n.my_profile %></h5>
-           <p class="card-text">
-  Depuis cet espace, vous pouvez consulter et modifier vos informations personnelles telles que votre nom, prénom et adresse e-mail. Veillez à ce que vos données soient toujours à jour afin de garantir une expérience optimale sur notre plateforme.<br><br>
-
-  Dans la section <strong>« Pages créées »</strong>, vous avez la possibilité de générer gratuitement une <strong>landing page optimisée SEO</strong> pour mettre en valeur votre bien immobilier. Vous pouvez également y acheter un <strong>pack de diffusion</strong> d’une durée de 90 jours, valable pour une annonce.<br><br>
-
-  La diffusion est effectuée automatiquement sur plusieurs canaux performants : <strong>Google Ads, Facebook Ads, Instagram Ads, ECA-N</strong> et notre propre régie <strong>Ads by UAP</strong>, afin d’assurer une visibilité maximale.<br><br>
-
-  Pour toute question ou accompagnement concernant l’utilisation de la plateforme, n’hésitez pas à contacter notre équipe.
-</p>
-
 
             <p class="card-text user-info"><strong><%= i18n.name %>:</strong> <%= user.firstName %></p>
             <p class="card-text user-info"><strong><%= i18n.first_name %>:</strong> <%= user.lastName %></p>
@@ -689,7 +679,15 @@ progress {
               <strong>Mot de passe:</strong>
               <button type="button" class="btn btn-sm btn-outline-dark ms-2" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
             </p>
+           <p class="card-text">
+  Depuis cet espace, vous pouvez consulter et modifier vos informations personnelles telles que votre nom, prénom et adresse e-mail. Veillez à ce que vos données soient toujours à jour afin de garantir une expérience optimale sur notre plateforme.<br><br>
 
+  Dans la section <strong>« Pages créées »</strong>, vous avez la possibilité de générer gratuitement une <strong>landing page optimisée SEO</strong> pour mettre en valeur votre bien immobilier. Vous pouvez également y acheter un <strong>pack de diffusion</strong> d’une durée de 90 jours, valable pour une annonce.<br><br>
+
+  La diffusion est effectuée automatiquement sur plusieurs canaux performants : <strong>Google Ads, Facebook Ads, Instagram Ads, ECA-N</strong> et notre propre régie <strong>Ads by UAP</strong>, afin d’assurer une visibilité maximale.<br><br>
+
+  Pour toute question ou accompagnement concernant l’utilisation de la plateforme, n’hésitez pas à contacter notre équipe.
+</p>
             <div id="disable-2fa-message" class="alert alert-success" style="display: none;"></div>
 <hr class="my-4">
 <div class="alert alert-info">
