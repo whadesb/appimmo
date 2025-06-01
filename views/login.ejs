@@ -176,17 +176,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <main>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
 <!-- NAVBAR -->
-<!-- Remplace ce bloc dans ta page HTML pour avoir une navbar unifiée mobile/desktop sans selecteur de langue mobile -->
+
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
     <!-- Logo -->
     <a class="navbar-brand" href="/<%= locale %>">
       <span>UAP Immo</span>
-    </a>
-
-    <!-- Icône profil mobile -->
-    <a href="/<%= locale %>/login" class="d-lg-none ms-2 me-auto">
-      <i class="bi bi-person-fill" style="font-size: 1.5rem; color: #000;"></i>
     </a>
 
     <!-- Burger -->
