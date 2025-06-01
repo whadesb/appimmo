@@ -729,52 +729,70 @@ progress {
   <h6 class="text-black mb-3"><i class="fa fa-home me-2"></i> Informations générales</h6>
 
   <div class="form-group">
-    <label for="rooms">Nombre total de pièces</label>
+    <label for="rooms">Nombre total de pièces
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Inclut chambres, salon, cuisine, etc."></i>
+    </label>
     <input type="number" class="form-control" id="rooms" name="rooms" required>
     <small class="form-text text-muted">Inclut les chambres, salons, etc.</small>
   </div>
 
   <div class="form-group">
-    <label for="bedrooms">Nombre de chambres</label>
+    <label for="bedrooms">Nombre de chambres
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Nombre de chambres à coucher"></i>
+    </label>
     <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
     <small class="form-text text-muted">Indiquez uniquement les chambres à coucher.</small>
   </div>
 
   <div class="form-group">
-    <label for="surface">Surface habitable (m²) <span style="color:red">*</span></label>
+    <label for="surface">Surface habitable (m²) <span style="color:red">*</span>
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Surface habitable en m²"></i>
+    </label>
     <input type="number" class="form-control" id="surface" name="surface" required>
     <small class="form-text text-muted">Exemple : 120</small>
   </div>
 
   <div class="form-group">
-    <label for="price">Prix en € <span style="color:red">*</span></label>
+    <label for="price">Prix en € <span style="color:red">*</span>
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Prix affiché sur l’annonce"></i>
+    </label>
     <input type="number" class="form-control" id="price" name="price" required>
     <small class="form-text text-muted">Exemple : 750000</small>
   </div>
 
   <div class="form-group">
-    <label for="country">Pays <span style="color:red">*</span></label>
+    <label for="country">Pays <span style="color:red">*</span>
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Pays où se situe le bien"></i>
+    </label>
     <input type="text" class="form-control" id="country" name="country" required>
   </div>
 
   <div class="mb-3">
-    <label for="postalCode" class="form-label">Code postal</label>
+    <label for="postalCode" class="form-label">Code postal
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Code postal à 5 chiffres"></i>
+    </label>
     <input type="text" name="postalCode" id="postalCode" class="form-control" required>
   </div>
 
   <div class="form-group">
-    <label for="city">Ville <span style="color: red;">*</span></label>
+    <label for="city">Ville <span style="color: red;">*</span>
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Ville ou commune du bien"></i>
+    </label>
     <input type="text" class="form-control" id="city" name="city" required>
   </div>
 
   <div class="form-group">
-    <label for="yearBuilt">Année de construction</label>
+    <label for="yearBuilt">Année de construction
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Année de construction du bien"></i>
+    </label>
     <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
     <small class="form-text text-muted">Exemple : 1995</small>
   </div>
 
   <div class="form-group">
-    <label for="propertyType">Type de bien <span style="color:red">*</span></label>
+    <label for="propertyType">Type de bien <span style="color:red">*</span>
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Type de bien (villa, maison, appartement...)"></i>
+    </label>
     <select class="form-control" id="propertyType" name="propertyType" required>
       <option value="">-- Choisir --</option>
       <option value="Propriété">Propriété</option>
@@ -804,7 +822,9 @@ progress {
 
   <% equipmentOptions.forEach(e => { %>
     <div class="form-group">
-      <label for="<%= e.id %>"><%= e.label %></label>
+      <label for="<%= e.id %>"><%= e.label %>
+        <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Présence ou non de cet équipement."></i>
+      </label>
       <select class="form-control" id="<%= e.id %>" name="<%= e.id %>">
         <option value="false">Non</option>
         <option value="true">Oui</option>
@@ -817,7 +837,9 @@ progress {
   <h6 class="text-black mb-3"><i class="fa fa-image me-2"></i> Photos</h6>
 
   <div class="form-group">
-    <label for="dpe">Diagnostic de Performance Énergétique (DPE) <span style="color:red">*</span></label>
+    <label for="dpe">Diagnostic de Performance Énergétique (DPE) <span style="color:red">*</span>
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Classe énergétique du bien (obligatoire)"></i>
+    </label>
     <select class="form-control" id="dpe" name="dpe" required>
       <option value="">-- Sélectionner --</option>
       <option value="A">A - Excellent</option>
@@ -833,14 +855,18 @@ progress {
   </div>
 
   <div class="form-group">
-    <label for="photo1">Photo principale <span class="text-danger">*</span></label>
+    <label for="photo1">Photo principale <span class="text-danger">*</span>
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Image principale visible en première sur la page"></i>
+    </label>
     <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
     <progress id="progress1" value="0" max="100" class="hidden"></progress>
     <span id="status1" class="hidden text-success">Chargement...</span>
   </div>
 
   <div class="form-group">
-    <label for="photo2">Photo secondaire <span style="color:red">*</span></label>
+    <label for="photo2">Photo secondaire <span style="color:red">*</span>
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Image secondaire visible dans la galerie"></i>
+    </label>
     <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
     <progress id="progress2" value="0" max="100" class="hidden"></progress>
     <span id="status2" class="hidden text-success">Chargement...</span>
@@ -851,7 +877,9 @@ progress {
   <h6 class="text-black mb-3"><i class="fa fa-align-left me-2"></i> Description</h6>
 
   <div class="form-group">
-    <label for="description">Description <span style="color:red">*</span></label>
+    <label for="description">Description <span style="color:red">*</span>
+      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Résumé détaillé du bien (emplacement, caractéristiques, style...)"></i>
+    </label>
     <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
     <small id="charCount">0/820 caractères</small>
   </div>
@@ -870,6 +898,10 @@ progress {
         alert('Le code postal doit contenir exactement 5 chiffres.');
       }
     });
+
+    // Active les tooltips Bootstrap
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
   </script>
 </form>
 
