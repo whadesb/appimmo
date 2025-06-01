@@ -540,90 +540,114 @@ progress {
       <body id="top">
     <main>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
-       <nav class="navbar navbar-expand-lg fixed-top">
-    <div class="container">
-        <a class="navbar-brand" href="/">
-            <span>UAP Immo</span>
-        </a>
-       
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav ms-lg-5 me-lg-auto">
-                <li class="nav-item">
-                    <a class="nav-link click-scroll" href="/"><%= i18n.menu.home %></a>
-                </li>
-              
-                <li class="nav-item">
+     <nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <span>UAP Immo</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false"
+      aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <!-- MENU PRINCIPAL -->
+      <ul class="navbar-nav ms-lg-5 me-lg-auto">
+        <li class="nav-item">
+          <a class="nav-link click-scroll" href="/"><%= i18n.menu.home %></a>
+        </li>
+        <li class="nav-item">
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
-                <!-- Sidebar links for mobile -->
-                <li class="nav-item sidebar-mobile-links sidebar-links">
-                    <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
-                </li>
-                <li class="nav-item sidebar-mobile-links sidebar-links">
-                    <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i> <%= i18n.add_property %></a>
-                </li>
-                <li class="nav-item sidebar-mobile-links sidebar-links">
-                    <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
-                </li>
-                <li class="nav-item sidebar-mobile-links sidebar-links">
-                    <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i> <%= i18n.created_pages %></a>
-                </li>
-                <li class="nav-item sidebar-mobile-links sidebar-links">
-                    <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
-                </li>
 
-            </ul>
-           
-<% if (isAuthenticated) { %>
-  <li class="nav-item d-lg-none">
-    <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
-      <i class="bi bi-person-circle"></i>
-      <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
-    </a>
-  </li>
-  <li class="nav-item d-lg-none">
-    <form action="/logout" method="POST" class="w-100">
-      <button type="submit" class="nav-link btn btn-link text-start d-flex align-items-center gap-2 w-100">
-        <i class="bi bi-box-arrow-right"></i>
-        <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
-      </button>
-    </form>
-  </li>
-<% } else { %>
-  <li class="nav-item d-lg-none">
-    <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
-      <i class="bi bi-person-fill"></i>
-      <%= locale === 'fr' ? 'Connexion' : 'Login' %>
-    </a>
-  </li>
-<% } %>
-<!-- Desktop Language Selector -->
-<div class="desktop-lang-selector ms-3">
-  <div class="dropdown">
-    <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-      <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-      <i class="bi bi-chevron-down small"></i>
-    </button>
-    <ul class="dropdown-menu dropdown-menu-end shadow">
-      <% if (locale === 'fr') { %>
-        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+        <!-- Liens supplémentaires visibles uniquement en mobile -->
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i> <%= i18n.add_property %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i> <%= i18n.created_pages %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
+        </li>
+
+        <!-- Connexion / Compte - version MOBILE -->
+        <% if (isAuthenticated) { %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
+              <i class="bi bi-person-circle"></i>
+              <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+            </a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <form action="/logout" method="POST" class="w-100">
+              <button type="submit" class="nav-link btn btn-link text-start d-flex align-items-center gap-2 w-100" style="border: none; background: none;">
+                <i class="bi bi-box-arrow-right"></i>
+                <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+              </button>
+            </form>
+          </li>
+        <% } else { %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
+              <i class="bi bi-person-fill"></i>
+              <%= locale === 'fr' ? 'Connexion' : 'Login' %>
+            </a>
+          </li>
+        <% } %>
+      </ul>
+
+      <!-- Connexion / Compte - version DESKTOP -->
+      <% if (isAuthenticated) { %>
+        <div class="d-none d-lg-flex align-items-center ms-auto">
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+            <i class="bi bi-person-circle"></i>
+            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+          </a>
+          <form action="/logout" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+              <i class="bi bi-box-arrow-right"></i>
+              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+            </button>
+          </form>
+        </div>
       <% } else { %>
-        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+        <div class="d-none d-lg-flex align-items-center ms-auto">
+          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+            <i class="bi bi-person-fill"></i>
+            <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+          </a>
+        </div>
       <% } %>
-    </ul>
+
+      <!-- Sélecteur de langue - uniquement desktop -->
+      <div class="desktop-lang-selector ms-3">
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+            <% } else { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-
-
-
-        </div>
-    </div>
-        </div>
-    </div>
 </nav>
+
 
 <section class="contact-section section-padding section-bg" id="section_5">
     <div class="container">
