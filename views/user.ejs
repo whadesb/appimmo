@@ -536,7 +536,7 @@ progress {
   <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
   height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-
+    <main>
       <body id="top">
     <main>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
@@ -545,7 +545,7 @@ progress {
         <a class="navbar-brand" href="/">
             <span>UAP Immo</span>
         </a>
-
+       
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -611,21 +611,22 @@ progress {
     </ul>
   </div>
 </div>
-<div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-        <div class="dropdown">
-          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-            <i class="bi bi-chevron-down small"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-            <% if (locale === 'fr') { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
-            <% } else { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
-            <% } %>
-          </ul>
-        </div>
-      </div>
+
+<!-- Mobile Language Selector -->
+<div class="mobile-lang-selector">
+  <div class="dropdown" data-bs-auto-close="outside">
+    <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end shadow">
+      <% if (locale === 'fr') { %>
+        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+      <% } else { %>
+        <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+      <% } %>
+    </ul>
+  </div>
+</div>
 
         </div>
     </div>
@@ -660,15 +661,8 @@ progress {
         <div id="account" class="card">
           <div class="card-body">
             <h5 class="card-title"><%= i18n.my_profile %></h5>
- <p class="card-text">
-  Depuis cet espace, vous pouvez consulter et modifier vos informations personnelles telles que votre nom, prénom et adresse e-mail. Veillez à ce que vos données soient toujours à jour afin de garantir une expérience optimale sur notre plateforme.<br><br>
+            <p class="card-text"><%= i18n.profile_info %></p>
 
-  Dans la section <strong>« Pages créées »</strong>, vous avez la possibilité de générer gratuitement une <strong>landing page optimisée SEO</strong> pour mettre en valeur votre bien immobilier. Vous pouvez également y acheter un <strong>pack de diffusion</strong> d’une durée de 90 jours, valable pour une annonce.<br><br>
-
-  La diffusion est effectuée automatiquement sur plusieurs canaux performants : <strong>Google Ads, Facebook Ads, Instagram Ads, ECA-N</strong> et notre propre régie <strong>Ads by UAP</strong>, afin d’assurer une visibilité maximale.<br><br>
-
-  Pour toute question ou accompagnement concernant l’utilisation de la plateforme, n’hésitez pas à contacter notre équipe.
-</p>
             <p class="card-text user-info"><strong><%= i18n.name %>:</strong> <%= user.firstName %></p>
             <p class="card-text user-info"><strong><%= i18n.first_name %>:</strong> <%= user.lastName %></p>
             <p class="card-text user-info"><strong><%= i18n.email %>:</strong> <%= user.email %></p>
@@ -686,7 +680,7 @@ progress {
               <strong>Mot de passe:</strong>
               <button type="button" class="btn btn-sm btn-outline-dark ms-2" onclick="showSection('reset-password')"><%= i18n.reset_password %></button>
             </p>
-          
+
             <div id="disable-2fa-message" class="alert alert-success" style="display: none;"></div>
 <hr class="my-4">
 <div class="alert alert-info">
@@ -725,17 +719,7 @@ progress {
 <div id="landing" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title"><%= i18n.add_property %></h5>
-<p class="card-text">
-  Veuillez compléter le formulaire ci-dessous avec les informations détaillées de votre bien immobilier. Les champs obligatoires sont signalés par une astérisque (*), notamment la surface habitable, le prix, la ville, le type de bien, ainsi que deux photos de qualité (photo principale et secondaire).<br><br>
-
-  Le <strong>Diagnostic de Performance Énergétique (DPE)</strong> est obligatoire pour toute mise en vente. Si celui-ci est en cours de réalisation, veuillez sélectionner l’option « En cours » dans le menu déroulant.<br><br>
-
-  Une fois validée, votre page d’annonce est générée automatiquement et accessible depuis votre espace personnel. Vous pourrez la modifier à tout moment en cas d’erreur ou de mise à jour à effectuer.<br><br>
-
-  La page est optimisée <strong>SEO <i class="fa fa-question-circle text-muted" data-bs-toggle="tooltip" title="SEO : amélioration de la visibilité sur Google et autres moteurs de recherche."></i></strong> pour maximiser sa visibilité sur les moteurs de recherche et attirer un maximum de prospects.<br><br>
-
-  Ce service de création de page est <strong>entièrement gratuit</strong>. Pour toute aide ou question, n’hésitez pas à contacter notre équipe via le formulaire de contact.
-</p>
+    <p class="card-text"><%= i18n.property_details %></p>
 
 <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
   <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
@@ -906,19 +890,19 @@ progress {
   </button>
 
   <script>
- document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
-    const postalCode = document.getElementById('postalCode')?.value;
-    const postalCodePattern = /^\d{5}$/;
+    document.querySelector('form').addEventListener('submit', function (e) {
+      const postalCode = document.getElementById('postalCode').value;
+      const postalCodePattern = /^\d{5}$/;
 
-    if (postalCode && !postalCodePattern.test(postalCode)) {
-      e.preventDefault();
-      alert('Le code postal doit contenir exactement 5 chiffres.');
-    }
-  });
+      if (!postalCodePattern.test(postalCode)) {
+        e.preventDefault();
+        alert('Le code postal doit contenir exactement 5 chiffres.');
+      }
+    });
 
-  // Active les tooltips Bootstrap
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-  tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+    // Active les tooltips Bootstrap
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
   </script>
 </form>
 
@@ -930,21 +914,9 @@ progress {
                      <div id="donnees" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title"><%= i18n.stats %></h5>
- <p class="card-text">
-  Cette section vous permet de consulter les <strong>statistiques de performance</strong> de chacune de vos pages générées. Chaque ligne du tableau correspond à une page d’annonce, et les différentes colonnes vous permettent d’analyser le comportement des visiteurs.<br><br>
-
-  • <strong>Page</strong> : titre ou lien de l’annonce concernée.<br>
-  • <strong>Vues</strong> : nombre total de fois où la page a été affichée, toutes visites confondues.<br>
-  • <strong>Utilisateurs</strong> : nombre de visiteurs uniques (comptés une seule fois chacun).<br>
-  • <strong>Scrolls</strong> : nombre de fois où les visiteurs ont fait défiler la page (indicateur d’intérêt).<br>
-  • <strong>Source</strong> : origine de la visite (ex. : lien direct, moteur de recherche, réseaux sociaux).<br>
-  • <strong>Géolocalisation</strong> : localisation géographique estimée du visiteur (ville ou pays).<br>
-  • <strong>Appareil</strong> : type d’appareil utilisé pour consulter la page (ordinateur, mobile, tablette).<br>
-  • <strong>OS</strong> : système d’exploitation utilisé (Windows, macOS, Android, iOS, etc.).<br>
-  • <strong>Navigateur</strong> : logiciel de navigation utilisé (Chrome, Safari, Firefox, etc.).<br>
-  • <strong>Langue</strong> : langue du navigateur ou de l’appareil de l’utilisateur.
-</p>
-
+    <p class="card-text">
+      Cette section vous permet de suivre la performance de vos annonces immobilières sur les différentes plateformes de diffusion. Consultez les statistiques détaillées pour évaluer la visibilité de vos annonces sur Facebook, Ads by UAP, ECA-N, et Google.
+    </p>
 
     <form id="statsFilter" class="mb-3">
   <div class="row">
@@ -960,7 +932,7 @@ progress {
       </button>
     </div>
   </div>
-</form>>
+</form>
 
 
    <div class="table-responsive">
@@ -1031,15 +1003,8 @@ progress {
 <!-- Section Mes Commandes (design harmonisé) -->
 <div id="orders" class="card" style="display: none;">
   <div class="card-body">
-   <h5 class="card-title">Mes commandes</h5>
-<p class="card-text">
-  Cette section vous permet de consulter l’historique de vos commandes ainsi que leur statut en temps réel.
-  Chaque commande correspond à un pack de diffusion d’une annonce, d’une valeur de 500 €, valable pour une durée de 90 jours à compter de la date de validation.<br><br>
-  Vous pouvez visualiser la durée restante de chaque diffusion dans la colonne <strong>“Jours restants”</strong>,
-  et connaître la <strong>date d’expiration</strong> dans la colonne correspondante.<br><br>
-  Pour toute question ou demande d’information complémentaire, n’hésitez pas à contacter notre équipe via le formulaire de contact ou par email.
-</p>
-
+    <h5 class="card-title">Mes commandes</h5>
+    <p class="card-text">Liste des commandes passées</p>
 
     <div class="table-responsive">
       <table class="table table-striped">
@@ -1920,7 +1885,20 @@ function showPageDetails(page) {
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
   tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
 </script>
+<script>
+  // Affiche un second message après 2 secondes
+  setTimeout(() => {
+    const redirectMsg = document.createElement('div');
+    redirectMsg.className = 'alert alert-info mt-3';
+    redirectMsg.innerText = 'Vous allez être redirigé vers votre profil...';
+    document.body.appendChild(redirectMsg);
+  }, 2000);
 
+  // Redirige automatiquement après 5 secondes
+  setTimeout(() => {
+    window.location.href = '/user';
+  }, 5000);
+</script>
 
 </body>
 </html>
