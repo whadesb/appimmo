@@ -984,7 +984,7 @@ const response = await axios.post(verificationURL, null, {
 
   try {
     const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
-    await sendAccountCreationEmail(newUser.email);
+await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
 
     req.login(newUser, (err) => {
       if (err) {
