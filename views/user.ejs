@@ -888,24 +888,7 @@ progress {
   <button type="submit" class="btn btn-dark py-2 mt-3">
     <i class="fa fa-check-circle me-2"></i>Créer l'annonce
   </button>
- <% if (typeof successMessage !== 'undefined') { %>
-    <div class="container mt-4">
-      <div class="alert alert-success"><%- successMessage %></div>
-    </div>
 
-    <script>
-      setTimeout(() => {
-        const msg = document.createElement('div');
-        msg.className = 'alert alert-info mt-3 text-center';
-        msg.innerText = 'Vous allez être redirigé vers votre profil...';
-        document.body.prepend(msg);
-      }, 2000);
-
-      setTimeout(() => {
-        window.location.href = '/user';
-      }, 5000);
-    </script>
-  <% } %>
   <script>
     document.querySelector('form').addEventListener('submit', function (e) {
       const postalCode = document.getElementById('postalCode').value;
@@ -1902,4 +1885,20 @@ function showPageDetails(page) {
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
   tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
 </script>
+<script>
+  // Affiche un second message après 2 secondes
+  setTimeout(() => {
+    const redirectMsg = document.createElement('div');
+    redirectMsg.className = 'alert alert-info mt-3';
+    redirectMsg.innerText = 'Vous allez être redirigé vers votre profil...';
+    document.body.appendChild(redirectMsg);
+  }, 2000);
+
+  // Redirige automatiquement après 5 secondes
+  setTimeout(() => {
+    window.location.href = '/user';
+  }, 5000);
+</script>
+
+</body>
 </html>
