@@ -1116,7 +1116,7 @@ postalCode: req.body.postalCode,
 const locale = req.getLocale();
 const userTranslations = require(`./locales/${locale}.json`);
 const userLandingPages = await Property.find({ userId: user._id }).sort({ createdAt: -1 });
-const statsArray = await getStatsForUser(user._id); // si tu l'utilises ailleurs
+const statsArray = []; 
 
   res.render('user', {
     user,
