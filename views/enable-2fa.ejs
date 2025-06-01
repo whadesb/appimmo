@@ -360,7 +360,8 @@
   </style>
 </head>
 <body id="top">
- <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
+<main>
+<% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
     <a class="navbar-brand" href="/<%= locale %>">
@@ -368,13 +369,13 @@
     </a>
 
     <!-- Mobile Language Selector -->
-    <div class="mobile-lang-selector">
+    <div class="mobile-lang-selector d-lg-none">
       <div class="dropdown" data-bs-auto-close="outside">
         <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
           <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end shadow">
-          <%  (locale === 'fr') { %>
+          <% if (locale === 'fr') { %>
             <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
           <% } else { %>
             <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
@@ -391,29 +392,52 @@
       <ul class="navbar-nav me-auto">
         <li class="nav-item"><a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a></li>
         <li class="nav-item"><a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a></li>
+
+        <% if (isAuthenticated && showAccountButtons !== false) { %>
+          <!-- Mobile buttons -->
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
+              <i class="bi bi-person-circle"></i>
+              <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+            </a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <form action="/logout" method="POST" class="w-100">
+              <button type="submit" class="nav-link btn btn-link text-start d-flex align-items-center gap-2 w-100" style="border: none; background: none;">
+                <i class="bi bi-box-arrow-right"></i>
+                <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+              </button>
+            </form>
+          </li>
+        <% } %>
       </ul>
 
-    <% if (isAuthenticated && showAccountButtons !== false) { %>
-
-        <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-          <i class="bi bi-person-circle"></i>
-          <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
-        </a>
-        <form action="/logout" method="POST" class="d-inline">
-          <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-            <i class="bi bi-box-arrow-right"></i>
-            <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
-          </button>
-        </form>
+      <% if (isAuthenticated && showAccountButtons !== false) { %>
+        <!-- Desktop buttons -->
+        <div class="d-none d-lg-flex align-items-center ms-auto">
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+            <i class="bi bi-person-circle"></i>
+            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+          </a>
+          <form action="/logout" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+              <i class="bi bi-box-arrow-right"></i>
+              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+            </button>
+          </form>
+        </div>
       <% } else { %>
-        <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-          <i class="bi bi-person-fill"></i>
-          <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-        </a>
+        <!-- Desktop login -->
+        <div class="d-none d-lg-flex align-items-center ms-auto">
+          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+            <i class="bi bi-person-fill"></i>
+            <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+          </a>
+        </div>
       <% } %>
 
       <!-- Desktop Language Selector -->
-      <div class="desktop-lang-selector ms-3">
+      <div class="desktop-lang-selector ms-3 d-none d-lg-block">
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
@@ -432,7 +456,7 @@
   </div>
 </nav>
 
- <main>
+
   <div class="twofa-container">
     <!-- Colonne gauche -->
     <div class="twofa-left">
