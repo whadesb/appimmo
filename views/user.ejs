@@ -902,21 +902,42 @@ progress {
 
 
    <div class="table-responsive">
-      <table class="table table-striped mt-4">
-  <thead>
-    <tr>
-      <th>Page</th>
-      <th>Vues</th>
-      <th>Utilisateurs</th>
-      <th>Scrolls</th>
-      <th>Source</th>
-      <th>Géolocalisation</th>
-      <th>Appareil</th>
-      <th>OS</th>
-      <th>Navigateur</th>
-      <th>Langue</th>
-    </tr>
-  </thead>
+      <table class="table table-striped">
+ <thead class="table-dark">
+  <tr>
+    <th>
+      <span data-bs-toggle="tooltip" title="Lien de l'annonce">Page</span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Nombre total de vues">Vues</span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Nombre d'utilisateurs uniques">Utilisateurs</span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Nombre de scrolls détectés">Scrolls</span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Source de trafic (ex : Google, Facebook…)">Source</span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Pays, région et ville">Géolocalisation</span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Type d'appareil (mobile, desktop…)">Appareil</span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Système d'exploitation">OS</span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Navigateur utilisé">Navigateur</span>
+    </th>
+    <th>
+      <span data-bs-toggle="tooltip" title="Langue du navigateur">Langue</span>
+    </th>
+  </tr>
+</thead>
+
  <tbody id="stats-table-body">
   <% if (stats && stats.length > 0) { %>
     <% stats.forEach(stat => { %>
