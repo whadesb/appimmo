@@ -1885,6 +1885,20 @@ function showPageDetails(page) {
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
   tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
 </script>
+<script>
+  // Affiche un second message après 2 secondes
+  setTimeout(() => {
+    const redirectMsg = document.createElement('div');
+    redirectMsg.className = 'alert alert-info mt-3';
+    redirectMsg.innerText = 'Vous allez être redirigé vers votre profil...';
+    document.body.appendChild(redirectMsg);
+  }, 2000);
+
+  // Redirige automatiquement après 5 secondes
+  setTimeout(() => {
+    window.location.href = '/user';
+  }, 5000);
+</script>
 
 </body>
 </html>
