@@ -1885,7 +1885,7 @@ function showPageDetails(page) {
   const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
   tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
 </script>
-<% if (successMessage) { %>
+<% if (typeof successMessage !== 'undefined') { %>
   <div class="alert alert-success mt-3"><%- successMessage %></div>
 
   <script>
