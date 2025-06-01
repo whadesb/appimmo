@@ -182,23 +182,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       <span>UAP Immo</span>
     </a>
 
-    <!-- Mobile Language Selector -->
-    <div class="mobile-lang-selector">
-      <div class="dropdown" data-bs-auto-close="outside">
-  <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-  </button>
-  <ul class="dropdown-menu dropdown-menu-end shadow">
-    <% if (locale === 'fr') { %>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
-    <% } else { %>
-      <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
-    <% } %>
-  </ul>
-</div>
-
-    </div>
-
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -247,9 +230,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           </ul>
         </div>
       </div>
+
+      <!-- Mobile Language Selector (INSIDE the collapse div) -->
+      <div class="mobile-lang-selector mt-3">
+        <div class="dropdown" data-bs-auto-close="outside">
+          <button class="btn btn-light border rounded-pill px-2 py-1 d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
+            <% } else { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+
     </div>
   </div>
 </nav>
+
               <section class="new-section">
       <div class="container">
         <div class="row">
