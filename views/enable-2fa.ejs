@@ -82,7 +82,7 @@
       flex: 1;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justy-content: center;
       min-height: calc(100vh - 80px);
       padding: 120px 20px 60px;
       background-color: #fff;
@@ -118,7 +118,7 @@
   display: flex;
   gap: 60px;
   align-items: center;
-  justify-content: space-between;
+  justy-content: space-between;
 }
 
 .twofa-left {
@@ -374,7 +374,7 @@
           <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end shadow">
-          <% if (locale === 'fr') { %>
+          <%  (locale === 'fr') { %>
             <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
           <% } else { %>
             <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
@@ -393,7 +393,8 @@
         <li class="nav-item"><a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a></li>
       </ul>
 
-      <% if (isAuthenticated) { %>
+    <% if (isAuthenticated && showAccountButtons !== false) { %>
+
         <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
           <i class="bi bi-person-circle"></i>
           <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
