@@ -114,10 +114,14 @@
       padding: 15px;
       font-family: monospace;
       font-size: 0.95rem;
+font-family: Arial, sans-serif; /* même police que le reste du site */
+  line-height: 1.5;
     }
-    .ticket-style p {
-      margin: 0 0 8px;
-    }
+   .ticket-style p {
+  font-size: 1.01rem; /* même taille que .form-text */
+  margin-bottom: 12px;
+  color: #000;
+}
         .btn-primary {
             background-color: #52566f;
             border-color: #000;
@@ -169,9 +173,15 @@
     margin: 20px auto !important;
     padding: 15px !important;
   }
-
-  .form-container h4 {
-    margin-top: 0 !important;
+ h4 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    text-align: center;
+  }
+   .form-container h4 {
+    font-size: 1.2rem;
+    margin-top: 10px !important;
+    text-align: center;
   }
 
   .row > [class*='col'] {
@@ -288,21 +298,22 @@
           <h4>Paiement pour votre annonce</h4>
           <p class="form-text">Maximisez la visibilité de votre annonce avec notre offre de diffusion premium.</p>
           <p class="form-text">Votre annonce sera diffusée sur Facebook, Google, ECA-N et Ads by UAP, pendant <strong>90 jours</strong>.</p>
-          <p class="form-text">Investissez dans votre succès avec UAP Immo.</p>
+          <p class="form-text">Maximisez la visibilité de votre annonce.</p>
+<p class="form-text"><em>Un email vous sera envoyé après confirmation de votre paiement.</em></p>
           <div id="paypal-button-container"></div>
           <input type="hidden" id="propertyId" value="<%= propertyId %>">
         </div>
       </div>
       <div class="col-lg-6 col-12">
         <div class="form-container">
-          <h4>Bon de commande</h4>
-          <div class="ticket-style">
-            <p><strong>Durée :</strong> 90 jours</p>
-            <p><strong>ID de l'annonce :</strong> <%= propertyId %></p>
-            <p><strong>URL :</strong> https://uap.immo<%= url %></p>
-            <p><strong>Montant :</strong> 500€</p>
-            <p><strong>Méthode :</strong> PayPal</p>
-          </div>
+          <h4>Commande</h4>
+        <div class="ticket-style">
+  <p><strong>Durée :</strong> 90 jours</p>
+  <p><strong>ID de l'annonce :</strong> <%= propertyId %></p>
+  <p><strong>Total :</strong> 500€</p>
+  <p><strong>Paiement :</strong> PayPal</p>
+</div>
+
         </div>
       </div>
     </div>
