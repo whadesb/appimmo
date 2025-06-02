@@ -579,22 +579,32 @@ progress {
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
 
-        <!-- Liens supplémentaires visibles uniquement en mobile -->
-        <li class="nav-item sidebar-mobile-links sidebar-links">
-          <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
-        </li>
-        <li class="nav-item sidebar-mobile-links sidebar-links">
-          <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i> <%= i18n.add_property %></a>
-        </li>
-        <li class="nav-item sidebar-mobile-links sidebar-links">
-          <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
-        </li>
-        <li class="nav-item sidebar-mobile-links sidebar-links">
-          <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i> <%= i18n.created_pages %></a>
-        </li>
-        <li class="nav-item sidebar-mobile-links sidebar-links">
-          <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
-        </li>
+       <!-- Liens supplémentaires visibles uniquement en mobile -->
+<li class="nav-item sidebar-mobile-links sidebar-links">
+  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="account">
+    <i class="fa fa-user"></i> <%= i18n.my_profile %>
+  </a>
+</li>
+<li class="nav-item sidebar-mobile-links sidebar-links">
+  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="landing">
+    <i class="fa fa-pencil-alt"></i> <%= i18n.add_property %>
+  </a>
+</li>
+<li class="nav-item sidebar-mobile-links sidebar-links">
+  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="donnees">
+    <i class="fa-solid fa-chart-line"></i> <%= i18n.stats %>
+  </a>
+</li>
+<li class="nav-item sidebar-mobile-links sidebar-links">
+  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="created-pages">
+    <i class="fa fa-file-alt"></i> <%= i18n.created_pages %>
+  </a>
+</li>
+<li class="nav-item sidebar-mobile-links sidebar-links">
+  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="orders">
+    <i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %>
+  </a>
+</li>
 
         <!-- Connexion / Compte - version MOBILE -->
         <% if (isAuthenticated) { %>
@@ -1274,28 +1284,24 @@ progress {
       }
     }
 
-    // Lien classiques (avec href)
+    // Liens de type <a data-section="..."> pour showSection()
+    document.querySelectorAll('.sidebar-trigger').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        const sectionId = this.dataset.section;
+        if (sectionId) {
+          showSection(sectionId);
+        }
+        closeNavbar();
+      });
+    });
+
+    // Lien normaux avec href
     document.querySelectorAll('.navbar-nav .nav-link[href]').forEach(link => {
       link.addEventListener('click', closeNavbar);
     });
-
-    // Liens sidebar avec onclick="showSection('...')"
-    document.querySelectorAll('.sidebar-mobile-links .nav-link').forEach(link => {
-      link.addEventListener('click', function (e) {
-        e.preventDefault(); // bloque le comportement par défaut
-        closeNavbar();
-
-        // Extraire l'ID de la section depuis l'attribut onclick
-        const match = this.getAttribute('onclick')?.match(/showSection\(['"](.+?)['"]\)/);
-        if (match && match[1]) {
-          showSection(match[1]); // Appelle la fonction showSection avec l’ID
-        }
-      });
-    });
   });
 </script>
-
-
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
