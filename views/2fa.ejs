@@ -489,13 +489,11 @@ main {
   <!-- Touches générées par JS -->
 </div>
 
-<button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mt-2">Effacer</button>
-<button id="submit-code" type="submit" class="btn btn-primary w-100 mt-3" disabled>Valider</button>
+<button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mt-2"><%= i18n.menu.clear_button %></button>
+<button id="submit-code" type="submit" class="btn btn-primary w-100 mt-3" disabled><%= i18n.menu.submit_button %></button>
 
 <input type="hidden" name="code" id="hidden-code">
-
-
-        <div id="countdown">Le code expire dans <span id="timer">30</span> secondes.</div>
+<div id="countdown"><%= i18n.menu.code_expires_in %> <span id="timer">30</span> <%= i18n.menu.seconds %>.</div>
 
         <div id="success-check">
           <i class="bi bi-check-circle-fill"></i>
@@ -541,12 +539,20 @@ main {
             <i class="bi bi-chevron-down small"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow">
-            <% if (locale === 'fr') { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
-            <% } else { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
-            <% } %>
-          </ul>
+  <% if (locale === 'fr') { %>
+    <li>
+      <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
+        <span class="lang-flag lang-en"></span> English
+      </a>
+    </li>
+  <% } else { %>
+    <li>
+      <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">
+        <span class="lang-flag lang-fr"></span> Français
+      </a>
+    </li>
+  <% } %>
+</ul>
         </div>
       </div>
     </div>
