@@ -465,7 +465,7 @@ main {
 
         <div id="success-check">
           <i class="bi bi-check-circle-fill"></i>
-          <p>Code accepté, redirection en cours...</p>
+          <p><%= i18n.code_success %></p>
         </div>
 
       
@@ -534,7 +534,7 @@ main {
     if (countdown <= 0) {
       clearInterval(interval);
       document.getElementById("submit-code").disabled = true;
-      alert("Code expiré. Rechargez la page pour recommencer.");
+      alert("<%= i18n.code_expired %>");
     }
   }, 1000);
 </script>
@@ -553,7 +553,7 @@ document.getElementById('submit-code').addEventListener('click', function (e) {
       this.closest("form").submit(); // ✅ soumission après succès visuel
     }, 1500);
   } else {
-    alert("Le code est invalide ou a expiré. Veuillez recommencer.");
+    alert("<%= i18n.invalid_or_expired %>");
   }
 });
 
