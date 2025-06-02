@@ -488,29 +488,30 @@ input.is-invalid {
   handlePasswordToggle('toggleConfirmPassword', 'confirmPassword');
 </script>
 <script>
-  const password = document.getElementById('password');
-  const confirmPassword = document.getElementById('confirmPassword');
-  const messageDiv = document.getElementById('passwordMatchMessage');
+const password = document.getElementById('password');
+const confirmPassword = document.getElementById('confirmPassword');
+const messageDiv = document.getElementById('passwordMatchMessage');
 
-  function checkPasswordMatch() {
-    if (confirmPassword.value === '') {
-      messageDiv.textContent = '';
-      confirmPassword.setCustomValidity('');
-      return;
-    }
+function checkPasswordMatch() {
+  if (confirmPassword.value === '') {
+    messageDiv.textContent = '';
+    confirmPassword.setCustomValidity('');
+    return;
+  }
 
-   if (confirmPassword.value !== password.value) {
-  messageDiv.textContent = i18nMessages.passwordMismatch;
-  messageDiv.className = 'password-match-message error';
-  confirmPassword.setCustomValidity(i18nMessages.passwordMismatch);
-} else {
-  messageDiv.textContent = i18nMessages.passwordMatch;
-  messageDiv.className = 'password-match-message success';
-  confirmPassword.setCustomValidity('');
+  if (confirmPassword.value !== password.value) {
+    messageDiv.textContent = i18nMessages.passwordMismatch;
+    messageDiv.className = 'password-match-message error';
+    confirmPassword.setCustomValidity(i18nMessages.passwordMismatch);
+  } else {
+    messageDiv.textContent = i18nMessages.passwordMatch;
+    messageDiv.className = 'password-match-message success';
+    confirmPassword.setCustomValidity('');
+  }
 }
 
-  password.addEventListener('input', checkPasswordMatch);
-  confirmPassword.addEventListener('input', checkPasswordMatch);
+password.addEventListener('input', checkPasswordMatch);
+confirmPassword.addEventListener('input', checkPasswordMatch);
 </script>
 
 <script>
