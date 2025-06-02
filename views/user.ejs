@@ -947,20 +947,29 @@ progress {
                      <div id="donnees" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title"><%= i18n.stats %></h5>
- <p class="card-text">
-  Cette section vous permet de consulter les <strong>statistiques de performance</strong> de chacune de vos pages générées. Chaque ligne du tableau correspond à une page d’annonce, et les différentes colonnes vous permettent d’analyser le comportement des visiteurs.<br><br>
-
-  • <strong>Page</strong> : titre ou lien de l’annonce concernée.<br>
-  • <strong>Vues</strong> : nombre total de fois où la page a été affichée, toutes visites confondues.<br>
-  • <strong>Utilisateurs</strong> : nombre de visiteurs uniques (comptés une seule fois chacun).<br>
-  • <strong>Scrolls</strong> : nombre de fois où les visiteurs ont fait défiler la page (indicateur d’intérêt).<br>
-  • <strong>Source</strong> : origine de la visite (ex. : lien direct, moteur de recherche, réseaux sociaux).<br>
-  • <strong>Géolocalisation</strong> : localisation géographique estimée du visiteur (ville ou pays).<br>
-  • <strong>Appareil</strong> : type d’appareil utilisé pour consulter la page (ordinateur, mobile, tablette).<br>
-  • <strong>OS</strong> : système d’exploitation utilisé (Windows, macOS, Android, iOS, etc.).<br>
-  • <strong>Navigateur</strong> : logiciel de navigation utilisé (Chrome, Safari, Firefox, etc.).<br>
-  • <strong>Langue</strong> : langue du navigateur ou de l’appareil de l’utilisateur.
+<p class="card-text mb-3">
+  Cette section vous permet de consulter les <strong>statistiques de performance</strong> de chacune de vos pages générées. Chaque ligne du tableau correspond à une page d’annonce, et les différentes colonnes vous permettent d’analyser le comportement des visiteurs.
 </p>
+
+<!-- Bouton toggle -->
+<button id="toggleDetailsBtn" class="btn btn-outline-secondary btn-sm mb-3" type="button">
+  Voir les détails des colonnes
+</button>
+
+<!-- Section masquée -->
+<div id="statsDetails" class="border rounded p-3 bg-light" style="display: none; font-size: 0.95rem;">
+  <p><strong>Page</strong> : titre ou lien de l’annonce concernée.</p>
+  <p><strong>Vues</strong> : nombre total de fois où la page a été affichée, toutes visites confondues.</p>
+  <p><strong>Utilisateurs</strong> : nombre de visiteurs uniques (comptés une seule fois chacun).</p>
+  <p><strong>Scrolls</strong> : nombre de fois où les visiteurs ont fait défiler la page (indicateur d’intérêt).</p>
+  <p><strong>Source</strong> : origine de la visite (ex. : lien direct, moteur de recherche, réseaux sociaux).</p>
+  <p><strong>Géolocalisation</strong> : localisation géographique estimée du visiteur (ville ou pays).</p>
+  <p><strong>Appareil</strong> : type d’appareil utilisé pour consulter la page (ordinateur, mobile, tablette).</p>
+  <p><strong>OS</strong> : système d’exploitation utilisé (Windows, macOS, Android, iOS, etc.).</p>
+  <p><strong>Navigateur</strong> : logiciel de navigation utilisé (Chrome, Safari, Firefox, etc.).</p>
+  <p><strong>Langue</strong> : langue du navigateur ou de l’appareil de l’utilisateur.</p>
+</div>
+
 
 
     <form id="statsFilter" class="mb-3">
@@ -1238,6 +1247,18 @@ progress {
 <!-- JavaScript -->
 <script src="/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const btn = document.getElementById("toggleDetailsBtn");
+    const details = document.getElementById("statsDetails");
+
+    btn.addEventListener("click", function () {
+      const isVisible = details.style.display === "block";
+      details.style.display = isVisible ? "none" : "block";
+      btn.textContent = isVisible ? "Voir les détails des colonnes" : "Masquer les détails";
+    });
+  });
+</script>
 <script>
 function showSection(sectionId) {
     const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
