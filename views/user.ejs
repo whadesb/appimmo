@@ -19,8 +19,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-oBwVfRbVLMEoV0E8YI4K/0CnGuB2HCLv6zE+F4dD+IwZqfKmUvRRCtkk0HjYTLKJcAxjGu7n0UJ1g+WW0/ayFg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
     <style>
         html, body {
             height: 100%;
@@ -579,32 +578,22 @@ progress {
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
 
-       <!-- Liens supplémentaires visibles uniquement en mobile -->
-<li class="nav-item sidebar-mobile-links sidebar-links">
-  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="account">
-    <i class="fa fa-user"></i> <%= i18n.my_profile %>
-  </a>
-</li>
-<li class="nav-item sidebar-mobile-links sidebar-links">
-  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="landing">
-    <i class="fa fa-pencil-alt"></i> <%= i18n.add_property %>
-  </a>
-</li>
-<li class="nav-item sidebar-mobile-links sidebar-links">
-  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="donnees">
-    <i class="fa-solid fa-chart-line"></i> <%= i18n.stats %>
-  </a>
-</li>
-<li class="nav-item sidebar-mobile-links sidebar-links">
-  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="created-pages">
-    <i class="fa fa-file-alt"></i> <%= i18n.created_pages %>
-  </a>
-</li>
-<li class="nav-item sidebar-mobile-links sidebar-links">
-  <a class="nav-link click-scroll sidebar-trigger" href="#" data-section="orders">
-    <i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %>
-  </a>
-</li>
+        <!-- Liens supplémentaires visibles uniquement en mobile -->
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('account')"><i class="fa fa-user"></i> <%= i18n.my_profile %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i> <%= i18n.add_property %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i> <%= i18n.created_pages %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
+        </li>
 
         <!-- Connexion / Compte - version MOBILE -->
         <% if (isAuthenticated) { %>
@@ -689,11 +678,11 @@ progress {
             <div class="row mt-4">
                 <div class="col-auto p-0">
                    <div class="sidebar">
-<a class="nav-link sidebar-trigger" href="#" data-section="account">...</a>
-<a class="nav-link sidebar-trigger" href="#" data-section="landing">...</a>
-<a class="nav-link sidebar-trigger" href="#" data-section="donnees">...</a>
-<a class="nav-link sidebar-trigger" href="#" data-section="created-pages">...</a>
-<a class="nav-link sidebar-trigger" href="#" data-section="orders">...</a>
+  <a href="#" onclick="showSection('account')"><i class="fa fa-user"></i></a>
+  <a href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i></a>
+  <a href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
+  <a href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i></a>
+  <a href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
 </div>
 
                 </div>
@@ -1275,36 +1264,6 @@ progress {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const navbarCollapse = document.getElementById("navbarNav");
-
-    function closeNavbar() {
-      const collapseInstance = bootstrap.Collapse.getInstance(navbarCollapse);
-      if (collapseInstance && window.innerWidth < 992) {
-        collapseInstance.hide();
-      }
-    }
-
-    // Liens de type <a data-section="..."> pour showSection()
-    document.querySelectorAll('.sidebar-trigger').forEach(link => {
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        const sectionId = this.dataset.section;
-        if (sectionId) {
-          showSection(sectionId);
-        }
-        closeNavbar();
-      });
-    });
-
-    // Lien normaux avec href
-    document.querySelectorAll('.navbar-nav .nav-link[href]').forEach(link => {
-      link.addEventListener('click', closeNavbar);
-    });
-  });
-</script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function () {
     function setupToggleButton(btnId, targetId, showText, hideText) {
       const btn = document.getElementById(btnId);
       const target = document.getElementById(targetId);
@@ -1641,9 +1600,6 @@ function showSection(sectionId) {
   if (sectionId === 'created-pages') loadLandingPages();
   if (sectionId === 'donnees') loadStats();
 }
-
-window.showSection = showSection;
-
 </script>
 
 
