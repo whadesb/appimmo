@@ -260,18 +260,18 @@ input.is-invalid {
       <% if (isAuthenticated) { %>
         <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
           <i class="bi bi-person-circle"></i>
-          <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+          <span><%= i18n.menu.my_account %></span>
         </a>
         <form action="/logout" method="POST" class="d-inline">
           <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
             <i class="bi bi-box-arrow-right"></i>
-            <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+            <span><%= i18n.menu.logout %></span>
           </button>
         </form>
       <% } else { %>
         <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
           <i class="bi bi-person-fill"></i>
-          <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+          <span><%= i18n.menu.login %></span>
         </a>
       <% } %>
 
@@ -409,16 +409,16 @@ input.is-invalid {
         </a>
       </div>
       <div class="col-lg-3 col-md-4 col-6">
-        <h6 class="site-footer-title mb-3">Informations</h6>
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.informations %></h6>
         <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
-          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link"><%= i18n.menu.home %></a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link"><%= i18n.menu.register %></a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-4 col-6">
-        <h6 class="site-footer-title mb-3">Accès</h6>
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.access %></h6>
         <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link"><%= i18n.menu.contact %></a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
