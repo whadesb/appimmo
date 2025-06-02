@@ -400,25 +400,6 @@ main {
           </li>
         <% } %>
 
-        <!-- Mobile : sélecteur de langue -->
-        <li class="nav-item d-lg-none dropdown language-switcher">
-          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-            <span><%= locale === 'fr' ? 'Français' : 'English' %></span>
-          </a>
-          <ul class="dropdown-menu" aria-labelledby="languageDropdown">
-            <li>
-              <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">
-                <span class="lang-flag lang-fr"></span> Français
-              </a>
-            </li>
-            <li>
-              <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
-                <span class="lang-flag lang-en"></span> English
-              </a>
-            </li>
-          </ul>
-        </li>
       </ul>
 
       <!-- Desktop à droite -->
