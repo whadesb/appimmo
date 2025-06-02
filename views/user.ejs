@@ -1270,14 +1270,15 @@ progress {
 
     navLinks.forEach(link => {
       link.addEventListener('click', () => {
-        const bsCollapse = new bootstrap.Collapse(navbarCollapse, {
-          toggle: false
-        });
-        bsCollapse.hide();
+        const collapseInstance = bootstrap.Collapse.getInstance(navbarCollapse);
+        if (collapseInstance && window.innerWidth < 992) {
+          collapseInstance.hide();
+        }
       });
     });
   });
 </script>
+
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
