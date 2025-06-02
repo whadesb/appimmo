@@ -689,11 +689,11 @@ progress {
             <div class="row mt-4">
                 <div class="col-auto p-0">
                    <div class="sidebar">
-  <a href="#" onclick="showSection('account')"><i class="fa fa-user"></i></a>
-  <a href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i></a>
-  <a href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
-  <a href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i></a>
-  <a href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
+<a class="nav-link sidebar-trigger" href="#" data-section="account">...</a>
+<a class="nav-link sidebar-trigger" href="#" data-section="landing">...</a>
+<a class="nav-link sidebar-trigger" href="#" data-section="donnees">...</a>
+<a class="nav-link sidebar-trigger" href="#" data-section="created-pages">...</a>
+<a class="nav-link sidebar-trigger" href="#" data-section="orders">...</a>
 </div>
 
                 </div>
@@ -1641,6 +1641,9 @@ function showSection(sectionId) {
   if (sectionId === 'created-pages') loadLandingPages();
   if (sectionId === 'donnees') loadStats();
 }
+
+window.showSection = showSection;
+
 </script>
 
 
