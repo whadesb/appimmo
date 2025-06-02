@@ -76,6 +76,10 @@ button.disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
+.annonces-section {
+  background-color: #f7f7f7; /* gris très clair */
+}
+
 #statsDetails {
   overflow: hidden;
   max-height: 0;
@@ -688,7 +692,7 @@ progress {
 <!-- SECTION ACCOUNT -->
 <div id="account" class="card">
   <div class="card-body">
-    <h5 class="card-title">1. Mon Profil</h5>
+    <h5 class="card-title">Mon Profil</h5>
     <p class="card-text">
       Depuis cet espace, vous pouvez consulter et modifier vos informations personnelles telles que votre nom, prénom et adresse e-mail. Veillez à ce que vos données soient toujours à jour afin de garantir une expérience optimale sur notre plateforme.
     </p>
@@ -731,19 +735,20 @@ progress {
     </p>
 
     <hr class="my-4">
+<!-- Vos Annonces -->
+<div class="annonces-section p-3 rounded mb-3">
+  <p class="card-text"><strong>Vos Annonces</strong></p>
+  <% if (userLandingPages && userLandingPages.length > 0) { %>
+    <p class="card-text">✅ Vous avez généré <strong><%= userLandingPages.length %></strong> page(s) d'annonce immobilière.</p>
+    <p class="card-text">📣 N'oubliez pas de <strong>diffuser</strong> vos annonces pour plus de visibilité !</p>
+  <% } else { %>
+    <p class="card-text">🚫 Vous n'avez pas encore généré d'annonce.</p>
+    <a href="#" onclick="showSection('landing')" class="btn btn-sm btn-outline-dark mt-2">
+      <i class="bi bi-plus-circle"></i>Créer ma première annonce
+    </a>
+  <% } %>
+</div>
 
-    <!-- Vos Annonces -->
-    <p class="card-text"><strong>2. Vos Annonces</strong></p>
-    <% if (userLandingPages && userLandingPages.length > 0) { %>
-      <p class="card-text">✅ Vous avez généré <strong><%= userLandingPages.length %></strong> page(s) d'annonce immobilière.</p>
-      <p class="card-text">📣 N'oubliez pas de <strong>diffuser</strong> vos annonces pour plus de visibilité !</p>
-    <% } else { %>
-      <p class="card-text">🚫 Vous n'avez pas encore généré d'annonce.</p>
-      <a href="#" onclick="showSection('landing')" class="btn btn-sm btn-outline-dark mt-2">
-        <i class="bi bi-plus-circle"></i>Créer ma première annonce
-      </a>
-    <% } %>
-  </div>
 </div>
 
 
