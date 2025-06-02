@@ -964,20 +964,21 @@ progress {
 
 
     <form id="statsFilter" class="mb-3">
-  <div class="row">
-    <div class="col-md-4">
+  <div class="row g-2 align-items-end">
+    <div class="col-sm-6 col-md-3">
+      <label for="startDate" class="form-label">Date de début</label>
       <input type="date" id="startDate" name="startDate" class="form-control" required>
     </div>
-    <div class="col-md-4">
+    <div class="col-sm-6 col-md-3">
+      <label for="endDate" class="form-label">Date de fin</label>
       <input type="date" id="endDate" name="endDate" class="form-control" required>
     </div>
-    <div class="col-md-4">
-      <button type="submit" class="btn btn-dark w-100">
-        Filtrer les statistiques
-      </button>
+    <div class="col-12 col-md-3">
+      <button type="submit" class="btn btn-dark w-100 mt-3 mt-md-0">Filtrer les statistiques</button>
     </div>
   </div>
 </form>
+
 
 
    <div class="table-responsive">
