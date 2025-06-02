@@ -12,7 +12,11 @@
     "fonctionnement": "Fonctionnement",
     "processus": "Processus",
     "faq": "FAQ",
-    "contact": "Contact"
+    "contact": "Contact",
+"clear_button": "Effacer",
+"submit_button": "Valider",
+"code_expires_in": "Le code expire dans",
+"seconds": "secondes"
   },
   "code_expired": "Code expiré. Rechargez la page pour recommencer.",
   "invalid_or_expired": "Le code est invalide ou a expiré. Veuillez recommencer.",
