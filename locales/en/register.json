@@ -23,6 +23,13 @@
     "my_account": "My Account",
     "logout": "Logout"
   },
+"password_validation": {
+  "too_weak": "🔴 Password too weak.",
+  "medium": "🟠 Medium security.",
+  "strong": "🟢 Secure password.",
+  "mismatch": "❌ Passwords do not match.",
+  "match": "✅ Passwords match."
+},
   "footer": {
     "informations": "Information",
     "access": "Access",
