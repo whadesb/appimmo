@@ -1267,21 +1267,28 @@ progress {
 
       btn.addEventListener("click", function () {
         const isVisible = target.classList.contains("show");
-
         target.classList.toggle("show");
         btn.querySelector("span").textContent = isVisible ? showText : hideText;
       });
     }
 
+    // Bouton de la section Mon Profil
     setupToggleButton(
       "toggleHelpProfile",
       "helpProfileDetails",
       "Fonctionnement",
       "Masquer l'aide"
     );
+
+    // ✅ Ajoute cet appel pour le bouton "Voir les détails des colonnes"
+    setupToggleButton(
+      "toggleDetailsBtn",
+      "statsDetails",
+      "Voir les détails des colonnes",
+      "Masquer les détails"
+    );
   });
 </script>
-
 
 <script>
 function showSection(sectionId) {
