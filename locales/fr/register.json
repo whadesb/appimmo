@@ -12,6 +12,13 @@
   "already_have_account": "Vous avez déjà un compte ?",
   "login_link": "Connectez-vous ici",
   "error_message": "Une erreur est survenue. Veuillez réessayer.",
+"password_validation": {
+  "too_weak": "🔴 Mot de passe trop faible.",
+  "medium": "🟠 Sécurité moyenne.",
+  "strong": "🟢 Mot de passe sécurisé.",
+  "mismatch": "❌ Les mots de passe ne correspondent pas.",
+  "match": "✅ Les mots de passe correspondent."
+},
   "menu": {
     "home": "Accueil",
     "fonctionnement": "Fonctionnement",
