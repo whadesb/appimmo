@@ -685,6 +685,7 @@ progress {
           <div class="col">
   <div class="main-section">
   <!-- SECTION ACCOUNT -->
+<!-- SECTION ACCOUNT -->
 <div id="account" class="card">
   <div class="card-body">
     <h5 class="card-title">1. Mon Profil</h5>
@@ -692,6 +693,25 @@ progress {
       Depuis cet espace, vous pouvez consulter et modifier vos informations personnelles telles que votre nom, prénom et adresse e-mail. Veillez à ce que vos données soient toujours à jour afin de garantir une expérience optimale sur notre plateforme.
     </p>
 
+    <!-- ✅ Bouton Fonctionnement directement sous l'intro -->
+    <button id="toggleHelpProfile" class="btn btn-outline-dark btn-sm mb-3 d-flex align-items-center gap-2" type="button">
+      <i class="bi bi-info-circle"></i>
+      <span>Fonctionnement</span>
+    </button>
+
+    <div id="helpProfileDetails" class="collapse mt-2">
+      <p class="card-text">
+        Dans la section « Pages créées », vous avez la possibilité de générer gratuitement une landing page optimisée SEO pour mettre en valeur votre bien immobilier. Vous pouvez également y acheter un pack de diffusion d’une durée de 90 jours, valable pour une annonce.
+      </p>
+      <p class="card-text">
+        La diffusion est effectuée automatiquement sur plusieurs canaux performants : Google Ads, Facebook Ads, Instagram Ads, ECA-N et notre propre régie Ads by UAP, afin d’assurer une visibilité maximale.
+      </p>
+      <p class="card-text">
+        Pour toute question ou accompagnement concernant l’utilisation de la plateforme, n’hésitez pas à contacter notre équipe.
+      </p>
+    </div>
+
+    <!-- Infos utilisateur -->
     <p class="card-text user-info"><strong>Nom :</strong> <%= user.lastName %></p>
     <p class="card-text user-info"><strong>Prénom :</strong> <%= user.firstName %></p>
     <p class="card-text user-info"><strong>Email :</strong> <%= user.email %></p>
@@ -712,39 +732,20 @@ progress {
 
     <hr class="my-4">
 
-    <h5 class="card-title mt-4">2. Vos Annonces</h5>
+    <!-- Vos Annonces -->
+    <p class="card-text"><strong>2. Vos Annonces</strong></p>
     <% if (userLandingPages && userLandingPages.length > 0) { %>
-      <p>✅ Vous avez généré <strong><%= userLandingPages.length %></strong> page(s) d'annonce immobilière.</p>
-      <p>📣 N'oubliez pas de <strong>diffuser</strong> vos annonces pour plus de visibilité !</p>
+      <p class="card-text">✅ Vous avez généré <strong><%= userLandingPages.length %></strong> page(s) d'annonce immobilière.</p>
+      <p class="card-text">📣 N'oubliez pas de <strong>diffuser</strong> vos annonces pour plus de visibilité !</p>
     <% } else { %>
-      <p>🚫 Vous n'avez pas encore généré d'annonce.</p>
+      <p class="card-text">🚫 Vous n'avez pas encore généré d'annonce.</p>
       <a href="#" onclick="showSection('landing')" class="btn btn-sm btn-outline-dark mt-2">
         <i class="bi bi-plus-circle"></i>Créer ma première annonce
       </a>
     <% } %>
-
-    <hr class="my-4">
-
-    <!-- 3. Bouton Fonctionnement -->
-    <h5 class="card-title mt-4">3. Aide à l'utilisation</h5>
-    <button id="toggleHelpProfile" class="btn btn-outline-dark btn-sm mb-3 d-flex align-items-center gap-2" type="button">
-      <i class="bi bi-info-circle"></i>
-      <span>Fonctionnement</span>
-    </button>
-
-    <div id="helpProfileDetails" class="collapse mt-2">
-      <p>
-        Dans la section « Pages créées », vous avez la possibilité de générer gratuitement une landing page optimisée SEO pour mettre en valeur votre bien immobilier. Vous pouvez également y acheter un pack de diffusion d’une durée de 90 jours, valable pour une annonce.
-      </p>
-      <p>
-        La diffusion est effectuée automatiquement sur plusieurs canaux performants : Google Ads, Facebook Ads, Instagram Ads, ECA-N et notre propre régie Ads by UAP, afin d’assurer une visibilité maximale.
-      </p>
-      <p>
-        Pour toute question ou accompagnement concernant l’utilisation de la plateforme, n’hésitez pas à contacter notre équipe.
-      </p>
-    </div>
   </div>
 </div>
+
 
 
           <!-- ✅ FORMULAIRE AMÉLIORÉ UX - SECTION LANDING -->
