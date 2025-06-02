@@ -1265,19 +1265,36 @@ progress {
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
   document.addEventListener("DOMContentLoaded", function () {
-    const navLinks = document.querySelectorAll('.navbar-nav .nav-link');
-    const navbarCollapse = document.getElementById('navbarNav');
+    const navbarCollapse = document.getElementById("navbarNav");
 
-    navLinks.forEach(link => {
-      link.addEventListener('click', () => {
-        const collapseInstance = bootstrap.Collapse.getInstance(navbarCollapse);
-        if (collapseInstance && window.innerWidth < 992) {
-          collapseInstance.hide();
+    function closeNavbar() {
+      const collapseInstance = bootstrap.Collapse.getInstance(navbarCollapse);
+      if (collapseInstance && window.innerWidth < 992) {
+        collapseInstance.hide();
+      }
+    }
+
+    // Lien classiques (avec href)
+    document.querySelectorAll('.navbar-nav .nav-link[href]').forEach(link => {
+      link.addEventListener('click', closeNavbar);
+    });
+
+    // Liens sidebar avec onclick="showSection('...')"
+    document.querySelectorAll('.sidebar-mobile-links .nav-link').forEach(link => {
+      link.addEventListener('click', function (e) {
+        e.preventDefault(); // bloque le comportement par défaut
+        closeNavbar();
+
+        // Extraire l'ID de la section depuis l'attribut onclick
+        const match = this.getAttribute('onclick')?.match(/showSection\(['"](.+?)['"]\)/);
+        if (match && match[1]) {
+          showSection(match[1]); // Appelle la fonction showSection avec l’ID
         }
       });
     });
   });
 </script>
+
 
 
 <script>
