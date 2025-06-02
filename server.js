@@ -95,6 +95,15 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 app.use((req, res, next) => {
   const path = req.path;
 
+  // Prolonger la session si l'utilisateur est connecté
+  if (req.session && req.session.touch && req.isAuthenticated && req.isAuthenticated()) {
+    req.session.touch();
+  }
+
+  next(); // Important : permet de continuer vers les routes suivantes
+});
+
+
   // ✅ Ignorer certaines routes techniques / API
   const ignoredPaths = [
     '/check-email',
@@ -393,6 +402,7 @@ function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated && req.isAuthenticated()) {
     return next();
   }
+  req.flash('error', 'Votre session a expiré. Veuillez vous reconnecter.');
   res.redirect(`/${req.params.locale || 'fr'}/login`);
 }
 
@@ -691,7 +701,7 @@ app.get('/:locale/logout', (req, res, next) => {
 });
 
 // Route pour la page utilisateur avec locale et récupération des propriétés
-app.get('/:locale/user', isAuthenticated, async (req, res) => {
+app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
   const { locale } = req.params;
   const user = req.user;
 
