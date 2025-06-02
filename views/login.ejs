@@ -347,7 +347,7 @@ footer .copyright-text {
 
       <!-- Colonne 2 : Accès -->
       <div class="col-12 col-md-4">
-        <h6 class="site-footer-title footer-title">Accès</h6>
+        <h6 class="site-footer-title footer-title"><%= i18n.footer.access_title %></h6>
         <ul class="site-footer-links">
           <li class="site-footer-link-item"><a href="/<%= locale %>/login" class="site-footer-link footer-link">Connexion</a></li>
           <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link footer-link">Créer un compte</a></li>
@@ -357,7 +357,7 @@ footer .copyright-text {
 
       <!-- Colonne 3 : Langue -->
       <div class="col-12 col-md-4">
-        <h6 class="site-footer-title footer-title">Langue</h6>
+        <h6 class="site-footer-title footer-title"><%= i18n.footer.language_title %></h6>
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
