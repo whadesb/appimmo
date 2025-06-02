@@ -14,17 +14,16 @@
     "faq": "FAQ",
     "contact": "Contact"
   },
-"code_expired": "Code expiré. Rechargez la page pour recommencer.",
-"invalid_or_expired": "Le code est invalide ou a expiré. Veuillez recommencer.",
-"code_success": "Code accepté, redirection en cours..."
-},
- "instruction_title": "Étapes à suivre :",
-"instruction_steps": [
-  "Ouvrez l'application Google Authenticator",
-  "Copiez le code généré (6 chiffres)",
-  "Entrez le code ci-dessous pour valider",
-  "Le code expire après 30 secondes"
-],
+  "code_expired": "Code expiré. Rechargez la page pour recommencer.",
+  "invalid_or_expired": "Le code est invalide ou a expiré. Veuillez recommencer.",
+  "code_success": "Code accepté, redirection en cours...",
+  "instruction_title": "Étapes à suivre :",
+  "instruction_steps": [
+    "Ouvrez l'application Google Authenticator",
+    "Copiez le code généré (6 chiffres)",
+    "Entrez le code ci-dessous pour valider",
+    "Le code expire après 30 secondes"
+  ],
   "footer": {
     "information": "Informations",
     "create_account": "Créer un compte",
