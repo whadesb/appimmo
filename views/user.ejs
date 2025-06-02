@@ -1738,10 +1738,12 @@ async function loadStats() {
 
     statsList.innerHTML = '';
 
+    // Charger les pages d'annonces
     const response = await fetch('/user/landing-pages');
     const pages = await response.json();
 
-    for (const page of pages) {
+    // Lancer toutes les requêtes en parallèle
+    const promises = pages.map(async (page) => {
       const pageId = page._id;
       const pageUrl = page.url;
 
@@ -1751,19 +1753,20 @@ async function loadStats() {
       if (!contentType || !contentType.includes("application/json")) {
         const text = await res.text();
         console.error("❌ Réponse non JSON :", text);
-        continue;
+        return null;
       }
 
-          const data = await res.json();
+      const data = await res.json();
       if (data.error) {
         console.error(`❌ Erreur pour la page ${pageId} :`, data.error);
-        continue;
+        return null;
       }
 
       const views = data.views || 0;
       const users = data.users || 0;
 
-      // ➕ Ajouter ici :
+      if (views === 0 && users === 0) return null;
+
       const scrolls = data.scrolls || 0;
       const geo = data.geo || {};
       const device = data.deviceCategory || 'N/A';
@@ -1772,27 +1775,27 @@ async function loadStats() {
       const lang = data.language || 'N/A';
       const source = data.sessionDefaultChannelGroup || data.channel || 'N/A';
 
-      // Ne pas afficher les lignes sans données
-      if (views === 0 && users === 0) continue;
+      return `
+        <tr>
+          <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
+          <td>${views}</td>
+          <td>${users}</td>
+          <td>${scrolls}</td>
+          <td>${source}</td>
+          <td>${geo.country || '—'}${geo.region ? ', ' + geo.region : ''}${geo.city ? ', ' + geo.city : ''}</td>
+          <td>${device}</td>
+          <td>${os}</td>
+          <td>${browser}</td>
+          <td>${lang}</td>
+        </tr>
+      `;
+    });
 
-      const row = document.createElement('tr');
-     row.innerHTML = `
-  <td><a href="${pageUrl}" target="_blank">${pageUrl}</a></td>
-  <td>${views}</td>
-  <td>${users}</td>
-  <td>${scrolls}</td>
-  <td>${source}</td>
-  <td>${geo.country || '—'}${geo.region ? ', ' + geo.region : ''}${geo.city ? ', ' + geo.city : ''}</td>
-  <td>${device}</td>
-  <td>${os}</td>
-  <td>${browser}</td>
-  <td>${lang}</td>
-`;
+    const rows = await Promise.all(promises);
 
-      statsList.appendChild(row);
-    }
+    statsList.innerHTML = rows.filter(Boolean).join('');
 
-    // Ajouter les événements après l'injection
+    // ✅ Si tu as des boutons .copy-btn à ajouter, fais-le ici (facultatif)
     document.querySelectorAll('.copy-btn').forEach(button => {
       button.addEventListener('click', function () {
         const url = `https://uap.immo${this.dataset.url}`;
@@ -1811,12 +1814,13 @@ async function loadStats() {
 
   } catch (error) {
     console.error('❌ Erreur lors du chargement des statistiques:', error);
-    const statsList = document.getElementById('statsTableBody');
+    const statsList = document.getElementById('stats-table-body');
     if (statsList) {
-      statsList.innerHTML = '<tr><td colspan="5">❌ Erreur lors du chargement des statistiques.</td></tr>';
+      statsList.innerHTML = '<tr><td colspan="10">❌ Erreur lors du chargement des statistiques.</td></tr>';
     }
   }
 }
+
 </script>
 
 <script>
