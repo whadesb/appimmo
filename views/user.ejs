@@ -76,6 +76,17 @@ button.disabled {
   opacity: 0.7;
   cursor: not-allowed;
 }
+#statsDetails {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  transition: max-height 0.5s ease, opacity 0.4s ease;
+}
+
+#statsDetails.show {
+  max-height: 1000px; /* suffisamment grand pour ton contenu */
+  opacity: 1;
+}
 
 .progress {
     background-color: #d7d7d7 !important; 
@@ -952,24 +963,23 @@ progress {
 </p>
 
 <!-- Bouton toggle -->
-<button id="toggleDetailsBtn" class="btn border border-dark text-dark mb-3 d-flex align-items-center gap-2 px-3 py-2" type="button" style="font-size: 1rem;">
+<button id="toggleDetailsBtn" class="btn btn-outline-dark btn-sm mb-3 d-flex align-items-center gap-2" type="button">
   <i class="bi bi-info-circle"></i>
   <span>Voir les détails des colonnes</span>
 </button>
 
-
 <!-- Section masquée -->
-<div id="detailsSection" class="border rounded p-3 mb-3" style="display: none; font-size: 1rem;">
-  <div><strong>Page</strong> : titre ou lien de l’annonce concernée.</div>
-  <div><strong>Vues</strong> : nombre total de fois où la page a été affichée, toutes visites confondues.</div>
-  <div><strong>Utilisateurs</strong> : nombre de visiteurs uniques (comptés une seule fois chacun).</div>
-  <div><strong>Scrolls</strong> : nombre de fois où les visiteurs ont fait défiler la page (indicateur d’intérêt).</div>
-  <div><strong>Source</strong> : origine de la visite (ex. : lien direct, moteur de recherche, réseaux sociaux).</div>
-  <div><strong>Géolocalisation</strong> : localisation géographique estimée du visiteur (ville ou pays).</div>
-  <div><strong>Appareil</strong> : type d’appareil utilisé pour consulter la page (ordinateur, mobile, tablette).</div>
-  <div><strong>OS</strong> : système d’exploitation utilisé (Windows, macOS, Android, iOS, etc.).</div>
-  <div><strong>Navigateur</strong> : logiciel de navigation utilisé (Chrome, Safari, Firefox, etc.).</div>
-  <div><strong>Langue</strong> : langue du navigateur ou de l’appareil de l’utilisateur.</div>
+<div id="statsDetails" class="mb-3">
+  <p class="card-text mb-1">Page : titre ou lien de l’annonce concernée.</p>
+  <p class="card-text mb-1">Vues : nombre total de fois où la page a été affichée, toutes visites confondues.</p>
+  <p class="card-text mb-1">Utilisateurs : nombre de visiteurs uniques (comptés une seule fois chacun).</p>
+  <p class="card-text mb-1">Scrolls : nombre de fois où les visiteurs ont fait défiler la page (indicateur d’intérêt).</p>
+  <p class="card-text mb-1">Source : origine de la visite (ex. : lien direct, moteur de recherche, réseaux sociaux).</p>
+  <p class="card-text mb-1">Géolocalisation : localisation géographique estimée du visiteur (ville ou pays).</p>
+  <p class="card-text mb-1">Appareil : type d’appareil utilisé pour consulter la page (ordinateur, mobile, tablette).</p>
+  <p class="card-text mb-1">OS : système d’exploitation utilisé (Windows, macOS, Android, iOS, etc.).</p>
+  <p class="card-text mb-1">Navigateur : logiciel de navigation utilisé (Chrome, Safari, Firefox, etc.).</p>
+  <p class="card-text mb-1">Langue : langue du navigateur ou de l’appareil de l’utilisateur.</p>
 </div>
 
 
@@ -1254,9 +1264,12 @@ progress {
   const details = document.getElementById("statsDetails");
 
   btn.addEventListener("click", function () {
-    const isVisible = details.style.display === "block";
-    details.style.display = isVisible ? "none" : "block";
-    btn.textContent = isVisible ? "Voir les détails des colonnes" : "Masquer les détails";
+    const isVisible = details.classList.contains("show");
+
+    details.classList.toggle("show");
+    btn.querySelector("span").textContent = isVisible
+      ? "Voir les détails des colonnes"
+      : "Masquer les détails";
   });
 });
 </script>
