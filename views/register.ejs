@@ -442,6 +442,15 @@ input.is-invalid {
   </div>
 </footer>
 <script>
+  const i18nMessages = {
+    passwordMatch: "<%= i18n.password_validation.match %>",
+    passwordMismatch: "<%= i18n.password_validation.mismatch %>",
+    tooWeak: "<%= i18n.password_validation.too_weak %>",
+    mediumStrength: "<%= i18n.password_validation.medium %>",
+    strongStrength: "<%= i18n.password_validation.strong %>"
+  };
+</script>
+<script>
   function handlePasswordToggle(buttonId, inputId) {
     const toggleBtn = document.getElementById(buttonId);
     const input = document.getElementById(inputId);
