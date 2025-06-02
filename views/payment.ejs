@@ -161,23 +161,34 @@
   background-image: url('https://flagcdn.com/gb.svg');
 }
 
-        @media (max-width: 767px) {
-            .form-container {
-                background: none;
-                box-shadow: none;
-                border: none;
-            }
-        }
-        .order-summary p {
-            margin-bottom: 10px;
-            color: #333; /* Text color changed to a darker shade */
-        }
-        .form-control.card-number {
-            font-size: 1.2rem; /* Increase font size for better visibility */
-            padding: 10px;
-            border: 2px solid #8781dc; /* Add border for better visibility */
-            border-radius: 5px;
-        }
+       @media (max-width: 767px) {
+  .form-container {
+    background: none;
+    box-shadow: none;
+    border: none;
+    margin: 20px auto !important;
+    padding: 15px !important;
+  }
+
+  .form-container h4 {
+    margin-top: 0 !important;
+  }
+
+  .row > [class*='col'] {
+    margin-bottom: 20px;
+  }
+
+  .container {
+    padding-top: 40px !important;
+    padding-bottom: 20px !important;
+  }
+
+  footer.site-footer {
+    margin-top: 0 !important;
+    padding-top: 20px !important;
+  }
+}
+
     </style>    
 </head>
 <body id="top">
