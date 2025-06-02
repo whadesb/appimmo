@@ -248,12 +248,12 @@ footer .copyright-text {
         <div class="d-none d-lg-flex align-items-center ms-auto">
           <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
             <i class="bi bi-person-circle"></i>
-            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+            <span><%= i18n.menu.my_account %></span>
           </a>
           <form action="/logout" method="POST" class="d-inline">
             <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
               <i class="bi bi-box-arrow-right"></i>
-              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+              <span><%= i18n.menu.logout %></span>
             </button>
           </form>
         </div>
@@ -349,9 +349,9 @@ footer .copyright-text {
       <div class="col-12 col-md-4">
         <h6 class="site-footer-title footer-title"><%= i18n.footer.access_title %></h6>
         <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>/login" class="site-footer-link footer-link">Connexion</a></li>
-          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link footer-link">Créer un compte</a></li>
-          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link footer-link">Contact</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/login" class="site-footer-link footer-link"><%= i18n.menu.login %></a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link footer-link"><%= i18n.menu.register %></a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link footer-link"><%= i18n.menu.contact %></a></li>
         </ul>
       </div>
 
