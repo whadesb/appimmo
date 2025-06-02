@@ -499,16 +499,15 @@ input.is-invalid {
       return;
     }
 
-    if (confirmPassword.value !== password.value) {
-      messageDiv.textContent = "❌ Les mots de passe ne correspondent pas.";
-      messageDiv.className = 'password-match-message error';
-      confirmPassword.setCustomValidity("Les mots de passe ne correspondent pas.");
-    } else {
-      messageDiv.textContent = "✅ Les mots de passe correspondent.";
-      messageDiv.className = 'password-match-message success';
-      confirmPassword.setCustomValidity('');
-    }
-  }
+   if (confirmPassword.value !== password.value) {
+  messageDiv.textContent = i18nMessages.passwordMismatch;
+  messageDiv.className = 'password-match-message error';
+  confirmPassword.setCustomValidity(i18nMessages.passwordMismatch);
+} else {
+  messageDiv.textContent = i18nMessages.passwordMatch;
+  messageDiv.className = 'password-match-message success';
+  confirmPassword.setCustomValidity('');
+}
 
   password.addEventListener('input', checkPasswordMatch);
   confirmPassword.addEventListener('input', checkPasswordMatch);
@@ -526,22 +525,23 @@ input.is-invalid {
     if (/[0-9]/.test(value)) strength++;
     if (/[^A-Za-z0-9]/.test(value)) strength++;
 
-    switch (strength) {
-      case 0:
-      case 1:
-        passwordStrength.textContent = "🔴 Mot de passe trop faible.";
-        passwordStrength.className = "password-match-message error";
-        break;
-      case 2:
-      case 3:
-        passwordStrength.textContent = "🟠 Sécurité moyenne.";
-        passwordStrength.className = "password-match-message";
-        break;
-      case 4:
-        passwordStrength.textContent = "🟢 Mot de passe sécurisé.";
-        passwordStrength.className = "password-match-message success";
-        break;
-    }
+switch (strength) {
+  case 0:
+  case 1:
+    passwordStrength.textContent = i18nMessages.tooWeak;
+    passwordStrength.className = "password-match-message error";
+    break;
+  case 2:
+  case 3:
+    passwordStrength.textContent = i18nMessages.mediumStrength;
+    passwordStrength.className = "password-match-message";
+    break;
+  case 4:
+    passwordStrength.textContent = i18nMessages.strongStrength;
+    passwordStrength.className = "password-match-message success";
+    break;
+}
+
   });
 </script>
 
