@@ -14,17 +14,16 @@
     "faq": "FAQ",
     "contact": "Contact"
   },
-"code_expired": "Code expired. Please reload the page to try again.",
-"invalid_or_expired": "Invalid or expired code. Please try again.",
-"code_success": "Code accepted, redirecting..."
-},
+  "code_expired": "Code expired. Please reload the page to try again.",
+  "invalid_or_expired": "Invalid or expired code. Please try again.",
+  "code_success": "Code accepted, redirecting...",
   "instruction_title": "Steps to follow:",
-"instruction_steps": [
-  "Open your Google Authenticator app",
-  "Copy the generated 6-digit code",
-  "Enter the code below to verify",
-  "The code expires after 30 seconds"
-],
+  "instruction_steps": [
+    "Open your Google Authenticator app",
+    "Copy the generated 6-digit code",
+    "Enter the code below to verify",
+    "The code expires after 30 seconds"
+  ],
   "footer": {
     "information": "Information",
     "create_account": "Create an account",
