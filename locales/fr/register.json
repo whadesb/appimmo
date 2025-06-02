@@ -19,10 +19,14 @@
     "faq": "FAQs",
     "contact": "Contact",
     "login": "Connexion",
-    "register": "Inscription"
+    "register": "Inscription",
+    "my_account": "Mon compte",
+    "logout": "Déconnexion"
   },
   "footer": {
     "informations": "Informations",
-    "access": "Accès"
+    "access": "Accès",
+    "language_title": "Langue",
+    "all_rights": "Tous droits réservés."
   }
 }
