@@ -14,6 +14,15 @@
     "processus": "Processus",
     "faq": "FAQs",
     "contact": "Contact",
-    "login": "Connexion"
+    "login": "Connexion",
+    "my_account": "Mon compte",
+    "logout": "Déconnexion",
+    "register": "Créer un compte"
+  },
+  "footer": {
+    "info_title": "Informations",
+    "access_title": "Accès",
+    "language_title": "Langue",
+    "all_rights": "Tous droits réservés."
   }
 }
