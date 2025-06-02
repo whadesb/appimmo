@@ -14,6 +14,15 @@
     "processus": "Process",
     "faq": "FAQs",
     "contact": "Contact",
-    "login": "Login"
+    "login": "Login",
+    "my_account": "My Account",
+    "logout": "Logout",
+    "register": "Register"
+  },
+  "footer": {
+    "info_title": "Information",
+    "access_title": "Access",
+    "language_title": "Language",
+    "all_rights": "All rights reserved."
   }
 }
