@@ -75,22 +75,22 @@
             margin-bottom: 15px;
             font-size: 1.01rem
         }
-.form-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f9f9f9;
-            border-radius: 2px;
-            box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
-        }
-        .form-container h4 {
-            margin-bottom: 20px;
-            color: #000;
-        }
-        .form-container .form-text {
-            margin-bottom: 15px;
-            font-size: 1.01rem
-        }
+ .form-container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f9f9f9;
+      border-radius: 2px;
+      box-shadow: 0 0 2px rgba(0, 0, 0, 0.6);
+    }
+    .form-container h4 {
+      margin-bottom: 20px;
+      color: #000;
+    }
+    .form-text {
+      margin-bottom: 15px;
+      font-size: 1.01rem;
+    }
         .new-section {
             padding: 60px 0; 
             background-color: #f8f9fa; 
@@ -111,6 +111,16 @@
             transform: translateY(-50%);
             cursor: pointer;
         }
+  .ticket-style {
+      background-color: #fff;
+      border: 2px dashed #000;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 0.95rem;
+    }
+    .ticket-style p {
+      margin: 0 0 8px;
+    }
         .btn-primary {
             background-color: #52566f;
             border-color: #000;
@@ -264,35 +274,31 @@
 </nav>
 
         <main class="container" style="padding-top: 100px;">
-  <div class="row">
-    <div class="col-lg-6 col-12">
-      <div class="form-container">
-        <h4><%= i18n.payment_title %></h4>
-        <p class="form-text"><%= i18n.payment_description_1 %></p>
-        <p class="form-text"><%= i18n.payment_description_2 %></p>
-        <p class="form-text"><%= i18n.payment_description_3 %></p>
-
-        <!-- ✅ PayPal Button Container -->
-        <div id="paypal-button-container"></div>
-<input type="hidden" id="propertyId" value="<%= propertyId %>">
-
+    <div class="row">
+      <div class="col-lg-6 col-12">
+        <div class="form-container">
+          <h4>Paiement pour votre annonce</h4>
+          <p class="form-text">Maximisez la visibilité de votre annonce avec notre offre de diffusion premium.</p>
+          <p class="form-text">Votre annonce sera diffusée sur Facebook, Google, ECA-N et Ads by UAP, pendant <strong>90 jours</strong>.</p>
+          <p class="form-text">Investissez dans votre succès avec UAP Immo.</p>
+          <div id="paypal-button-container"></div>
+          <input type="hidden" id="propertyId" value="<%= propertyId %>">
+        </div>
+      </div>
+      <div class="col-lg-6 col-12">
+        <div class="form-container">
+          <h4>Bon de commande</h4>
+          <div class="ticket-style">
+            <p><strong>Durée :</strong> 90 jours</p>
+            <p><strong>ID de l'annonce :</strong> <%= propertyId %></p>
+            <p><strong>URL :</strong> https://uap.immo<%= url %></p>
+            <p><strong>Montant :</strong> 500€</p>
+            <p><strong>Méthode :</strong> PayPal</p>
+          </div>
+        </div>
       </div>
     </div>
-
-    <div class="col-lg-6 col-12">
-      <div class="form-container">
-        <h4><%= i18n.order_summary %></h4>
-        <p><%= i18n.rooms %>: <%= rooms %></p>
-        <p><%= i18n.surface %>: <%= surface %> m²</p>
-        <p><%= i18n.price %>: <%= price %> €</p>
-        <p><%= i18n.city %>: <%= city %></p>
-        <p><%= i18n.country %>: <%= country %></p>
-        <hr>
-        <p><%= i18n.total %>: 500€ / 3 mois</p>
-      </div>
-    </div>
-  </div>
-</main>
+  </main>
 <footer class="site-footer section-padding">
   <div class="container">
     <div class="row">
