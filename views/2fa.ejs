@@ -352,7 +352,6 @@ main {
 </noscript>
   <main>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
-<!-- NAVBAR -->
 
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
@@ -376,9 +375,8 @@ main {
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
 
-     <% if (isAuthenticated && showAccountButtons !== false) { %>
-
-          <!-- Mobile: Mon compte & Déconnexion -->
+        <!-- Mobile uniquement -->
+        <% if (isAuthenticated && showAccountButtons !== false) { %>
           <li class="nav-item d-lg-none">
             <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
               <i class="bi bi-person-circle"></i>
@@ -394,7 +392,6 @@ main {
             </form>
           </li>
         <% } else { %>
-          <!-- Mobile: Connexion -->
           <li class="nav-item d-lg-none">
             <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
               <i class="bi bi-person-fill"></i>
@@ -402,11 +399,31 @@ main {
             </a>
           </li>
         <% } %>
+
+        <!-- Mobile : sélecteur de langue -->
+        <li class="nav-item d-lg-none dropdown language-switcher">
+          <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" id="languageDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <span><%= locale === 'fr' ? 'Français' : 'English' %></span>
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="languageDropdown">
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">
+                <span class="lang-flag lang-fr"></span> Français
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
+                <span class="lang-flag lang-en"></span> English
+              </a>
+            </li>
+          </ul>
+        </li>
       </ul>
 
-      <!-- Desktop -->
-<% if (isAuthenticated && showAccountButtons !== false) { %>
-        <div class="d-none d-lg-flex align-items-center ms-auto">
+      <!-- Desktop à droite -->
+      <div class="d-none d-lg-flex align-items-center ms-auto">
+        <% if (isAuthenticated && showAccountButtons !== false) { %>
           <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
             <i class="bi bi-person-circle"></i>
             <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
@@ -417,20 +434,37 @@ main {
               <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
             </button>
           </form>
-        </div>
-      <% } else { %>
-        <div class="d-none d-lg-flex align-items-center ms-auto">
+        <% } else { %>
           <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
             <i class="bi bi-person-fill"></i>
             <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
           </a>
-        </div>
-      <% } %>
+        <% } %>
 
-     
+        <!-- Desktop : sélecteur de langue -->
+        <div class="dropdown language-switcher">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">
+                <span class="lang-flag lang-fr"></span> Français
+              </a>
+            </li>
+            <li>
+              <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
+                <span class="lang-flag lang-en"></span> English
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
     </div>
   </div>
 </nav>
+
 
   <div class="twofa-container">
     <div class="twofa-left">
