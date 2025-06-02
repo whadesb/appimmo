@@ -92,24 +92,26 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 });
 // Middleware global pour rendre isAuthenticated et user accessibles dans toutes les vues EJS
 
+// Middleware : prolonger la session active
 app.use((req, res, next) => {
   const path = req.path;
 
-  // Prolonger la session si l'utilisateur est connecté
   if (req.session && req.session.touch && req.isAuthenticated && req.isAuthenticated()) {
     req.session.touch();
   }
 
-  next(); // Important : permet de continuer vers les routes suivantes
+  next();
 });
 
+// Middleware : définir la locale en fonction de l’URL
+app.use((req, res, next) => {
+  const path = req.path;
 
-  // ✅ Ignorer certaines routes techniques / API
   const ignoredPaths = [
     '/check-email',
     '/api',
     '/webhook',
-    '/uploads', // tu peux ajouter ici tous les chemins non liés à des vues
+    '/uploads',
   ];
 
   if (ignoredPaths.some(prefix => path.startsWith(prefix))) {
@@ -117,12 +119,7 @@ app.use((req, res, next) => {
   }
 
   const firstSegment = path.split('/')[1];
-
-  if (supportedLocales.includes(firstSegment)) {
-    req.locale = firstSegment;
-  } else {
-    req.locale = 'fr';
-  }
+  req.locale = ['fr', 'en'].includes(firstSegment) ? firstSegment : 'fr';
 
   next();
 });
