@@ -952,26 +952,25 @@ progress {
 </p>
 
 <!-- Bouton toggle -->
-<button id="toggleDetailsBtn" class="btn btn-light mb-3 d-flex align-items-center gap-2 px-3 py-2" type="button" style="font-size: 1rem;">
+<button id="toggleDetailsBtn" class="btn border border-dark text-dark mb-3 d-flex align-items-center gap-2 px-3 py-2" type="button" style="font-size: 1rem;">
   <i class="bi bi-info-circle"></i>
   <span>Voir les détails des colonnes</span>
 </button>
 
 
 <!-- Section masquée -->
-<div id="statsDetails" class="border rounded p-3 bg-light" style="display: none; font-size: 0.95rem;">
-  <p><strong>Page</strong> : titre ou lien de l’annonce concernée.</p>
-  <p><strong>Vues</strong> : nombre total de fois où la page a été affichée, toutes visites confondues.</p>
-  <p><strong>Utilisateurs</strong> : nombre de visiteurs uniques (comptés une seule fois chacun).</p>
-  <p><strong>Scrolls</strong> : nombre de fois où les visiteurs ont fait défiler la page (indicateur d’intérêt).</p>
-  <p><strong>Source</strong> : origine de la visite (ex. : lien direct, moteur de recherche, réseaux sociaux).</p>
-  <p><strong>Géolocalisation</strong> : localisation géographique estimée du visiteur (ville ou pays).</p>
-  <p><strong>Appareil</strong> : type d’appareil utilisé pour consulter la page (ordinateur, mobile, tablette).</p>
-  <p><strong>OS</strong> : système d’exploitation utilisé (Windows, macOS, Android, iOS, etc.).</p>
-  <p><strong>Navigateur</strong> : logiciel de navigation utilisé (Chrome, Safari, Firefox, etc.).</p>
-  <p><strong>Langue</strong> : langue du navigateur ou de l’appareil de l’utilisateur.</p>
+<div id="detailsSection" class="border rounded p-3 mb-3" style="display: none; font-size: 1rem;">
+  <div><strong>Page</strong> : titre ou lien de l’annonce concernée.</div>
+  <div><strong>Vues</strong> : nombre total de fois où la page a été affichée, toutes visites confondues.</div>
+  <div><strong>Utilisateurs</strong> : nombre de visiteurs uniques (comptés une seule fois chacun).</div>
+  <div><strong>Scrolls</strong> : nombre de fois où les visiteurs ont fait défiler la page (indicateur d’intérêt).</div>
+  <div><strong>Source</strong> : origine de la visite (ex. : lien direct, moteur de recherche, réseaux sociaux).</div>
+  <div><strong>Géolocalisation</strong> : localisation géographique estimée du visiteur (ville ou pays).</div>
+  <div><strong>Appareil</strong> : type d’appareil utilisé pour consulter la page (ordinateur, mobile, tablette).</div>
+  <div><strong>OS</strong> : système d’exploitation utilisé (Windows, macOS, Android, iOS, etc.).</div>
+  <div><strong>Navigateur</strong> : logiciel de navigation utilisé (Chrome, Safari, Firefox, etc.).</div>
+  <div><strong>Langue</strong> : langue du navigateur ou de l’appareil de l’utilisateur.</div>
 </div>
-
 
 
     <form id="statsFilter" class="mb-3">
@@ -1250,16 +1249,16 @@ progress {
 <script src="/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", function () {
-    const btn = document.getElementById("toggleDetailsBtn");
-    const details = document.getElementById("statsDetails");
+ document.addEventListener("DOMContentLoaded", function () {
+  const btn = document.getElementById("toggleDetailsBtn");
+  const details = document.getElementById("statsDetails");
 
-    btn.addEventListener("click", function () {
-      const isVisible = details.style.display === "block";
-      details.style.display = isVisible ? "none" : "block";
-      btn.textContent = isVisible ? "Voir les détails des colonnes" : "Masquer les détails";
-    });
+  btn.addEventListener("click", function () {
+    const isVisible = details.style.display === "block";
+    details.style.display = isVisible ? "none" : "block";
+    btn.textContent = isVisible ? "Voir les détails des colonnes" : "Masquer les détails";
   });
+});
 </script>
 <script>
 function showSection(sectionId) {
