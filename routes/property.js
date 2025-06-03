@@ -416,42 +416,53 @@ align-items: stretch;
 
 
     /* Responsive mobile */
-    @media screen and (max-width: 768px) {
-     html, body {
-  overflow-x: hidden;
+   @media screen and (max-width: 768px) {
+  html, body {
+    overflow-x: hidden;
+  }
+
+  .container {
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+  }
+
+  .slider {
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .slider img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
+
+  .slides,
+  .slides img {
+    position: relative;
+    height: auto;
+    opacity: 1;
+    animation: none;
+  }
+
+  .property-info {
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .extra-info-desktop {
+    display: block;
+    padding: 20px 10px;
+  }
+
+  .dpe-bar {
+    width: 100%;
+    max-width: 250px;
+  }
 }
-
-.container {
-  max-width: 100% !important;
-  padding: 20px 10px;
-}
-
-.slider {
-  width: 100% !important;
-  overflow: hidden;
-}
-    .slider img {
-      width: 100vw !important;
-      height: auto;
-      object-fit: cover;
-    }
-      .slides, .slides img {
-        position: relative;
-        height: auto;
-        opacity: 1;
-        animation: none;
-      }
-
-      .extra-info-desktop {
-        display: block;
-      }
-
-      .dpe-bar {
-        width: 100%;
-        max-width: 250px;
-      }
-
-    }
 
     /* Affiche le bloc en desktop */
     @media screen and (min-width: 769px) {
