@@ -1824,15 +1824,19 @@ align-items: stretch;
 
     /* Responsive mobile */
     @media screen and (max-width: 768px) {
-      .container {
-        flex-direction: column;
-      }
+      html, body {
+  overflow-x: hidden;
+}
+
+.container {
+  max-width: 100% !important;
+  padding: 20px 10px;
+}
+
 .slider {
-      width: 100vw !important;
-      margin-left: auto;
-      margin-right: auto;
-      overflow-x: hidden;
-    }
+  width: 100% !important;
+  overflow: hidden;
+}
 
     .slider img {
       width: 100vw !important;
