@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>UAP Immo | Paiement</title>
+<title>UAP Immo | <%= i18n.payment_title %></title>
 
   <!-- Google Tag Manager -->
   <script>
@@ -295,23 +295,23 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
     <div class="row">
       <div class="col-lg-6 col-12">
         <div class="form-container">
-          <h4>Paiement pour votre annonce</h4>
-          <p class="form-text">Maximisez la visibilité de votre annonce avec notre offre de diffusion premium.</p>
-          <p class="form-text">Votre annonce sera diffusée sur Facebook, Google, ECA-N et Ads by UAP, pendant <strong>90 jours</strong>.</p>
-          <p class="form-text">Maximisez la visibilité de votre annonce.</p>
-<p class="form-text"><em>Un email vous sera envoyé après confirmation de votre paiement.</em></p>
+<h4><%= i18n.payment_title %></h4>
+          <p class="form-text"><%= i18n.payment_description_1 %></p>
+<p class="form-text"><%= i18n.payment_description_2 %></p>
+<p class="form-text"><%= i18n.payment_description_3 %></p>
+<p class="form-text"><em><%= i18n.confirmation_notice %></em></p>
           <div id="paypal-button-container"></div>
           <input type="hidden" id="propertyId" value="<%= propertyId %>">
         </div>
       </div>
       <div class="col-lg-6 col-12">
         <div class="form-container">
-          <h4>Commande</h4>
+<h4><%= i18n.order_summary %></h4>
         <div class="ticket-style">
-  <p><strong>Durée :</strong> 90 jours</p>
-  <p><strong>ID de l'annonce :</strong> <%= propertyId %></p>
-  <p><strong>Total :</strong> 500€</p>
-  <p><strong>Paiement :</strong> PayPal</p>
+ <p><strong><%= i18n.duration || 'Durée' %> :</strong> 90 jours</p>
+<p><strong>ID :</strong> <%= propertyId %></p>
+<p><strong><%= i18n.total %> :</strong> 500€</p>
+<p><strong><%= i18n.pay_with_paypal || 'Paiement' %> :</strong> PayPal</p>
 </div>
 
         </div>
@@ -327,16 +327,16 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
         </a>
       </div>
       <div class="col-lg-3 col-md-4 col-6">
-        <h6 class="site-footer-title mb-3">Informations</h6>
+<h6 class="site-footer-title mb-3"><%= i18n.footer.informations %></h6>
         <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
-          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link"><%= i18n.menu.home %></a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-4 col-6">
-        <h6 class="site-footer-title mb-3">Accès</h6>
+<h6 class="site-footer-title mb-3"><%= i18n.footer.access %></h6>
         <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link"><%= i18n.menu.contact %></a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
