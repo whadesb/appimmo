@@ -1869,6 +1869,27 @@ align-items: stretch;
     width: 100%;
     max-width: 250px;
   }
+.property-description {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.construction-year {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 1.1rem;
+}
+
+.price {
+  margin-top: 20px;
+  margin-bottom: 30px;
+  background-color: #c4b9905f;
+  padding: 12px 20px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  width: fit-content;
+  text-transform: uppercase;
+}
 }
 
 
