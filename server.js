@@ -1482,6 +1482,8 @@ async function generateLandingPage(property) {
       <meta name="description" content="${property.description?.slice(0, 160) || ''}">
       <meta name="keywords" content="${keywords.join(', ')}">
       <title>${property.propertyType} à ${city}, ${country}</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
       <!-- Google Tag Manager -->
       <script>
