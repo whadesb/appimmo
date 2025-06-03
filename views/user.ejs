@@ -848,88 +848,66 @@ progress {
         <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
       </div>
 
-      <!-- Étape 2 -->
-      <div class="form-step d-none" data-step="2">
-        <%- include('form-parts/step-2.ejs') %>
-        <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
-        <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
-      </div>
-
-      <!-- Étape 3 -->
-      <div class="form-step d-none" data-step="3">
-        <%- include('form-parts/step-3.ejs') %>
-        <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
-        <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
-      </div>
-
-      <!-- Étape 4 -->
-      <div class="form-step d-none" data-step="4">
-        <%- include('form-parts/step-4.ejs') %>
-        <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
-        <button type="submit" class="btn btn-dark py-2 mt-3">
-          <i class="fa fa-check-circle me-2"></i>Créer l'annonce
-        </button>
-      </div>
-
       <div id="generatedLink" class="mt-3"></div>
-
-      <script>
-        let currentStep = 1;
-
-        function showStep(step) {
-          document.querySelectorAll('.form-step').forEach(div => {
-            div.classList.add('d-none');
-            div.style.opacity = 0;
-          });
-          const stepEl = document.querySelector(`.form-step[data-step='${step}']`);
-          stepEl.classList.remove('d-none');
-          stepEl.style.opacity = 1;
-
-          const progressBar = document.getElementById('formProgress');
-          if (progressBar) {
-            progressBar.style.width = `${step * 25}%`;
-            progressBar.innerText = `Étape ${step} sur 4`;
-          }
-        }
-
-        document.querySelectorAll('.next-step').forEach(btn => {
-          btn.addEventListener('click', () => {
-            const currentFields = document.querySelector(`.form-step[data-step='${currentStep}']`).querySelectorAll('input, select, textarea');
-            for (let field of currentFields) {
-              if (!field.checkValidity()) {
-                field.reportValidity();
-                return;
-              }
-            }
-            currentStep++;
-            showStep(currentStep);
-          });
-        });
-
-        document.querySelectorAll('.prev-step').forEach(btn => {
-          btn.addEventListener('click', () => {
-            currentStep--;
-            showStep(currentStep);
-          });
-        });
-
-        document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
-          const postalCode = document.getElementById('postalCode')?.value;
-          const postalCodePattern = /^\d{5}$/;
-          if (postalCode && !postalCodePattern.test(postalCode)) {
-            e.preventDefault();
-            alert('Le code postal doit contenir exactement 5 chiffres.');
-          }
-        });
-
-        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-        tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
-
-        showStep(currentStep);
-      </script>
     </form>
+
+    <script>
+      let currentStep = 1;
+
+      function showStep(step) {
+        document.querySelectorAll('.form-step').forEach(div => {
+          div.classList.add('d-none');
+          div.style.opacity = 0;
+        });
+        const stepEl = document.querySelector(`.form-step[data-step='${step}']`);
+        stepEl.classList.remove('d-none');
+        stepEl.style.opacity = 1;
+
+        const progressBar = document.getElementById('formProgress');
+        if (progressBar) {
+          progressBar.style.width = `${step * 25}%`;
+          progressBar.innerText = `Étape ${step} sur 4`;
+        }
+      }
+
+      document.querySelectorAll('.next-step').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const currentFields = document.querySelector(`.form-step[data-step='${currentStep}']`).querySelectorAll('input, select, textarea');
+          for (let field of currentFields) {
+            if (!field.checkValidity()) {
+              field.reportValidity();
+              return;
+            }
+          }
+          currentStep++;
+          showStep(currentStep);
+        });
+      });
+
+      document.querySelectorAll('.prev-step').forEach(btn => {
+        btn.addEventListener('click', () => {
+          currentStep--;
+          showStep(currentStep);
+        });
+      });
+
+      document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
+        const postalCode = document.getElementById('postalCode')?.value;
+        const postalCodePattern = /^\d{5}$/;
+        if (postalCode && !postalCodePattern.test(postalCode)) {
+          e.preventDefault();
+          alert('Le code postal doit contenir exactement 5 chiffres.');
+        }
+      });
+
+      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+      tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+
+      showStep(currentStep);
+    </script>
   </div>
 </div>
+
 
 
                         <!-- Section Données -->
