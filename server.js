@@ -1886,24 +1886,26 @@ align-items: stretch;
     line-height: 1.6;
   }
 
-  .price {
-    margin: 0 auto 30px auto;
-    padding: 12px 20px;
-    font-size: 1.4rem;
-    font-weight: 600;
-    background-color: #c4b9905f;
-    text-transform: uppercase;
-    border-radius: 4px;
-    display: block;
-    text-align: center;
-    width: fit-content;
-    max-width: 100%;
-  }
+.price {
+  margin: 0 auto 15px auto; /* ← marge basse réduite à 15px */
+  padding: 12px 20px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  background-color: #c4b9905f;
+  text-transform: uppercase;
+  border-radius: 4px;
+  display: block;
+  text-align: center;
+  width: fit-content;
+  max-width: 100%;
+}
+
 
   .extra-info-desktop {
     display: block;
     padding: 10px 20px;
     font-family: "Lora", serif;
+ margin-top: 0;
     text-align: left; /* aligné comme "Type de bien" */
   }
 
