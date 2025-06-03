@@ -769,6 +769,7 @@ progress {
 
       <!-- Étape 1 -->
       <div class="form-step" data-step="1">
+        <h6 class="mb-3">Informations générales du bien</h6>
         <div class="form-group">
           <label for="rooms">Nombre total de pièces
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Inclut chambres, salon, cuisine, etc."></i>
@@ -849,7 +850,8 @@ progress {
       </div>
 
       <!-- Étape 2 -->
-      <div class="form-step d-none" data-step="2">
+       <div class="form-step d-none" data-step="2">
+        <h6 class="mb-3">Équipement</h6>
         <% const equipmentOptions = [
           { id: 'pool', label: 'Piscine' },
           { id: 'doubleGlazing', label: 'Double vitrage' },
@@ -879,7 +881,8 @@ progress {
       </div>
 
       <!-- Étape 3 -->
-      <div class="form-step d-none" data-step="3">
+       <div class="form-step d-none" data-step="3">
+        <h6 class="mb-3">Photos du bien</h6>
         <div class="form-group">
           <label for="dpe">Diagnostic de Performance Énergétique (DPE) <span style="color:red">*</span>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Classe énergétique du bien (obligatoire)"></i>
@@ -898,21 +901,26 @@ progress {
         </div>
 
         <div class="form-group">
-          <label for="photo1">Photo principale <span class="text-danger">*</span></label>
-          <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-        </div>
+    <label for="photo1">Photo principale <span class="text-danger">*</span></label>
+    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required onchange="handleFileUpload(this, 'progress1', 'status1')">
+    <progress id="progress1" value="0" max="100" style="width: 100%; display: none;"></progress>
+    <span id="status1" class="text-muted small d-block mt-1"></span>
+  </div>
 
-        <div class="form-group">
-          <label for="photo2">Photo secondaire <span style="color:red">*</span></label>
-          <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-        </div>
+  <div class="form-group">
+    <label for="photo2">Photo secondaire <span style="color:red">*</span></label>
+    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required onchange="handleFileUpload(this, 'progress2', 'status2')">
+    <progress id="progress2" value="0" max="100" style="width: 100%; display: none;"></progress>
+    <span id="status2" class="text-muted small d-block mt-1"></span>
+  </div>
 
         <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
         <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
       </div>
 
       <!-- Étape 4 -->
-      <div class="form-step d-none" data-step="4">
+     <div class="form-step d-none" data-step="4">
+        <h6 class="mb-3">Description du bien</h6>
         <div class="form-group">
           <label for="description">Description <span style="color:red">*</span></label>
           <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
