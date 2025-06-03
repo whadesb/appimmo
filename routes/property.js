@@ -420,7 +420,18 @@ align-items: stretch;
       .container {
         flex-direction: column;
       }
+.slider {
+      width: 100vw !important;
+      margin-left: auto;
+      margin-right: auto;
+      overflow-x: hidden;
+    }
 
+    .slider img {
+      width: 100vw !important;
+      height: auto;
+      object-fit: cover;
+    }
       .slides, .slides img {
         position: relative;
         height: auto;
