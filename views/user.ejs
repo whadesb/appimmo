@@ -746,213 +746,116 @@ progress {
   </div>
 </div>
 
-
-
-          <!-- ✅ FORMULAIRE AMÉLIORÉ UX - SECTION LANDING -->
+<!-- ✅ FORMULAIRE AMÉLIORÉ UX - SECTION LANDING -->
 <div id="landing" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title"><%= i18n.add_property %></h5>
-<p class="card-text">
-  Veuillez compléter le formulaire ci-dessous avec les informations détaillées de votre bien immobilier. Les champs obligatoires sont signalés par une astérisque (*), notamment la surface habitable, le prix, la ville, le type de bien, ainsi que deux photos de qualité (photo principale et secondaire).<br><br>
+    <p class="card-text">
+      Veuillez compléter le formulaire ci-dessous avec les informations détaillées de votre bien immobilier. Les champs obligatoires sont signalés par une astérisque (*), notamment la surface habitable, le prix, la ville, le type de bien, ainsi que deux photos de qualité (photo principale et secondaire).<br><br>
+      Le <strong>Diagnostic de Performance Énergétique (DPE)</strong> est obligatoire pour toute mise en vente. Si celui-ci est en cours de réalisation, veuillez sélectionner l’option « En cours » dans le menu déroulant.<br><br>
+      Une fois validée, votre page d’annonce est générée automatiquement et accessible depuis votre espace personnel. Vous pourrez la modifier à tout moment en cas d’erreur ou de mise à jour à effectuer.<br><br>
+      La page est optimisée <strong>SEO <i class="fa fa-question-circle text-muted" data-bs-toggle="tooltip" title="SEO : amélioration de la visibilité sur Google et autres moteurs de recherche."></i></strong> pour maximiser sa visibilité sur les moteurs de recherche et attirer un maximum de prospects.<br><br>
+      Ce service de création de page est <strong>entièrement gratuit</strong>. Pour toute aide ou question, n’hésitez pas à contacter notre équipe via le formulaire de contact.
+    </p>
 
-  Le <strong>Diagnostic de Performance Énergétique (DPE)</strong> est obligatoire pour toute mise en vente. Si celui-ci est en cours de réalisation, veuillez sélectionner l’option « En cours » dans le menu déroulant.<br><br>
-
-  Une fois validée, votre page d’annonce est générée automatiquement et accessible depuis votre espace personnel. Vous pourrez la modifier à tout moment en cas d’erreur ou de mise à jour à effectuer.<br><br>
-
-  La page est optimisée <strong>SEO <i class="fa fa-question-circle text-muted" data-bs-toggle="tooltip" title="SEO : amélioration de la visibilité sur Google et autres moteurs de recherche."></i></strong> pour maximiser sa visibilité sur les moteurs de recherche et attirer un maximum de prospects.<br><br>
-
-  Ce service de création de page est <strong>entièrement gratuit</strong>. Pour toute aide ou question, n’hésitez pas à contacter notre équipe via le formulaire de contact.
-</p>
-<div id="success-message-container"></div>
-
-<form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
-  <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
-
-  <!-- SECTION: Informations générales -->
-  <hr class="my-4">
-  <h6 class="text-black mb-3"><i class="fa fa-home me-2"></i> Informations générales</h6>
-
-  <div class="form-group">
-    <label for="rooms">Nombre total de pièces
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Inclut chambres, salon, cuisine, etc."></i>
-    </label>
-    <input type="number" class="form-control" id="rooms" name="rooms" required>
-    <small class="form-text text-muted">Inclut les chambres, salons, etc.</small>
-  </div>
-
-  <div class="form-group">
-    <label for="bedrooms">Nombre de chambres
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Nombre de chambres à coucher"></i>
-    </label>
-    <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
-    <small class="form-text text-muted">Indiquez uniquement les chambres à coucher.</small>
-  </div>
-
-  <div class="form-group">
-    <label for="surface">Surface habitable (m²) <span style="color:red">*</span>
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Surface habitable en m²"></i>
-    </label>
-    <input type="number" class="form-control" id="surface" name="surface" required>
-    <small class="form-text text-muted">Exemple : 120</small>
-  </div>
-
-  <div class="form-group">
-    <label for="price">Prix en € <span style="color:red">*</span>
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Prix affiché sur l’annonce"></i>
-    </label>
-    <input type="number" class="form-control" id="price" name="price" required>
-    <small class="form-text text-muted">Exemple : 750000</small>
-  </div>
-
-  <div class="form-group">
-    <label for="country">Pays <span style="color:red">*</span>
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Pays où se situe le bien"></i>
-    </label>
-    <input type="text" class="form-control" id="country" name="country" required>
-  </div>
-
-<div class="form-group">
-    <label for="postalCode">Code postal
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Code postal à 5 chiffres"></i>
-    </label>
-    <input type="text" name="postalCode" id="postalCode" class="form-control" required>
-  </div>
-
-
-  <div class="form-group">
-    <label for="city">Ville <span style="color: red;">*</span>
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Ville ou commune du bien"></i>
-    </label>
-    <input type="text" class="form-control" id="city" name="city" required>
-  </div>
-
-  <div class="form-group">
-    <label for="yearBuilt">Année de construction
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Année de construction du bien"></i>
-    </label>
-    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
-    <small class="form-text text-muted">Exemple : 1995</small>
-  </div>
-
-  <div class="form-group">
-    <label for="propertyType">Type de bien <span style="color:red">*</span>
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Type de bien (villa, maison, appartement...)"></i>
-    </label>
-    <select class="form-control" id="propertyType" name="propertyType" required>
-      <option value="">-- Choisir --</option>
-      <option value="Propriété">Propriété</option>
-      <option value="Villa">Villa</option>
-      <option value="Hôtel particulier">Hôtel particulier</option>
-      <option value="Appartement">Appartement</option>
-      <option value="Chateau">Château</option>
-      <option value="Maison">Maison</option>
-    </select>
-  </div>
-
-  <!-- SECTION: Équipements -->
-  <hr class="my-4">
-  <h6 class="text-black mb-3"><i class="fa fa-cogs me-2"></i> Équipements</h6>
-
-  <% const equipmentOptions = [
-    { id: 'pool', label: 'Piscine' },
-    { id: 'doubleGlazing', label: 'Double vitrage' },
-    { id: 'wateringSystem', label: 'Arrosage automatique' },
-    { id: 'barbecue', label: 'Barbecue' },
-    { id: 'carShelter', label: 'Abri de voiture' },
-    { id: 'parking', label: 'Parking' },
-    { id: 'caretakerHouse', label: 'Maison de gardien' },
-    { id: 'electricShutters', label: 'Stores électriques' },
-    { id: 'outdoorLighting', label: 'Éclairage extérieur' }
-  ]; %>
-
-  <% equipmentOptions.forEach(e => { %>
-    <div class="form-group">
-      <label for="<%= e.id %>"><%= e.label %>
-        <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Présence ou non de cet équipement."></i>
-      </label>
-      <select class="form-control" id="<%= e.id %>" name="<%= e.id %>">
-        <option value="false">Non</option>
-        <option value="true">Oui</option>
-      </select>
+    <div class="progress mb-4">
+      <div class="progress-bar" role="progressbar" id="formProgress" style="width: 25%;">Étape 1 sur 4</div>
     </div>
-  <% }); %>
 
-  <!-- SECTION: Photos -->
-  <hr class="my-4">
-  <h6 class="text-black mb-3"><i class="fa fa-image me-2"></i> Photos</h6>
+    <div id="success-message-container"></div>
 
-  <div class="form-group">
-    <label for="dpe">Diagnostic de Performance Énergétique (DPE) <span style="color:red">*</span>
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Classe énergétique du bien (obligatoire)"></i>
-    </label>
-    <select class="form-control" id="dpe" name="dpe" required>
-      <option value="">-- Sélectionner --</option>
-      <option value="A">A - Excellent</option>
-      <option value="B">B - Très bon</option>
-      <option value="C">C - Bon</option>
-      <option value="D">D - Moyenne</option>
-      <option value="E">E - Passable</option>
-      <option value="F">F - Mauvais</option>
-      <option value="G">G - Très mauvais</option>
-      <option value="En cours">En cours</option>
-    </select>
-    <small class="form-text text-muted">Obligatoire pour les annonces, sauf si "En cours".</small>
-  </div>
+    <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+      <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
 
-  <div class="form-group">
-    <label for="photo1">Photo principale <span class="text-danger">*</span>
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Image principale visible en première sur la page"></i>
-    </label>
-    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required>
-    <progress id="progress1" value="0" max="100" class="hidden"></progress>
-    <span id="status1" class="hidden text-success">Chargement...</span>
-  </div>
+      <!-- Étape 1 -->
+      <div class="form-step" data-step="1">
+        <%- include('form-parts/step-1.ejs') %>
+        <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
+      </div>
 
-  <div class="form-group">
-    <label for="photo2">Photo secondaire <span style="color:red">*</span>
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Image secondaire visible dans la galerie"></i>
-    </label>
-    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required>
-    <progress id="progress2" value="0" max="100" class="hidden"></progress>
-    <span id="status2" class="hidden text-success">Chargement...</span>
-  </div>
+      <!-- Étape 2 -->
+      <div class="form-step d-none" data-step="2">
+        <%- include('form-parts/step-2.ejs') %>
+        <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
+        <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
+      </div>
 
-  <!-- SECTION: Description -->
-  <hr class="my-4">
-  <h6 class="text-black mb-3"><i class="fa fa-align-left me-2"></i> Description</h6>
+      <!-- Étape 3 -->
+      <div class="form-step d-none" data-step="3">
+        <%- include('form-parts/step-3.ejs') %>
+        <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
+        <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
+      </div>
 
-  <div class="form-group">
-    <label for="description">Description <span style="color:red">*</span>
-      <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Résumé détaillé du bien (emplacement, caractéristiques, style...)"></i>
-    </label>
-    <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
-    <small id="charCount">0/820 caractères</small>
-  </div>
+      <!-- Étape 4 -->
+      <div class="form-step d-none" data-step="4">
+        <%- include('form-parts/step-4.ejs') %>
+        <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
+        <button type="submit" class="btn btn-dark py-2 mt-3">
+          <i class="fa fa-check-circle me-2"></i>Créer l'annonce
+        </button>
+      </div>
 
-  <button type="submit" class="btn btn-dark py-2 mt-3">
-    <i class="fa fa-check-circle me-2"></i>Créer l'annonce
-  </button>
-<div id="generatedLink" class="mt-3"></div>
+      <div id="generatedLink" class="mt-3"></div>
 
-  <script>
- document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
-    const postalCode = document.getElementById('postalCode')?.value;
-    const postalCodePattern = /^\d{5}$/;
+      <script>
+        let currentStep = 1;
 
-    if (postalCode && !postalCodePattern.test(postalCode)) {
-      e.preventDefault();
-      alert('Le code postal doit contenir exactement 5 chiffres.');
-    }
-  });
+        function showStep(step) {
+          document.querySelectorAll('.form-step').forEach(div => {
+            div.classList.add('d-none');
+            div.style.opacity = 0;
+          });
+          const stepEl = document.querySelector(`.form-step[data-step='${step}']`);
+          stepEl.classList.remove('d-none');
+          stepEl.style.opacity = 1;
 
-  // Active les tooltips Bootstrap
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-  tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
-  </script>
-</form>
+          const progressBar = document.getElementById('formProgress');
+          if (progressBar) {
+            progressBar.style.width = `${step * 25}%`;
+            progressBar.innerText = `Étape ${step} sur 4`;
+          }
+        }
 
+        document.querySelectorAll('.next-step').forEach(btn => {
+          btn.addEventListener('click', () => {
+            const currentFields = document.querySelector(`.form-step[data-step='${currentStep}']`).querySelectorAll('input, select, textarea');
+            for (let field of currentFields) {
+              if (!field.checkValidity()) {
+                field.reportValidity();
+                return;
+              }
+            }
+            currentStep++;
+            showStep(currentStep);
+          });
+        });
+
+        document.querySelectorAll('.prev-step').forEach(btn => {
+          btn.addEventListener('click', () => {
+            currentStep--;
+            showStep(currentStep);
+          });
+        });
+
+        document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
+          const postalCode = document.getElementById('postalCode')?.value;
+          const postalCodePattern = /^\d{5}$/;
+          if (postalCode && !postalCodePattern.test(postalCode)) {
+            e.preventDefault();
+            alert('Le code postal doit contenir exactement 5 chiffres.');
+          }
+        });
+
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+
+        showStep(currentStep);
+      </script>
+    </form>
   </div>
 </div>
+
 
                         <!-- Section Données -->
                      <div id="donnees" class="card" style="display: none;">
