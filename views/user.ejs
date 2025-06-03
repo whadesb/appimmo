@@ -1259,6 +1259,21 @@ progress {
 <script src="/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
 <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const navbarCollapse = document.getElementById('navbarNav');
+
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(function (link) {
+      link.addEventListener('click', function () {
+        if (navbarCollapse.classList.contains('show')) {
+          // Ferme le menu (collapse Bootstrap 5)
+          new bootstrap.Collapse(navbarCollapse).hide();
+        }
+      });
+    });
+  });
+</script>
+
+<script>
   document.addEventListener("DOMContentLoaded", function () {
     function setupToggleButton(btnId, targetId, showText, hideText) {
       const btn = document.getElementById(btnId);
