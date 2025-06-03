@@ -1,5 +1,4 @@
 require('dotenv').config();
-console.log("Stripe Public Key:", process.env.STRIPE_PUBLIC_KEY);
 
 process.on('uncaughtException', function (err) {
   console.error('Uncaught Exception:', err);
@@ -1345,63 +1344,7 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
 
 
 
-app.post('/process-payment', isAuthenticated, async (req, res) => {
-    try {
-        const { stripeToken, amount, propertyId } = req.body;
-        const userId = req.user._id;
 
-        console.log("🔍 Paiement en cours...");
-        console.log("Stripe Token:", stripeToken);
-        console.log("Amount:", amount);
-        console.log("Property ID:", propertyId);
-        console.log("User ID:", userId);
-
-        if (!stripeToken || !amount || !propertyId) {
-            console.error("❌ Données manquantes pour le paiement.");
-            return res.status(400).json({ error: 'Données manquantes' });
-        }
-
-        const paymentIntent = await stripe.paymentIntents.create({
-            amount: parseInt(amount, 10) * 100,
-            currency: 'eur',
-            payment_method: stripeToken,
-            confirm: true,
-            return_url: `https://uap.immo/payment-success?propertyId=${propertyId}`,
-            automatic_payment_methods: {
-                enabled: true,
-                allow_redirects: "always"
-            }
-        });
-
-        console.log("✅ Paiement réussi:", paymentIntent);
-
-        const order = new Order({
-    userId,
-    propertyId,
-    amount: parseInt(amount, 10),
-    status: 'paid',
-    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-});
-
-console.log("🔍 Nouvelle commande enregistrée :", order);
-
-await order.save();
-
-
-        // Déterminer la redirection en fonction de la langue
-        const locale = req.cookies.locale || 'fr';
-        const redirectUrl = `/${locale}/user#`;
-
-        res.status(200).json({
-            message: 'Paiement réussi',
-            orderId: order._id,
-            redirectUrl // ✅ Correction de la redirection
-        });
-    } catch (error) {
-        console.error("❌ Erreur lors du paiement :", error);
-        res.status(500).json({ error: error.message || 'Erreur de paiement' });
-    }
-});
 app.get('/user/orders', isAuthenticated, async (req, res) => {
     try {
         const orders = await Order.find({ userId: req.user._id }).populate('propertyId');
