@@ -483,6 +483,51 @@ align-items: stretch;
   width: fit-content;
   text-transform: uppercase;
 }
+  .extra-columns {
+    flex-direction: column;
+    gap: 20px;
+    padding: 0;
+    border: none;
+  }
+
+  .extra-col {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    position: relative;
+  }
+
+  .extra-col:not(:last-child)::after {
+    content: none;
+  }
+
+  .extra-col.map-col {
+    padding: 10px 15px;
+  }
+
+  #map {
+    width: 100%;
+    height: 250px;
+    min-width: unset;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+  }
+
+  .extra-info-desktop {
+    padding: 10px;
+  }
+
+  .extra-info-desktop h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .info-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
 }
 
     /* Affiche le bloc en desktop */
