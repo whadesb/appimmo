@@ -1124,11 +1124,15 @@ postalCode: req.body.postalCode,
     const user = await User.findById(req.user._id);
     await sendPropertyCreationEmail(user, property);
 
-    const successMessage = `
-      <div class="alert alert-success" role="alert">
-        Propriété ajoutée avec succès ! URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a>
-      </div>
-    `;
+  const successMessage = `
+  <div class="alert alert-success" role="alert">
+    <p>Propriété ajoutée avec succès !</p>
+    <p>URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a></p>
+    <p>
+      👉 <a href="#created-pages" class="btn btn-link">Voir ma page dans la liste</a>
+    </p>
+  </div>
+`;
     res.send(successMessage);
   } catch (error) {
     console.error("Erreur lors de l'ajout de la propriété :", error);
