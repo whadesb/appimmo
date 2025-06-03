@@ -12,6 +12,7 @@
   "payment_description_1": "Maximize the visibility of your real estate ad with our premium broadcasting offer.",
   "payment_description_2": "Your ad will be displayed on the most influential platforms: Facebook, Google, ECA-N, and Ads by UAP, for 3 months.",
   "payment_description_3": "Invest in your real estate success with UAP Immo.",
+  "confirmation_notice": "An email will be sent to you after your payment is confirmed.",
   "payment_card": "Credit Card Payment",
   "card_name": "Name on Card",
   "email": "Email",
@@ -22,8 +23,16 @@
   "card_number": "Card Number",
   "pay_now": "Pay Now",
   "order_summary": "Order Summary",
+  "duration": "Duration",
   "rooms": "Number of rooms",
   "surface": "Surface",
   "price": "Price",
-  "total": "Total"
+  "total": "Total",
+  "pay_with_paypal": "Pay with PayPal",
+  "footer": {
+    "informations": "Information",
+    "create_account": "Create an Account",
+    "access": "Access",
+    "all_rights": "All rights reserved."
+  }
 }
