@@ -2042,8 +2042,7 @@ h1 {
 
     <div class="property-info">
       <p class="property-lorem">UAP Immo Annonce</p>
-      <h1>Propriété à ${property.city}, ${property.country}</h1>
-<br>
+      <h1>Propriété à<br> ${property.city}, ${property.country}</h1>
       <h2>Type de bien: ${property.propertyType}</h2>
 
       <div class="property-details one-line">
