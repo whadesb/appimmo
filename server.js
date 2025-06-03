@@ -1837,6 +1837,12 @@ align-items: stretch;
     padding: 0;
     gap: 0;
   }
+h1 {
+  font-size: 1.6rem; /* ou adapte selon ton besoin */
+  line-height: 1.3;  /* réduit l'espacement vertical */
+  font-weight: 500;
+  margin-bottom: 15px; /* ajoute un petit espace avec ce qui suit */
+}
 
   .slider {
     width: 100%;
@@ -2037,6 +2043,7 @@ align-items: stretch;
     <div class="property-info">
       <p class="property-lorem">UAP Immo Annonce</p>
       <h1>Propriété à ${property.city}, ${property.country}</h1>
+<br>
       <h2>Type de bien: ${property.propertyType}</h2>
 
       <div class="property-details one-line">
