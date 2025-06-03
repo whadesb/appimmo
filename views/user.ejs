@@ -769,7 +769,82 @@ progress {
 
       <!-- Étape 1 -->
       <div class="form-step" data-step="1">
-        ... (contenu inchangé de l'étape 1)
+        <div class="form-group">
+          <label for="rooms">Nombre total de pièces
+            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Inclut chambres, salon, cuisine, etc."></i>
+          </label>
+          <input type="number" class="form-control" id="rooms" name="rooms" required>
+          <small class="form-text text-muted">Inclut les chambres, salons, etc.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="bedrooms">Nombre de chambres
+            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Nombre de chambres à coucher"></i>
+          </label>
+          <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
+          <small class="form-text text-muted">Indiquez uniquement les chambres à coucher.</small>
+        </div>
+
+        <div class="form-group">
+          <label for="surface">Surface habitable (m²) <span style="color:red">*</span>
+            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Surface habitable en m²"></i>
+          </label>
+          <input type="number" class="form-control" id="surface" name="surface" required>
+          <small class="form-text text-muted">Exemple : 120</small>
+        </div>
+
+        <div class="form-group">
+          <label for="price">Prix en € <span style="color:red">*</span>
+            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Prix affiché sur l’annonce"></i>
+          </label>
+          <input type="number" class="form-control" id="price" name="price" required>
+          <small class="form-text text-muted">Exemple : 750000</small>
+        </div>
+
+        <div class="form-group">
+          <label for="country">Pays <span style="color:red">*</span>
+            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Pays où se situe le bien"></i>
+          </label>
+          <input type="text" class="form-control" id="country" name="country" required>
+        </div>
+
+        <div class="form-group">
+          <label for="postalCode">Code postal
+            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Code postal à 5 chiffres"></i>
+          </label>
+          <input type="text" name="postalCode" id="postalCode" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label for="city">Ville <span style="color: red;">*</span>
+            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Ville ou commune du bien"></i>
+          </label>
+          <input type="text" class="form-control" id="city" name="city" required>
+        </div>
+
+        <div class="form-group">
+          <label for="yearBuilt">Année de construction
+            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Année de construction du bien"></i>
+          </label>
+          <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
+          <small class="form-text text-muted">Exemple : 1995</small>
+        </div>
+
+        <div class="form-group">
+          <label for="propertyType">Type de bien <span style="color:red">*</span>
+            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Type de bien (villa, maison, appartement...)"></i>
+          </label>
+          <select class="form-control" id="propertyType" name="propertyType" required>
+            <option value="">-- Choisir --</option>
+            <option value="Propriété">Propriété</option>
+            <option value="Villa">Villa</option>
+            <option value="Hôtel particulier">Hôtel particulier</option>
+            <option value="Appartement">Appartement</option>
+            <option value="Chateau">Château</option>
+            <option value="Maison">Maison</option>
+          </select>
+        </div>
+
         <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
       </div>
 
