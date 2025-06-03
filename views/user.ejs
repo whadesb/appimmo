@@ -763,6 +763,7 @@ progress {
 
   Ce service de création de page est <strong>entièrement gratuit</strong>. Pour toute aide ou question, n’hésitez pas à contacter notre équipe via le formulaire de contact.
 </p>
+<div id="success-message-container"></div>
 
 <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
   <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
@@ -1400,13 +1401,21 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
       method: 'POST',
       body: formData
     });
-    
-    const result = await response.text();  // Récupérer la réponse sous forme de texte HTML
-    document.getElementById('generatedLink').innerHTML = result;  // Afficher le message sous le formulaire
+
+    const result = await response.text();
+    document.getElementById('generatedLink').innerHTML = result;
+
+    // ✅ Vide les champs du formulaire après soumission réussie
+    this.reset();
+
+    // ✅ Optionnel : scroller en haut pour voir le message
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la propriété :', error);
   }
 });
+
 
 
     // Temps en millisecondes (5 minutes)
