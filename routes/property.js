@@ -485,8 +485,9 @@ h1 {
   }
 
 .price {
-  margin: 0 auto 15px auto; /* ← marge basse réduite à 15px */
-  padding: 12px 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  padding: 12px 15px;
   font-size: 1.4rem;
   font-weight: 600;
   background-color: #c4b9905f;
@@ -494,10 +495,9 @@ h1 {
   border-radius: 4px;
   display: block;
   text-align: center;
-  width: fit-content;
-  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
-
 
   .extra-info-desktop {
     display: block;
