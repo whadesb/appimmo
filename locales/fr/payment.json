@@ -12,6 +12,7 @@
   "payment_description_1": "Maximisez la visibilité de votre annonce immobilière grâce à notre offre de diffusion premium.",
   "payment_description_2": "Votre annonce sera affichée sur les plateformes les plus influentes : Facebook, Google, ECA-N et Ads by UAP, pendant 3 mois.",
   "payment_description_3": "Investissez dans votre succès immobilier avec UAP Immo.",
+  "confirmation_notice": "Un email vous sera envoyé après confirmation de votre paiement.",
   "payment_card": "Paiement par carte bancaire",
   "card_name": "Nom sur la carte",
   "email": "Email",
@@ -22,9 +23,16 @@
   "card_number": "Numéro de carte",
   "pay_now": "Payer maintenant",
   "order_summary": "Récapitulatif de la commande",
+  "duration": "Durée",
   "rooms": "Nombre de pièces",
   "surface": "Surface",
   "price": "Prix",
   "total": "Total",
-"pay_with_paypal": "Payer avec PayPal"
+  "pay_with_paypal": "Paiement",
+  "footer": {
+    "informations": "Informations",
+    "create_account": "Créer un compte",
+    "access": "Accès",
+    "all_rights": "Tous droits réservés."
+  }
 }
