@@ -1125,13 +1125,16 @@ postalCode: req.body.postalCode,
     await sendPropertyCreationEmail(user, property);
 
   const successMessage = `
-  <div class="alert alert-success" role="alert">
-    <p>Propriété ajoutée avec succès !</p>
-    <p>URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a></p>
-    <p>
-  👉 <a href="#" onclick="showSection('created-pages')" class="btn btn-link">Voir ma page dans la liste</a>
-</p>
-  </div>
+  <div class="alert alert-success small text-muted" role="alert">
+  <p class="mb-1">✅ Propriété ajoutée avec succès !</p>
+  <p class="mb-1">URL de la landing page : 
+    <a href="${property.url}" target="_blank" class="text-decoration-underline">${property.url}</a>
+  </p>
+  <p class="mb-0">
+    👉 <a href="#" onclick="showSection('created-pages'); return false;" class="btn btn-link p-0 align-baseline">Voir ma page dans la liste</a>
+  </p>
+</div>
+
 `;
     res.send(successMessage);
   } catch (error) {
