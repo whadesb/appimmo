@@ -467,22 +467,27 @@ align-items: stretch;
   margin-bottom: 20px;
 }
 
+.price {
+  margin: 0 auto 30px auto; /* centrage horizontal + marge bas */
+  padding: 12px 20px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  background-color: #c4b9905f;
+  text-transform: uppercase;
+  border-radius: 4px;
+  display: block;
+  text-align: center;
+  width: fit-content;
+  max-width: 100%;
+}
+
 .construction-year {
   margin-top: 20px;
   margin-bottom: 20px;
   font-size: 1.1rem;
 }
 
-.price {
-  margin-top: 20px;
-  margin-bottom: 30px;
-  background-color: #c4b9905f;
-  padding: 12px 20px;
-  font-size: 1.6rem;
-  font-weight: 600;
-  width: fit-content;
-  text-transform: uppercase;
-}
+
   .extra-columns {
     flex-direction: column;
     gap: 20px;
