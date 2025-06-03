@@ -1129,8 +1129,8 @@ postalCode: req.body.postalCode,
     <p>Propriété ajoutée avec succès !</p>
     <p>URL de la landing page : <a href="${property.url}" target="_blank">${property.url}</a></p>
     <p>
-      👉 <a href="#created-pages" class="btn btn-link">Voir ma page dans la liste</a>
-    </p>
+  👉 <a href="#" onclick="showSection('created-pages')" class="btn btn-link">Voir ma page dans la liste</a>
+</p>
   </div>
 `;
     res.send(successMessage);
