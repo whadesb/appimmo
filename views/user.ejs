@@ -1409,7 +1409,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     this.reset();
 
     // ✅ Optionnel : scroller en haut pour voir le message
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    document.getElementById('generatedLink')?.scrollIntoView({ behavior: 'smooth' });
 
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la propriété :', error);
