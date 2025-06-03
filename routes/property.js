@@ -415,10 +415,11 @@ align-items: stretch;
 }
 
 
-    /* Responsive mobile */
-   @media screen and (max-width: 768px) {
+  @media screen and (max-width: 768px) {
   html, body {
     overflow-x: hidden;
+    font-family: "Lora", serif;
+    color: #3c3c3c;
   }
 
   .container {
@@ -451,42 +452,57 @@ align-items: stretch;
     width: 100%;
     padding: 20px;
     box-sizing: border-box;
+    font-family: "Lora", serif;
+    font-size: 1.1rem;
+  }
+
+  .property-lorem,
+  .construction-year,
+  .property-details,
+  .detail p {
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .property-description {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-size: 1.2rem;
+    line-height: 1.6;
+  }
+
+  .price {
+    margin: 0 auto 30px auto;
+    padding: 12px 20px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    background-color: #c4b9905f;
+    text-transform: uppercase;
+    border-radius: 4px;
+    display: block;
+    text-align: center;
+    width: fit-content;
+    max-width: 100%;
   }
 
   .extra-info-desktop {
     display: block;
-    padding: 20px 10px;
+    padding: 10px 20px;
+    font-family: "Lora", serif;
+    text-align: left; /* aligné comme "Type de bien" */
   }
 
-  .dpe-bar {
-    width: 100%;
-    max-width: 250px;
+  .extra-info-desktop h2 {
+    font-size: 1.4rem;
+    margin-bottom: 20px;
+    text-align: left;
+    font-weight: 500;
   }
-.property-description {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.price {
-  margin: 0 auto 30px auto; /* centrage horizontal + marge bas */
-  padding: 12px 20px;
-  font-size: 1.6rem;
-  font-weight: 600;
-  background-color: #c4b9905f;
-  text-transform: uppercase;
-  border-radius: 4px;
-  display: block;
-  text-align: center;
-  width: fit-content;
-  max-width: 100%;
-}
-
-.construction-year {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  font-size: 1.1rem;
-}
-
 
   .extra-columns {
     flex-direction: column;
@@ -497,7 +513,7 @@ align-items: stretch;
 
   .extra-col {
     flex: 1;
-    padding: 10px 15px;
+    padding: 10px 0;
     border: none;
     position: relative;
   }
@@ -506,34 +522,34 @@ align-items: stretch;
     content: none;
   }
 
+  .info-label {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  .info-item {
+    font-size: 1.1rem;
+    margin-bottom: 6px;
+  }
+
+  .dpe-bar {
+    width: 100%;
+    max-width: 250px;
+  }
+
   .extra-col.map-col {
-    padding: 10px 15px;
+    padding: 10px 0;
   }
 
   #map {
     width: 100%;
     height: 250px;
-    min-width: unset;
     border-radius: 8px;
     border: 1px solid #ccc;
   }
-
-  .extra-info-desktop {
-    padding: 10px;
-  }
-
-  .extra-info-desktop h2 {
-    font-size: 1.4rem;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  .info-label {
-    font-size: 1.2rem;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
 }
+
 
     /* Affiche le bloc en desktop */
     @media screen and (min-width: 769px) {
