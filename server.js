@@ -1869,10 +1869,6 @@ align-items: stretch;
     width: 100%;
     max-width: 250px;
   }
-.property-description {
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
 
 .construction-year {
   margin-top: 20px;
@@ -1880,15 +1876,23 @@ align-items: stretch;
   font-size: 1.1rem;
 }
 
-.price {
+.property-description {
   margin-top: 20px;
-  margin-bottom: 30px;
-  background-color: #c4b9905f;
+  margin-bottom: 20px;
+}
+
+.price {
+  margin: 0 auto 30px auto; /* centrage horizontal + marge bas */
   padding: 12px 20px;
   font-size: 1.6rem;
   font-weight: 600;
-  width: fit-content;
+  background-color: #c4b9905f;
   text-transform: uppercase;
+  border-radius: 4px;
+  display: block;
+  text-align: center;
+  width: fit-content;
+  max-width: 100%;
 }
   .extra-columns {
     flex-direction: column;
