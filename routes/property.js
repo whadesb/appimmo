@@ -436,6 +436,10 @@ align-items: stretch;
         width: 100%;
         max-width: 250px;
       }
+ .section {
+      max-width: 700px;
+      margin: 0 auto 20px;
+    }
     }
 
     /* Affiche le bloc en desktop */
@@ -507,12 +511,12 @@ align-items: stretch;
         <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2" />
       </div>
     </div>
-
+ <div class="section">
     <div class="property-info">
       <p class="property-lorem">UAP Immo Annonce</p>
       <h1>Propriété à ${property.city}, ${property.country}</h1>
       <h2>Type de bien: ${property.propertyType}</h2>
-
+</div>
       <div class="property-details one-line">
   <div class="detail">
     <i class="fal fa-ruler-combined"></i>
@@ -615,6 +619,7 @@ ${JSON.stringify(jsonLD)}
 </script>
  </html>
   `;
+
 
   fs.writeFileSync(filePath, template);
 
