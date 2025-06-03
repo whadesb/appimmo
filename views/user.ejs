@@ -932,6 +932,7 @@ progress {
   <button type="submit" class="btn btn-dark py-2 mt-3">
     <i class="fa fa-check-circle me-2"></i>Créer l'annonce
   </button>
+<div id="generatedLink" class="mt-3"></div>
 
   <script>
  document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
@@ -950,7 +951,6 @@ progress {
   </script>
 </form>
 
-    <div id="generatedLink" class="mt-3"></div>
   </div>
 </div>
 
@@ -1403,18 +1403,20 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
     });
 
     const result = await response.text();
-    document.getElementById('generatedLink').innerHTML = result;
+    console.log('Réponse du serveur :', result); // DEBUG
 
-    // ✅ Vide les champs du formulaire après soumission réussie
+    document.getElementById('generatedLink').innerHTML = result;
     this.reset();
 
-    // ✅ Optionnel : scroller en haut pour voir le message
-    document.getElementById('generatedLink')?.scrollIntoView({ behavior: 'smooth' });
+    setTimeout(() => {
+      document.getElementById('generatedLink')?.scrollIntoView({ behavior: 'smooth' });
+    }, 100);
 
   } catch (error) {
     console.error('Erreur lors de l\'ajout de la propriété :', error);
   }
 });
+
 
 
 
