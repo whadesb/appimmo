@@ -466,6 +466,11 @@ app.get('/forgot-password', (req, res) => {
   res.redirect('/fr/forgot-password');
 });
 
+app.post('/forgot-password', (req, res) => {
+  const locale = req.locale || 'fr';
+  res.redirect(`/${locale}/forgot-password`);
+});
+
 
 // Route pour la politique de confidentialité
 app.get('/politique-confidentialite', (req, res) => {
