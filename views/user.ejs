@@ -1688,7 +1688,7 @@ async function loadLandingPages() {
             <button class="btn btn-sm btn-outline-dark me-1 show-url-btn" data-url="${page.url}" title="Afficher l'URL">
               <i class="bi bi-link-45deg"></i>
             </button>
-            <button class="btn btn-sm btn-qr me-1 qr-code-btn" data-id="${page._id}" title="QR Code">
+            <button class="btn btn-sm btn-qr me-1 qr-code-btn" data-id="${page._id}" data-url="${page.url}" title="QR Code">
               <i class="bi bi-qr-code"></i>
             </button>
             <button class="btn btn-sm ${disabled ? 'btn-warning disabled' : 'btn-dark'} me-1"
@@ -1736,7 +1736,7 @@ async function loadLandingPages() {
     });
     document.querySelectorAll('.qr-code-btn').forEach(button => {
       button.addEventListener('click', function () {
-        showQRCode(this.dataset.id);
+        showQRCode(this.dataset.id, this.dataset.url);
       });
     });
   } catch (error) {
@@ -2027,7 +2027,7 @@ document.addEventListener("DOMContentLoaded", function () {
   </div>
 </div>
 <script>
-function showQRCode(propertyId) {
+function showQRCode(propertyId, pageUrl) {
   const qrContainer = document.getElementById('qrCodeContainer');
   qrContainer.innerHTML = `
     <div class="spinner-border text-primary" role="status">
@@ -2035,7 +2035,7 @@ function showQRCode(propertyId) {
     </div>
   `;
 
-  const url = `https://uap.immo/landing-pages/${propertyId}.html`;
+  const url = `https://uap.immo${pageUrl}`;
   document.getElementById('qrModalUrl').textContent = url;
   document.getElementById('openQrUrl').href = url;
   const copyBtn = document.getElementById('copyQrUrl');
