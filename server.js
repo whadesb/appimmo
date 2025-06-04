@@ -489,7 +489,9 @@ app.post('/:lang/forgot-password', async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) {
-      req.flash('error', 'Aucun compte trouvé avec cette adresse email.');
+      req.flash('error', locale === 'fr'
+        ? "Aucun compte trouvé avec cette adresse email."
+        : "No account found with that email address.");
       return res.redirect(`/${locale}/forgot-password`);
     }
 
@@ -503,11 +505,15 @@ app.post('/:lang/forgot-password', async (req, res) => {
     const resetUrl = `http://${req.headers.host}/${locale}/reset-password/${token}`;
     await sendPasswordResetEmail(user, locale, resetUrl, code);
 
-    req.flash('success', 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.');
+    req.flash('success', locale === 'fr'
+      ? 'Un email avec des instructions pour réinitialiser votre mot de passe a été envoyé.'
+      : 'An email with password reset instructions has been sent.');
     return res.redirect(`/${locale}/forgot-password?emailSent=true`);
   } catch (error) {
     console.error('Erreur lors de la réinitialisation du mot de passe :', error);
-    req.flash('error', 'Une erreur est survenue lors de la réinitialisation du mot de passe.');
+    req.flash('error', locale === 'fr'
+      ? 'Une erreur est survenue lors de la réinitialisation du mot de passe.'
+      : 'An error occurred while resetting the password.');
     return res.redirect(`/${locale}/forgot-password`);
   }
 });
@@ -526,7 +532,9 @@ app.get('/:lang/reset-password/:token', async (req, res) => {
     });
 
     if (!user) {
-      req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
+      req.flash('error', locale === 'fr'
+        ? 'Le token de réinitialisation est invalide ou a expiré.'
+        : 'The password reset token is invalid or has expired.');
       return res.redirect(`/${locale}/forgot-password`);
     }
 
@@ -541,7 +549,9 @@ app.get('/:lang/reset-password/:token', async (req, res) => {
     res.render('reset-password', { token: req.params.token, locale, i18n, messages: req.flash() });
   } catch (error) {
     console.error('Erreur lors de la vérification du token :', error);
-    req.flash('error', 'Une erreur est survenue lors de la vérification du token.');
+    req.flash('error', locale === 'fr'
+      ? 'Une erreur est survenue lors de la vérification du token.'
+      : 'An error occurred while verifying the token.');
     res.redirect(`/${locale}/forgot-password`);
   }
 });
@@ -556,7 +566,9 @@ app.post('/:lang/reset-password/:token', async (req, res) => {
   const locale = req.params.lang;
 
   if (password !== confirmPassword) {
-    req.flash('error', 'Les mots de passe ne correspondent pas.');
+    req.flash('error', locale === 'fr'
+      ? 'Les mots de passe ne correspondent pas.'
+      : 'Passwords do not match.');
     return res.redirect('back');
   }
 
@@ -567,7 +579,9 @@ app.post('/:lang/reset-password/:token', async (req, res) => {
     });
 
     if (!user) {
-      req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
+      req.flash('error', locale === 'fr'
+        ? 'Le token de réinitialisation est invalide ou a expiré.'
+        : 'The password reset token is invalid or has expired.');
       return res.redirect(`/${locale}/forgot-password`);
     }
 
@@ -578,7 +592,9 @@ app.post('/:lang/reset-password/:token', async (req, res) => {
 
     user.setPassword(password, async (err) => {
       if (err) {
-        req.flash('error', 'Erreur lors de la réinitialisation du mot de passe.');
+        req.flash('error', locale === 'fr'
+          ? 'Erreur lors de la réinitialisation du mot de passe.'
+          : 'Error resetting the password.');
         return res.redirect('back');
       }
 
@@ -587,12 +603,16 @@ app.post('/:lang/reset-password/:token', async (req, res) => {
       user.resetPasswordCode = undefined;
       await user.save();
 
-      req.flash('success', 'Votre mot de passe a été mis à jour avec succès.');
+      req.flash('success', locale === 'fr'
+        ? 'Votre mot de passe a été mis à jour avec succès.'
+        : 'Your password has been updated successfully.');
       res.redirect(`/${locale}/login`);
     });
   } catch (error) {
     console.error('Erreur lors de la mise à jour du mot de passe :', error);
-    req.flash('error', 'Une erreur est survenue lors de la mise à jour du mot de passe.');
+    req.flash('error', locale === 'fr'
+      ? 'Une erreur est survenue lors de la mise à jour du mot de passe.'
+      : 'An error occurred while updating the password.');
     res.redirect(`/${locale}/forgot-password`);
   }
 });
@@ -979,12 +999,16 @@ const response = await axios.post(verificationURL, null, {
 
   // ✅ Validation email et mot de passe
   if (!validator.isEmail(email)) {
-    req.flash('error', 'L\'adresse email n\'est pas valide.');
+    req.flash('error', locale === 'fr'
+      ? "L'adresse email n'est pas valide."
+      : 'The email address is not valid.');
     return res.redirect(`/${locale}/register`);
   }
 
   if (password !== confirmPassword) {
-    req.flash('error', 'Les mots de passe ne correspondent pas.');
+    req.flash('error', locale === 'fr'
+      ? 'Les mots de passe ne correspondent pas.'
+      : 'Passwords do not match.');
     return res.redirect(`/${locale}/register`);
   }
 
