@@ -688,59 +688,51 @@ progress {
 <!-- SECTION ACCOUNT -->
 <div id="account" class="card">
   <div class="card-body">
-    <h5 class="card-title">Mon Profil</h5>
-    <p class="card-text">
-      Depuis cet espace, vous pouvez consulter et modifier vos informations personnelles telles que votre nom, prénom et adresse e-mail. Veillez à ce que vos données soient toujours à jour afin de garantir une expérience optimale sur notre plateforme.
-    </p>
+    <h5 class="card-title"><%= i18n.my_profile %></h5>
+    <p class="card-text"><%= i18n.profile_info %></p>
 
     <!-- ✅ Bouton Fonctionnement directement sous l'intro -->
     <button id="toggleHelpProfile" class="btn btn-outline-dark btn-sm mb-3 d-flex align-items-center gap-2" type="button">
       <i class="bi bi-info-circle"></i>
-      <span>Fonctionnement</span>
+      <span><%= i18n.menu.fonctionnement %></span>
     </button>
 
     <div id="helpProfileDetails" class="collapse mt-2">
-      <p class="card-text">
-        Dans la section « Pages créées », vous avez la possibilité de générer gratuitement une landing page optimisée SEO pour mettre en valeur votre bien immobilier. Vous pouvez également y acheter un pack de diffusion d’une durée de 90 jours, valable pour une annonce.
-      </p>
-      <p class="card-text">
-        La diffusion est effectuée automatiquement sur plusieurs canaux performants : Google Ads, Facebook Ads, Instagram Ads, ECA-N et notre propre régie Ads by UAP, afin d’assurer une visibilité maximale.
-      </p>
-      <p class="card-text">
-        Pour toute question ou accompagnement concernant l’utilisation de la plateforme, n’hésitez pas à contacter notre équipe.
-      </p>
+      <p class="card-text"><%= i18n.help_profile_line1 %></p>
+      <p class="card-text"><%= i18n.help_profile_line2 %></p>
+      <p class="card-text"><%= i18n.help_profile_line3 %></p>
     </div>
 
     <!-- Infos utilisateur -->
-    <p class="card-text user-info"><strong>Nom :</strong> <%= user.lastName %></p>
-    <p class="card-text user-info"><strong>Prénom :</strong> <%= user.firstName %></p>
-    <p class="card-text user-info"><strong>Email :</strong> <%= user.email %></p>
+    <p class="card-text user-info"><strong><%= i18n.name %> :</strong> <%= user.lastName %></p>
+    <p class="card-text user-info"><strong><%= i18n.first_name %> :</strong> <%= user.firstName %></p>
+    <p class="card-text user-info"><strong><%= i18n.email %> :</strong> <%= user.email %></p>
 
     <p class="card-text user-info d-flex align-items-center">
-      <strong>Authentification à deux facteurs (2FA):</strong>
+      <strong><%= i18n.two_factor_auth %></strong>
       <% if (!user.twoFactorEnabled) { %>
-        <a href="/<%= locale %>/enable-2fa" class="btn btn-sm btn-warning ms-2">Activer 2FA</a>
+        <a href="/<%= locale %>/enable-2fa" class="btn btn-sm btn-warning ms-2"><%= i18n.enable_2fa %></a>
       <% } else { %>
-        <span class="badge bg-success ms-2">2FA activé</span>
+        <span class="badge bg-success ms-2"><%= i18n.two_factor_enabled %></span>
       <% } %>
     </p>
 
     <p class="card-text user-info d-flex align-items-center">
-      <strong>Mot de passe:</strong>
-      <button type="button" class="btn btn-sm btn-outline-dark ms-2" onclick="showSection('reset-password')">Modifier</button>
+      <strong><%= i18n.password_label %></strong>
+      <button type="button" class="btn btn-sm btn-outline-dark ms-2" onclick="showSection('reset-password')"><%= i18n.edit %></button>
     </p>
 
     <hr class="my-4">
 
     <!-- Vos Annonces -->
-    <p class="card-text"><strong>Vos Annonces</strong></p>
+    <p class="card-text"><strong><%= i18n.your_ads %></strong></p>
     <% if (userLandingPages && userLandingPages.length > 0) { %>
-      <p class="card-text">✅ Vous avez généré <strong><%= userLandingPages.length %></strong> page(s) d'annonce immobilière.</p>
-      <p class="card-text">📣 N'oubliez pas de <strong>diffuser</strong> vos annonces pour plus de visibilité !</p>
+      <p class="card-text"><%= i18n.ads_generated.replace('{count}', userLandingPages.length) %></p>
+      <p class="card-text"><%= i18n.remember_to_publish %></p>
     <% } else { %>
-      <p class="card-text">🚫 Vous n'avez pas encore généré d'annonce.</p>
+      <p class="card-text"><%= i18n.no_ads_yet %></p>
       <a href="#" onclick="showSection('landing')" class="btn btn-sm btn-outline-dark mt-2">
-        <i class="bi bi-plus-circle"></i>Créer ma première annonce
+        <i class="bi bi-plus-circle"></i><%= i18n.create_first_ad %>
       </a>
     <% } %>
   </div>
@@ -750,13 +742,7 @@ progress {
 <div id="landing" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title"><%= i18n.add_property %></h5>
-    <p class="card-text">
-      Veuillez compléter le formulaire ci-dessous avec les informations détaillées de votre bien immobilier. Les champs obligatoires sont signalés par une astérisque (*), notamment la surface habitable, le prix, la ville, le type de bien, ainsi que deux photos de qualité (photo principale et secondaire).<br><br>
-      Le <strong>Diagnostic de Performance Énergétique (DPE)</strong> est obligatoire pour toute mise en vente. Si celui-ci est en cours de réalisation, veuillez sélectionner l’option « En cours » dans le menu déroulant.<br><br>
-      Une fois validée, votre page d’annonce est générée automatiquement et accessible depuis votre espace personnel. Vous pourrez la modifier à tout moment en cas d’erreur ou de mise à jour à effectuer.<br><br>
-      La page est optimisée <strong>SEO <i class="fa fa-question-circle text-muted" data-bs-toggle="tooltip" title="SEO : amélioration de la visibilité sur Google et autres moteurs de recherche."></i></strong> pour maximiser sa visibilité sur les moteurs de recherche et attirer un maximum de prospects.<br><br>
-      Ce service de création de page est <strong>entièrement gratuit</strong>. Pour toute aide ou question, n’hésitez pas à contacter notre équipe via le formulaire de contact.
-    </p>
+    <p class="card-text"><%= i18n.property_details %></p>
 
     <div class="progress mb-4">
       <div class="progress-bar" role="progressbar" id="formProgress" style="width: 25%;">Étape 1 sur 4</div>
@@ -769,9 +755,9 @@ progress {
 
       <!-- Étape 1 -->
       <div class="form-step" data-step="1">
-        <h6 class="mb-3">Informations générales du bien</h6>
+        <h6 class="mb-3"><%= i18n.step1_title %></h6>
         <div class="form-group">
-          <label for="rooms">Nombre total de pièces
+          <label for="rooms"><%= i18n.rooms %>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Inclut chambres, salon, cuisine, etc."></i>
           </label>
           <input type="number" class="form-control" id="rooms" name="rooms" required>
@@ -779,7 +765,7 @@ progress {
         </div>
 
         <div class="form-group">
-          <label for="bedrooms">Nombre de chambres
+          <label for="bedrooms"><%= i18n.bedrooms %>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Nombre de chambres à coucher"></i>
           </label>
           <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
@@ -787,7 +773,7 @@ progress {
         </div>
 
         <div class="form-group">
-          <label for="surface">Surface habitable (m²) <span style="color:red">*</span>
+          <label for="surface"><%= i18n.surface %> <span style="color:red">*</span>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Surface habitable en m²"></i>
           </label>
           <input type="number" class="form-control" id="surface" name="surface" required>
@@ -795,7 +781,7 @@ progress {
         </div>
 
         <div class="form-group">
-          <label for="price">Prix en € <span style="color:red">*</span>
+          <label for="price"><%= i18n.price %> <span style="color:red">*</span>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Prix affiché sur l’annonce"></i>
           </label>
           <input type="number" class="form-control" id="price" name="price" required>
@@ -803,28 +789,28 @@ progress {
         </div>
 
         <div class="form-group">
-          <label for="country">Pays <span style="color:red">*</span>
+          <label for="country"><%= i18n.country %> <span style="color:red">*</span>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Pays où se situe le bien"></i>
           </label>
           <input type="text" class="form-control" id="country" name="country" required>
         </div>
 
         <div class="form-group">
-          <label for="postalCode">Code postal
+          <label for="postalCode"><%= i18n.postal_code %>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Code postal à 5 chiffres"></i>
           </label>
           <input type="text" name="postalCode" id="postalCode" class="form-control" required>
         </div>
 
         <div class="form-group">
-          <label for="city">Ville <span style="color: red;">*</span>
+          <label for="city"><%= i18n.city %> <span style="color: red;">*</span>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Ville ou commune du bien"></i>
           </label>
           <input type="text" class="form-control" id="city" name="city" required>
         </div>
 
         <div class="form-group">
-          <label for="yearBuilt">Année de construction
+          <label for="yearBuilt"><%= i18n.year_built %>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Année de construction du bien"></i>
           </label>
           <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
@@ -832,7 +818,7 @@ progress {
         </div>
 
         <div class="form-group">
-          <label for="propertyType">Type de bien <span style="color:red">*</span>
+          <label for="propertyType"><%= i18n.property_type %> <span style="color:red">*</span>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Type de bien (villa, maison, appartement...)"></i>
           </label>
           <select class="form-control" id="propertyType" name="propertyType" required>
@@ -846,12 +832,12 @@ progress {
           </select>
         </div>
 
-        <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
+        <button type="button" class="btn btn-primary next-step mt-3"><%= i18n.next %></button>
       </div>
 
       <!-- Étape 2 -->
        <div class="form-step d-none" data-step="2">
-        <h6 class="mb-3">Équipement</h6>
+        <h6 class="mb-3"><%= i18n.equipment %></h6>
         <% const equipmentOptions = [
           { id: 'pool', label: 'Piscine' },
           { id: 'doubleGlazing', label: 'Double vitrage' },
@@ -876,15 +862,15 @@ progress {
           </div>
         <% }); %>
 
-        <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
-        <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
+        <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
+        <button type="button" class="btn btn-primary next-step mt-3"><%= i18n.next %></button>
       </div>
 
       <!-- Étape 3 -->
        <div class="form-step d-none" data-step="3">
-        <h6 class="mb-3">Photos du bien</h6>
+        <h6 class="mb-3"><%= i18n.photos_title %></h6>
         <div class="form-group">
-          <label for="dpe">Diagnostic de Performance Énergétique (DPE) <span style="color:red">*</span>
+          <label for="dpe"><%= i18n.dpe_label %> <span style="color:red">*</span>
             <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Classe énergétique du bien (obligatoire)"></i>
           </label>
           <select class="form-control" id="dpe" name="dpe" required>
@@ -901,34 +887,34 @@ progress {
         </div>
 
         <div class="form-group">
-    <label for="photo1">Photo principale <span class="text-danger">*</span></label>
+    <label for="photo1"><%= i18n.main_photo %> <span class="text-danger">*</span></label>
     <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required onchange="handleFileUpload(this, 'progress1', 'status1')">
     <progress id="progress1" value="0" max="100" style="width: 100%; display: none;"></progress>
     <span id="status1" class="text-muted small d-block mt-1"></span>
   </div>
 
   <div class="form-group">
-    <label for="photo2">Photo secondaire <span style="color:red">*</span></label>
+    <label for="photo2"><%= i18n.secondary_photo %> <span style="color:red">*</span></label>
     <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required onchange="handleFileUpload(this, 'progress2', 'status2')">
     <progress id="progress2" value="0" max="100" style="width: 100%; display: none;"></progress>
     <span id="status2" class="text-muted small d-block mt-1"></span>
   </div>
 
-        <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
-        <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
+        <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
+        <button type="button" class="btn btn-primary next-step mt-3"><%= i18n.next %></button>
       </div>
 
       <!-- Étape 4 -->
      <div class="form-step d-none" data-step="4">
-        <h6 class="mb-3">Description du bien</h6>
+        <h6 class="mb-3"><%= i18n.description_title %></h6>
         <div class="form-group">
-          <label for="description">Description <span style="color:red">*</span></label>
+          <label for="description"><%= i18n.description_label %> <span style="color:red">*</span></label>
           <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
-          <small id="charCount">0/820 caractères</small>
+          <small id="charCount">0/820 <%= i18n.characters %></small>
         </div>
-        <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
+        <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
         <button type="submit" class="btn btn-dark py-2 mt-3">
-          <i class="fa fa-check-circle me-2"></i>Créer l'annonce
+          <i class="fa fa-check-circle me-2"></i><%= i18n.create_ad %>
         </button>
       </div>
 
@@ -998,15 +984,13 @@ progress {
                      <div id="donnees" class="card" style="display: none;">
   <div class="card-body">
     <h5 class="card-title"><%= i18n.stats %></h5>
-<p class="card-text mb-3">
-  Cette section vous permet de consulter les <strong>statistiques de performance</strong> de chacune de vos pages générées. Chaque ligne du tableau correspond à une page d’annonce, et les différentes colonnes vous permettent d’analyser le comportement des visiteurs.
-</p>
+  <p class="card-text mb-3"><%= i18n.stats_info %></p>
 
 <!-- Bouton toggle -->
-<button id="toggleDetailsBtn" class="btn btn-outline-dark btn-sm mb-3 d-flex align-items-center gap-2" type="button">
+  <button id="toggleDetailsBtn" class="btn btn-outline-dark btn-sm mb-3 d-flex align-items-center gap-2" type="button">
   <i class="bi bi-info-circle"></i>
-  <span>Voir les détails des colonnes</span>
-</button>
+  <span><%= i18n.show_column_details %></span>
+  </button>
 
 <!-- Section masquée -->
 <div id="statsDetails" class="mb-3">
@@ -1026,15 +1010,15 @@ progress {
     <form id="statsFilter" class="mb-3">
   <div class="row g-2 align-items-end">
     <div class="col-sm-6 col-md-3">
-      <label for="startDate" class="form-label">Date de début</label>
+      <label for="startDate" class="form-label"><%= i18n.start_date %></label>
       <input type="date" id="startDate" name="startDate" class="form-control" required>
     </div>
     <div class="col-sm-6 col-md-3">
-      <label for="endDate" class="form-label">Date de fin</label>
+      <label for="endDate" class="form-label"><%= i18n.end_date %></label>
       <input type="date" id="endDate" name="endDate" class="form-control" required>
     </div>
     <div class="col-12 col-md-3">
-      <button type="submit" class="btn btn-dark w-100 mt-3 mt-md-0">Filtrer les statistiques</button>
+      <button type="submit" class="btn btn-dark w-100 mt-3 mt-md-0"><%= i18n.filter_stats %></button>
     </div>
   </div>
 </form>
@@ -1046,34 +1030,34 @@ progress {
  <thead class="table-dark">
   <tr>
     <th>
-      <span data-bs-toggle="tooltip" title="Lien de l'annonce">Page</span>
+      <span data-bs-toggle="tooltip" title="Lien de l'annonce"><%= i18n.table_page %></span>
     </th>
     <th>
-      <span data-bs-toggle="tooltip" title="Nombre total de vues">Vues</span>
+      <span data-bs-toggle="tooltip" title="Nombre total de vues"><%= i18n.table_views %></span>
     </th>
     <th>
-      <span data-bs-toggle="tooltip" title="Nombre d'utilisateurs uniques">Utilisateurs</span>
+      <span data-bs-toggle="tooltip" title="Nombre d'utilisateurs uniques"><%= i18n.table_users %></span>
     </th>
     <th>
-      <span data-bs-toggle="tooltip" title="Nombre de scrolls détectés">Scrolls</span>
+      <span data-bs-toggle="tooltip" title="Nombre de scrolls détectés"><%= i18n.table_scrolls %></span>
     </th>
     <th>
-      <span data-bs-toggle="tooltip" title="Source de trafic (ex : Google, Facebook…)">Source</span>
+      <span data-bs-toggle="tooltip" title="Source de trafic (ex : Google, Facebook…)"><%= i18n.table_source %></span>
     </th>
     <th>
-      <span data-bs-toggle="tooltip" title="Pays, région et ville">Géolocalisation</span>
+      <span data-bs-toggle="tooltip" title="Pays, région et ville"><%= i18n.table_location %></span>
     </th>
     <th>
-      <span data-bs-toggle="tooltip" title="Type d'appareil (mobile, desktop…)">Appareil</span>
+      <span data-bs-toggle="tooltip" title="Type d'appareil (mobile, desktop…)"><%= i18n.table_device %></span>
     </th>
     <th>
-      <span data-bs-toggle="tooltip" title="Système d'exploitation">OS</span>
+      <span data-bs-toggle="tooltip" title="Système d'exploitation"><%= i18n.table_os %></span>
     </th>
     <th>
-      <span data-bs-toggle="tooltip" title="Navigateur utilisé">Navigateur</span>
+      <span data-bs-toggle="tooltip" title="Navigateur utilisé"><%= i18n.table_browser %></span>
     </th>
     <th>
-      <span data-bs-toggle="tooltip" title="Langue du navigateur">Langue</span>
+      <span data-bs-toggle="tooltip" title="Langue du navigateur"><%= i18n.table_language %></span>
     </th>
   </tr>
 </thead>
@@ -1095,7 +1079,7 @@ progress {
       </tr>
     <% }); %>
   <% } else { %>
-    <tr><td colspan="10">Aucune statistique disponible</td></tr>
+    <tr><td colspan="10"><%= i18n.no_stats_available %></td></tr>
   <% } %>
 </tbody>
 </table>
@@ -1109,14 +1093,8 @@ progress {
 <!-- Section Mes Commandes (design harmonisé) -->
 <div id="orders" class="card" style="display: none;">
   <div class="card-body">
-   <h5 class="card-title">Mes commandes</h5>
-<p class="card-text">
-  Cette section vous permet de consulter l’historique de vos commandes ainsi que leur statut en temps réel.
-  Chaque commande correspond à un pack de diffusion d’une annonce, d’une valeur de 500 €, valable pour une durée de 90 jours à compter de la date de validation.<br><br>
-  Vous pouvez visualiser la durée restante de chaque diffusion dans la colonne <strong>“Jours restants”</strong>,
-  et connaître la <strong>date d’expiration</strong> dans la colonne correspondante.<br><br>
-  Pour toute question ou demande d’information complémentaire, n’hésitez pas à contacter notre équipe via le formulaire de contact ou par email.
-</p>
+   <h5 class="card-title"><%= i18n.my_orders %></h5>
+<p class="card-text"><%= i18n.orders_info %></p>
 
 
     <div class="table-responsive">
@@ -1125,32 +1103,32 @@ progress {
   <tr>
     <th>
       <span data-bs-toggle="tooltip" title="Numéro de votre commande">
-        Commandes
+        <%= i18n.orders_table_order %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Date de votre commande">
-        Date
+        <%= i18n.orders_table_date %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Statut de la commande (payée ou en attente)">
-        Statut
+        <%= i18n.orders_table_status %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Nombre de jours de diffusion restants (max 90 jours)">
-        Jours restants
+        <%= i18n.orders_table_days_left %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Fin de la diffusion publicitaire (90 jours après l'achat)">
-        Expiration
+        <%= i18n.orders_table_expiration %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Copier l’URL, voir la page, télécharger la facture">
-        Actions
+        <%= i18n.orders_table_actions %>
       </span>
     </th>
   </tr>
@@ -1161,7 +1139,7 @@ progress {
     </div>
 
     <div id="no-orders-message" style="display: none;" class="text-center">
-      <p>Aucune commande trouvée.</p>
+      <p><%= i18n.no_orders_found %></p>
     </div>
   </div>
 </div>
@@ -1169,9 +1147,9 @@ progress {
 <!-- Spinner de chargement pour statistiques -->
 <div id="stats-loading" class="text-center my-3" style="display: none;">
   <div class="spinner-border text-secondary" role="status">
-    <span class="visually-hidden">Chargement...</span>
+    <span class="visually-hidden"><%= i18n.loading %></span>
   </div>
-  <p class="mt-2">Chargement des statistiques...</p>
+  <p class="mt-2"><%= i18n.loading_stats %></p>
 </div>
 
 <!-- SECTION CREATED PAGES -->
@@ -1186,37 +1164,37 @@ progress {
   <tr>
     <th>
       <span data-bs-toggle="tooltip" title="Identifiant unique de la page créée">
-        ID
+        <%= i18n.created_id %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Type de bien (maison, villa, château…)">
-        Type
+        <%= i18n.created_type %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Pays dans lequel se situe le bien">
-        Pays
+        <%= i18n.created_country %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Ville dans laquelle se trouve le bien">
-        Ville
+        <%= i18n.created_city %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Prix affiché sur la page d’annonce">
-        Prix
+        <%= i18n.created_price %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Afficher les informations complètes de l'annonce">
-        Détails
+        <%= i18n.created_details %>
       </span>
     </th>
     <th>
       <span data-bs-toggle="tooltip" title="Copier l’URL, diffuser ou modifier votre page">
-        Actions
+        <%= i18n.created_actions %>
       </span>
     </th>
   </tr>
@@ -1227,7 +1205,7 @@ progress {
     </div>
 
     <div id="no-properties-message" class="text-center" style="display: none;">
-      <p>Aucune landing page trouvée.</p>
+      <p><%= i18n.no_properties_message %></p>
     </div>
   </div>
 </div>
@@ -1238,7 +1216,7 @@ progress {
   <div class="toast align-items-center text-white bg-success border-0 show" role="alert">
     <div class="d-flex">
       <div class="toast-body">
-        🎉 Redirection vers le paiement en cours...
+        🎉 <%= i18n.redirect_payment %>
       </div>
       <button type="button" class="btn-close btn-close-white me-2 m-auto" onclick="document.getElementById('toast-confirm').style.display='none';"></button>
     </div>
@@ -1262,16 +1240,16 @@ progress {
         </a>
       </div>
       <div class="col-lg-3 col-md-4 col-6">
-        <h6 class="site-footer-title mb-3">Informations</h6>
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.information_title %></h6>
         <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link">Accueil</a></li>
-          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link">Créer un compte</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link"><%= i18n.menu.home %></a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-4 col-6">
-        <h6 class="site-footer-title mb-3">Accès</h6>
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.access_title %></h6>
         <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link">Contact</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link"><%= i18n.menu.contact %></a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
@@ -1294,7 +1272,7 @@ progress {
 </p>
   </div>
 </footer>
-<div class="copy-message" id="copyMessage">URL copiée avec succès !</div>
+<div class="copy-message" id="copyMessage"><%= i18n.copy_success_message %></div>
 <!-- JavaScript -->
 <script src="/jquery-3.6.0.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj" crossorigin="anonymous"></script>
@@ -1332,16 +1310,16 @@ progress {
     setupToggleButton(
       "toggleHelpProfile",
       "helpProfileDetails",
-      "Fonctionnement",
-      "Masquer l'aide"
+      "<%= i18n.menu.fonctionnement %>",
+      "<%= i18n.toggle_help_hide %>"
     );
 
     // ✅ Ajoute cet appel pour le bouton "Voir les détails des colonnes"
     setupToggleButton(
       "toggleDetailsBtn",
       "statsDetails",
-      "Voir les détails des colonnes",
-      "Masquer les détails"
+      "<%= i18n.show_column_details %>",
+      "<%= i18n.hide_details %>"
     );
   });
 </script>
