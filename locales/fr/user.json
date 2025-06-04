@@ -104,5 +104,7 @@
   "created_price": "Prix",
   "created_details": "Détails",
   "created_actions": "Actions",
-  "redirect_payment": "Redirection vers le paiement en cours..."
+  "redirect_payment": "Redirection vers le paiement en cours...",
+  "url_modal_title": "URL de la page",
+  "copy_url": "Copier l'URL"
 }
