@@ -10,17 +10,20 @@
   <link href="/css/bootstrap-icons.css" rel="stylesheet">
   <link rel="stylesheet" href="/css/styles-main.css">
   <style>
-      body {
-      font-family: 'Inter', sans-serif;
-      background-color: #fff;
-      color: #212529;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-  .navbar {
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #fff;
+  color: #212529;
+  margin: 0;
+  padding: 0;
+ display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+main {
+  flex: 1;
+}
+ .navbar {
             background-color: #C4B990; 
         }
         .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
@@ -78,52 +81,64 @@
   .navbar .btn-outline-dark {
     margin-right: 12px;
   }
-    main {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 80px);
-      padding: 120px 20px 60px;
-      background-color: #fff;
-    }
-  
-    .twofa-left h2 {
-      font-size: 1.9rem;
-      font-weight: 600;
-      margin-bottom: 14px;
-    }
-    .twofa-left ul {
-      list-style: none;
-      padding-left: 0;
-      border-left: 3px solid #000;
-      padding-left: 16px;
-      margin-top: 12px;
-    }
-    .twofa-left li {
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-      color: #444;
-    }
-    .twofa-left li::before {
-      content: "✓";
-      color: #0e7e41;
-      font-weight: 500;
-      margin-right: 8px;
-    }
-   .twofa-container {
+main {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px); /* On retire juste le footer, le padding-top compense la navbar */
+  padding: 120px 20px 60px; /* top | horizontal | bottom */
+  background-color: #fff;
+}
+
+
+
+.twofa-container {
   max-width: 1100px;
   margin: auto;
   padding: 0 20px;
   display: flex;
   gap: 60px;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
 }
 
 .twofa-left {
   flex: 1 1 48%;
-  text-align: left;
+}
+
+.twofa-left h2 {
+  font-size: 1.9rem;
+  font-weight: 600;
+  margin-bottom: 14px;
+}
+
+.twofa-left p {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 20px;
+}
+
+.twofa-left ul {
+  list-style: none;
+  padding-left: 0;
+  border-left: 3px solid #dee2e6;
+  padding-left: 16px;
+  margin-top: 12px;
+}
+
+.twofa-left li {
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: #444;
+  position: relative;
+}
+
+.twofa-left li::before {
+  content: "✓";
+  color: #8f97c4;
+  margin-right: 8px;
 }
 
 .twofa-form-wrapper {
@@ -134,108 +149,125 @@
   border: 1px solid #e2e6ea;
 }
 
-#numeric-keypad button {
-  font-size: 1.3rem;
-  padding: 12px 0;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  background-color: #f6f6f6;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.06);
-  transition: all 0.2s ease-in-out;
+.twofa-form-wrapper label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
 }
-
-#numeric-keypad button:hover {
-  background-color: #eaeaea;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+#numeric-keypad button {
+  font-size: 1.6rem;
+  padding: 16px 0;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+#numeric-keypad {
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 300px;
+  margin: 20px auto;
 }
 
 #numeric-keypad button:active {
-  transform: scale(0.98);
-  box-shadow: none;
+  transform: scale(0.97);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Espacement entre clavier et boutons */
 #numeric-keypad {
-  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 300px;
+  margin: 20px auto;
 }
 
-/* Bouton "Effacer" */
-#clear-code {
-  border: 1px solid #212529 !important; /* ✅ Bordure plus fine */
-  color: #212529 !important;
-  background-color: #fff !important;
-  font-weight: 600;
-  transition: all 0.2s ease;
-  margin-bottom: 12px; /* ✅ Espace entre Effacer et Valider */
-}
-
-#clear-code:hover {
-  background-color: #f0f0f0 !important;
-}
-
-/* Bouton "Valider" */
-#submit-code {
-  background-color: #212529 !important;
-  color: #fff;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
-}
-
-#submit-code:hover {
-  background-color: #000 !important;
-}
-
-#code-display {
-  height: 50px;
-  line-height: 50px;
-  background: #fff;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  letter-spacing: 10px;
+#code {
+  width: 100%;
+  padding: 14px;
   font-size: 1.6rem;
   font-weight: 600;
   text-align: center;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  letter-spacing: 6px;
+  background-color: #fff;
 }
 
-#keypad {
-  max-width: 280px;
-  margin: auto;
+#code:focus {
+  border-color: #8f97c4;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(143, 151, 196, 0.2);
 }
-.qr-code-container img {
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: auto;
-}
-.twofa-left,
-.twofa-form-wrapper {
-  flex: 1 1 48%;
-}
-   
-    .twofa-form-wrapper label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 8px;
-    }
-    .btn-primary {
-      width: 100%;
-      background-color: #8f97c4;
-      border: none;
-      padding: 14px;
-      font-size: 1rem;
-      font-weight: 600;
-      border-radius: 8px;
-      transition: background-color 0.2s ease;
-    }
-    .btn-primary:hover {
-      background-color: #7a81b8;
-    }
 
-    @media (max-width: 768px) {
+#countdown {
+ font-size: 0.875rem;
+  color: #000; /* Noir */
+  text-align: center;
+  margin-top: 12px;
+  margin-bottom: 20px;
+}
+
+#success-check {
+  display: none;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+#success-check i {
+  font-size: 2rem;
+  color: #28a745;
+}
+
+#success-check p {
+  font-weight: 500;
+  color: #28a745;
+  margin-top: 8px;
+}
+
+.btn-primary {
+  width: 100%;
+  background-color: #8f97c4;
+  border: none;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.btn-primary:hover {
+  background-color: #7a81b8;
+}
+
+.text-muted a {
+  color: #000 !important; /* Forcer noir */
+  font-size: 0.875rem;
+}
+
+.text-muted a:hover {
+  color: #444;
+}
+#code-display {
+  height: 50px;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  line-height: 50px;
+}
+
+@media (max-width: 768px) {
   .twofa-container {
     flex-direction: column;
     gap: 40px;
+  }
+
+  .twofa-form-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 24px 16px;
+    margin: auto;
   }
 
   .twofa-left {
@@ -247,19 +279,17 @@
     max-width: 320px;
   }
 
-  .twofa-form-wrapper {
-    width: 100%;
-    max-width: 100%;
-    padding: 24px 16px;
-    margin: auto;
+  #code-display {
+    font-size: 1.8rem;
+    height: 52px;
+    line-height: 52px;
+    letter-spacing: 12px;
   }
 
   #numeric-keypad {
-    display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
     max-width: 300px;
-    margin: auto;
     margin-bottom: 20px;
     padding: 0 10px;
   }
@@ -268,98 +298,62 @@
     font-size: 1.6rem;
     padding: 16px 0;
     border-radius: 8px;
+    border: 1px solid #ced4da;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
     touch-action: manipulation;
   }
 
-  #code-display {
-    font-size: 1.8rem;
-    height: 52px;
-    line-height: 52px;
-    letter-spacing: 12px;
+  #numeric-keypad button:active {
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
   }
 
-  #clear-code,
-  #submit-code {
-    font-size: 1.1rem;
-    padding: 14px;
-  }
+#clear-code {
+  border: 1px solid #000;
+  color: #000;
+  background-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+#clear-code:hover,
+#clear-code:active {
+  background-color: #000;
+  color: #fff;
+}
+#submit-code:enabled {
+  background-color: #212529; /* Gris très foncé */
+  color: #fff;
+  border: none;
+}
+#clear-code,
+#submit-code {
+  font-size: 1.1rem;
+  padding: 14px;
+}
 
+#submit-code:enabled {
+  background-color: #212529; /* même en mobile */
+}
   main {
-    padding: 120px 20px 100px; /* top - sides - bottom */
+    padding-bottom: 100px;
   }
 }
 
-    }
-/* Adaptation mobile complète */
-@media (max-width: 991.98px) {
-  .twofa-container {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 40px;
-  }
- .mobile-lang-selector {
-        display: flex !important;
-        align-items: center;
-        gap: 8px;
-      }
-      .desktop-lang-selector {
-        display: none !important;
-      }
-    }
-    @media (min-width: 992px) {
-      .mobile-lang-selector {
-        display: none !important;
-      }
-  .twofa-left,
-  .twofa-form-wrapper {
-    width: 100%;
-    flex: unset;
-    padding: 0 10px;
-  }
 
-  .twofa-left {
-    text-align: center;
-  }
-
-  .twofa-left ul {
-    margin: auto;
-    max-width: 100%;
-  }
-
-  #numeric-keypad {
-    width: 100%;
-    max-width: 100%;
-    padding: 0 10px;
-  }
-
-  #numeric-keypad button {
-    font-size: 1.2rem;
-    padding: 12px 0;
-  }
-
-  #code-display {
-    font-size: 1.4rem;
-    height: 48px;
-    line-height: 48px;
-    letter-spacing: 8px;
-  }
-
-  #clear-code,
-  #submit-code {
-    font-size: 1rem;
-    padding: 12px;
-  }
+.qr-code-container img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: auto;
 }
-
-/* Toujours occuper tout l'espace horizontal sur petit écran */
-.twofa-form-wrapper form {
-  width: 100%;
-}
-
-   
   </style>
 </head>
 <body id="top">
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
 <main>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
 <nav class="navbar navbar-expand-lg fixed-top">
@@ -434,21 +428,28 @@
         </div>
       <% } %>
 
-      <!-- Langue: uniquement desktop -->
-      <div class="desktop-lang-selector ms-3">
-        <div class="dropdown">
-          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-            <i class="bi bi-chevron-down small"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-            <% if (locale === 'fr') { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
-            <% } else { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
-            <% } %>
-          </ul>
-        </div>
+      <!-- Desktop : sélecteur de langue -->
+      <div class="dropdown language-switcher">
+        <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+          <i class="bi bi-chevron-down small"></i>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end shadow">
+  <% if (locale === 'fr') { %>
+    <li>
+      <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
+        <span class="lang-flag lang-en"></span> English
+      </a>
+    </li>
+  <% } else { %>
+    <li>
+      <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">
+        <span class="lang-flag lang-fr"></span> Français
+      </a>
+    </li>
+  <% } %>
+</ul>
+
       </div>
     </div>
   </div>
