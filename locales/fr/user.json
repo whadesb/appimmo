@@ -52,7 +52,7 @@
   "edit": "Modifier",
   "your_ads": "Vos Annonces",
   "ads_generated": "✅ Vous avez généré <strong>{count}</strong> page(s) d'annonce immobilière.",
-  "remember_to_publish": "📣 N'oubliez pas de <strong>diffuser</strong> vos annonces pour plus de visibilité !",
+  "remember_to_publish": "📣 N'oubliez pas de <strong><a href=\"#\" onclick=\"showSection('created-pages')\">diffuser</a></strong> vos annonces pour plus de visibilité !",
   "no_ads_yet": "🚫 Vous n'avez pas encore généré d'annonce.",
   "create_first_ad": "Créer ma première annonce",
   "step1_title": "Informations générales du bien",

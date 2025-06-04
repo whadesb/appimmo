@@ -52,7 +52,7 @@
   "edit": "Edit",
   "your_ads": "Your Ads",
   "ads_generated": "You have generated <strong>{count}</strong> property ad page(s).",
-  "remember_to_publish": "Don't forget to <strong>publish</strong> your ads for more visibility!",
+  "remember_to_publish": "Don't forget to <strong><a href=\"#\" onclick=\"showSection('created-pages')\">publish</a></strong> your ads for more visibility!",
   "no_ads_yet": "You haven't generated any ad yet.",
   "create_first_ad": "Create my first ad",
   "step1_title": "General property information",
