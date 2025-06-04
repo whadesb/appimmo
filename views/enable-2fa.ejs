@@ -82,7 +82,7 @@
       flex: 1;
       display: flex;
       align-items: center;
-      justy-content: center;
+      justify-content: center;
       min-height: calc(100vh - 80px);
       padding: 120px 20px 60px;
       background-color: #fff;
@@ -118,7 +118,7 @@
   display: flex;
   gap: 60px;
   align-items: center;
-  justy-content: space-between;
+  justify-content: space-between;
 }
 
 .twofa-left {
@@ -364,23 +364,28 @@
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
 <nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
+    <!-- Logo -->
     <a class="navbar-brand" href="/<%= locale %>">
       <span>UAP Immo</span>
     </a>
 
-  
-
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <!-- Burger -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
+    <!-- Contenu menu -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav me-auto">
-        <li class="nav-item"><a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a></li>
-        <li class="nav-item"><a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
+        </li>
 
         <% if (isAuthenticated && showAccountButtons !== false) { %>
-          <!-- Mobile buttons -->
+          <!-- Mobile: My Account & Logout -->
           <li class="nav-item d-lg-none">
             <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
               <i class="bi bi-person-circle"></i>
@@ -395,25 +400,32 @@
               </button>
             </form>
           </li>
+        <% } else { %>
+          <!-- Mobile: Login -->
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
+              <i class="bi bi-person-fill"></i>
+              <%= locale === 'fr' ? 'Connexion' : 'Login' %>
+            </a>
+          </li>
         <% } %>
       </ul>
 
+      <!-- Desktop: Account or Login -->
       <% if (isAuthenticated && showAccountButtons !== false) { %>
-        <!-- Desktop buttons -->
         <div class="d-none d-lg-flex align-items-center ms-auto">
           <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
             <i class="bi bi-person-circle"></i>
-            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+            <span><%= i18n.menu.my_account %></span>
           </a>
           <form action="/logout" method="POST" class="d-inline">
             <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
               <i class="bi bi-box-arrow-right"></i>
-              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+              <span><%= i18n.menu.logout %></span>
             </button>
           </form>
         </div>
       <% } else { %>
-        <!-- Desktop login -->
         <div class="d-none d-lg-flex align-items-center ms-auto">
           <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
             <i class="bi bi-person-fill"></i>
@@ -422,8 +434,8 @@
         </div>
       <% } %>
 
-      <!-- Desktop Language Selector -->
-      <div class="desktop-lang-selector ms-3 d-none d-lg-block">
+      <!-- Langue: uniquement desktop -->
+      <div class="desktop-lang-selector ms-3">
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
             <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
