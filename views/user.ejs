@@ -540,12 +540,17 @@ progress {
       }
     }
 
-    .ads-info {
-      background-color: #e6f7ff;
-      padding: 10px;
-      border-radius: 5px;
-      margin-bottom: 15px;
-    }
+  .ads-info {
+    background-color: #e6f7ff;
+    padding: 10px;
+    border-radius: 5px;
+    margin-bottom: 15px;
+  }
+
+  .notif-badge {
+    font-size: 0.75rem;
+    padding: 0.25em 0.4em;
+  }
 
     </style>
 </head>
@@ -601,9 +606,10 @@ progress {
         <!-- Connexion / Compte - version MOBILE -->
         <% if (isAuthenticated) { %>
           <li class="nav-item d-lg-none">
-            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
+            <a class="nav-link d-flex align-items-center gap-2 position-relative" href="/<%= locale %>/user">
               <i class="bi bi-person-circle"></i>
               <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-badge"><%= userLandingPages ? userLandingPages.length : 0 %></span>
             </a>
           </li>
           <li class="nav-item d-lg-none">
@@ -627,9 +633,10 @@ progress {
       <!-- Connexion / Compte - version DESKTOP -->
       <% if (isAuthenticated) { %>
         <div class="d-none d-lg-flex align-items-center ms-auto">
-          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2 position-relative">
             <i class="bi bi-person-circle"></i>
             <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-badge"><%= userLandingPages ? userLandingPages.length : 0 %></span>
           </a>
           <form action="/logout" method="POST" class="d-inline">
             <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
