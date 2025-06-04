@@ -514,7 +514,11 @@ app.get('/reset-password/:token', async (req, res) => {
 
 app.get('/:lang/reset-password/:token', async (req, res) => {
   const locale = req.params.lang;
+  const translationsPath = `./locales/${locale}/password-reset.json`;
+  let i18n = {};
   try {
+    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+
     const user = await User.findOne({
       resetPasswordToken: req.params.token,
       resetPasswordExpires: { $gt: Date.now() }
@@ -525,7 +529,13 @@ app.get('/:lang/reset-password/:token', async (req, res) => {
       return res.redirect('/forgot-password');
     }
 
-    res.render('reset-password', { token: req.params.token, locale });
+    res.render('reset-password', {
+      token: req.params.token,
+      locale,
+      i18n,
+      messages: req.flash(),
+      currentPath: req.originalUrl
+    });
   } catch (error) {
     console.error('Erreur lors de la vérification du token :', error);
     req.flash('error', 'Une erreur est survenue lors de la vérification du token.');
