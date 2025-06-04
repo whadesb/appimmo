@@ -8,6 +8,7 @@ const UserSchema = new mongoose.Schema({
   role: { type: String, required: true },
   resetPasswordToken: String,
   resetPasswordExpires: Date,
+  resetPasswordCode: String,
   twoFactorSecret: { type: String }, // Secret utilisé pour la 2FA (Google Authenticator)
   twoFactorEnabled: { type: Boolean, default: false } // Indique si 2FA est activé ou non
 });
