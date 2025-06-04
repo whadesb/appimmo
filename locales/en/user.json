@@ -106,5 +106,6 @@
   "created_actions": "Actions",
   "redirect_payment": "Redirecting to payment...",
   "url_modal_title": "Page URL",
-  "copy_url": "Copy URL"
+  "copy_url": "Copy URL",
+  "open_page": "Open page"
 }
