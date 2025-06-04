@@ -2195,22 +2195,32 @@ async function sendAccountCreationEmail(email, firstName, lastName, locale = 'fr
 }
 
 async function sendPasswordResetEmail(user, locale, resetUrl, code) {
-  const isFr = locale === 'fr';
-  const subject = isFr ? 'Réinitialisation du mot de passe' : 'Password Reset';
+  const subject = 'Réinitialisation du mot de passe / Password Reset';
   const html = `
     <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-      <h2 style="color: #52566f;">${isFr ? 'Réinitialisation de votre mot de passe' : 'Password Reset'}</h2>
-      <p>${isFr ? 'Bonjour,' : 'Hello,'}</p>
-      <p>${isFr ? 'Vous avez demandé à réinitialiser le mot de passe de votre compte UAP Immo.' : 'You requested to reset the password for your UAP Immo account.'}</p>
-      <p>${isFr ? 'Utilisez le code suivant pour confirmer votre demande :' : 'Use the following code to confirm your request:'}</p>
+      <h2 style="color: #52566f;">Réinitialisation de votre mot de passe</h2>
+      <p>Bonjour,</p>
+      <p>Vous avez demandé à réinitialiser le mot de passe de votre compte UAP Immo.</p>
+      <p>Utilisez le code suivant pour confirmer votre demande :</p>
       <p style="font-size: 24px; font-weight: bold; color: #52566f;">${code}</p>
-      <p>${isFr ? 'Ou cliquez sur le lien ci-dessous pour définir un nouveau mot de passe :' : 'Or click the link below to set a new password:'}</p>
-      <p><a href="${resetUrl}" style="color: #52566f; text-decoration: underline;">${isFr ? 'Réinitialiser mon mot de passe' : 'Reset my password'}</a></p>
-      <p>${isFr ? 'Ce code et ce lien expirent dans 1 heure.' : 'This code and link are valid for 1 hour.'}</p>
-      <p>${isFr ? "Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email." : 'If you did not make this request, you can ignore this email.'}</p>
-      <p>${isFr ? 'Cordialement,<br>L\'équipe UAP Immo' : 'Regards,<br>The UAP Immo Team'}</p>
+      <p>Ou cliquez sur le lien ci-dessous pour définir un nouveau mot de passe :</p>
+      <p><a href="${resetUrl}" style="color: #52566f; text-decoration: underline;">Réinitialiser mon mot de passe</a></p>
+      <p>Ce code et ce lien expirent dans 1 heure.</p>
+      <p>Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer cet email.</p>
+      <p>Cordialement,<br>L'équipe UAP Immo</p>
       <hr>
-      <p style="font-size: 12px; color: #888;">${isFr ? 'Cet email a été envoyé automatiquement. Merci de ne pas y répondre.' : 'This email was sent automatically. Please do not reply.'}</p>
+      <h2 style="color: #52566f;">Password Reset</h2>
+      <p>Hello,</p>
+      <p>You requested to reset the password for your UAP Immo account.</p>
+      <p>Use the following code to confirm your request:</p>
+      <p style="font-size: 24px; font-weight: bold; color: #52566f;">${code}</p>
+      <p>Or click the link below to set a new password:</p>
+      <p><a href="${resetUrl}" style="color: #52566f; text-decoration: underline;">Reset my password</a></p>
+      <p>This code and link are valid for 1 hour.</p>
+      <p>If you did not make this request, you can ignore this email.</p>
+      <p>Regards,<br>The UAP Immo Team</p>
+      <hr>
+      <p style="font-size: 12px; color: #888;">Cet email a été envoyé automatiquement. Merci de ne pas y répondre. / This email was sent automatically. Please do not reply.</p>
     </div>
   `;
 
