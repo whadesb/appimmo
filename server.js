@@ -522,7 +522,7 @@ app.get('/:lang/reset-password/:token', async (req, res) => {
 
     if (!user) {
       req.flash('error', 'Le token de réinitialisation est invalide ou a expiré.');
-      return res.redirect('/forgot-password');
+      return res.redirect(`/${locale}/forgot-password`);
     }
 
     const translationsPath = path.join(__dirname, 'locales', locale, 'register.json');
