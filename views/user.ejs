@@ -1667,6 +1667,9 @@ async function loadLandingPages() {
             <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
               <i class="bi bi-clipboard"></i>
             </button>
+            <button class="btn btn-sm btn-outline-dark me-1 show-url-btn" data-url="${page.url}" title="Afficher l'URL">
+              <i class="bi bi-link-45deg"></i>
+            </button>
             <button class="btn btn-sm ${disabled ? 'btn-warning disabled' : 'btn-dark'} me-1" 
                     ${disabled ? 'disabled' : ''} 
                     title="${disabled ? 'Commande active en cours' : 'Diffuser'}" 
@@ -1700,6 +1703,14 @@ async function loadLandingPages() {
             icon.classList.add('bi-clipboard');
           }, 1500);
         });
+      });
+    });
+    document.querySelectorAll('.show-url-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const url = `https://uap.immo${this.dataset.url}`;
+        document.getElementById('urlModalText').textContent = url;
+        const modal = new bootstrap.Modal(document.getElementById('urlModal'));
+        modal.show();
       });
     });
   } catch (error) {
@@ -1962,6 +1973,22 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
   </div>
 </div>
+<div class="modal fade" id="urlModal" tabindex="-1" aria-labelledby="urlModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="urlModalLabel"><%= i18n.url_modal_title %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+      </div>
+      <div class="modal-body">
+        <p id="urlModalText" class="text-break mb-3"></p>
+        <button class="btn btn-sm btn-outline-dark" id="copyUrlFromModal">
+          <i class="bi bi-clipboard"></i> <%= i18n.copy_url %>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
 function showQRCode(propertyId) {
   const qrContainer = document.getElementById('qrCodeContainer');
@@ -2017,6 +2044,15 @@ function showPageDetails(page) {
     tooltipElements.forEach(el => {
       new bootstrap.Tooltip(el);
     });
+    const copyBtnModal = document.getElementById('copyUrlFromModal');
+    if (copyBtnModal) {
+      copyBtnModal.addEventListener('click', () => {
+        const url = document.getElementById('urlModalText').textContent;
+        navigator.clipboard.writeText(url).then(() => {
+          showCopyMessage();
+        });
+      });
+    }
   });
 </script>
 
