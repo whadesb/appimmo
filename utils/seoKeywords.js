@@ -50,6 +50,53 @@ const seoKeywords = {
       "buy property in Spain"
     ]
   }
+  ,
+  es: {
+    France: [
+      "casa en venta en Francia",
+      "inmobiliaria París",
+      "comprar propiedad en Francia",
+      "propiedad Riviera Francesa"
+    ],
+    Belgium: [
+      "inmobiliaria Bélgica",
+      "comprar casa en Bruselas",
+      "propiedad en Lieja"
+    ],
+    Portugal: [
+      "propiedad en Lisboa",
+      "villa Algarve",
+      "comprar apartamento Porto"
+    ],
+    Spain: [
+      "casa en Barcelona",
+      "inmobiliaria española",
+      "comprar propiedad en España"
+    ]
+  },
+  pt: {
+    France: [
+      "casa à venda na França",
+      "imóveis Paris",
+      "comprar propriedade na França",
+      "propriedade Riviera Francesa"
+    ],
+    Belgium: [
+      "imóveis Bélgica",
+      "comprar casa em Bruxelas",
+      "propriedade em Liège"
+    ],
+    Portugal: [
+      "propriedade em Lisboa",
+      "villa Algarve",
+      "comprar apartamento no Porto"
+    ],
+    Spain: [
+      "casa em Barcelona",
+      "imóveis na Espanha",
+      "comprar propriedade na Espanha"
+    ]
+  }
 };
 
 module.exports = seoKeywords;

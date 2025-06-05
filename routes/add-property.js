@@ -45,6 +45,28 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Caretaker house',
       electricShutters: 'Electric shutters',
       outdoorLighting: 'Outdoor lighting'
+    },
+    es: {
+      propertyIn: 'en',
+      price: 'Precio',
+      pool: 'Piscina',
+      wateringSystem: 'Sistema de riego',
+      carShelter: 'Cochera',
+      parking: 'Estacionamiento',
+      caretakerHouse: 'Casa del guardián',
+      electricShutters: 'Persianas eléctricas',
+      outdoorLighting: 'Iluminación exterior'
+    },
+    pt: {
+      propertyIn: 'em',
+      price: 'Preço',
+      pool: 'Piscina',
+      wateringSystem: 'Sistema de irrigação',
+      carShelter: 'Abrigo para carro',
+      parking: 'Estacionamento',
+      caretakerHouse: 'Casa do zelador',
+      electricShutters: 'Persianas elétricas',
+      outdoorLighting: 'Iluminação externa'
     }
   };
 

@@ -39,6 +39,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .lang-en {
       background-image: url('https://flagcdn.com/gb.svg');
     }
+    .lang-es {
+      background-image: url('/images/flags/es.svg');
+    }
+    .lang-pt {
+      background-image: url('/images/flags/pt.svg');
+    }
         body {
             display: flex;
             flex-direction: column;
@@ -943,11 +949,27 @@ progress {
           <label class="d-block"><%= i18n.language_label %> <span style="color:red">*</span></label>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="language" id="lang-fr" value="fr" required>
-            <label class="form-check-label" for="lang-fr" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">FR</label>
+            <label class="form-check-label d-flex align-items-center" for="lang-fr" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">
+              <span class="lang-flag lang-fr me-1"></span>FR
+            </label>
           </div>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="language" id="lang-en" value="en" required>
-            <label class="form-check-label" for="lang-en" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">EN</label>
+            <label class="form-check-label d-flex align-items-center" for="lang-en" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">
+              <span class="lang-flag lang-en me-1"></span>EN
+            </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="language" id="lang-es" value="es" required>
+            <label class="form-check-label d-flex align-items-center" for="lang-es" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">
+              <span class="lang-flag lang-es me-1"></span>ES
+            </label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="language" id="lang-pt" value="pt" required>
+            <label class="form-check-label d-flex align-items-center" for="lang-pt" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">
+              <span class="lang-flag lang-pt me-1"></span>PT
+            </label>
           </div>
         </div>
         <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
