@@ -943,11 +943,11 @@ progress {
           <label class="d-block"><%= i18n.language_label %> <span style="color:red">*</span></label>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="language" id="lang-fr" value="fr" required>
-            <label class="form-check-label" for="lang-fr">FR</label>
+            <label class="form-check-label" for="lang-fr" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">FR</label>
           </div>
           <div class="form-check form-check-inline">
             <input class="form-check-input" type="radio" name="language" id="lang-en" value="en" required>
-            <label class="form-check-label" for="lang-en">EN</label>
+            <label class="form-check-label" for="lang-en" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">EN</label>
           </div>
         </div>
         <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
