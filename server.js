@@ -301,7 +301,8 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             city: property.city,
             country: property.country,
             url: property.url,
-currentPath: req.originalUrl 
+            currentPath: req.originalUrl,
+            PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID
         });
     } catch (error) {
         console.error('Error fetching property:', error);
