@@ -835,7 +835,12 @@ app.post('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
 
 
 app.get('/faq', (req, res) => {
-  res.render('faq', { title: 'faq' });
+  const locale = req.locale || 'fr';
+  res.render('faq', {
+    title: 'faq',
+    locale,
+    currentPath: req.originalUrl
+  });
 });
 
 app.get('/:lang/contact', (req, res) => {

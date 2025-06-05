@@ -16,14 +16,19 @@
     </head>
     <body id="top">
         <main>
-              <nav class="navbar navbar-expand-lg">
+            <% let locale = typeof locale !== 'undefined' ? locale : 'fr'; %>
+            <nav class="navbar navbar-expand-lg">
                 <div class="container">
                     <a class="navbar-brand" href="/">
                         <i class="bi-back"></i>
                         <span>UAP Immo</span>
                     </a>
                     <div class="d-lg-none ms-auto me-4">
-                        <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
+                        <% if (isAuthenticated) { %>
+                            <a href="/<%= locale %>/user" class="navbar-icon bi-person-circle smoothscroll"></a>
+                        <% } else { %>
+                            <a href="/<%= locale %>/login" class="navbar-icon bi-person smoothscroll"></a>
+                        <% } %>
                     </div>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -45,13 +50,56 @@
                             <li class="nav-item">
                                 <a class="nav-link click-scroll" href="#section_5">Contact</a>
                             </li>
+
+                            <% if (isAuthenticated) { %>
+                                <li class="nav-item d-lg-none">
+                                    <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
+                                        <i class="bi bi-person-circle"></i>
+                                        <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+                                    </a>
+                                </li>
+                                <li class="nav-item d-lg-none">
+                                    <form action="/logout" method="POST" class="w-100">
+                                        <button type="submit" class="nav-link btn btn-link text-start d-flex align-items-center gap-2 w-100" style="border: none; background: none;">
+                                            <i class="bi bi-box-arrow-right"></i>
+                                            <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+                                        </button>
+                                    </form>
+                                </li>
+                            <% } else { %>
+                                <li class="nav-item d-lg-none">
+                                    <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
+                                        <i class="bi bi-person-fill"></i>
+                                        <%= locale === 'fr' ? 'Connexion' : 'Login' %>
+                                    </a>
+                                </li>
+                            <% } %>
                         </ul>
-                        <div class="d-none d-lg-block">
-                            <a href="/login" class="navbar-icon bi-person smoothscroll"></a>
-                        </div>
+
+                        <% if (isAuthenticated) { %>
+                            <div class="d-none d-lg-flex align-items-center ms-auto">
+                                <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+                                    <i class="bi bi-person-circle"></i>
+                                    <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+                                </a>
+                                <form action="/logout" method="POST" class="d-inline">
+                                    <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+                                        <i class="bi bi-box-arrow-right"></i>
+                                        <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+                                    </button>
+                                </form>
+                            </div>
+                        <% } else { %>
+                            <div class="d-none d-lg-flex align-items-center ms-auto">
+                                <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+                                    <i class="bi bi-person-fill"></i>
+                                    <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+                                </a>
+                            </div>
+                        <% } %>
                     </div>
                 </div>
-            </nav>                    
+            </nav>
           <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
                 <div class="container">
                     <div class="row">
