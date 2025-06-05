@@ -33,7 +33,9 @@ async function generateLandingPage(property) {
       parking: 'Parking',
       caretakerHouse: 'Maison de gardien',
       electricShutters: 'Stores électriques',
-      outdoorLighting: 'Éclairage extérieur'
+      outdoorLighting: 'Éclairage extérieur',
+      yes: 'Oui',
+      no: 'Non'
     },
     en: {
       propertyIn: 'in',
@@ -44,7 +46,9 @@ async function generateLandingPage(property) {
       parking: 'Parking',
       caretakerHouse: 'Caretaker house',
       electricShutters: 'Electric shutters',
-      outdoorLighting: 'Outdoor lighting'
+      outdoorLighting: 'Outdoor lighting',
+      yes: 'Yes',
+      no: 'No'
     },
     es: {
       propertyIn: 'en',
@@ -55,7 +59,9 @@ async function generateLandingPage(property) {
       parking: 'Estacionamiento',
       caretakerHouse: 'Casa del guardián',
       electricShutters: 'Persianas eléctricas',
-      outdoorLighting: 'Iluminación exterior'
+      outdoorLighting: 'Iluminación exterior',
+      yes: 'Sí',
+      no: 'No'
     },
     pt: {
       propertyIn: 'em',
@@ -66,7 +72,9 @@ async function generateLandingPage(property) {
       parking: 'Estacionamento',
       caretakerHouse: 'Casa do zelador',
       electricShutters: 'Persianas elétricas',
-      outdoorLighting: 'Iluminação externa'
+      outdoorLighting: 'Iluminação externa',
+      yes: 'Sim',
+      no: 'Não'
     }
   };
 
@@ -132,7 +140,7 @@ async function generateLandingPage(property) {
       ${property.pool ? `<p><i class=\\"fas fa-swimming-pool\\"></i> ${t.pool}</p>` : ''}
       ${property.wateringSystem ? `<p><i class=\\"fas fa-water\\"></i> ${t.wateringSystem}</p>` : ''}
       ${property.carShelter ? `<p><i class=\\"fas fa-car\\"></i> ${t.carShelter}</p>` : ''}
-      ${property.parking ? `<p><i class=\\"fas fa-parking\\"></i> ${t.parking}</p>` : ''}
+      <p><i class=\\"fas fa-parking\\"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</p>
       ${property.caretakerHouse ? `<p><i class=\\"fas fa-house-user\\"></i> ${t.caretakerHouse}</p>` : ''}
       ${property.electricShutters ? `<p><i class=\\"fas fa-window-maximize\\"></i> ${t.electricShutters}</p>` : ''}
       ${property.outdoorLighting ? `<p><i class=\\"fas fa-lightbulb\\"></i> ${t.outdoorLighting}</p>` : ''}

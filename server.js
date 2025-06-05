@@ -1097,6 +1097,9 @@ app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
   try {
+    if (typeof req.body.parking === 'undefined') {
+      return res.status(400).send('Le champ parking est requis.');
+    }
     const property = new Property({
       rooms: req.body.rooms,
       bedrooms: req.body.bedrooms,
@@ -1418,6 +1421,8 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Maison de gardien',
       electricShutters: 'Stores électriques',
       outdoorLighting: 'Éclairage extérieur',
+      yes: 'Oui',
+      no: 'Non',
       notProvided: 'Non renseignée',
       noDescription: 'Aucune description fournie.',
       mapUnavailable: 'Carte non disponible.',
@@ -1441,6 +1446,8 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Caretaker house',
       electricShutters: 'Electric shutters',
       outdoorLighting: 'Outdoor lighting',
+      yes: 'Yes',
+      no: 'No',
       notProvided: 'Not provided',
       noDescription: 'No description provided.',
       mapUnavailable: 'Map not available.',
@@ -1464,6 +1471,8 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Casa del guardián',
       electricShutters: 'Persianas eléctricas',
       outdoorLighting: 'Iluminación exterior',
+      yes: 'Sí',
+      no: 'No',
       notProvided: 'No especificado',
       noDescription: 'No se proporcionó descripción.',
       mapUnavailable: 'Mapa no disponible.',
@@ -1487,6 +1496,8 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Casa do zelador',
       electricShutters: 'Persianas elétricas',
       outdoorLighting: 'Iluminação externa',
+      yes: 'Sim',
+      no: 'Não',
       notProvided: 'Não fornecido',
       noDescription: 'Nenhuma descrição fornecida.',
       mapUnavailable: 'Mapa indisponível.',
@@ -2174,7 +2185,7 @@ h1 {
   ${property.pool ? `<div class="info-item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
   ${property.wateringSystem ? `<div class="info-item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
   ${property.carShelter ? `<div class="info-item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
-  ${property.parking ? `<div class="info-item"><i class="fas fa-parking"></i> ${t.parking}</div>` : ''}
+  <div class="info-item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
   ${property.caretakerHouse ? `<div class="info-item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
   ${property.electricShutters ? `<div class="info-item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
   ${property.outdoorLighting ? `<div class="info-item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
