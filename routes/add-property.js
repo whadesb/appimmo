@@ -22,6 +22,33 @@ async function generateLandingPage(property) {
   const lang = property.language || 'fr';
   const city = property.city || '';
   const country = property.country || '';
+
+  const translations = {
+    fr: {
+      propertyIn: 'à',
+      price: 'Prix',
+      pool: 'Piscine',
+      wateringSystem: 'Arrosage automatique',
+      carShelter: 'Abri voiture',
+      parking: 'Parking',
+      caretakerHouse: 'Maison de gardien',
+      electricShutters: 'Stores électriques',
+      outdoorLighting: 'Éclairage extérieur'
+    },
+    en: {
+      propertyIn: 'in',
+      price: 'Price',
+      pool: 'Pool',
+      wateringSystem: 'Watering system',
+      carShelter: 'Car shelter',
+      parking: 'Parking',
+      caretakerHouse: 'Caretaker house',
+      electricShutters: 'Electric shutters',
+      outdoorLighting: 'Outdoor lighting'
+    }
+  };
+
+  const t = translations[lang] || translations.fr;
   const slug = slugify(`${property.propertyType}-${city}-${country}`, { lower: true });
   const filename = `${property._id}-${slug}.html`;
   const filePath = path.join(__dirname, '../public/landing-pages', filename);
@@ -74,20 +101,20 @@ async function generateLandingPage(property) {
     </head>
     <body>
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-      <h1>${property.propertyType} à ${city}, ${country}</h1>
+      <h1>${property.propertyType} ${t.propertyIn} ${city}, ${country}</h1>
       <p>${property.description}</p>
       <p><i class="fal fa-ruler-combined"></i> ${property.surface} m²</p>
       ${property.rooms ? `<p><i class=\\"fal fa-home\\"></i> ${property.rooms}</p>` : ''}
       ${property.bedrooms ? `<p><i class=\\"fal fa-bed\\"></i> ${property.bedrooms}</p>` : ''}
       ${property.yearBuilt ? `<p><i class=\\"fal fa-calendar-alt\\"></i> ${property.yearBuilt}</p>` : ''}
-      ${property.pool ? `<p><i class=\\"fas fa-swimming-pool\\"></i> Piscine</p>` : ''}
-      ${property.wateringSystem ? `<p><i class=\\"fas fa-water\\"></i> Arrosage automatique</p>` : ''}
-      ${property.carShelter ? `<p><i class=\\"fas fa-car\\"></i> Abri voiture</p>` : ''}
-      ${property.parking ? `<p><i class=\\"fas fa-parking\\"></i> Parking</p>` : ''}
-      ${property.caretakerHouse ? `<p><i class=\\"fas fa-house-user\\"></i> Maison de gardien</p>` : ''}
-      ${property.electricShutters ? `<p><i class=\\"fas fa-window-maximize\\"></i> Stores électriques</p>` : ''}
-      ${property.outdoorLighting ? `<p><i class=\\"fas fa-lightbulb\\"></i> Éclairage extérieur</p>` : ''}
-      <p>Prix : ${Number(property.price).toLocaleString('fr-FR')} €</p>
+      ${property.pool ? `<p><i class=\\"fas fa-swimming-pool\\"></i> ${t.pool}</p>` : ''}
+      ${property.wateringSystem ? `<p><i class=\\"fas fa-water\\"></i> ${t.wateringSystem}</p>` : ''}
+      ${property.carShelter ? `<p><i class=\\"fas fa-car\\"></i> ${t.carShelter}</p>` : ''}
+      ${property.parking ? `<p><i class=\\"fas fa-parking\\"></i> ${t.parking}</p>` : ''}
+      ${property.caretakerHouse ? `<p><i class=\\"fas fa-house-user\\"></i> ${t.caretakerHouse}</p>` : ''}
+      ${property.electricShutters ? `<p><i class=\\"fas fa-window-maximize\\"></i> ${t.electricShutters}</p>` : ''}
+      ${property.outdoorLighting ? `<p><i class=\\"fas fa-lightbulb\\"></i> ${t.outdoorLighting}</p>` : ''}
+      <p>${t.price} : ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</p>
       <img src="/uploads/${property.photos[0] || 'default.jpg'}" width="400">
     </body>
     </html>`;

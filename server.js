@@ -1400,6 +1400,57 @@ async function generateLandingPage(property) {
   const city = property.city || '';
   const country = property.country || '';
 
+  const translations = {
+    fr: {
+      adLabel: 'UAP Immo Annonce',
+      propertyHeading: 'Propriété à',
+      propertyType: 'Type de bien',
+      yearBuilt: 'Année de construction',
+      guidedTour: 'Visite guidée',
+      price: 'Prix',
+      addInfo: 'Informations complémentaires',
+      keyInfo: 'Informations clés',
+      location: 'Localisation',
+      pool: 'Piscine',
+      wateringSystem: 'Arrosage automatique',
+      carShelter: 'Abri voiture',
+      parking: 'Parking',
+      caretakerHouse: 'Maison de gardien',
+      electricShutters: 'Stores électriques',
+      outdoorLighting: 'Éclairage extérieur',
+      notProvided: 'Non renseignée',
+      noDescription: 'Aucune description fournie.',
+      mapUnavailable: 'Carte non disponible.',
+      mapError: 'Erreur lors du chargement de la carte.',
+      inProgress: 'En cours'
+    },
+    en: {
+      adLabel: 'UAP Real Estate Ad',
+      propertyHeading: 'Property in',
+      propertyType: 'Property Type',
+      yearBuilt: 'Year built',
+      guidedTour: 'Guided tour',
+      price: 'Price',
+      addInfo: 'Additional information',
+      keyInfo: 'Key information',
+      location: 'Location',
+      pool: 'Pool',
+      wateringSystem: 'Watering system',
+      carShelter: 'Car shelter',
+      parking: 'Parking',
+      caretakerHouse: 'Caretaker house',
+      electricShutters: 'Electric shutters',
+      outdoorLighting: 'Outdoor lighting',
+      notProvided: 'Not provided',
+      noDescription: 'No description provided.',
+      mapUnavailable: 'Map not available.',
+      mapError: 'Error loading the map.',
+      inProgress: 'In progress'
+    }
+  };
+
+  const t = translations[lang] || translations.fr;
+
   const slug = slugify(`${property.propertyType}-${city}-${country}`, { lower: true });
   const filename = `${property._id}-${slug}.html`;
   const filePath = path.join(__dirname, 'public/landing-pages', filename);
@@ -2013,9 +2064,9 @@ h1 {
     </div>
 
     <div class="property-info">
-      <p class="property-lorem">UAP Immo Annonce</p>
-      <h1>Propriété à<br> ${property.city}, ${property.country}</h1>
-      <h2>Type de bien: ${property.propertyType}</h2>
+      <p class="property-lorem">${t.adLabel}</p>
+      <h1>${t.propertyHeading}<br> ${property.city}, ${property.country}</h1>
+      <h2>${t.propertyType}: ${property.propertyType}</h2>
 
       <div class="property-details one-line">
   <div class="detail">
@@ -2033,28 +2084,28 @@ h1 {
 </div>
 
 
-      <div class="construction-year">Année de construction: ${property.yearBuilt || 'Non renseignée'}</div>
+      <div class="construction-year">${t.yearBuilt}: ${property.yearBuilt || t.notProvided}</div>
 
       <div class="property-description">
-        <div class="section-title">Visite guidée</div>
-        ${property.description || 'Aucune description fournie.'}
+        <div class="section-title">${t.guidedTour}</div>
+        ${property.description || t.noDescription}
       </div>
 
-      <div class="price">Prix: ${Number(property.price).toLocaleString('fr-FR')} €</div>
+      <div class="price">${t.price}: ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
     </div>
   </div>
 
   <!-- Bloc secondaire en dessous -->
  <div class="extra-info-desktop">
   <hr />
-  <h2>Informations complémentaires</h2>
+  <h2>${t.addInfo}</h2>
 
   <div class="extra-columns">
 <!-- Colonne 1 : DPE -->
 <div class="extra-col">
   <div class="info-label">DPE : ${
     property.dpe.toLowerCase() === 'en cours'
-      ? '<em>En cours</em>'
+      ? `<em>${t.inProgress}</em>`
       : `<strong>${property.dpe}</strong>`
   }</div>
   <div class="dpe-bar">
@@ -2068,24 +2119,24 @@ h1 {
 
 <!-- Colonne 2 : Informations clés -->
 <div class="extra-col">
-  <div class="info-label">Informations clés</div>
-  <div class="info-item">Prix : ${Number(property.price).toLocaleString('fr-FR')} €</div>
+  <div class="info-label">${t.keyInfo}</div>
+  <div class="info-item">${t.price} : ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
   <div class="info-item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
   <div class="info-item"><i class="fal fa-home"></i> ${property.rooms}</div>
   <div class="info-item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>
-  <div class="info-item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt || 'Non renseignée'}</div>
-  ${property.pool ? `<div class="info-item"><i class="fas fa-swimming-pool"></i> Piscine</div>` : ''}
-  ${property.wateringSystem ? `<div class="info-item"><i class="fas fa-water"></i> Arrosage automatique</div>` : ''}
-  ${property.carShelter ? `<div class="info-item"><i class="fas fa-car"></i> Abri voiture</div>` : ''}
-  ${property.parking ? `<div class="info-item"><i class="fas fa-parking"></i> Parking</div>` : ''}
-  ${property.caretakerHouse ? `<div class="info-item"><i class="fas fa-house-user"></i> Maison de gardien</div>` : ''}
-  ${property.electricShutters ? `<div class="info-item"><i class="fas fa-window-maximize"></i> Stores électriques</div>` : ''}
-  ${property.outdoorLighting ? `<div class="info-item"><i class="fas fa-lightbulb"></i> Éclairage extérieur</div>` : ''}
+  <div class="info-item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt || t.notProvided}</div>
+  ${property.pool ? `<div class="info-item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
+  ${property.wateringSystem ? `<div class="info-item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
+  ${property.carShelter ? `<div class="info-item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
+  ${property.parking ? `<div class="info-item"><i class="fas fa-parking"></i> ${t.parking}</div>` : ''}
+  ${property.caretakerHouse ? `<div class="info-item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
+  ${property.electricShutters ? `<div class="info-item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
+  ${property.outdoorLighting ? `<div class="info-item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
 </div>
 
 <!-- Colonne 3 : Localisation -->
 <div class="extra-col map-col">
-  <div class="info-label">Localisation</div>
+  <div class="info-label">${t.location}</div>
   <div id="map"></div>
 </div>
 
@@ -2120,12 +2171,12 @@ ${JSON.stringify(jsonLD)}
           L.marker([lat, lon]).addTo(map)
             .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
         } else {
-          document.getElementById('map').innerHTML = "Carte non disponible.";
+          document.getElementById('map').innerHTML = "${t.mapUnavailable}";
         }
       })
       .catch(err => {
         console.error(err);
-        document.getElementById('map').innerHTML = "Erreur lors du chargement de la carte.";
+        document.getElementById('map').innerHTML = "${t.mapError}";
       });
   });
 </script>
