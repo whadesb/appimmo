@@ -2011,12 +2011,12 @@ h1 {
     <p>${property.surface} m²</p>
   </div>
   <div class="detail">
-    <span>${'<i class="fal fa-bed"></i>'.repeat(property.bedrooms)}</span>
-    <p>${property.bedrooms} Chambre${property.bedrooms > 1 ? 's' : ''}</p>
+    <i class="fal fa-bed"></i>
+    <p>${property.bedrooms}</p>
   </div>
   <div class="detail">
-    <span>${'<i class="fal fa-home"></i>'.repeat(property.rooms)}</span>
-    <p>${property.rooms} Pièce${property.rooms > 1 ? 's' : ''}</p>
+    <i class="fal fa-home"></i>
+    <p>${property.rooms}</p>
   </div>
 </div>
 
