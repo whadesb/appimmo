@@ -1442,7 +1442,6 @@ async function generateLandingPage(property) {
       <title>${property.propertyType} à ${city}, ${country}</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
-<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
       <!-- Google Tag Manager -->
@@ -1462,7 +1461,7 @@ async function generateLandingPage(property) {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      font-family: "Lora", serif;
+      font-family: Arial, sans-serif;
     }
 
     body {
@@ -1642,7 +1641,7 @@ align-items: stretch;
   font-size: 1.2rem; /* Plus grande et pro */
   color: #2b2b2b;
   margin-bottom: 12px;
-  font-family: "Lora", serif;
+  font-family: Arial, sans-serif;
   line-height: 1.6;
 }
 
@@ -1657,7 +1656,7 @@ align-items: stretch;
   font-size: 1.1rem;
   color: #3c3c3c;
   line-height: 1.8;
-  font-family: "Lora", serif;
+  font-family: Arial, sans-serif;
 }
 .main-info-section {
   margin-top: 10px;
@@ -1782,7 +1781,7 @@ align-items: stretch;
 .extra-col .info-label {
   font-size: 1.35rem;
   font-weight: 400;
-  font-family: "Lora", serif;
+  font-family: Arial, sans-serif;
   margin-bottom: 12px;
 }
 
@@ -1791,7 +1790,7 @@ align-items: stretch;
 @media screen and (max-width: 768px) {
   html, body {
     overflow-x: hidden;
-    font-family: "Lora", serif;
+    font-family: Arial, sans-serif;
     color: #3c3c3c;
   }
 
@@ -1831,7 +1830,7 @@ h1 {
     width: 100%;
     padding: 20px;
     box-sizing: border-box;
-    font-family: "Lora", serif;
+    font-family: Arial, sans-serif;
     font-size: 1.1rem;
   }
 
@@ -1878,7 +1877,7 @@ h1 {
   .extra-info-desktop {
     display: block;
     padding: 10px 20px;
-    font-family: "Lora", serif;
+    font-family: Arial, sans-serif;
  margin-top: 0;
     text-align: left; /* aligné comme "Type de bien" */
   }
@@ -1915,8 +1914,8 @@ h1 {
   }
 
   .info-item {
-    font-size: 1.1rem;
-    margin-bottom: 6px;
+    font-size: 1.25rem;
+    margin-bottom: 10px;
   }
 
   .dpe-bar {
@@ -1975,7 +1974,7 @@ h1 {
   font-size: 1.35rem;
   font-weight: 400;
   margin-bottom: 12px;
-  font-family: "Lora", serif;
+  font-family: Arial, sans-serif;
 }
 
 .extra-col {
@@ -2048,7 +2047,11 @@ h1 {
   <div class="extra-columns">
 <!-- Colonne 1 : DPE -->
 <div class="extra-col">
-  <div class="info-label">DPE</div>
+  <div class="info-label">DPE : ${
+    property.dpe.toLowerCase() === 'en cours'
+      ? '<em>En cours</em>'
+      : `<strong>${property.dpe}</strong>`
+  }</div>
   <div class="dpe-bar">
     ${['A','B','C','D','E','F','G'].map(letter => `
       <div class="bar ${letter} ${property.dpe.toUpperCase() === letter ? 'active' : ''} ${property.dpe.toLowerCase() === 'en cours' ? 'pending' : ''}">
