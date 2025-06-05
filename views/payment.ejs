@@ -368,8 +368,12 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 paypal.Buttons({
   createOrder: function(data, actions) {
     return actions.order.create({
+      intent: 'CAPTURE',
       purchase_units: [{
-        amount: { value: '500.00' }
+        amount: {
+          currency_code: 'EUR',
+          value: '500.00'
+        }
       }]
     });
   },
