@@ -888,7 +888,7 @@ progress {
             <label for="<%= e.id %>"><%= e.label %>
               <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Présence ou non de cet équipement."></i>
             </label>
-            <select class="form-control" id="<%= e.id %>" name="<%= e.id %>">
+            <select class="form-control" id="<%= e.id %>" name="<%= e.id %>" <%= e.id === 'parking' ? 'required' : '' %>>
               <option value="false">Non</option>
               <option value="true">Oui</option>
             </select>
