@@ -272,7 +272,7 @@ align-items: stretch;
   flex-direction: column;
   justify-content: space-between;
   height: 100%;
-  gap: 15px;
+  gap: 5px;
 }
 
     .property-lorem {
@@ -325,14 +325,27 @@ align-items: stretch;
       margin-bottom: 10px;
     }
 
+    .price-row {
+      display: flex;
+      gap: 10px;
+    }
+
     .price {
       background-color: #c4b9905f;
       padding: 10px 20px;
       font-size: 1.5rem;
       font-weight: 500;
-      width: fit-content;
+      width: 100%;
       text-transform: uppercase;
       margin: 20px 0;
+      text-align: center;
+      flex: 1;
+    }
+
+    .lorem-btn {
+      width: 100%;
+      margin: 20px 0;
+      flex: 1;
     }
 
     /* Bloc Infos complémentaires */
@@ -592,6 +605,12 @@ h1 {
     margin-bottom: 10px;
   }
 
+  .price-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   .property-description {
     margin-top: 20px;
     margin-bottom: 20px;
@@ -617,6 +636,12 @@ h1 {
   width: 100%;
   box-sizing: border-box;
 }
+
+  .lorem-btn {
+    width: 100%;
+    margin: 20px 0;
+    flex: 1;
+  }
 
   .extra-info-desktop {
     display: block;
@@ -776,7 +801,10 @@ h1 {
         ${property.description || t.noDescription}
       </div>
 
-      <div class="price">${t.price}: ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
+      <div class="price-row">
+        <div class="price">${t.price}: ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
+        <button class="lorem-btn">lorem</button>
+      </div>
     </div>
   </div>
 
