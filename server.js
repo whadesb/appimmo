@@ -1568,12 +1568,14 @@ align-items: stretch;
 
     .construction-year {
       font-size: 1.1rem;
+      margin: 20px 0;
     }
 
     .property-description {
       background: #f7f7f7;
       padding: 15px;
       border: 1px solid #ddd;
+      margin: 20px 0;
     }
 
     .section-title {
@@ -1588,6 +1590,7 @@ align-items: stretch;
       font-weight: 500;
       width: fit-content;
       text-transform: uppercase;
+      margin: 20px 0;
     }
 
     /* Bloc Infos complémentaires */
@@ -1851,9 +1854,13 @@ h1 {
     line-height: 1.6;
   }
 
+  .construction-year {
+    margin: 20px 0;
+  }
+
 .price {
-  margin-top: 15px;
-  margin-bottom: 15px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   padding: 12px 15px;
   font-size: 1.4rem;
   font-weight: 600;
@@ -2054,6 +2061,7 @@ h1 {
 <div class="extra-col">
   <div class="info-label">Informations clés</div>
   <div class="info-item">Prix : ${Number(property.price).toLocaleString('fr-FR')} €</div>
+  <div class="info-item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
   <div class="info-item"><i class="fal fa-home"></i> ${property.rooms}</div>
   <div class="info-item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>
   <div class="info-item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt || 'Non renseignée'}</div>
