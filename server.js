@@ -2535,10 +2535,16 @@ app.post('/paypal/webhook', express.json(), async (req, res) => {
     if (event.event_type === 'CHECKOUT.ORDER.APPROVED') {
       const orderId = event.resource.id;
 
-      // Étape 1 : Token PayPal
+      // 👉 Ajout de cette ligne
+      const isProduction = process.env.NODE_ENV === 'production';
+      const paypalBaseUrl = isProduction
+        ? 'https://api-m.paypal.com'
+        : 'https://api-m.sandbox.paypal.com';
+
+      // Étape 1 : Authentification
       const { data: tokenData } = await axios({
         method: 'post',
-        url: 'https://api-m.sandbox.paypal.com/v1/oauth2/token',
+        url: `${paypalBaseUrl}/v1/oauth2/token`,
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         auth: {
           username: process.env.PAYPAL_CLIENT_ID,
@@ -2549,10 +2555,10 @@ app.post('/paypal/webhook', express.json(), async (req, res) => {
 
       const accessToken = tokenData.access_token;
 
-      // Étape 2 : Capture paiement
+      // Étape 2 : Capture
       const captureRes = await axios({
         method: 'post',
-        url: `https://api-m.sandbox.paypal.com/v2/checkout/orders/${orderId}/capture`,
+        url: `${paypalBaseUrl}/v2/checkout/orders/${orderId}/capture`,
         headers: {
           Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json'
