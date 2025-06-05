@@ -77,8 +77,8 @@ async function generateLandingPage(property) {
       <h1>${property.propertyType} à ${city}, ${country}</h1>
       <p>${property.description}</p>
       <p><i class="fal fa-ruler-combined"></i> ${property.surface} m²</p>
-      ${property.rooms ? `<p><span>${'<i class=\\"fal fa-home\\"></i>'.repeat(property.rooms)}</span> ${property.rooms} Pièce${property.rooms > 1 ? 's' : ''}</p>` : ''}
-      ${property.bedrooms ? `<p><span>${'<i class=\\"fal fa-bed\\"></i>'.repeat(property.bedrooms)}</span> ${property.bedrooms} Chambre${property.bedrooms > 1 ? 's' : ''}</p>` : ''}
+      ${property.rooms ? `<p><i class=\\"fal fa-home\\"></i> ${property.rooms}</p>` : ''}
+      ${property.bedrooms ? `<p><i class=\\"fal fa-bed\\"></i> ${property.bedrooms}</p>` : ''}
       ${property.yearBuilt ? `<p><i class=\\"fal fa-calendar-alt\\"></i> ${property.yearBuilt}</p>` : ''}
       ${property.pool ? `<p><i class=\\"fas fa-swimming-pool\\"></i> Piscine</p>` : ''}
       ${property.wateringSystem ? `<p><i class=\\"fas fa-water\\"></i> Arrosage automatique</p>` : ''}
