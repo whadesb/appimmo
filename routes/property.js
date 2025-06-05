@@ -809,6 +809,7 @@ router.post('/add-property', authMiddleware, upload.fields([
             country,
             dpe: dpe || 'En cours',
     description: description || '',
+            language: req.body.language || 'fr',
             userId: req.user._id,
             photos: [photo1, photo2]
         });

@@ -932,12 +932,23 @@ progress {
       </div>
 
       <!-- Étape 4 -->
-     <div class="form-step d-none" data-step="4">
+      <div class="form-step d-none" data-step="4">
         <h6 class="mb-3"><%= i18n.description_title %></h6>
         <div class="form-group">
           <label for="description"><%= i18n.description_label %> <span style="color:red">*</span></label>
           <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
           <small id="charCount">0/820 <%= i18n.characters %></small>
+        </div>
+        <div class="form-group mt-3">
+          <label class="d-block"><%= i18n.language_label %> <span style="color:red">*</span></label>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="language" id="lang-fr" value="fr" required>
+            <label class="form-check-label" for="lang-fr">FR</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="language" id="lang-en" value="en" required>
+            <label class="form-check-label" for="lang-en">EN</label>
+          </div>
         </div>
         <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
         <button type="submit" class="btn btn-dark py-2 mt-3">
