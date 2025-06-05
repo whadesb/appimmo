@@ -1442,6 +1442,7 @@ async function generateLandingPage(property) {
       <title>${property.propertyType} à ${city}, ${country}</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
       <!-- Google Tag Manager -->
@@ -1461,10 +1462,10 @@ async function generateLandingPage(property) {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: "Lora", serif;
     }
 
     body {
-      font-family: "Lora", "Source Sans Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
       background-color: #ffffff;
       color: #3c3c3c;
       line-height: 1.5;
