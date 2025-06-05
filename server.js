@@ -1541,7 +1541,7 @@ align-items: stretch;
     }
 
     h1 {
-      font-size: 2.5rem;
+      font-size: 2.3rem;
       font-weight: 400;
     }
 
@@ -1785,6 +1785,10 @@ align-items: stretch;
   margin-bottom: 12px;
 }
 
+  .info-item {
+    margin: 10px 0;
+  }
+
 
     /* Responsive mobile */
 @media screen and (max-width: 768px) {
@@ -1800,10 +1804,10 @@ align-items: stretch;
     gap: 0;
   }
 h1 {
-  font-size: 1.6rem; /* ou adapte selon ton besoin */
-  line-height: 1.3;  /* réduit l'espacement vertical */
+  font-size: 2.3rem;
+  line-height: 1.3;
   font-weight: 500;
-  margin-bottom: 15px; /* ajoute un petit espace avec ce qui suit */
+  margin-bottom: 15px;
 }
 
   .slider {
@@ -1915,7 +1919,7 @@ h1 {
 
   .info-item {
     font-size: 1.25rem;
-    margin-bottom: 10px;
+    margin: 10px 0;
   }
 
   .dpe-bar {
