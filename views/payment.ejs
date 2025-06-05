@@ -367,16 +367,17 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 <script>
 paypal.Buttons({
   createOrder: function(data, actions) {
-    return actions.order.create({
-      intent: 'CAPTURE',
-      purchase_units: [{
-        amount: {
-          currency_code: 'EUR',
-          value: '500.00'
-        }
-      }]
-    });
-  },
+  return actions.order.create({
+    intent: 'CAPTURE',
+    purchase_units: [{
+      amount: {
+        currency_code: 'EUR',
+        value: '500.00'
+      },
+      description: 'Paiement annonce immobilière UAP' // important !
+    }]
+  });
+}
   onApprove: function(data, actions) {
     const simulatedOrderID = data.orderID || 'SIMULATED12345';
     const propertyId = document.getElementById('propertyId').value;
