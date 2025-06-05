@@ -30,7 +30,7 @@ postalCode: {
   caretakerHouse: { type: Boolean, default: false },
   electricShutters: { type: Boolean, default: false },
   outdoorLighting: { type: Boolean, default: false },
-  language: { type: String, enum: ['fr', 'en'], default: 'fr' },
+  language: { type: String, enum: ['fr', 'en', 'es', 'pt'], default: 'fr' },
   dpe: {
   type: String,
   enum: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'En cours'],
