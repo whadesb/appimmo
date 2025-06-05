@@ -267,11 +267,12 @@ align-items: stretch;
 
    .property-info {
   flex: 0.8;
-  padding: 40px;
+  padding: 0 40px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%; 
+  height: 100%;
+  gap: 15px;
 }
 
     .property-lorem {
@@ -283,10 +284,11 @@ align-items: stretch;
     h1 {
       font-size: 2.3rem;
       font-weight: 400;
+      line-height: 1.15;
     }
 
     h2 {
-      font-size: 1.6rem;
+      font-size: 1.4rem;
       font-weight: 300;
     }
 
