@@ -62,6 +62,7 @@ async function generateLandingPage(property) {
       <meta name="description" content="${property.description?.slice(0, 160) || ''}">
       <meta name="keywords" content="${keywords.join(', ')}">
       <title>${property.propertyType} à ${city}, ${country}</title>
+      <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
       <script>
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -75,7 +76,17 @@ async function generateLandingPage(property) {
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h1>${property.propertyType} à ${city}, ${country}</h1>
       <p>${property.description}</p>
-      <p>Surface : ${property.surface} m²</p>
+      <p><i class="fal fa-ruler-combined"></i> ${property.surface} m²</p>
+      ${property.rooms ? `<p><span>${'<i class=\\"fal fa-home\\"></i>'.repeat(property.rooms)}</span> ${property.rooms} Pièce${property.rooms > 1 ? 's' : ''}</p>` : ''}
+      ${property.bedrooms ? `<p><span>${'<i class=\\"fal fa-bed\\"></i>'.repeat(property.bedrooms)}</span> ${property.bedrooms} Chambre${property.bedrooms > 1 ? 's' : ''}</p>` : ''}
+      ${property.yearBuilt ? `<p><i class=\\"fal fa-calendar-alt\\"></i> ${property.yearBuilt}</p>` : ''}
+      ${property.pool ? `<p><i class=\\"fas fa-swimming-pool\\"></i> Piscine</p>` : ''}
+      ${property.wateringSystem ? `<p><i class=\\"fas fa-water\\"></i> Arrosage automatique</p>` : ''}
+      ${property.carShelter ? `<p><i class=\\"fas fa-car\\"></i> Abri voiture</p>` : ''}
+      ${property.parking ? `<p><i class=\\"fas fa-parking\\"></i> Parking</p>` : ''}
+      ${property.caretakerHouse ? `<p><i class=\\"fas fa-house-user\\"></i> Maison de gardien</p>` : ''}
+      ${property.electricShutters ? `<p><i class=\\"fas fa-window-maximize\\"></i> Stores électriques</p>` : ''}
+      ${property.outdoorLighting ? `<p><i class=\\"fas fa-lightbulb\\"></i> Éclairage extérieur</p>` : ''}
       <p>Prix : ${Number(property.price).toLocaleString('fr-FR')} €</p>
       <img src="/uploads/${property.photos[0] || 'default.jpg'}" width="400">
     </body>

@@ -76,6 +76,7 @@ async function generateLandingPage(property) {
       <meta name="keywords" content="${keywords.join(', ')}">
       <title>${property.propertyType} à ${city}, ${country}</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
       <!-- Google Tag Manager -->
@@ -640,11 +641,11 @@ h1 {
     <p>${property.surface} m²</p>
   </div>
   <div class="detail">
-    <i class="fal fa-bed"></i>
+    <span>${'<i class="fal fa-bed"></i>'.repeat(property.bedrooms)}</span>
     <p>${property.bedrooms} Chambre${property.bedrooms > 1 ? 's' : ''}</p>
   </div>
   <div class="detail">
-    <i class="fal fa-home"></i>
+    <span>${'<i class="fal fa-home"></i>'.repeat(property.rooms)}</span>
     <p>${property.rooms} Pièce${property.rooms > 1 ? 's' : ''}</p>
   </div>
 </div>
@@ -683,9 +684,16 @@ h1 {
 <div class="extra-col">
   <div class="info-label">Informations clés</div>
   <div class="info-item">Prix : ${Number(property.price).toLocaleString('fr-FR')} €</div>
-  <div class="info-item">Pièces : ${property.rooms}</div>
-  <div class="info-item">Chambres : ${property.bedrooms}</div>
-  <div class="info-item">Année : ${property.yearBuilt || 'Non renseignée'}</div>
+  <div class="info-item"><i class="fal fa-home"></i> ${property.rooms}</div>
+  <div class="info-item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>
+  <div class="info-item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt || 'Non renseignée'}</div>
+  ${property.pool ? `<div class="info-item"><i class="fas fa-swimming-pool"></i> Piscine</div>` : ''}
+  ${property.wateringSystem ? `<div class="info-item"><i class="fas fa-water"></i> Arrosage automatique</div>` : ''}
+  ${property.carShelter ? `<div class="info-item"><i class="fas fa-car"></i> Abri voiture</div>` : ''}
+  ${property.parking ? `<div class="info-item"><i class="fas fa-parking"></i> Parking</div>` : ''}
+  ${property.caretakerHouse ? `<div class="info-item"><i class="fas fa-house-user"></i> Maison de gardien</div>` : ''}
+  ${property.electricShutters ? `<div class="info-item"><i class="fas fa-window-maximize"></i> Stores électriques</div>` : ''}
+  ${property.outdoorLighting ? `<div class="info-item"><i class="fas fa-lightbulb"></i> Éclairage extérieur</div>` : ''}
 </div>
 
 <!-- Colonne 3 : Localisation -->
