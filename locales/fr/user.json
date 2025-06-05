@@ -67,6 +67,7 @@
   "dpe_label": "Diagnostic de Performance Énergétique (DPE)",
   "main_photo": "Photo principale",
   "secondary_photo": "Photo secondaire",
+  "language_label": "Langue de la page",
   "description_title": "Description du bien",
   "description_label": "Description",
   "characters": "caractères",

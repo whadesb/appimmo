@@ -1116,6 +1116,7 @@ postalCode: req.body.postalCode,
       caretakerHouse: req.body.caretakerHouse === 'true',
       electricShutters: req.body.electricShutters === 'true',
       outdoorLighting: req.body.outdoorLighting === 'true',
+      language: req.body.language || 'fr',
       userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
       photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]

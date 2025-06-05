@@ -67,6 +67,7 @@
   "dpe_label": "Energy Performance Diagnosis (DPE)",
   "main_photo": "Main photo",
   "secondary_photo": "Secondary photo",
+  "language_label": "Page language",
   "description_title": "Property description",
   "description_label": "Description",
   "characters": "characters",
