@@ -1326,7 +1326,7 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
     const newOrder = new Order({
       userId: req.user._id,
       propertyId,
-      amount: parseInt(amount, 10),
+      amount: parseFloat(amount),
       status: 'pending',
       paypalOrderId: orderID,
       expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 jours
@@ -2571,6 +2571,9 @@ app.post('/paypal/webhook', express.json(), async (req, res) => {
       // Étape 3 : Infos paiement
       const email = captureData.payer.email_address;
       const amount = captureData.purchase_units[0].payments.captures[0].amount.value;
+if (parseFloat(amount) !== expectedAmount) {
+  console.warn(`❗ Montant incohérent : attendu ${expectedAmount}, reçu ${amount}`);
+}
       const currency = captureData.purchase_units[0].payments.captures[0].amount.currency_code;
       const transactionId = captureData.purchase_units[0].payments.captures[0].id;
 
