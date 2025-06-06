@@ -236,14 +236,15 @@ align-items: stretch;
 }
 
     
-.slider {
-  flex: 2;
-  overflow: hidden;
-  position: relative;
-  height: auto; 
-  display: flex;
-  flex-direction: column;
-}
+  .slider {
+    flex: 1;
+    width: 60%;
+    overflow: hidden;
+    position: relative;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+  }
 
     .slides {
       display: flex;
@@ -270,7 +271,8 @@ align-items: stretch;
     }
 
    .property-info {
-  flex: 0.8;
+  flex: 1;
+  width: 40%;
   padding: 0 40px;
   display: flex;
   flex-direction: column;
