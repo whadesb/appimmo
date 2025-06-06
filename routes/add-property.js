@@ -34,6 +34,7 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Maison de gardien',
       electricShutters: 'Stores électriques',
       outdoorLighting: 'Éclairage extérieur',
+      visit: 'Visiter',
       yes: 'Oui',
       no: 'Non'
     },
@@ -47,6 +48,7 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Caretaker house',
       electricShutters: 'Electric shutters',
       outdoorLighting: 'Outdoor lighting',
+      visit: 'Visit',
       yes: 'Yes',
       no: 'No'
     },
@@ -60,6 +62,7 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Casa del guardián',
       electricShutters: 'Persianas eléctricas',
       outdoorLighting: 'Iluminación exterior',
+      visit: 'Visitar',
       yes: 'Sí',
       no: 'No'
     },
@@ -73,6 +76,7 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Casa do zelador',
       electricShutters: 'Persianas elétricas',
       outdoorLighting: 'Iluminação externa',
+      visit: 'Visitar',
       yes: 'Sim',
       no: 'Não'
     }
@@ -145,6 +149,12 @@ async function generateLandingPage(property) {
       ${property.electricShutters ? `<p><i class=\\"fas fa-window-maximize\\"></i> ${t.electricShutters}</p>` : ''}
       ${property.outdoorLighting ? `<p><i class=\\"fas fa-lightbulb\\"></i> ${t.outdoorLighting}</p>` : ''}
       <p>${t.price} : ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</p>
+      <button id="visitBtn">${t.visit}</button>
+      <script>
+        document.getElementById('visitBtn').addEventListener('click', function() {
+          alert('${property.contactFirstName || ''} ${property.contactLastName || ''} - ${property.contactPhone || ''}');
+        });
+      </script>
       <img src="/uploads/${property.photos[0] || 'default.jpg'}" width="400">
     </body>
     </html>`;
@@ -203,6 +213,9 @@ postalCode,
       city,
       propertyType,
       description,
+      contactFirstName: req.body.contactFirstName,
+      contactLastName: req.body.contactLastName,
+      contactPhone: req.body.contactPhone,
       language: req.body.language || 'fr',
       userId,
       photos: [photo1, photo2]

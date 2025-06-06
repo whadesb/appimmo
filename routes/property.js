@@ -52,6 +52,7 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Maison de gardien',
       electricShutters: 'Stores électriques',
       outdoorLighting: 'Éclairage extérieur',
+      visit: 'Visiter',
       yes: 'Oui',
       no: 'Non',
       notProvided: 'Non renseignée',
@@ -77,6 +78,7 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Caretaker house',
       electricShutters: 'Electric shutters',
       outdoorLighting: 'Outdoor lighting',
+      visit: 'Visit',
       yes: 'Yes',
       no: 'No',
       notProvided: 'Not provided',
@@ -102,6 +104,7 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Casa del guardián',
       electricShutters: 'Persianas eléctricas',
       outdoorLighting: 'Iluminación exterior',
+      visit: 'Visitar',
       yes: 'Sí',
       no: 'No',
       notProvided: 'No especificado',
@@ -127,6 +130,7 @@ async function generateLandingPage(property) {
       caretakerHouse: 'Casa do zelador',
       electricShutters: 'Persianas elétricas',
       outdoorLighting: 'Iluminação externa',
+      visit: 'Visitar',
       yes: 'Sim',
       no: 'Não',
       notProvided: 'Não fornecido',
@@ -342,10 +346,39 @@ align-items: stretch;
       flex: 1;
     }
 
-    .lorem-btn {
+    .visit-btn {
       width: 100%;
       margin: 20px 0;
       flex: 1;
+      background-color: #C4B990;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    .visit-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      align-items: center;
+      justify-content: center;
+    }
+    .visit-modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 4px;
+      text-align: center;
+      position: relative;
+    }
+    .visit-modal .close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      cursor: pointer;
     }
 
     /* Bloc Infos complémentaires */
@@ -637,10 +670,15 @@ h1 {
   box-sizing: border-box;
 }
 
-  .lorem-btn {
+  .visit-btn {
     width: 100%;
     margin: 20px 0;
     flex: 1;
+    background-color: #C4B990;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
   }
 
   .extra-info-desktop {
@@ -803,7 +841,14 @@ h1 {
 
       <div class="price-row">
         <div class="price">${t.price}: ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
-        <button class="lorem-btn">lorem</button>
+        <button class="visit-btn" id="visitBtn">${t.visit}</button>
+        <div id="visitModal" class="visit-modal">
+          <div class="visit-modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <p>${property.contactFirstName || ''} ${property.contactLastName || ''}</p>
+            <p>${property.contactPhone || ''}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -891,6 +936,23 @@ ${JSON.stringify(jsonLD)}
         console.error(err);
         document.getElementById('map').innerHTML = "${t.mapError}";
       });
+
+    const visitBtn = document.getElementById('visitBtn');
+    const visitModal = document.getElementById('visitModal');
+    const closeModal = document.getElementById('closeModal');
+    if (visitBtn && visitModal && closeModal) {
+      visitBtn.addEventListener('click', () => {
+        visitModal.style.display = 'flex';
+      });
+      closeModal.addEventListener('click', () => {
+        visitModal.style.display = 'none';
+      });
+      visitModal.addEventListener('click', (e) => {
+        if (e.target === visitModal) {
+          visitModal.style.display = 'none';
+        }
+      });
+    }
   });
 </script>
  </html>

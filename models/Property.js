@@ -30,6 +30,9 @@ postalCode: {
   caretakerHouse: { type: Boolean, default: false },
   electricShutters: { type: Boolean, default: false },
   outdoorLighting: { type: Boolean, default: false },
+  contactFirstName: { type: String },
+  contactLastName: { type: String },
+  contactPhone: { type: String },
   language: { type: String, enum: ['fr', 'en', 'es', 'pt'], default: 'fr' },
   dpe: {
   type: String,
