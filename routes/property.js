@@ -286,13 +286,13 @@ align-items: stretch;
     }
 
     h1 {
-      font-size: 2.3rem;
+      font-size: 1.8rem;
       font-weight: 400;
       line-height: 1.15;
     }
 
     h2 {
-      font-size: 1.4rem;
+      font-size: 1.2rem;
       font-weight: 300;
     }
 
@@ -306,6 +306,12 @@ align-items: stretch;
       display: flex;
       align-items: center;
       gap: 8px;
+      margin: 8px 0;
+    }
+
+    .detail i,
+    .detail p {
+      font-size: 14px;
     }
 
     .detail i {
@@ -335,7 +341,7 @@ align-items: stretch;
     }
 
     .price {
-      background-color: #c4b9905f;
+      background-color: #f7f7f7;
       padding: 10px 20px;
       font-size: 1.5rem;
       font-weight: 500;
@@ -611,7 +617,7 @@ align-items: stretch;
     animation: none;
   }
 h1 {
-  font-size: 2.3rem;
+  font-size: 1.8rem;
   line-height: 1.3;
   font-weight: 500;
   margin-bottom: 15px;
@@ -629,7 +635,11 @@ h1 {
   .construction-year,
   .property-details,
   .detail p {
-    font-size: 1.1rem;
+    font-size: 14px;
+  }
+
+  .detail i {
+    font-size: 14px;
   }
 
   .section-title {
@@ -661,7 +671,7 @@ h1 {
   padding: 12px 15px;
   font-size: 1.4rem;
   font-weight: 600;
-  background-color: #c4b9905f;
+  background-color: #f7f7f7;
   text-transform: uppercase;
   border-radius: 4px;
   display: block;
@@ -840,7 +850,7 @@ h1 {
       </div>
 
       <div class="price-row">
-        <div class="price">${t.price}: ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
+        <div class="price">${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
         <button class="visit-btn" id="visitBtn">${t.visit}</button>
         <div id="visitModal" class="visit-modal">
           <div class="visit-modal-content">
