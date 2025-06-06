@@ -148,8 +148,10 @@ async function generateLandingPage(property) {
       ${property.caretakerHouse ? `<p><i class=\\"fas fa-house-user\\"></i> ${t.caretakerHouse}</p>` : ''}
       ${property.electricShutters ? `<p><i class=\\"fas fa-window-maximize\\"></i> ${t.electricShutters}</p>` : ''}
       ${property.outdoorLighting ? `<p><i class=\\"fas fa-lightbulb\\"></i> ${t.outdoorLighting}</p>` : ''}
-      <p>${t.price} : ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</p>
-      <button id="visitBtn">${t.visit}</button>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <p style="margin:0;">${t.price} : ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</p>
+        <button id="visitBtn">${t.visit}</button>
+      </div>
       <script>
         document.getElementById('visitBtn').addEventListener('click', function() {
           alert('${property.contactFirstName || ''} ${property.contactLastName || ''} - ${property.contactPhone || ''}');
