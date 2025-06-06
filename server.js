@@ -1664,6 +1664,7 @@ align-items: stretch;
       font-size: 1.8rem;
       font-weight: 400;
       line-height: 1.15;
+      margin-bottom: 15px;
     }
 
     h2 {
@@ -1703,10 +1704,12 @@ align-items: stretch;
       padding: 15px;
       border: 1px solid #ddd;
       margin: 20px 0;
+      font-size: 14px;
+      overflow-wrap: break-word;
     }
 
     .section-title {
-      font-size: 1.4rem;
+      font-size: 1.1rem;
       margin-bottom: 10px;
     }
 
@@ -1980,7 +1983,7 @@ h1 {
   }
 
   .section-title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
     margin-bottom: 10px;
   }
@@ -1988,8 +1991,9 @@ h1 {
   .property-description {
     margin-top: 20px;
     margin-bottom: 20px;
-    font-size: 1.2rem;
+    font-size: 14px;
     line-height: 1.6;
+    overflow-wrap: break-word;
   }
 
   .construction-year {
@@ -2133,10 +2137,21 @@ h1 {
       border: none;
       color: #000;
       font-weight: 600;
-      padding: 12px 20px;
+      padding: 12px 20px 16px;
       cursor: pointer;
       font-size: 1.2rem;
       font-family: sans-serif;
+      position: relative;
+    }
+
+    .visit-btn::after {
+      content: '';
+      position: absolute;
+      bottom: 4px;
+      left: 12.5%;
+      width: 75%;
+      height: 2px;
+      background-color: currentColor;
     }
     .visit-modal {
       display: none;
@@ -2151,19 +2166,24 @@ h1 {
     }
     .visit-modal-content {
       background: #fff;
-      padding: 20px;
+      padding: 30px;
       border-radius: 8px;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 15px;
+      min-width: 320px;
     }
-    .copy-buttons {
+
+    .contact-item {
       display: flex;
-      gap: 10px;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
     }
-    .copy-buttons button {
+
+    .contact-item button {
       padding: 6px 12px;
       border: none;
       background: #eee;
@@ -2231,9 +2251,12 @@ h1 {
       <div id="visitModal" class="visit-modal">
         <div class="visit-modal-content">
           <span id="closeModal" class="close">&times;</span>
-          <p><span id="contactName">${property.contactFirstName || ''} ${property.contactLastName || ''}</span> - <span id="contactPhone">${property.contactPhone || ''}</span></p>
-          <div class="copy-buttons">
+          <div class="contact-item">
+            <span id="contactPhone">${property.contactPhone || ''}</span>
             <button id="copyPhoneBtn">Copier le téléphone</button>
+          </div>
+          <div class="contact-item">
+            <span id="contactName">${property.contactFirstName || ''} ${property.contactLastName || ''}</span>
             <button id="copyNameBtn">Copier le nom</button>
           </div>
         </div>
