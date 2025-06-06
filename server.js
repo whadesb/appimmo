@@ -1648,8 +1648,10 @@ align-items: stretch;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: 100%;
-  gap: 15px;
+  /* Removed fixed height to avoid overflowing */
+  /* height: 100%; */
+  /* Eliminated gap to keep elements compact */
+  /* gap: 15px; */
 }
 
     .property-lorem {
@@ -2121,11 +2123,13 @@ h1 {
       width: 100%;
       margin: 20px 0;
       flex: 1;
-      background-color: #C4B990;
+      background-color: #8f97c4;
       color: #fff;
       border: none;
-      padding: 10px 20px;
+      padding: 12px 20px;
       cursor: pointer;
+      font-size: 1.2rem;
+      font-family: sans-serif;
     }
     .visit-modal {
       display: none;
