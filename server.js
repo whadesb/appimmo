@@ -1702,14 +1702,21 @@ align-items: stretch;
       margin-bottom: 10px;
     }
 
+    .price-row {
+      display: flex;
+      gap: 10px;
+    }
+
     .price {
       background-color: #c4b9905f;
       padding: 10px 20px;
       font-size: 1.5rem;
       font-weight: 500;
-      width: fit-content;
+      width: 100%;
       text-transform: uppercase;
       margin: 20px 0;
+      text-align: center;
+      flex: 1;
     }
 
     /* Bloc Infos complémentaires */
@@ -2111,12 +2118,14 @@ h1 {
 }
 
     .visit-btn {
+      width: 100%;
+      margin: 20px 0;
+      flex: 1;
       background-color: #C4B990;
       color: #fff;
       border: none;
       padding: 10px 20px;
       cursor: pointer;
-      margin-top: 10px;
     }
     .visit-modal {
       display: none;
@@ -2190,8 +2199,10 @@ h1 {
         ${property.description || t.noDescription}
       </div>
 
-      <div class="price">${t.price}: ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
-      <button class="visit-btn" id="visitBtn">${t.visit}</button>
+      <div class="price-row">
+        <div class="price">${t.price}: ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
+        <button class="visit-btn" id="visitBtn">${t.visit}</button>
+      </div>
       <div id="visitModal" class="visit-modal">
         <div class="visit-modal-content">
           <span id="closeModal" class="close">&times;</span>
