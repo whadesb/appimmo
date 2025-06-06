@@ -2129,9 +2129,10 @@ h1 {
       width: 100%;
       margin: 20px 0;
       flex: 1;
-      background-color: #8f97c4;
-      color: #fff;
+      background: none;
       border: none;
+      color: #000;
+      font-weight: 600;
       padding: 12px 20px;
       cursor: pointer;
       font-size: 1.2rem;
@@ -2151,8 +2152,22 @@ h1 {
     .visit-modal-content {
       background: #fff;
       padding: 20px;
-      border-radius: 4px;
+      border-radius: 8px;
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+    .copy-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .copy-buttons button {
+      padding: 6px 12px;
+      border: none;
+      background: #eee;
+      cursor: pointer;
     }
     .visit-modal .close {
       position: absolute;
@@ -2216,8 +2231,11 @@ h1 {
       <div id="visitModal" class="visit-modal">
         <div class="visit-modal-content">
           <span id="closeModal" class="close">&times;</span>
-          <p>${property.contactFirstName || ''} ${property.contactLastName || ''}</p>
-          <p>${property.contactPhone || ''}</p>
+          <p><span id="contactName">${property.contactFirstName || ''} ${property.contactLastName || ''}</span> - <span id="contactPhone">${property.contactPhone || ''}</span></p>
+          <div class="copy-buttons">
+            <button id="copyPhoneBtn">Copier le téléphone</button>
+            <button id="copyNameBtn">Copier le nom</button>
+          </div>
         </div>
       </div>
     </div>
@@ -2309,6 +2327,10 @@ ${JSON.stringify(jsonLD)}
     const visitBtn = document.getElementById('visitBtn');
     const visitModal = document.getElementById('visitModal');
     const closeModal = document.getElementById('closeModal');
+    const copyPhoneBtn = document.getElementById('copyPhoneBtn');
+    const copyNameBtn = document.getElementById('copyNameBtn');
+    const contactPhone = document.getElementById('contactPhone');
+    const contactName = document.getElementById('contactName');
 
     if (visitBtn && visitModal && closeModal) {
       visitBtn.addEventListener('click', () => {
@@ -2321,6 +2343,18 @@ ${JSON.stringify(jsonLD)}
         if (e.target === visitModal) {
           visitModal.style.display = 'none';
         }
+      });
+    }
+
+    if (copyPhoneBtn && contactPhone) {
+      copyPhoneBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(contactPhone.textContent.trim());
+      });
+    }
+
+    if (copyNameBtn && contactName) {
+      copyNameBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(contactName.textContent.trim());
       });
     }
   });
