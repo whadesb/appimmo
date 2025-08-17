@@ -804,6 +804,36 @@ h1 {
 }
 
 
+    .photo-carousel {
+      position: relative;
+      width: 100%;
+      margin: 20px auto;
+      overflow: hidden;
+    }
+    .photo-carousel .carousel-track {
+      display: flex;
+      transition: transform 0.3s ease-in-out;
+    }
+    .photo-carousel img {
+      width: 25%;
+      object-fit: cover;
+    }
+    .photo-carousel .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .photo-carousel .carousel-btn.prev { left: 0; }
+    .photo-carousel .carousel-btn.next { right: 0; }
+    @media (max-width: 768px) {
+      .photo-carousel img { width: 50%; }
+    }
+
     }
   </style>
 </head>
@@ -862,6 +892,16 @@ h1 {
       </div>
     </div>
   </div>
+
+  ${property.photos.slice(2).length > 0 ? `
+  <div class="photo-carousel">
+    <button class="carousel-btn prev">&#10094;</button>
+    <div class="carousel-track">
+      ${property.photos.slice(2,10).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
+    </div>
+    <button class="carousel-btn next">&#10095;</button>
+  </div>
+  ` : ''}
 
   <!-- Bloc secondaire en dessous -->
  <div class="extra-info-desktop">
@@ -963,9 +1003,34 @@ ${JSON.stringify(jsonLD)}
         }
       });
     }
+
+    const track = document.querySelector('.carousel-track');
+    if (track) {
+      const prev = document.querySelector('.carousel-btn.prev');
+      const next = document.querySelector('.carousel-btn.next');
+      let index = 0;
+      function updateCarousel() {
+        const imgWidth = track.querySelector('img').clientWidth;
+        track.style.transform = `translateX(-${index * imgWidth}px)`;
+      }
+      next.addEventListener('click', () => {
+        const visible = window.innerWidth <= 768 ? 2 : 4;
+        if (index < track.children.length - visible) {
+          index++;
+          updateCarousel();
+        }
+      });
+      prev.addEventListener('click', () => {
+        if (index > 0) {
+          index--;
+          updateCarousel();
+        }
+      });
+      window.addEventListener('resize', updateCarousel);
+    }
   });
 </script>
- </html>
+</html>
   `;
 
 
@@ -980,12 +1045,14 @@ ${JSON.stringify(jsonLD)}
 // Route pour ajouter une nouvelle propriété
 router.post('/add-property', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
-    { name: 'photo2', maxCount: 1 }
+    { name: 'photo2', maxCount: 1 },
+    { name: 'extraPhotos', maxCount: 8 }
 ]), async (req, res) => {
     const { rooms, surface, price, city, country, dpe, description } = req.body;
 
     let photo1 = null;
     let photo2 = null;
+    let extraPhotos = [];
 
     if (req.files.photo1) {
         const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
@@ -1007,6 +1074,18 @@ router.post('/add-property', authMiddleware, upload.fields([
         fs.unlinkSync(req.files.photo2[0].path);
     }
 
+    if (req.files.extraPhotos) {
+        for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
+            const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
+            await sharp(file.path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(extraPath);
+            extraPhotos.push(path.basename(extraPath));
+            fs.unlinkSync(file.path);
+        }
+    }
+
     try {
         const property = new Property({
             rooms,
@@ -1018,7 +1097,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     description: description || '',
             language: req.body.language || 'fr',
             userId: req.user._id,
-            photos: [photo1, photo2]
+            photos: [photo1, photo2, ...extraPhotos]
         });
 
         await property.save();
@@ -1038,7 +1117,8 @@ router.post('/add-property', authMiddleware, upload.fields([
 // Route pour mettre à jour une propriété existante
 router.post('/update-property/:id', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
-    { name: 'photo2', maxCount: 1 }
+    { name: 'photo2', maxCount: 1 },
+    { name: 'extraPhotos', maxCount: 8 }
 ]), async (req, res) => {
     try {
         const property = await Property.findById(req.params.id);
@@ -1073,6 +1153,22 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
                 .toFile(photo2Path);
             property.photos[1] = path.basename(photo2Path);
             fs.unlinkSync(req.files.photo2[0].path);
+        }
+
+        let extraPhotos = [];
+        if (req.files.extraPhotos) {
+            for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
+                const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
+                await sharp(file.path)
+                    .resize(800)
+                    .jpeg({ quality: 80 })
+                    .toFile(extraPath);
+                extraPhotos.push(path.basename(extraPath));
+                fs.unlinkSync(file.path);
+            }
+        }
+        if (extraPhotos.length) {
+            property.photos = property.photos.slice(0,2).concat(extraPhotos);
         }
 
         await property.save();

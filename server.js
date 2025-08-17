@@ -1095,12 +1095,18 @@ app.post('/:locale/2fa', async (req, res) => {
 
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
-  { name: 'photo2', maxCount: 1 }
+  { name: 'photo2', maxCount: 1 },
+  { name: 'extraPhotos', maxCount: 8 }
 ]), async (req, res) => {
   try {
     if (typeof req.body.parking === 'undefined') {
       return res.status(400).send('Le champ parking est requis.');
     }
+    const photos = [req.files.photo1[0].filename, req.files.photo2[0].filename];
+    if (req.files.extraPhotos) {
+      req.files.extraPhotos.slice(0, 8).forEach(f => photos.push(f.filename));
+    }
+
     const property = new Property({
       rooms: req.body.rooms,
       bedrooms: req.body.bedrooms,
@@ -1126,7 +1132,7 @@ postalCode: req.body.postalCode,
       language: req.body.language || 'fr',
       userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
-      photos: [req.files.photo1[0].filename, req.files.photo2[0].filename]
+      photos
     });
 
     await property.save();
@@ -2196,6 +2202,36 @@ h1 {
       cursor: pointer;
     }
 
+    .photo-carousel {
+      position: relative;
+      width: 100%;
+      margin: 20px auto;
+      overflow: hidden;
+    }
+    .photo-carousel .carousel-track {
+      display: flex;
+      transition: transform 0.3s ease-in-out;
+    }
+    .photo-carousel img {
+      width: 25%;
+      object-fit: cover;
+    }
+    .photo-carousel .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .photo-carousel .carousel-btn.prev { left: 0; }
+    .photo-carousel .carousel-btn.next { right: 0; }
+    @media (max-width: 768px) {
+      .photo-carousel img { width: 50%; }
+    }
+
 
     }
   </style>
@@ -2263,6 +2299,16 @@ h1 {
       </div>
     </div>
   </div>
+
+  ${property.photos.slice(2).length > 0 ? `
+  <div class="photo-carousel">
+    <button class="carousel-btn prev">&#10094;</button>
+    <div class="carousel-track">
+      ${property.photos.slice(2,10).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
+    </div>
+    <button class="carousel-btn next">&#10095;</button>
+  </div>
+  ` : ''}
 
   <!-- Bloc secondaire en dessous -->
  <div class="extra-info-desktop">
@@ -2380,9 +2426,34 @@ ${JSON.stringify(jsonLD)}
         navigator.clipboard.writeText(contactName.textContent.trim());
       });
     }
+
+    const track = document.querySelector('.carousel-track');
+    if (track) {
+      const prev = document.querySelector('.carousel-btn.prev');
+      const next = document.querySelector('.carousel-btn.next');
+      let index = 0;
+      function updateCarousel() {
+        const imgWidth = track.querySelector('img').clientWidth;
+        track.style.transform = `translateX(-${index * imgWidth}px)`;
+      }
+      next.addEventListener('click', () => {
+        const visible = window.innerWidth <= 768 ? 2 : 4;
+        if (index < track.children.length - visible) {
+          index++;
+          updateCarousel();
+        }
+      });
+      prev.addEventListener('click', () => {
+        if (index > 0) {
+          index--;
+          updateCarousel();
+        }
+      });
+      window.addEventListener('resize', updateCarousel);
+    }
   });
 </script>
- </html>
+</html>
   `;
 
   fs.writeFileSync(filePath, template);
