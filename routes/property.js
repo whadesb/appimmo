@@ -816,7 +816,9 @@ h1 {
     }
     .photo-carousel img {
       width: 25%;
+      height: 80px;
       object-fit: cover;
+      flex: 0 0 auto;
     }
     .photo-carousel .carousel-btn {
       position: absolute;
@@ -833,7 +835,37 @@ h1 {
     @media (max-width: 768px) {
       .photo-carousel img { width: 50%; }
     }
-
+    .mini-carousel {
+      position: relative;
+      width: 100%;
+      margin: 10px auto;
+      overflow: hidden;
+    }
+    .mini-carousel .mini-track {
+      display: flex;
+      transition: transform 0.3s ease-in-out;
+      justify-content: center;
+    }
+    .mini-carousel img {
+      width: 20%;
+      height: 60px;
+      object-fit: cover;
+      flex: 0 0 auto;
+    }
+    .mini-carousel .mini-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .mini-carousel .mini-btn.prev { left: 0; }
+    .mini-carousel .mini-btn.next { right: 0; }
+    @media (max-width: 768px) {
+      .mini-carousel img { width: 33.33%; }
     }
   </style>
 </head>
@@ -900,6 +932,16 @@ h1 {
       ${property.photos.slice(2,10).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
     </div>
     <button class="carousel-btn next">&#10095;</button>
+  </div>
+  ` : ''}
+
+  ${property.photos.slice(10).length > 0 ? `
+  <div class="mini-carousel">
+    <button class="mini-btn prev">&#10094;</button>
+    <div class="mini-track">
+      ${property.photos.slice(10,13).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
+    </div>
+    <button class="mini-btn next">&#10095;</button>
   </div>
   ` : ''}
 
@@ -1016,17 +1058,52 @@ ${JSON.stringify(jsonLD)}
       next.addEventListener('click', () => {
         const visible = window.innerWidth <= 768 ? 2 : 4;
         if (index < track.children.length - visible) {
-          index++;
+          index += visible;
+          if (index > track.children.length - visible) {
+            index = track.children.length - visible;
+          }
           updateCarousel();
         }
       });
       prev.addEventListener('click', () => {
+        const visible = window.innerWidth <= 768 ? 2 : 4;
         if (index > 0) {
-          index--;
+          index -= visible;
+          if (index < 0) index = 0;
           updateCarousel();
         }
       });
       window.addEventListener('resize', updateCarousel);
+    }
+
+    const miniTrack = document.querySelector('.mini-track');
+    if (miniTrack) {
+      const prevMini = document.querySelector('.mini-btn.prev');
+      const nextMini = document.querySelector('.mini-btn.next');
+      let miniIndex = 0;
+      function updateMini() {
+        const imgWidth = miniTrack.querySelector('img').clientWidth;
+        miniTrack.style.transform = 'translateX(-' + miniIndex * imgWidth + 'px)';
+      }
+      nextMini.addEventListener('click', () => {
+        const visibleMini = window.innerWidth <= 768 ? 1 : 3;
+        if (miniIndex < miniTrack.children.length - visibleMini) {
+          miniIndex += visibleMini;
+          if (miniIndex > miniTrack.children.length - visibleMini) {
+            miniIndex = miniTrack.children.length - visibleMini;
+          }
+          updateMini();
+        }
+      });
+      prevMini.addEventListener('click', () => {
+        const visibleMini = window.innerWidth <= 768 ? 1 : 3;
+        if (miniIndex > 0) {
+          miniIndex -= visibleMini;
+          if (miniIndex < 0) miniIndex = 0;
+          updateMini();
+        }
+      });
+      window.addEventListener('resize', updateMini);
     }
   });
 </script>
@@ -1046,13 +1123,15 @@ ${JSON.stringify(jsonLD)}
 router.post('/add-property', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 },
-    { name: 'extraPhotos', maxCount: 8 }
+    { name: 'extraPhotos', maxCount: 8 },
+    { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
     const { rooms, surface, price, city, country, dpe, description } = req.body;
 
     let photo1 = null;
     let photo2 = null;
     let extraPhotos = [];
+    let miniPhotos = [];
 
     if (req.files.photo1) {
         const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
@@ -1086,6 +1165,18 @@ router.post('/add-property', authMiddleware, upload.fields([
         }
     }
 
+    if (req.files.miniPhotos) {
+        for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
+            const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
+            await sharp(file.path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(miniPath);
+            miniPhotos.push(path.basename(miniPath));
+            fs.unlinkSync(file.path);
+        }
+    }
+
     try {
         const property = new Property({
             rooms,
@@ -1097,7 +1188,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     description: description || '',
             language: req.body.language || 'fr',
             userId: req.user._id,
-            photos: [photo1, photo2, ...extraPhotos]
+            photos: [photo1, photo2, ...extraPhotos, ...miniPhotos]
         });
 
         await property.save();
@@ -1118,7 +1209,8 @@ router.post('/add-property', authMiddleware, upload.fields([
 router.post('/update-property/:id', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 },
-    { name: 'extraPhotos', maxCount: 8 }
+    { name: 'extraPhotos', maxCount: 8 },
+    { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
     try {
         const property = await Property.findById(req.params.id);
@@ -1155,8 +1247,9 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
             fs.unlinkSync(req.files.photo2[0].path);
         }
 
-        let extraPhotos = [];
+        let extraPhotos = property.photos.slice(2,10);
         if (req.files.extraPhotos) {
+            extraPhotos = [];
             for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
                 const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
                 await sharp(file.path)
@@ -1167,9 +1260,22 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
                 fs.unlinkSync(file.path);
             }
         }
-        if (extraPhotos.length) {
-            property.photos = property.photos.slice(0,2).concat(extraPhotos);
+
+        let miniPhotos = property.photos.slice(10,13);
+        if (req.files.miniPhotos) {
+            miniPhotos = [];
+            for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
+                const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
+                await sharp(file.path)
+                    .resize(800)
+                    .jpeg({ quality: 80 })
+                    .toFile(miniPath);
+                miniPhotos.push(path.basename(miniPath));
+                fs.unlinkSync(file.path);
+            }
         }
+
+        property.photos = property.photos.slice(0,2).concat(extraPhotos, miniPhotos);
 
         await property.save();
 
