@@ -154,6 +154,16 @@ async function generateLandingPage(property) {
   const keywordsList = seoKeywords[lang]?.[country] || [];
   const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
 
+  const getEmbedUrl = url => {
+    const match = url?.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/);
+    if (match && match[1]) {
+      const id = match[1];
+      return `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}&mute=1&controls=0&showinfo=0`;
+    }
+    return '';
+  };
+  const embedUrl = getEmbedUrl(property.videoUrl);
+
   const jsonLD = {
     "@context": "https://schema.org",
     "@type": "Residence",
@@ -803,6 +813,7 @@ h1 {
   align-items: flex-start;
 }
 
+
     .photo-carousel {
       position: relative;
       max-width: 1400px;
@@ -833,6 +844,7 @@ h1 {
       padding: 5px 10px;
       cursor: pointer;
     }
+
     .photo-carousel .carousel-btn.prev { left: 0; }
     .photo-carousel .carousel-btn.next { right: 0; }
     @media (max-width: 768px) {
@@ -849,6 +861,7 @@ h1 {
       transition: transform 0.3s ease-in-out;
       justify-content: center;
     }
+
     .mini-carousel img {
       width: 20%;
       height: 60px;
@@ -890,14 +903,44 @@ h1 {
       padding: 5px 10px;
       cursor: pointer;
     }
+
     .mini-carousel .mini-btn.prev { left: 0; }
     .mini-carousel .mini-btn.next { right: 0; }
     @media (max-width: 768px) {
       .mini-carousel img { width: 33.33%; }
     }
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .video-background iframe {
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
+  ${embedUrl ? `
+  <div class="video-background">
+    <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </div>
+  <div class="video-overlay"></div>
+  ` : ''}
 
   <!-- Google Tag Manager (noscript) -->
   <noscript>
@@ -962,7 +1005,6 @@ h1 {
     <button class="carousel-btn next">&#10095;</button>
   </div>
   ` : ''}
-
 
   ${property.photos.slice(10).length > 0 ? `
   <div class="mini-carousel">
@@ -1109,6 +1151,7 @@ ${JSON.stringify(jsonLD)}
         }
       });
 
+
       window.addEventListener('resize', updateCarousel);
 
       const fullscreenOverlay = document.getElementById('fullscreenOverlay');
@@ -1129,6 +1172,7 @@ ${JSON.stringify(jsonLD)}
         }
       });
     }
+
 
 
     const miniTrack = document.querySelector('.mini-track');
@@ -1181,7 +1225,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     { name: 'extraPhotos', maxCount: 8 },
     { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
-    const { rooms, surface, price, city, country, dpe, description } = req.body;
+    const { rooms, surface, price, city, country, dpe, description, videoUrl } = req.body;
 
     let photo1 = null;
     let photo2 = null;
@@ -1243,6 +1287,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     description: description || '',
             language: req.body.language || 'fr',
             userId: req.user._id,
+            videoUrl,
             photos: [photo1, photo2, ...extraPhotos, ...miniPhotos]
         });
 
@@ -1274,13 +1319,14 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
             return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
         }
 
-        const { rooms, surface, price, city, country, dpe } = req.body;
+        const { rooms, surface, price, city, country, dpe, videoUrl } = req.body;
 
         property.rooms = rooms;
         property.surface = surface;
         property.price = price;
         property.city = city;
         property.country = country;
+        property.videoUrl = videoUrl;
 
         if (req.files.photo1) {
             const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;

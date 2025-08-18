@@ -932,6 +932,7 @@ progress {
     <progress id="progress2" value="0" max="100" style="width: 100%; display: none;"></progress>
     <span id="status2" class="text-muted small d-block mt-1"></span>
   </div>
+
 <div class="form-group">
   <label>Photos supplémentaires pour le carrousel</label>
   <div class="row">
@@ -948,6 +949,7 @@ progress {
           class="mt-2 border rounded d-none w-100"
           style="height:80px; object-fit:cover;" />
       </div>
+
     <% } %>
   </div>
 </div>
@@ -958,6 +960,11 @@ progress {
     <label for="miniPhotos">Petites photos (max 3)</label>
     <input type="file" class="form-control" id="miniPhotos" name="miniPhotos" accept="image/*" multiple>
     <div id="miniPhotosPreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+  </div>
+
+  <div class="form-group">
+    <label for="videoUrl">Lien YouTube</label>
+    <input type="url" class="form-control" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
   </div>
 
         <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>

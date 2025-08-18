@@ -1133,6 +1133,7 @@ postalCode: req.body.postalCode,
       contactFirstName: req.body.contactFirstName,
       contactLastName: req.body.contactLastName,
       contactPhone: req.body.contactPhone,
+      videoUrl: req.body.videoUrl,
       language: req.body.language || 'fr',
       userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
@@ -1536,6 +1537,16 @@ async function generateLandingPage(property) {
 
   const keywordsList = seoKeywords[lang]?.[country] || [];
   const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
+
+  const getEmbedUrl = url => {
+    const match = url?.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/);
+    if (match && match[1]) {
+      const id = match[1];
+      return `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}&mute=1&controls=0&showinfo=0`;
+    }
+    return '';
+  };
+  const embedUrl = getEmbedUrl(property.videoUrl);
 
   const jsonLD = {
     "@context": "https://schema.org",
@@ -2225,6 +2236,7 @@ h1 {
       width: 45%;
       height: 150px;
       object-fit: contain;
+
       cursor: pointer;
     }
     .photo-carousel .carousel-btn {
@@ -2301,9 +2313,38 @@ h1 {
     @media (max-width: 768px) {
       .mini-carousel img { width: 33.33%; }
     }
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .video-background iframe {
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
+  ${embedUrl ? `
+  <div class="video-background">
+    <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </div>
+  <div class="video-overlay"></div>
+  ` : ''}
 
   <!-- Google Tag Manager (noscript) -->
   <noscript>
