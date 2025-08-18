@@ -821,7 +821,7 @@ h1 {
     .photo-carousel img {
       width: 25%;
       height: 80px;
-      object-fit: contain;
+      object-fit: cover;
       flex: 0 0 auto;
       cursor: pointer;
     }
