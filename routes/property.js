@@ -818,11 +818,10 @@ h1 {
       gap: 30px;
       transition: transform 0.3s ease-in-out;
     }
-    .photo-carousel img {
-      width: 25%;
-      height: 80px;
-      object-fit: cover;
-      flex: 0 0 auto;
+ .photo-carousel img {
+      width: 45%;
+      height: 150px;
+      object-fit: contain;
       cursor: pointer;
     }
     .photo-carousel .carousel-btn {
@@ -1388,3 +1387,4 @@ router.get('/user/landing-pages', async (req, res) => {
 
 
 module.exports = router;
+
