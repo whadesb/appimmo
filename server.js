@@ -2434,7 +2434,7 @@ ${JSON.stringify(jsonLD)}
       let index = 0;
       function updateCarousel() {
         const imgWidth = track.querySelector('img').clientWidth;
-        track.style.transform = `translateX(-${index * imgWidth}px)`;
+        track.style.transform = \`translateX(-\${index * imgWidth}px)\`;
       }
       next.addEventListener('click', () => {
         const visible = window.innerWidth <= 768 ? 2 : 4;
