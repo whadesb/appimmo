@@ -2221,10 +2221,10 @@ h1 {
       transition: transform 0.3s ease-in-out;
     }
     .photo-carousel img {
-      width: 25%;
-      height: 80px;
       object-fit: contain;
-      flex: 0 0 auto;
+      width: 45%;
+      height: 150px;
+      object-fit: contain;
       cursor: pointer;
     }
     .photo-carousel .carousel-btn {
