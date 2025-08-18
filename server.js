@@ -2221,6 +2221,7 @@ h1 {
       transition: transform 0.3s ease-in-out;
     }
     .photo-carousel img {
+      object-fit: contain;
       width: 45%;
       height: 150px;
       object-fit: contain;
@@ -2235,6 +2236,7 @@ h1 {
       border: none;
       padding: 5px 10px;
       cursor: pointer;
+      z-index: 1;
     }
     .photo-carousel .carousel-btn.prev { left: 0; }
     .photo-carousel .carousel-btn.next { right: 0; }
@@ -2292,6 +2294,7 @@ h1 {
       border: none;
       padding: 5px 10px;
       cursor: pointer;
+      z-index: 1;
     }
     .mini-carousel .mini-btn.prev { left: 0; }
     .mini-carousel .mini-btn.next { right: 0; }

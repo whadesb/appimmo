@@ -803,7 +803,6 @@ h1 {
   align-items: flex-start;
 }
 
-
     .photo-carousel {
       position: relative;
       max-width: 1400px;
@@ -964,6 +963,7 @@ h1 {
   </div>
   ` : ''}
 
+
   ${property.photos.slice(10).length > 0 ? `
   <div class="mini-carousel">
     <button class="mini-btn prev">&#10094;</button>
@@ -981,6 +981,7 @@ h1 {
 
   <!-- Bloc secondaire en dessous -->
  <div class="extra-info-desktop">
+
   <hr />
   <h2>${t.addInfo}</h2>
 
@@ -1107,6 +1108,7 @@ ${JSON.stringify(jsonLD)}
           updateCarousel();
         }
       });
+
       window.addEventListener('resize', updateCarousel);
 
       const fullscreenOverlay = document.getElementById('fullscreenOverlay');
@@ -1127,6 +1129,7 @@ ${JSON.stringify(jsonLD)}
         }
       });
     }
+
 
     const miniTrack = document.querySelector('.mini-track');
     if (miniTrack) {
