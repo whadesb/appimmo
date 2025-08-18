@@ -1096,7 +1096,8 @@ app.post('/:locale/2fa', async (req, res) => {
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 },
-  { name: 'extraPhotos', maxCount: 8 }
+  { name: 'extraPhotos', maxCount: 8 },
+  { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
   try {
     if (typeof req.body.parking === 'undefined') {
@@ -1105,6 +1106,9 @@ app.post('/add-property', isAuthenticated, upload.fields([
     const photos = [req.files.photo1[0].filename, req.files.photo2[0].filename];
     if (req.files.extraPhotos) {
       req.files.extraPhotos.slice(0, 8).forEach(f => photos.push(f.filename));
+    }
+    if (req.files.miniPhotos) {
+      req.files.miniPhotos.slice(0, 3).forEach(f => photos.push(f.filename));
     }
 
     const property = new Property({
@@ -2214,7 +2218,9 @@ h1 {
     }
     .photo-carousel img {
       width: 25%;
+      height: 80px;
       object-fit: cover;
+      flex: 0 0 auto;
     }
     .photo-carousel .carousel-btn {
       position: absolute;
@@ -2231,8 +2237,37 @@ h1 {
     @media (max-width: 768px) {
       .photo-carousel img { width: 50%; }
     }
-
-
+    .mini-carousel {
+      position: relative;
+      width: 100%;
+      margin: 10px auto;
+      overflow: hidden;
+    }
+    .mini-carousel .mini-track {
+      display: flex;
+      transition: transform 0.3s ease-in-out;
+      justify-content: center;
+    }
+    .mini-carousel img {
+      width: 20%;
+      height: 60px;
+      object-fit: cover;
+      flex: 0 0 auto;
+    }
+    .mini-carousel .mini-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.5);
+      color: #fff;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+    .mini-carousel .mini-btn.prev { left: 0; }
+    .mini-carousel .mini-btn.next { right: 0; }
+    @media (max-width: 768px) {
+      .mini-carousel img { width: 33.33%; }
     }
   </style>
 </head>
@@ -2307,6 +2342,16 @@ h1 {
       ${property.photos.slice(2,10).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
     </div>
     <button class="carousel-btn next">&#10095;</button>
+  </div>
+  ` : ''}
+
+  ${property.photos.slice(10).length > 0 ? `
+  <div class="mini-carousel">
+    <button class="mini-btn prev">&#10094;</button>
+    <div class="mini-track">
+      ${property.photos.slice(10,13).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
+    </div>
+    <button class="mini-btn next">&#10095;</button>
   </div>
   ` : ''}
 
@@ -2434,22 +2479,56 @@ ${JSON.stringify(jsonLD)}
       let index = 0;
       function updateCarousel() {
         const imgWidth = track.querySelector('img').clientWidth;
-        track.style.transform = `translateX(-${index * imgWidth}px)`;
+        track.style.transform = 'translateX(-' + index * imgWidth + 'px)';
       }
       next.addEventListener('click', () => {
         const visible = window.innerWidth <= 768 ? 2 : 4;
         if (index < track.children.length - visible) {
-          index++;
+          index += visible;
+          if (index > track.children.length - visible) {
+            index = track.children.length - visible;
+          }
           updateCarousel();
         }
       });
       prev.addEventListener('click', () => {
+        const visible = window.innerWidth <= 768 ? 2 : 4;
         if (index > 0) {
-          index--;
+          index -= visible;
+          if (index < 0) index = 0;
           updateCarousel();
         }
       });
       window.addEventListener('resize', updateCarousel);
+    }
+    const miniTrack = document.querySelector('.mini-track');
+    if (miniTrack) {
+      const prevMini = document.querySelector('.mini-btn.prev');
+      const nextMini = document.querySelector('.mini-btn.next');
+      let miniIndex = 0;
+      function updateMini() {
+        const imgWidth = miniTrack.querySelector('img').clientWidth;
+        miniTrack.style.transform = 'translateX(-' + miniIndex * imgWidth + 'px)';
+      }
+      nextMini.addEventListener('click', () => {
+        const visibleMini = window.innerWidth <= 768 ? 1 : 3;
+        if (miniIndex < miniTrack.children.length - visibleMini) {
+          miniIndex += visibleMini;
+          if (miniIndex > miniTrack.children.length - visibleMini) {
+            miniIndex = miniTrack.children.length - visibleMini;
+          }
+          updateMini();
+        }
+      });
+      prevMini.addEventListener('click', () => {
+        const visibleMini = window.innerWidth <= 768 ? 1 : 3;
+        if (miniIndex > 0) {
+          miniIndex -= visibleMini;
+          if (miniIndex < 0) miniIndex = 0;
+          updateMini();
+        }
+      });
+      window.addEventListener('resize', updateMini);
     }
   });
 </script>
