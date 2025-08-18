@@ -828,11 +828,10 @@ h1 {
       gap: 30px;
       transition: transform 0.3s ease-in-out;
     }
-    .photo-carousel img {
-      width: 25%;
-      height: 80px;
+ .photo-carousel img {
+      width: 45%;
+      height: 150px;
       object-fit: contain;
-      flex: 0 0 auto;
       cursor: pointer;
     }
     .photo-carousel .carousel-btn {
@@ -844,8 +843,8 @@ h1 {
       border: none;
       padding: 5px 10px;
       cursor: pointer;
-      z-index: 1;
     }
+
     .photo-carousel .carousel-btn.prev { left: 0; }
     .photo-carousel .carousel-btn.next { right: 0; }
     @media (max-width: 768px) {
@@ -862,6 +861,7 @@ h1 {
       transition: transform 0.3s ease-in-out;
       justify-content: center;
     }
+
     .mini-carousel img {
       width: 20%;
       height: 60px;
@@ -902,8 +902,8 @@ h1 {
       border: none;
       padding: 5px 10px;
       cursor: pointer;
-      z-index: 1;
     }
+
     .mini-carousel .mini-btn.prev { left: 0; }
     .mini-carousel .mini-btn.next { right: 0; }
     @media (max-width: 768px) {
@@ -1023,6 +1023,7 @@ h1 {
 
   <!-- Bloc secondaire en dessous -->
  <div class="extra-info-desktop">
+
   <hr />
   <h2>${t.addInfo}</h2>
 
@@ -1149,6 +1150,8 @@ ${JSON.stringify(jsonLD)}
           updateCarousel();
         }
       });
+
+
       window.addEventListener('resize', updateCarousel);
 
       const fullscreenOverlay = document.getElementById('fullscreenOverlay');
@@ -1169,6 +1172,8 @@ ${JSON.stringify(jsonLD)}
         }
       });
     }
+
+
 
     const miniTrack = document.querySelector('.mini-track');
     if (miniTrack) {
@@ -1431,3 +1436,4 @@ router.get('/user/landing-pages', async (req, res) => {
 
 
 module.exports = router;
+
