@@ -154,6 +154,16 @@ async function generateLandingPage(property) {
   const keywordsList = seoKeywords[lang]?.[country] || [];
   const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
 
+  const getEmbedUrl = url => {
+    const match = url?.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/);
+    if (match && match[1]) {
+      const id = match[1];
+      return `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}&mute=1&controls=0&showinfo=0`;
+    }
+    return '';
+  };
+  const embedUrl = getEmbedUrl(property.videoUrl);
+
   const jsonLD = {
     "@context": "https://schema.org",
     "@type": "Residence",
@@ -806,19 +816,24 @@ h1 {
 
     .photo-carousel {
       position: relative;
+      max-width: 1400px;
       width: 100%;
       margin: 20px auto;
+      padding: 0 20px;
       overflow: hidden;
     }
     .photo-carousel .carousel-track {
       display: flex;
+      width: 100%;
+      gap: 30px;
       transition: transform 0.3s ease-in-out;
     }
     .photo-carousel img {
       width: 25%;
       height: 80px;
-      object-fit: cover;
+      object-fit: contain;
       flex: 0 0 auto;
+      cursor: pointer;
     }
     .photo-carousel .carousel-btn {
       position: absolute;
@@ -829,6 +844,7 @@ h1 {
       border: none;
       padding: 5px 10px;
       cursor: pointer;
+      z-index: 1;
     }
     .photo-carousel .carousel-btn.prev { left: 0; }
     .photo-carousel .carousel-btn.next { right: 0; }
@@ -849,8 +865,33 @@ h1 {
     .mini-carousel img {
       width: 20%;
       height: 60px;
-      object-fit: cover;
+      object-fit: contain;
       flex: 0 0 auto;
+    }
+    .fullscreen-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .fullscreen-overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+    .fullscreen-overlay .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #fff;
+      font-size: 30px;
+      cursor: pointer;
     }
     .mini-carousel .mini-btn {
       position: absolute;
@@ -861,15 +902,45 @@ h1 {
       border: none;
       padding: 5px 10px;
       cursor: pointer;
+      z-index: 1;
     }
     .mini-carousel .mini-btn.prev { left: 0; }
     .mini-carousel .mini-btn.next { right: 0; }
     @media (max-width: 768px) {
       .mini-carousel img { width: 33.33%; }
     }
+    .video-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      z-index: -1;
+    }
+    .video-background iframe {
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .video-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
+      z-index: -1;
+    }
   </style>
 </head>
 <body>
+  ${embedUrl ? `
+  <div class="video-background">
+    <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+  </div>
+  <div class="video-overlay"></div>
+  ` : ''}
 
   <!-- Google Tag Manager (noscript) -->
   <noscript>
@@ -944,6 +1015,11 @@ h1 {
     <button class="mini-btn next">&#10095;</button>
   </div>
   ` : ''}
+
+  <div id="fullscreenOverlay" class="fullscreen-overlay">
+    <span class="close">&times;</span>
+    <img id="fullscreenImg" src="" alt="Photo en plein écran" />
+  </div>
 
   <!-- Bloc secondaire en dessous -->
  <div class="extra-info-desktop">
@@ -1074,6 +1150,24 @@ ${JSON.stringify(jsonLD)}
         }
       });
       window.addEventListener('resize', updateCarousel);
+
+      const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+      const fullscreenImg = document.getElementById('fullscreenImg');
+      const closeFs = fullscreenOverlay.querySelector('.close');
+      track.querySelectorAll('img').forEach(img => {
+        img.addEventListener('click', () => {
+          fullscreenImg.src = img.src;
+          fullscreenOverlay.style.display = 'flex';
+        });
+      });
+      closeFs.addEventListener('click', () => {
+        fullscreenOverlay.style.display = 'none';
+      });
+      fullscreenOverlay.addEventListener('click', (e) => {
+        if (e.target === fullscreenOverlay) {
+          fullscreenOverlay.style.display = 'none';
+        }
+      });
     }
 
     const miniTrack = document.querySelector('.mini-track');
@@ -1126,7 +1220,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     { name: 'extraPhotos', maxCount: 8 },
     { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
-    const { rooms, surface, price, city, country, dpe, description } = req.body;
+    const { rooms, surface, price, city, country, dpe, description, videoUrl } = req.body;
 
     let photo1 = null;
     let photo2 = null;
@@ -1188,6 +1282,7 @@ router.post('/add-property', authMiddleware, upload.fields([
     description: description || '',
             language: req.body.language || 'fr',
             userId: req.user._id,
+            videoUrl,
             photos: [photo1, photo2, ...extraPhotos, ...miniPhotos]
         });
 
@@ -1219,13 +1314,14 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
             return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
         }
 
-        const { rooms, surface, price, city, country, dpe } = req.body;
+        const { rooms, surface, price, city, country, dpe, videoUrl } = req.body;
 
         property.rooms = rooms;
         property.surface = surface;
         property.price = price;
         property.city = city;
         property.country = country;
+        property.videoUrl = videoUrl;
 
         if (req.files.photo1) {
             const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;

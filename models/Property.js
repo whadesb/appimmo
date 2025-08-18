@@ -33,6 +33,7 @@ postalCode: {
   contactFirstName: { type: String },
   contactLastName: { type: String },
   contactPhone: { type: String },
+  videoUrl: { type: String },
   language: { type: String, enum: ['fr', 'en', 'es', 'pt'], default: 'fr' },
   dpe: {
   type: String,

@@ -91,6 +91,16 @@ async function generateLandingPage(property) {
   const keywordsList = seoKeywords[lang]?.[country] || [];
   const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
 
+  const getEmbedUrl = url => {
+    const match = url?.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/);
+    if (match && match[1]) {
+      const id = match[1];
+      return `https://www.youtube.com/embed/${id}?autoplay=1&loop=1&playlist=${id}&mute=1&controls=0&showinfo=0`;
+    }
+    return '';
+  };
+  const embedUrl = getEmbedUrl(property.videoUrl);
+
   const GTM_ID = 'GTM-TF7HSC3N';
 
   const jsonLD = {
@@ -124,6 +134,31 @@ async function generateLandingPage(property) {
       <meta name="keywords" content="${keywords.join(', ')}">
       <title>${property.propertyType} à ${city}, ${country}</title>
       <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
+      <style>
+        .video-background {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          z-index: -1;
+        }
+        .video-background iframe {
+          width: 100%;
+          height: 100%;
+          pointer-events: none;
+        }
+        .video-overlay {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.5);
+          z-index: -1;
+        }
+      </style>
       <script>
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -134,6 +169,12 @@ async function generateLandingPage(property) {
       <script type="application/ld+json">${JSON.stringify(jsonLD)}</script>
     </head>
     <body>
+      ${embedUrl ? `
+      <div class="video-background">
+        <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+      </div>
+      <div class="video-overlay"></div>
+      ` : ''}
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <h1>${property.propertyType} ${t.propertyIn} ${city}, ${country}</h1>
       <p>${property.description}</p>
@@ -175,7 +216,7 @@ router.post('/add-property', authMiddleware, upload.fields([
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
   try {
-   const { price, surface, country, city, postalCode, propertyType, description, language } = req.body;
+   const { price, surface, country, city, postalCode, propertyType, description, language, videoUrl } = req.body;
 
   if (!price || !surface || !country || !city || !postalCode || !propertyType || !description || !language) {
   return res.status(400).json({ error: 'Tous les champs doivent être remplis.' });
@@ -220,6 +261,7 @@ postalCode,
       contactPhone: req.body.contactPhone,
       language: req.body.language || 'fr',
       userId,
+      videoUrl,
       photos: [photo1, photo2]
     });
 
