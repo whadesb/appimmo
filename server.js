@@ -2208,12 +2208,16 @@ h1 {
 
     .photo-carousel {
       position: relative;
+      max-width: 1400px;
       width: 100%;
       margin: 20px auto;
+      padding: 0 20px;
       overflow: hidden;
     }
     .photo-carousel .carousel-track {
       display: flex;
+      width: 100%;
+      gap: 30px;
       transition: transform 0.3s ease-in-out;
     }
     .photo-carousel img {
