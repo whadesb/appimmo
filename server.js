@@ -2208,19 +2208,24 @@ h1 {
 
     .photo-carousel {
       position: relative;
+      max-width: 1400px;
       width: 100%;
       margin: 20px auto;
+      padding: 0 20px;
       overflow: hidden;
     }
     .photo-carousel .carousel-track {
       display: flex;
+      width: 100%;
+      gap: 30px;
       transition: transform 0.3s ease-in-out;
     }
     .photo-carousel img {
       width: 25%;
       height: 80px;
-      object-fit: cover;
+      object-fit: contain;
       flex: 0 0 auto;
+      cursor: pointer;
     }
     .photo-carousel .carousel-btn {
       position: absolute;
@@ -2251,8 +2256,33 @@ h1 {
     .mini-carousel img {
       width: 20%;
       height: 60px;
-      object-fit: cover;
+      object-fit: contain;
       flex: 0 0 auto;
+    }
+    .fullscreen-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .fullscreen-overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      object-fit: contain;
+    }
+    .fullscreen-overlay .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      color: #fff;
+      font-size: 30px;
+      cursor: pointer;
     }
     .mini-carousel .mini-btn {
       position: absolute;
@@ -2354,6 +2384,11 @@ h1 {
     <button class="mini-btn next">&#10095;</button>
   </div>
   ` : ''}
+
+  <div id="fullscreenOverlay" class="fullscreen-overlay">
+    <span class="close">&times;</span>
+    <img id="fullscreenImg" src="" alt="Photo en plein écran" />
+  </div>
 
   <!-- Bloc secondaire en dessous -->
  <div class="extra-info-desktop">
@@ -2500,6 +2535,24 @@ ${JSON.stringify(jsonLD)}
         }
       });
       window.addEventListener('resize', updateCarousel);
+
+      const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+      const fullscreenImg = document.getElementById('fullscreenImg');
+      const closeFs = fullscreenOverlay.querySelector('.close');
+      track.querySelectorAll('img').forEach(img => {
+        img.addEventListener('click', () => {
+          fullscreenImg.src = img.src;
+          fullscreenOverlay.style.display = 'flex';
+        });
+      });
+      closeFs.addEventListener('click', () => {
+        fullscreenOverlay.style.display = 'none';
+      });
+      fullscreenOverlay.addEventListener('click', (e) => {
+        if (e.target === fullscreenOverlay) {
+          fullscreenOverlay.style.display = 'none';
+        }
+      });
     }
     const miniTrack = document.querySelector('.mini-track');
     if (miniTrack) {
