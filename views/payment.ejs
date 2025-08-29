@@ -360,24 +360,37 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 </p>
   </div>
 </footer>
+<div class="modal fade" id="btcpay-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><%= i18n.pay_with_btc %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <iframe id="btcpay-iframe" src="" style="width:100%;height:600px;border:0;"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
    <script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
 <script>
+/* ---------- PayPal ---------- */
 paypal.Buttons({
-  createOrder: function(data, actions) {
+  createOrder: function (data, actions) {
     return actions.order.create({
       intent: 'CAPTURE',
       purchase_units: [{
-        amount: {
-          currency_code: 'EUR',
-          value: '500.00'
-        },
+        amount: { currency_code: 'EUR', value: '500.00' },
         description: 'Paiement annonce immobilière UAP'
       }]
     });
-  }, // ✅ VIRGULE ICI
-  onApprove: function(data, actions) {
+  }, // ✅ virgule ici
+  onApprove: function (data, actions) {
     const simulatedOrderID = data.orderID || 'SIMULATED12345';
-    const propertyId = document.getElementById('propertyId').value;
+    const propertyIdEl = document.getElementById('propertyId');
+    const propertyId = propertyIdEl ? propertyIdEl.value : null;
 
     return fetch('/process-paypal-payment', {
       method: 'POST',
@@ -385,47 +398,65 @@ paypal.Buttons({
       body: JSON.stringify({
         orderID: simulatedOrderID,
         propertyId: propertyId,
-        amount: "500.00"
+        amount: '500.00'
       })
     })
-    .then(res => res.json())
-    .then(result => {
-      if (result.success) {
+    .then(async (res) => {
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.message || ('HTTP ' + res.status));
+      return json;
+    })
+    .then((result) => {
+      if (result.success && result.redirectUrl) {
         window.location.href = result.redirectUrl;
       } else {
-        alert("Erreur : " + result.message);
+        alert('Erreur : ' + (result.message || 'Réponse inattendue.'));
       }
     })
-    .catch(err => {
-      console.error("Erreur PayPal :", err);
-      alert("Une erreur s'est produite avec PayPal.");
+    .catch((err) => {
+      console.error('Erreur PayPal :', err);
+      alert("Une erreur s'est produite avec PayPal : " + (err.message || err));
     });
   }
 }).render('#paypal-button-container');
 
-document.getElementById('btc-button').addEventListener('click', function() {
-  document.getElementById('payment-method').textContent = '<%= i18n.pay_with_btc %>';
-  const propertyId = document.getElementById('propertyId').value;
+/* ---------- BTCPay (Bitcoin) ---------- */
+document.getElementById('btc-button').addEventListener('click', function () {
+  const pm = document.getElementById('payment-method');
+  if (pm) pm.textContent = '<%= i18n.pay_with_btc %>';
+
+  const propertyIdEl = document.getElementById('propertyId');
+  const propertyId = propertyIdEl ? propertyIdEl.value : null;
 
   fetch('/process-btcpay-payment', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      propertyId: propertyId,
-      amount: '500.00'
-    })
+    body: JSON.stringify({ propertyId: propertyId, amount: '500.00' })
   })
-  .then(res => res.json())
-  .then(result => {
+  .then(async (res) => {
+    const json = await res.json().catch(() => ({}));
+    if (!res.ok) throw new Error(json.message || ('HTTP ' + res.status));
+    return json;
+  })
+  .then((result) => {
     if (result.success && result.invoiceUrl) {
-      window.location.href = result.invoiceUrl;
+      // Tente d’ouvrir dans un modal si présent, sinon redirige
+      const iframe = document.getElementById('btcpay-iframe');
+      const modalEl = document.getElementById('btcpay-modal');
+      if (iframe && modalEl && window.bootstrap && bootstrap.Modal) {
+        iframe.src = result.invoiceUrl;
+        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modal.show();
+      } else {
+        window.location.href = result.invoiceUrl;
+      }
     } else {
-      alert('Erreur : ' + result.message);
+      alert('Erreur : ' + (result.message || 'Réponse inattendue.'));
     }
   })
-  .catch(err => {
-    console.error('Erreur BTC Pay:', err);
-    alert("Une erreur s'est produite avec Bitcoin.");
+  .catch((err) => {
+    console.error('Erreur BTC Pay :', err);
+    alert("Une erreur s'est produite avec Bitcoin : " + (err.message || err));
   });
 });
 </script>
