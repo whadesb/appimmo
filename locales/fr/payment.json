@@ -29,6 +29,8 @@
   "price": "Prix",
   "total": "Total",
   "pay_with_paypal": "Paiement",
+  "pay_with_btc": "Payer en Bitcoin",
+  "payment_method": "Paiement",
   "footer": {
     "informations": "Informations",
     "create_account": "Créer un compte",

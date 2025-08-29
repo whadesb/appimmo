@@ -1369,6 +1369,63 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
   }
 });
 
+app.post('/process-btcpay-payment', isAuthenticated, async (req, res) => {
+  try {
+    const { propertyId, amount } = req.body;
+
+    const existingActiveOrder = await Order.findOne({
+      userId: req.user._id,
+      propertyId,
+      status: { $in: ['pending', 'paid'] },
+      expiryDate: { $gt: new Date() }
+    });
+
+    if (existingActiveOrder) {
+      return res.status(400).json({
+        success: false,
+        message: "Vous avez déjà une commande active pour cette annonce."
+      });
+    }
+
+    const newOrder = new Order({
+      userId: req.user._id,
+      propertyId,
+      amount: parseFloat(amount),
+      status: 'pending',
+      expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+    });
+
+    const invoiceRes = await axios.post(
+      `${process.env.BTCPAY_URL}/api/v1/stores/${process.env.BTCPAY_STORE_ID}/invoices`,
+      {
+        amount: parseFloat(amount),
+        currency: 'EUR',
+        metadata: { orderId: newOrder.orderId, propertyId }
+      },
+      { headers: { Authorization: `token ${process.env.BTCPAY_API_KEY}` } }
+    );
+
+    newOrder.btcPayInvoiceId = invoiceRes.data.id;
+    await newOrder.save();
+
+    try {
+      await sendMailPending(
+        req.user.email,
+        `${req.user.firstName} ${req.user.lastName}`,
+        newOrder.orderId,
+        amount
+      );
+    } catch (err) {
+      console.warn("📭 Erreur envoi mail d'attente BTC :", err.message);
+    }
+
+    res.json({ success: true, invoiceUrl: invoiceRes.data.checkoutLink });
+  } catch (err) {
+    console.error("❌ Erreur process-btcpay-payment :", err);
+    res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+});
+
 
 
 
@@ -2984,6 +3041,39 @@ if (parseFloat(amount) !== expectedAmount) {
     }
   } catch (error) {
     console.error("❌ Erreur dans le webhook PayPal :", error.response?.data || error.message);
+    res.sendStatus(500);
+  }
+});
+
+app.post('/btcpay/webhook', express.json(), async (req, res) => {
+  try {
+    const event = req.body;
+    const invoiceId = event.invoiceId || event.data?.id;
+
+    if (['InvoicePaid', 'InvoicePaidInFull', 'InvoiceSettled'].includes(event.type)) {
+      const order = await Order.findOneAndUpdate(
+        { btcPayInvoiceId: invoiceId },
+        { status: 'paid' }
+      ).populate('userId');
+
+      if (order) {
+        const user = order.userId;
+        await sendInvoiceByEmail(
+          user.email,
+          `${user.firstName} ${user.lastName}`,
+          order.orderId,
+          invoiceId,
+          order.amount,
+          'EUR'
+        );
+      } else {
+        console.warn(`⚠️ Aucune commande trouvée avec BTCPay ID : ${invoiceId}`);
+      }
+    }
+
+    res.sendStatus(200);
+  } catch (error) {
+    console.error('❌ Erreur dans le webhook BTCPay :', error);
     res.sendStatus(500);
   }
 });
