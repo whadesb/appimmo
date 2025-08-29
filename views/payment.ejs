@@ -301,6 +301,7 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 <p class="form-text"><%= i18n.payment_description_3 %></p>
 <p class="form-text"><em><%= i18n.confirmation_notice %></em></p>
           <div id="paypal-button-container"></div>
+          <button id="btc-button" class="btn btn-warning mt-3"><%= i18n.pay_with_btc %></button>
           <input type="hidden" id="propertyId" value="<%= propertyId %>">
         </div>
       </div>
@@ -311,7 +312,7 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
  <p><strong><%= i18n.duration %>:</strong> 90 days</p>
 <p><strong>ID :</strong> <%= propertyId %></p>
 <p><strong><%= i18n.total %> :</strong> 500€</p>
-<p><strong><%= i18n.pay_with_paypal || 'Paiement' %> :</strong> PayPal</p>
+<p><strong><%= i18n.payment_method %> :</strong> <span id="payment-method">PayPal</span></p>
 </div>
 
         </div>
@@ -359,6 +360,19 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 </p>
   </div>
 </footer>
+<div class="modal fade" id="btcpay-modal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><%= i18n.pay_with_btc %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <iframe id="btcpay-iframe" src="" style="width:100%;height:600px;border:0;"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
    <script src="/js/bootstrap.bundle.min.js"></script>
 <script>
 paypal.Buttons({
@@ -401,6 +415,35 @@ paypal.Buttons({
     });
   }
 }).render('#paypal-button-container');
+
+document.getElementById('btc-button').addEventListener('click', function() {
+  document.getElementById('payment-method').textContent = '<%= i18n.pay_with_btc %>';
+  const propertyId = document.getElementById('propertyId').value;
+
+  fetch('/process-btcpay-payment', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      propertyId: propertyId,
+      amount: '500.00'
+    })
+  })
+  .then(res => res.json())
+  .then(result => {
+    if (result.success && result.invoiceUrl) {
+      const iframe = document.getElementById('btcpay-iframe');
+      iframe.src = result.invoiceUrl;
+      const modal = new bootstrap.Modal(document.getElementById('btcpay-modal'));
+      modal.show();
+    } else {
+      alert('Erreur : ' + result.message);
+    }
+  })
+  .catch(err => {
+    console.error('Erreur BTC Pay:', err);
+    alert("Une erreur s'est produite avec Bitcoin.");
+  });
+});
 </script>
 </body>
 </html>

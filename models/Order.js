@@ -12,6 +12,11 @@ const orderSchema = new mongoose.Schema({
     unique: true,
     sparse: true
   },
+  btcPayInvoiceId: {
+    type: String,
+    unique: true,
+    sparse: true
+  },
   userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
