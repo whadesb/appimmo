@@ -14,14 +14,6 @@
     })(window,document,'script','dataLayer','GTM-TF7HSC3N');
   </script>
   <!-- Fin Google Tag Manager -->
-
-  <!-- PayPal SDK -->
-  <script src="https://www.paypal.com/sdk/js
-  ?client-id=<%= PAYPAL_CLIENT_ID %>
-  &currency=EUR
-  &intent=capture
-  &components=buttons
-  &disable-funding=card,credit,bancontact,blik,eps,giropay,ideal,mybank,p24,sepa,sofort"></script>
   <!-- CSS -->
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/styles-main.css" rel="stylesheet">
@@ -384,6 +376,56 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
    <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="https://www.paypal.com/sdk/js?client-id=<%= PAYPAL_CLIENT_ID %>&currency=EUR&intent=capture&components=buttons&disable-funding=card,credit,bancontact,blik,eps,giropay,ideal,mybank,p24,sepa,sofort"></script>
+<script>
+  // Sécurité : attendre que le SDK soit bien chargé
+  if (window.paypal && paypal.Buttons) {
+    paypal.Buttons({
+      // NB: pas besoin de 'intent' ici, tu l'as déjà dans l'URL du SDK (intent=capture)
+      createOrder: function (data, actions) {
+        return actions.order.create({
+          purchase_units: [{
+            amount: { currency_code: 'EUR', value: '500.00' },
+            description: 'Paiement annonce immobilière UAP'
+          }]
+        });
+      },
+      onApprove: function (data, actions) {
+        const orderID = data.orderID;
+        const propertyIdEl = document.getElementById('propertyId');
+        const propertyId = propertyIdEl ? propertyIdEl.value : null;
+
+        return fetch('/process-paypal-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderID,
+            propertyId,
+            amount: '500.00'
+          })
+        })
+        .then(async (res) => {
+          const json = await res.json().catch(() => ({}));
+          if (!res.ok) throw new Error(json.message || ('HTTP ' + res.status));
+          return json;
+        })
+        .then((result) => {
+          if (result.success && result.redirectUrl) {
+            window.location.href = result.redirectUrl;
+          } else {
+            alert('Erreur : ' + (result.message || 'Réponse inattendue.'));
+          }
+        })
+        .catch((err) => {
+          console.error('Erreur PayPal :', err);
+          alert("Une erreur s'est produite avec PayPal : " + (err.message || err));
+        });
+      }
+    }).render('#paypal-button-container');
+  } else {
+    console.error('PayPal SDK non chargé');
+  }
+</script>
+
 <script>
 /* ---------- BTCPay (Bitcoin) ---------- */
 document.getElementById('btc-button').addEventListener('click', function () {
