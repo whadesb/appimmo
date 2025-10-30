@@ -55,6 +55,7 @@ const app = express();
 // Middleware
 app.use(compression());
 app.use(cookieParser());
+app.use('/paypal/webhook', express.raw({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(flash());
@@ -166,6 +167,15 @@ app.use((req, res, next) => {
     next();
   }
 });
+function getPaypalConfig() {
+  const isLive = process.env.PAYPAL_ENV === 'live';
+  return {
+    baseUrl: isLive ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com',
+    clientId: isLive ? process.env.PAYPAL_CLIENT_ID_LIVE : process.env.PAYPAL_CLIENT_ID_SANDBOX,
+    secret:   isLive ? process.env.PAYPAL_SECRET_LIVE   : process.env.PAYPAL_SECRET_SANDBOX,
+    webhookId:isLive ? process.env.PAYPAL_WEBHOOK_ID_LIVE: process.env.PAYPAL_WEBHOOK_ID_SANDBOX
+  };
+}
 
 
 app.get('/user', (req, res) => {
@@ -290,7 +300,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
             return res.status(500).send('Erreur lors du chargement des traductions.');
         }
-
+const cfg = getPaypalConfig();
         res.render('payment', {
             locale,
             i18n,
@@ -302,7 +312,10 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
             country: property.country,
             url: property.url,
             currentPath: req.originalUrl,
-            PAYPAL_CLIENT_ID: process.env.PAYPAL_CLIENT_ID
+            const cfg = getPaypalConfig();
+      currentPath: req.originalUrl,
+PAYPAL_CLIENT_ID: cfg.clientId
+            PAYPAL_CLIENT_ID: cfg.clientId
         });
     } catch (error) {
         console.error('Error fetching property:', error);
@@ -1318,56 +1331,107 @@ app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
 
 
 app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
+  const axios = require('axios');
+  const cfg = getPaypalConfig();
+  const requestId = crypto.randomUUID();
+
   try {
     const { orderID, propertyId, amount } = req.body;
 
-    // 🔎 Étape 1 : Vérifier s’il y a déjà une commande active
+    // 1) Vérifier pas de commande active (ton code existant)
     const existingActiveOrder = await Order.findOne({
       userId: req.user._id,
       propertyId,
       status: { $in: ['pending', 'paid'] },
       expiryDate: { $gt: new Date() }
     });
-
     if (existingActiveOrder) {
-      return res.status(400).json({
-        success: false,
-        message: "Vous avez déjà une commande active pour cette annonce."
+      return res.status(400).json({ success: false, message: "Vous avez déjà une commande active pour cette annonce." });
+    }
+
+    // 2) OAuth
+    const { data: token } = await axios.post(
+      `${cfg.baseUrl}/v1/oauth2/token`,
+      'grant_type=client_credentials',
+      {
+        auth: { username: cfg.clientId, password: cfg.secret },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+      }
+    );
+    const accessToken = token.access_token;
+
+    // 3) Récupérer l'order PayPal (vérif montant/devise)
+    const orderResp = await axios.get(
+      `${cfg.baseUrl}/v2/checkout/orders/${orderID}`,
+      { headers: { Authorization: `Bearer ${accessToken}` } }
+    );
+
+    const pu = orderResp.data.purchase_units?.[0];
+    const orderAmount = pu?.amount?.value;
+    const orderCurrency = pu?.amount?.currency_code;
+
+    // Vérification montant/devise côté serveur
+    if (String(orderAmount) !== String(amount) || orderCurrency !== 'EUR') {
+      console.warn('Montant/devise incohérents', { orderAmount, orderCurrency, amount });
+      return res.status(400).json({ success: false, message: 'Montant ou devise invalide.' });
+    }
+
+    // 4) Capture (idempotente)
+    const captureRes = await axios.post(
+      `${cfg.baseUrl}/v2/checkout/orders/${orderID}/capture`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json',
+          'PayPal-Request-Id': requestId
+        },
+        validateStatus: () => true
+      }
+    );
+
+    if (captureRes.status === 201 || captureRes.status === 200) {
+      // 5) Enregistrer/mettre à jour ta commande locale
+      const newOrder = new Order({
+        userId: req.user._id,
+        propertyId,
+        amount: parseFloat(amount),
+        status: 'paid',
+        paypalOrderId: orderID,
+        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 jours
       });
+      await newOrder.save();
+
+      // (optionnel) email payé / facture ici...
+
+      const locale = req.cookies.locale || 'fr';
+      return res.json({ success: true, redirectUrl: `/${locale}/user` });
     }
 
-    // 🔄 Étape 2 : Créer la nouvelle commande
-    const newOrder = new Order({
-      userId: req.user._id,
-      propertyId,
-      amount: parseFloat(amount),
-      status: 'pending',
-      paypalOrderId: orderID,
-      expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 jours
-    });
-
-    await newOrder.save();
-
-    // 📧 Étape 3 : Envoyer l’e-mail
-    try {
-      await sendMailPending(
-  req.user.email,
-  `${req.user.firstName} ${req.user.lastName}`,
-  newOrder.orderId,
-  amount
-);
-    } catch (err) {
-      console.warn("📭 Erreur envoi mail d'attente :", err.message);
+    if (captureRes.status === 422) {
+      // Probable “ORDER_ALREADY_CAPTURED” -> considère comme OK
+      const updated = await Order.findOneAndUpdate(
+        { paypalOrderId: orderID },
+        {
+          $set: {
+            status: 'paid',
+            expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+          }
+        },
+        { upsert: true, new: true }
+      );
+      const locale = req.cookies.locale || 'fr';
+      return res.json({ success: true, redirectUrl: `/${locale}/user` });
     }
 
-    const locale = req.cookies.locale || 'fr';
-    res.json({ success: true, redirectUrl: `/${locale}/user` });
-
+    console.error('Capture PayPal a échoué:', captureRes.status, captureRes.data);
+    return res.status(400).json({ success: false, message: 'Capture échouée' });
   } catch (err) {
-    console.error("❌ Erreur process-paypal-payment :", err);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
+    console.error('Erreur /process-paypal-payment:', err?.response?.data || err.message);
+    return res.status(500).json({ success: false, message: 'Erreur serveur PayPal' });
   }
 });
+
 
 app.post('/process-btcpay-payment', isAuthenticated, async (req, res) => {
   try {
@@ -2974,74 +3038,82 @@ app.post('/send-contact', async (req, res) => {
   }
 });
 
-app.post('/paypal/webhook', express.json(), async (req, res) => {
+app.post('/paypal/webhook', async (req, res) => {
+  const axios = require('axios');
+  const cfg = getPaypalConfig();
+
   try {
-    const event = req.body;
-
-    if (event.event_type === 'CHECKOUT.ORDER.APPROVED') {
-      const orderId = event.resource.id;
-
-      // 👉 Ajout de cette ligne
-      const isProduction = process.env.NODE_ENV === 'production';
-      const paypalBaseUrl = isProduction
-        ? 'https://api-m.paypal.com'
-        : 'https://api-m.sandbox.paypal.com';
-
-      // Étape 1 : Authentification
-      const { data: tokenData } = await axios({
-        method: 'post',
-        url: `${paypalBaseUrl}/v1/oauth2/token`,
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        auth: {
-          username: process.env.PAYPAL_CLIENT_ID,
-          password: process.env.PAYPAL_SECRET
-        },
-        data: 'grant_type=client_credentials'
-      });
-
-      const accessToken = tokenData.access_token;
-
-      // Étape 2 : Capture
-      const captureRes = await axios({
-        method: 'post',
-        url: `${paypalBaseUrl}/v2/checkout/orders/${orderId}/capture`,
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-          'Content-Type': 'application/json'
-        }
-      });
-
-      const captureData = captureRes.data;
-
-      // Étape 3 : Infos paiement
-      const email = captureData.payer.email_address;
-      const amount = captureData.purchase_units[0].payments.captures[0].amount.value;
-if (parseFloat(amount) !== expectedAmount) {
-  console.warn(`❗ Montant incohérent : attendu ${expectedAmount}, reçu ${amount}`);
-}
-      const currency = captureData.purchase_units[0].payments.captures[0].amount.currency_code;
-      const transactionId = captureData.purchase_units[0].payments.captures[0].id;
-
-      // Étape 4 : Mettre à jour la commande
-      const updated = await Order.findOneAndUpdate(
-        { paypalOrderId: orderId },
-        { status: 'paid' }
-      );
-
-      if (!updated) {
-        console.warn(`⚠️ Aucune commande trouvée avec PayPal ID : ${orderId}`);
+    // 1) OAuth
+    const { data: token } = await axios.post(
+      `${cfg.baseUrl}/v1/oauth2/token`,
+      'grant_type=client_credentials',
+      {
+        auth: { username: cfg.clientId, password: cfg.secret },
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       }
+    );
+    const accessToken = token.access_token;
 
-      // Étape 5 : Envoyer la facture
-      await sendInvoiceByEmail(email, transactionId, amount, currency);
+    // 2) Vérifier la signature
+    const transmissionId   = req.header('paypal-transmission-id');
+    const transmissionTime = req.header('paypal-transmission-time');
+    const certUrl          = req.header('paypal-cert-url');
+    const authAlgo         = req.header('paypal-auth-algo');
+    const transmissionSig  = req.header('paypal-transmission-sig');
+    const webhookEvent     = JSON.parse(req.body.toString('utf8')); // RAW -> string -> JSON
 
-      res.sendStatus(200);
-    } else {
-      res.sendStatus(200); // Ignorer autres événements
+    const { data: verify } = await axios.post(
+      `${cfg.baseUrl}/v1/notifications/verify-webhook-signature`,
+      {
+        transmission_id: transmissionId,
+        transmission_time: transmissionTime,
+        cert_url: certUrl,
+        auth_algo: authAlgo,
+        transmission_sig: transmissionSig,
+        webhook_id: cfg.webhookId, // TON ID de webhook sandbox
+        webhook_event: webhookEvent
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        }
+      }
+    );
+
+    if (verify.verification_status !== 'SUCCESS') {
+      console.warn('Webhook PayPal signature INVALID');
+      return res.sendStatus(400);
     }
+
+    // 3) Événement AUTHENTIQUE
+    const event = webhookEvent;
+
+    if (event.event_type === 'PAYMENT.CAPTURE.COMPLETED') {
+      const capture = event.resource;
+      const orderId = capture?.supplementary_data?.related_ids?.order_id;
+
+      // Idempotence: marque payé si pas déjà fait
+      if (orderId) {
+        await Order.findOneAndUpdate(
+          { paypalOrderId: orderId },
+          {
+            $set: {
+              status: 'paid',
+              expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+            }
+          },
+          { upsert: false }
+        );
+      }
+      // (optionnel) email payé / facture ici...
+    }
+
+    // Répondre vite
+    return res.sendStatus(200);
   } catch (error) {
-    console.error("❌ Erreur dans le webhook PayPal :", error.response?.data || error.message);
-    res.sendStatus(500);
+    console.error("Webhook PayPal error:", error?.response?.data || error.message);
+    return res.sendStatus(500);
   }
 });
 
