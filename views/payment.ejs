@@ -383,51 +383,8 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 
    <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/bootstrap.bundle.min.js"></script>
+<script src="https://www.paypal.com/sdk/js?client-id=<%= PAYPAL_CLIENT_ID %>&currency=EUR&intent=capture&components=buttons&disable-funding=card,credit,bancontact,blik,eps,giropay,ideal,mybank,p24,sepa,sofort"></script>
 <script>
-/* ---------- PayPal ---------- */
-paypal.Buttons({
-  createOrder: function (data, actions) {
-    return actions.order.create({
-      intent: 'CAPTURE',
-      purchase_units: [{
-        amount: { currency_code: 'EUR', value: '500.00' },
-        description: 'Paiement annonce immobilière UAP'
-      }]
-    });
-  }, // ✅ virgule ici
-  onApprove: function (data, actions) {
-    const simulatedOrderID = data.orderID || 'SIMULATED12345';
-    const propertyIdEl = document.getElementById('propertyId');
-    const propertyId = propertyIdEl ? propertyIdEl.value : null;
-
-    return fetch('/process-paypal-payment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        orderID: simulatedOrderID,
-        propertyId: propertyId,
-        amount: '500.00'
-      })
-    })
-    .then(async (res) => {
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.message || ('HTTP ' + res.status));
-      return json;
-    })
-    .then((result) => {
-      if (result.success && result.redirectUrl) {
-        window.location.href = result.redirectUrl;
-      } else {
-        alert('Erreur : ' + (result.message || 'Réponse inattendue.'));
-      }
-    })
-    .catch((err) => {
-      console.error('Erreur PayPal :', err);
-      alert("Une erreur s'est produite avec PayPal : " + (err.message || err));
-    });
-  }
-}).render('#paypal-button-container');
-
 /* ---------- BTCPay (Bitcoin) ---------- */
 document.getElementById('btc-button').addEventListener('click', function () {
   const pm = document.getElementById('payment-method');
