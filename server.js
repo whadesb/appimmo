@@ -51,6 +51,15 @@ const { addToSitemap, pingSearchEngines } = require('./utils/seo');
 
 
 const app = express();
+function getPaypalConfig() {
+  const isLive = process.env.PAYPAL_ENV === 'live';
+  return {
+    baseUrl: isLive ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com',
+    clientId: isLive ? process.env.PAYPAL_CLIENT_ID_LIVE : process.env.PAYPAL_CLIENT_ID_SANDBOX,
+    secret:   isLive ? process.env.PAYPAL_SECRET_LIVE   : process.env.PAYPAL_SECRET_SANDBOX,
+    webhookId:isLive ? process.env.PAYPAL_WEBHOOK_ID_LIVE: process.env.PAYPAL_WEBHOOK_ID_SANDBOX
+  };
+}
 
 // Middleware
 app.use(compression());
@@ -167,15 +176,7 @@ app.use((req, res, next) => {
     next();
   }
 });
-function getPaypalConfig() {
-  const isLive = process.env.PAYPAL_ENV === 'live';
-  return {
-    baseUrl: isLive ? 'https://api-m.paypal.com' : 'https://api-m.sandbox.paypal.com',
-    clientId: isLive ? process.env.PAYPAL_CLIENT_ID_LIVE : process.env.PAYPAL_CLIENT_ID_SANDBOX,
-    secret:   isLive ? process.env.PAYPAL_SECRET_LIVE   : process.env.PAYPAL_SECRET_SANDBOX,
-    webhookId:isLive ? process.env.PAYPAL_WEBHOOK_ID_LIVE: process.env.PAYPAL_WEBHOOK_ID_SANDBOX
-  };
-}
+
 
 
 app.get('/user', (req, res) => {
@@ -279,49 +280,48 @@ app.get('/api/stats/:pageId', async (req, res) => {
 
 
 
-
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
-    const { locale } = req.params;  // Récupérer la langue depuis l'URL
-    const { propertyId } = req.query;
+  const { locale } = req.params;
+  const { propertyId } = req.query;
 
-    try {
-        const property = await Property.findById(propertyId);
-        if (!property) {
-            return res.status(404).send('Property not found');
-        }
-
-        // Charger les traductions spécifiques à la langue
-        const translationsPath = `./locales/${locale}/payment.json`;
-        let i18n = {};
-
-        try {
-            i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-        } catch (error) {
-            console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-            return res.status(500).send('Erreur lors du chargement des traductions.');
-        }
-const cfg = getPaypalConfig();
-        res.render('payment', {
-            locale,
-            i18n,
-            propertyId: property._id,
-            rooms: property.rooms,
-            surface: property.surface,
-            price: property.price,
-            city: property.city,
-            country: property.country,
-            url: property.url,
-            currentPath: req.originalUrl,
-            const cfg = getPaypalConfig();
-      currentPath: req.originalUrl,
-PAYPAL_CLIENT_ID: cfg.clientId
-            PAYPAL_CLIENT_ID: cfg.clientId
-        });
-    } catch (error) {
-        console.error('Error fetching property:', error);
-        res.status(500).send('Error fetching property');
+  try {
+    const property = await Property.findById(propertyId);
+    if (!property) {
+      return res.status(404).send('Property not found');
     }
+
+    const translationsPath = `./locales/${locale}/payment.json`;
+    let i18n = {};
+    try {
+      i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+      console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+      return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    // ✅ Déclare la variable ICI, en dehors de l’objet
+    const cfg = getPaypalConfig();
+
+    res.render('payment', {
+      locale,
+      i18n,
+      propertyId: property._id,
+      rooms: property.rooms,
+      surface: property.surface,
+      price: property.price,
+      city: property.city,
+      country: property.country,
+      url: property.url,
+      currentPath: req.originalUrl,
+      // ✅ Utilise la variable dans l’objet
+      PAYPAL_CLIENT_ID: cfg.clientId
+    });
+  } catch (error) {
+    console.error('Error fetching property:', error);
+    res.status(500).send('Error fetching property');
+  }
 });
+
 
 app.get('/:locale', (req, res, next) => {
     const locale = req.params.locale;
