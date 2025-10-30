@@ -278,8 +278,6 @@ app.get('/api/stats/:pageId', async (req, res) => {
   }
 });
 
-
-
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
   const { locale } = req.params;
   const { propertyId } = req.query;
@@ -299,7 +297,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
       return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    // ✅ Déclare la variable ICI, en dehors de l’objet
+    // ✅ Déclarer la config AVANT le render (une seule fois)
     const cfg = getPaypalConfig();
 
     res.render('payment', {
@@ -313,7 +311,7 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
       country: property.country,
       url: property.url,
       currentPath: req.originalUrl,
-      // ✅ Utilise la variable dans l’objet
+      // ✅ Une seule ligne PAYPAL_CLIENT_ID
       PAYPAL_CLIENT_ID: cfg.clientId
     });
   } catch (error) {
