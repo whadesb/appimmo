@@ -3136,7 +3136,6 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
   try {
     const { orderID, propertyId, amount, currency, captureId } = req.body;
 
-    // Upsert: si pas d’ordre pending on le crée directement en paid
     let order = await Order.findOne({ userId: req.user._id, propertyId, paypalOrderId: orderID });
 
     if (!order) {
@@ -3159,26 +3158,28 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
       await order.save();
     }
 
-    // Envoi facture (protégé)
-    try {
-      await sendInvoiceByEmail(
+    // ⚡️ Répondre D’ABORD, sans bloquer sur le mail
+    const locale = req.cookies.locale || 'fr';
+    res.json({ success: true, redirectUrl: `/${locale}/user` });
+
+    // 📧 Envoi de la facture en arrière-plan (non bloquant)
+    Promise.resolve().then(() =>
+      sendInvoiceByEmail(
         req.user.email,
         captureId || orderID,
         amount || String(order.amount),
         currency || 'EUR'
-      );
-    } catch (e) {
-      console.warn('📧 Envoi facture KO :', e.message);
-    }
-
-    const locale = req.cookies.locale || 'fr';
-    return res.json({ success: true, redirectUrl: `/${locale}/user` });
+      )
+    ).catch(e => {
+      console.warn('📧 Envoi facture KO (async) :', e?.message || e);
+    });
 
   } catch (err) {
     console.error('❌ /paypal/mark-paid :', err);
     return res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
+
 app.post('/btcpay/webhook', express.json(), async (req, res) => {
   try {
     const event = req.body;
