@@ -374,7 +374,8 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 </div>
 
    <script src="/js/bootstrap.bundle.min.js"></script>
-<script src="/js/bootstrap.bundle.min.js"></script>
+<!-- SDK PayPal (à mettre AVANT le script paypal.Buttons) -->
+<script src="https://www.paypal.com/sdk/js?client-id=<%= PAYPAL_CLIENT_ID %>&currency=EUR&intent=capture&components=buttons&disable-funding=card,credit,bancontact,blik,eps,giropay,ideal,mybank,p24,sepa,sofort"></script>
 <script>
 paypal.Buttons({
   createOrder: function (data, actions) {
@@ -415,6 +416,55 @@ paypal.Buttons({
 }).render('#paypal-button-container');
 </script>
 
+<script>
+function initPaypal() {
+  paypal.Buttons({
+    createOrder: function (data, actions) {
+      return actions.order.create({
+        purchase_units: [{
+          amount: { currency_code: 'EUR', value: '500.00' },
+          description: 'Paiement annonce immobilière UAP'
+        }]
+      });
+    },
+    onApprove: function (data, actions) {
+      return actions.order.capture().then(function(details) {
+        const propertyId = document.getElementById('propertyId')?.value || null;
+        const cap = details?.purchase_units?.[0]?.payments?.captures?.[0];
+
+        return fetch('/paypal/mark-paid', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            orderID: data.orderID,
+            propertyId,
+            amount: cap?.amount?.value || '500.00',
+            currency: cap?.amount?.currency_code || 'EUR',
+            captureId: cap?.id
+          })
+        })
+        .then(r => r.json())
+        .then(result => {
+          if (result.success && result.redirectUrl) {
+            window.location.href = result.redirectUrl;
+          } else {
+            alert('Erreur : ' + (result.message || 'Réponse inattendue.'));
+          }
+        });
+      });
+    }
+  }).render('#paypal-button-container');
+}
+
+// ⏳ Attendre que le SDK soit chargé
+(function waitForPaypal(){
+  if (window.paypal && paypal.Buttons) {
+    initPaypal();
+  } else {
+    setTimeout(waitForPaypal, 150);
+  }
+})();
+</script>
 
 
 <script>
