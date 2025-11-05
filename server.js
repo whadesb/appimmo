@@ -1388,47 +1388,76 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
       }
     );
 
-    if (captureRes.status === 201 || captureRes.status === 200) {
-      // 5) Enregistrer/mettre à jour ta commande locale
-      const newOrder = new Order({
-        userId: req.user._id,
-        propertyId,
-        amount: parseFloat(amount),
-        status: 'paid',
-        paypalOrderId: orderID,
-        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 jours
-      });
-      await newOrder.save();
+  if (captureRes.status === 201 || captureRes.status === 200) {
+  // ⚙️ Extraire l'ID de capture (toujours utile pour la facture)
+  const capture =
+    captureRes.data?.purchase_units?.[0]?.payments?.captures?.[0] || null;
+  const captureId = capture?.id || null;
 
-      // (optionnel) email payé / facture ici...
+  // 5) Enregistrer la commande locale (PAID)
+  const newOrder = new Order({
+    userId: req.user._id,
+    propertyId,
+    amount: parseFloat(amount),
+    status: 'paid',
+    paypalOrderId: orderID,
+    paypalCaptureId: captureId,
+    expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 jours
+  });
+  await newOrder.save();
+  console.log('✅ Order enregistrée comme PAID', {
+    orderId: newOrder._id.toString(),
+    paypalOrderId: orderID,
+    captureId
+  });
 
-      const locale = req.cookies.locale || 'fr';
-      return res.json({ success: true, redirectUrl: `/${locale}/user` });
-    }
-
-    if (captureRes.status === 422) {
-      // Probable “ORDER_ALREADY_CAPTURED” -> considère comme OK
-      const updated = await Order.findOneAndUpdate(
-        { paypalOrderId: orderID },
-        {
-          $set: {
-            status: 'paid',
-            expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-          }
-        },
-        { upsert: true, new: true }
-      );
-      const locale = req.cookies.locale || 'fr';
-      return res.json({ success: true, redirectUrl: `/${locale}/user` });
-    }
-
-    console.error('Capture PayPal a échoué:', captureRes.status, captureRes.data);
-    return res.status(400).json({ success: false, message: 'Capture échouée' });
-  } catch (err) {
-    console.error('Erreur /process-paypal-payment:', err?.response?.data || err.message);
-    return res.status(500).json({ success: false, message: 'Erreur serveur PayPal' });
+  // 6) Email / facture
+  try {
+    await sendInvoiceByEmail(
+      req.user.email,
+      captureId || orderID,     // numéro de transaction
+      String(amount),
+      'EUR'
+    );
+    console.log('📧 Email de facture envoyé à', req.user.email);
+  } catch (e) {
+    console.warn('📧 Envoi facture KO :', e?.message || e);
   }
-});
+
+  const locale = req.cookies.locale || 'fr';
+  return res.json({ success: true, redirectUrl: `/${locale}/user` });
+}
+
+
+if (captureRes.status === 422) {
+  // Probable ORDER_ALREADY_CAPTURED → on marque payé quand même
+  const updated = await Order.findOneAndUpdate(
+    { paypalOrderId: orderID },
+    {
+      $set: {
+        status: 'paid',
+        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+      }
+    },
+    { upsert: true, new: true }
+  );
+
+  try {
+    await sendInvoiceByEmail(
+      req.user.email,
+      orderID,     // pas d’id de capture fiable ici
+      String(amount),
+      'EUR'
+    );
+    console.log('📧 Email de facture envoyé (422) à', req.user.email);
+  } catch (e) {
+    console.warn('📧 Envoi facture KO (422) :', e?.message || e);
+  }
+
+  const locale = req.cookies.locale || 'fr';
+  return res.json({ success: true, redirectUrl: `/${locale}/user` });
+}
+
 
 
 app.post('/process-btcpay-payment', isAuthenticated, async (req, res) => {
