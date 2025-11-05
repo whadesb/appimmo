@@ -375,48 +375,44 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 
    <script src="/js/bootstrap.bundle.min.js"></script>
 <script src="/js/bootstrap.bundle.min.js"></script>
-<script src="https://www.paypal.com/sdk/js?client-id=<%= PAYPAL_CLIENT_ID %>&currency=EUR&intent=capture&components=buttons&disable-funding=card,credit,bancontact,blik,eps,giropay,ideal,mybank,p24,sepa,sofort"></script>
 <script>
-  // 🔒 Option A : capture 100% côté serveur
-  paypal.Buttons({
-    // pas besoin de 'intent' ici (déjà dans l'URL du SDK)
-    createOrder: function (data, actions) {
-      return actions.order.create({
-        purchase_units: [{
-          amount: { currency_code: 'EUR', value: '<%= (price || 500).toFixed ? price.toFixed(2) : "500.00" %>' },
-          description: 'Paiement annonce immobilière UAP'
-        }]
-      });
-    },
-    onApprove: function (data, actions) {
-      const orderID = data.orderID;
+paypal.Buttons({
+  createOrder: function (data, actions) {
+    return actions.order.create({
+      purchase_units: [{
+        amount: { currency_code: 'EUR', value: '500.00' },
+        description: 'Paiement annonce immobilière UAP'
+      }]
+    });
+  },
+  onApprove: function (data, actions) {
+    // ✅ Capture immédiate côté client — rapide
+    return actions.order.capture().then(function(details) {
       const propertyId = document.getElementById('propertyId')?.value || null;
-      const amount = '<%= (price || 500).toFixed ? price.toFixed(2) : "500.00" %>';
+      const cap = details?.purchase_units?.[0]?.payments?.captures?.[0];
 
-      // 👉 On délègue tout au serveur
-      return fetch('/process-paypal-payment', {
+      return fetch('/paypal/mark-paid', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderID, propertyId, amount })
+        body: JSON.stringify({
+          orderID: data.orderID,
+          propertyId,
+          amount: cap?.amount?.value || '500.00',
+          currency: cap?.amount?.currency_code || 'EUR',
+          captureId: cap?.id
+        })
       })
-      .then(async (res) => {
-        const json = await res.json().catch(() => ({}));
-        if (!res.ok) throw new Error(json.message || ('HTTP ' + res.status));
-        return json;
-      })
-      .then((result) => {
+      .then(r => r.json())
+      .then(result => {
         if (result.success && result.redirectUrl) {
           window.location.href = result.redirectUrl;
         } else {
           alert('Erreur : ' + (result.message || 'Réponse inattendue.'));
         }
-      })
-      .catch((err) => {
-        console.error('Erreur PayPal :', err);
-        alert("Une erreur s'est produite avec PayPal : " + (err.message || err));
       });
-    }
-  }).render('#paypal-button-container');
+    });
+  }
+}).render('#paypal-button-container');
 </script>
 
 
