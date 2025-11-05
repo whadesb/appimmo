@@ -3147,7 +3147,53 @@ app.post('/paypal/webhook', async (req, res) => {
     return res.sendStatus(500);
   }
 });
+app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
+  try {
+    const { orderID, propertyId, amount, currency, captureId } = req.body;
 
+    // Upsert: si pas d’ordre pending on le crée directement en paid
+    let order = await Order.findOne({ userId: req.user._id, propertyId, paypalOrderId: orderID });
+
+    if (!order) {
+      order = new Order({
+        userId: req.user._id,
+        propertyId,
+        amount: parseFloat(amount || '500.00'),
+        status: 'paid',
+        paypalOrderId: orderID,
+        paypalCaptureId: captureId,
+        paidAt: new Date(),
+        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+      });
+      await order.save();
+    } else {
+      order.status = 'paid';
+      order.paidAt = new Date();
+      order.paypalCaptureId = captureId || order.paypalCaptureId;
+      order.expiryDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
+      await order.save();
+    }
+
+    // Envoi facture (protégé)
+    try {
+      await sendInvoiceByEmail(
+        req.user.email,
+        captureId || orderID,
+        amount || String(order.amount),
+        currency || 'EUR'
+      );
+    } catch (e) {
+      console.warn('📧 Envoi facture KO :', e.message);
+    }
+
+    const locale = req.cookies.locale || 'fr';
+    return res.json({ success: true, redirectUrl: `/${locale}/user` });
+
+  } catch (err) {
+    console.error('❌ /paypal/mark-paid :', err);
+    return res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
+});
 app.post('/btcpay/webhook', express.json(), async (req, res) => {
   try {
     const event = req.body;
