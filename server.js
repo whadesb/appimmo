@@ -111,6 +111,13 @@ app.use((req, res, next) => {
 
   next();
 });
+// 🔐 Middleware JSON-safe pour APIs (ne renvoie jamais du HTML)
+function isAuthenticatedJson(req, res, next) {
+  try {
+    if (req.isAuthenticated && req.isAuthenticated()) return next();
+  } catch (e) {}
+  return res.status(401).json({ success: false, message: 'Session expirée. Veuillez vous reconnecter.' });
+}
 
 // Middleware : définir la locale en fonction de l’URL
 app.use((req, res, next) => {
@@ -193,11 +200,11 @@ app.post('/logout', isAuthenticated, (req, res) => {
 
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-  res.redirect('/login');
+  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  const locale = req.params.locale || req.locale || req.cookies.locale || 'fr';
+  return res.redirect(`/${locale}/login`);
 }
+
 
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
@@ -688,12 +695,7 @@ app.post('/set-cookie-consent', (req, res) => {
     res.cookie('cookie_consent', 'accepted', { maxAge: maxAge, httpOnly: true });
     res.json({ message: 'Consentement enregistré', maxAge: maxAge });
 });
-app.post('/logout', (req, res) => {
-  req.logout?.(); // si tu utilises passport
-  req.session.destroy(() => {
-    res.redirect('/');
-  });
-});
+
 
 app.get('/:locale/logout', (req, res, next) => {
     req.logout((err) => {
@@ -935,24 +937,7 @@ RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY
     });
 });
 
-app.get('/:locale/register', (req, res) => {
-    const locale = req.params.locale || 'fr'; // Récupérer la langue dans l'URL ou 'fr' par défaut
-    const translationsPath = path.join(__dirname, 'locales', locale, 'register.json');
-    let i18n = {};
 
-    try {
-        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8')); // Charger les traductions
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
-
-    res.render('register', {
-        locale: locale,
-        i18n: i18n,
-        messages: req.flash() // Pour afficher d'éventuelles erreurs d'inscription
-    });
-});
 
 app.use('/pdf', pdfRoutes);
 
