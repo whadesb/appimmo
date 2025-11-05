@@ -374,47 +374,8 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 </div>
 
    <script src="/js/bootstrap.bundle.min.js"></script>
-<!-- SDK PayPal (à mettre AVANT le script paypal.Buttons) -->
+<!-- SDK PayPal -->
 <script src="https://www.paypal.com/sdk/js?client-id=<%= PAYPAL_CLIENT_ID %>&currency=EUR&intent=capture&components=buttons&disable-funding=card,credit,bancontact,blik,eps,giropay,ideal,mybank,p24,sepa,sofort"></script>
-<script>
-paypal.Buttons({
-  createOrder: function (data, actions) {
-    return actions.order.create({
-      purchase_units: [{
-        amount: { currency_code: 'EUR', value: '500.00' },
-        description: 'Paiement annonce immobilière UAP'
-      }]
-    });
-  },
-  onApprove: function (data, actions) {
-    // ✅ Capture immédiate côté client — rapide
-    return actions.order.capture().then(function(details) {
-      const propertyId = document.getElementById('propertyId')?.value || null;
-      const cap = details?.purchase_units?.[0]?.payments?.captures?.[0];
-
-      return fetch('/paypal/mark-paid', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderID: data.orderID,
-          propertyId,
-          amount: cap?.amount?.value || '500.00',
-          currency: cap?.amount?.currency_code || 'EUR',
-          captureId: cap?.id
-        })
-      })
-      .then(r => r.json())
-      .then(result => {
-        if (result.success && result.redirectUrl) {
-          window.location.href = result.redirectUrl;
-        } else {
-          alert('Erreur : ' + (result.message || 'Réponse inattendue.'));
-        }
-      });
-    });
-  }
-}).render('#paypal-button-container');
-</script>
 
 <script>
 function initPaypal() {
@@ -428,13 +389,18 @@ function initPaypal() {
       });
     },
     onApprove: function (data, actions) {
-      return actions.order.capture().then(function(details) {
+      return actions.order.capture().then(async function(details) {
         const propertyId = document.getElementById('propertyId')?.value || null;
         const cap = details?.purchase_units?.[0]?.payments?.captures?.[0];
 
-        return fetch('/paypal/mark-paid', {
+        // 🔒 Demande JSON explicite + parsing robuste (diagnostic si HTML)
+        const res = await fetch('/paypal/mark-paid', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          credentials: 'same-origin', // s'assure que le cookie de session part bien
           body: JSON.stringify({
             orderID: data.orderID,
             propertyId,
@@ -442,15 +408,23 @@ function initPaypal() {
             currency: cap?.amount?.currency_code || 'EUR',
             captureId: cap?.id
           })
-        })
-        .then(r => r.json())
-        .then(result => {
-          if (result.success && result.redirectUrl) {
-            window.location.href = result.redirectUrl;
-          } else {
-            alert('Erreur : ' + (result.message || 'Réponse inattendue.'));
-          }
         });
+
+        const text = await res.text();
+        let json;
+        try {
+          json = JSON.parse(text);
+        } catch (e) {
+          console.error('Réponse non-JSON de /paypal/mark-paid :\n', text);
+          alert('Réponse inattendue du serveur (non JSON). Vérifie la session/connexion.');
+          return;
+        }
+
+        if (res.ok && json.success && json.redirectUrl) {
+          window.location.href = json.redirectUrl;
+        } else {
+          alert('Erreur : ' + (json.message || 'Réponse invalide.'));
+        }
       });
     }
   }).render('#paypal-button-container');
