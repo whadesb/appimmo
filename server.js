@@ -1430,41 +1430,6 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
   }
 });
 
-app.post('/paypal/mark-paid', isAuthenticated, async (req, res) => {
-  try {
-    const { orderID, propertyId, amount, currency, captureId } = req.body;
-
-    // 1) Retrouver la commande créée en "pending" par /process-paypal-payment
-    const order = await Order.findOne({ userId: req.user._id, propertyId, paypalOrderId: orderID });
-    if (!order) {
-      return res.status(404).json({ success: false, message: "Commande introuvable." });
-    }
-
-    // 2) Marquer payée
-    order.status = 'paid';
-    order.paidAt = new Date();
-    order.paypalCaptureId = captureId;
-    await order.save();
-
-    // 3) Envoyer la facture (ton helper utils/email)
-    try {
-      await sendInvoiceByEmail(
-        req.user.email,
-        captureId || orderID,        // numéro de transaction
-        amount || String(order.amount),
-        currency || 'EUR'
-      );
-    } catch (e) {
-      console.warn('📧 Envoi facture KO :', e.message);
-    }
-
-    const locale = req.cookies.locale || 'fr';
-    return res.json({ success: true, redirectUrl: `/${locale}/user` });
-  } catch (err) {
-    console.error('❌ /paypal/mark-paid :', err);
-    res.status(500).json({ success: false, message: 'Erreur serveur' });
-  }
-});
 
 app.post('/process-btcpay-payment', isAuthenticated, async (req, res) => {
   try {
