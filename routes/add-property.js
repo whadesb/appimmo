@@ -17,6 +17,21 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
+function cleanupUploadedFiles(files) {
+  if (!files) return;
+  Object.values(files).forEach(fileArray => {
+    fileArray.forEach(file => {
+      if (file?.path) {
+        fs.unlink(file.path, err => {
+          if (err && err.code !== 'ENOENT') {
+            console.error('Erreur lors de la suppression du fichier uploadé :', err);
+          }
+        });
+      }
+    });
+  });
+}
+
 // Génération de la landing page HTML
 async function generateLandingPage(property) {
   const lang = property.language || 'fr';
@@ -124,6 +139,7 @@ async function generateLandingPage(property) {
     "url": fullUrl
   };
 
+  const formattedPrice = Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR');
   const template = `
     <!DOCTYPE html>
     <html lang="${lang}">
@@ -135,6 +151,17 @@ async function generateLandingPage(property) {
       <title>${property.propertyType} à ${city}, ${country}</title>
       <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
       <style>
+        body {
+          margin: 0;
+          font-family: Arial, sans-serif;
+          background-color: ${embedUrl ? '#000' : '#ffffff'};
+          color: ${embedUrl ? '#ffffff' : '#000000'};
+        }
+        body.has-video {
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        }
         .video-background {
           position: fixed;
           top: 0;
@@ -158,6 +185,106 @@ async function generateLandingPage(property) {
           background: rgba(0,0,0,0.5);
           z-index: -1;
         }
+        .video-hero {
+          position: relative;
+          z-index: 1;
+          flex: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          text-align: center;
+          padding: 40px 20px;
+        }
+        .video-card {
+          background: rgba(0, 0, 0, 0.55);
+          padding: 40px 30px;
+          border-radius: 20px;
+          max-width: 820px;
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+        .video-card h1 {
+          font-size: 2.4rem;
+          margin: 0;
+        }
+        .video-card p {
+          margin: 0;
+          font-size: 1.1rem;
+          line-height: 1.6;
+        }
+        .video-details {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 18px;
+        }
+        .video-detail {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 1.1rem;
+        }
+        .video-actions {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: center;
+          gap: 18px;
+        }
+        .video-price {
+          font-size: 1.8rem;
+          font-weight: 600;
+        }
+        .visit-btn {
+          background-color: #c4b990;
+          border: none;
+          color: #000;
+          padding: 12px 28px;
+          border-radius: 999px;
+          cursor: pointer;
+          font-size: 1rem;
+          transition: opacity 0.2s ease;
+        }
+        .visit-btn:hover {
+          opacity: 0.85;
+        }
+        .page-content {
+          position: relative;
+          z-index: 1;
+          padding: 40px 20px;
+          max-width: 960px;
+          margin: 0 auto;
+        }
+        .page-content h1 {
+          font-size: 2rem;
+        }
+        .page-content p {
+          font-size: 1.1rem;
+          line-height: 1.6;
+        }
+        .page-content .info-row {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 15px;
+          margin: 20px 0;
+        }
+        .page-content .info-row p {
+          margin: 0;
+          font-size: 1rem;
+        }
+        @media (max-width: 768px) {
+          .video-card {
+            padding: 30px 20px;
+          }
+          .video-card h1 {
+            font-size: 1.8rem;
+          }
+          .video-price {
+            font-size: 1.4rem;
+          }
+        }
       </style>
       <script>
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -168,7 +295,7 @@ async function generateLandingPage(property) {
       </script>
       <script type="application/ld+json">${JSON.stringify(jsonLD)}</script>
     </head>
-    <body>
+    <body class="${embedUrl ? 'has-video' : ''}">
       ${embedUrl ? `
       <div class="video-background">
         <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
@@ -176,32 +303,57 @@ async function generateLandingPage(property) {
       <div class="video-overlay"></div>
       ` : ''}
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
-      <h1>${property.propertyType} ${t.propertyIn} ${city}, ${country}</h1>
-      <p>${property.description}</p>
-      <p><i class="fal fa-ruler-combined"></i> ${property.surface} m²</p>
-      ${property.rooms ? `<p><i class=\\"fal fa-home\\"></i> ${property.rooms}</p>` : ''}
-      ${property.bedrooms ? `<p><i class=\\"fal fa-bed\\"></i> ${property.bedrooms}</p>` : ''}
-      ${property.yearBuilt ? `<p><i class=\\"fal fa-calendar-alt\\"></i> ${property.yearBuilt}</p>` : ''}
-      ${property.pool ? `<p><i class=\\"fas fa-swimming-pool\\"></i> ${t.pool}</p>` : ''}
-      ${property.wateringSystem ? `<p><i class=\\"fas fa-water\\"></i> ${t.wateringSystem}</p>` : ''}
-      ${property.carShelter ? `<p><i class=\\"fas fa-car\\"></i> ${t.carShelter}</p>` : ''}
-      <p><i class=\\"fas fa-parking\\"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</p>
-      ${property.caretakerHouse ? `<p><i class=\\"fas fa-house-user\\"></i> ${t.caretakerHouse}</p>` : ''}
-      ${property.electricShutters ? `<p><i class=\\"fas fa-window-maximize\\"></i> ${t.electricShutters}</p>` : ''}
-      ${property.outdoorLighting ? `<p><i class=\\"fas fa-lightbulb\\"></i> ${t.outdoorLighting}</p>` : ''}
-      <div style="display:flex;align-items:center;gap:10px;">
-        <p style="margin:0;">${t.price} : ${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</p>
-        <button id="visitBtn">${t.visit}</button>
-      </div>
+      ${embedUrl ? `
+        <div class="video-hero">
+          <div class="video-card">
+            <h1>${property.propertyType} ${t.propertyIn} ${city}, ${country}</h1>
+            ${property.description ? `<p>${property.description}</p>` : ''}
+            <div class="video-details">
+              <div class="video-detail"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
+              ${property.rooms ? `<div class="video-detail"><i class="fal fa-home"></i> ${property.rooms}</div>` : ''}
+              ${property.bedrooms ? `<div class="video-detail"><i class="fal fa-bed"></i> ${property.bedrooms}</div>` : ''}
+              ${property.yearBuilt ? `<div class="video-detail"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt}</div>` : ''}
+            </div>
+            <div class="video-actions">
+              <span class="video-price">${formattedPrice} €</span>
+              <button id="visitBtn" class="visit-btn">${t.visit}</button>
+            </div>
+          </div>
+        </div>
+      ` : `
+        <div class="page-content">
+          <h1>${property.propertyType} ${t.propertyIn} ${city}, ${country}</h1>
+          ${property.description ? `<p>${property.description}</p>` : ''}
+          <div class="info-row">
+            <p><i class="fal fa-ruler-combined"></i> ${property.surface} m²</p>
+            ${property.rooms ? `<p><i class="fal fa-home"></i> ${property.rooms}</p>` : ''}
+            ${property.bedrooms ? `<p><i class="fal fa-bed"></i> ${property.bedrooms}</p>` : ''}
+            ${property.yearBuilt ? `<p><i class="fal fa-calendar-alt"></i> ${property.yearBuilt}</p>` : ''}
+            ${property.pool ? `<p><i class="fas fa-swimming-pool"></i> ${t.pool}</p>` : ''}
+            ${property.wateringSystem ? `<p><i class="fas fa-water"></i> ${t.wateringSystem}</p>` : ''}
+            ${property.carShelter ? `<p><i class="fas fa-car"></i> ${t.carShelter}</p>` : ''}
+            <p><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</p>
+            ${property.caretakerHouse ? `<p><i class="fas fa-house-user"></i> ${t.caretakerHouse}</p>` : ''}
+            ${property.electricShutters ? `<p><i class="fas fa-window-maximize"></i> ${t.electricShutters}</p>` : ''}
+            ${property.outdoorLighting ? `<p><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</p>` : ''}
+          </div>
+          <div class="video-actions" style="justify-content:flex-start;">
+            <span class="video-price" style="color:#000;">${formattedPrice} €</span>
+            <button id="visitBtn" class="visit-btn">${t.visit}</button>
+          </div>
+          ${property.photos?.[0] ? `<div style="margin-top:30px;"><img src="/uploads/${property.photos[0]}" alt="${property.propertyType}" style="max-width:100%;border-radius:12px;"></div>` : ''}
+        </div>
+      `}
       <script>
-        document.getElementById('visitBtn').addEventListener('click', function() {
-          alert('${property.contactFirstName || ''} ${property.contactLastName || ''} - ${property.contactPhone || ''}');
-        });
+        const visitButton = document.getElementById('visitBtn');
+        if (visitButton) {
+          visitButton.addEventListener('click', function() {
+            alert('${property.contactFirstName || ''} ${property.contactLastName || ''} - ${property.contactPhone || ''}');
+          });
+        }
       </script>
-      <img src="/uploads/${property.photos[0] || 'default.jpg'}" width="400">
     </body>
     </html>`;
-
   fs.writeFileSync(filePath, template);
 
   addToSitemap(fullUrl);
@@ -216,7 +368,9 @@ router.post('/add-property', authMiddleware, upload.fields([
   { name: 'photo2', maxCount: 1 }
 ]), async (req, res) => {
   try {
-   const { price, surface, country, city, postalCode, propertyType, description, language, videoUrl } = req.body;
+   const { price, surface, country, city, postalCode, propertyType, description, language } = req.body;
+   const rawVideoUrl = (req.body.videoUrl || '').trim();
+   const hasVideo = rawVideoUrl.length > 0;
 
   if (!price || !surface || !country || !city || !postalCode || !propertyType || !description || !language) {
   return res.status(400).json({ error: 'Tous les champs doivent être remplis.' });
@@ -234,18 +388,22 @@ if (!/^\d{5}$/.test(postalCode)) {
 
     let photo1 = null, photo2 = null;
 
-    if (req.files.photo1) {
-      const p1 = `public/uploads/${Date.now()}-photo1.jpg`;
-      await sharp(req.files.photo1[0].path).resize(800).jpeg({ quality: 80 }).toFile(p1);
-      photo1 = path.basename(p1);
-      fs.unlinkSync(req.files.photo1[0].path);
-    }
+    if (hasVideo) {
+      cleanupUploadedFiles(req.files);
+    } else {
+      if (req.files.photo1?.[0]) {
+        const p1 = `public/uploads/${Date.now()}-photo1.jpg`;
+        await sharp(req.files.photo1[0].path).resize(800).jpeg({ quality: 80 }).toFile(p1);
+        photo1 = path.basename(p1);
+        fs.unlinkSync(req.files.photo1[0].path);
+      }
 
-    if (req.files.photo2) {
-      const p2 = `public/uploads/${Date.now()}-photo2.jpg`;
-      await sharp(req.files.photo2[0].path).resize(800).jpeg({ quality: 80 }).toFile(p2);
-      photo2 = path.basename(p2);
-      fs.unlinkSync(req.files.photo2[0].path);
+      if (req.files.photo2?.[0]) {
+        const p2 = `public/uploads/${Date.now()}-photo2.jpg`;
+        await sharp(req.files.photo2[0].path).resize(800).jpeg({ quality: 80 }).toFile(p2);
+        photo2 = path.basename(p2);
+        fs.unlinkSync(req.files.photo2[0].path);
+      }
     }
 
     const property = new Property({
@@ -261,8 +419,8 @@ postalCode,
       contactPhone: req.body.contactPhone,
       language: req.body.language || 'fr',
       userId,
-      videoUrl,
-      photos: [photo1, photo2]
+      videoUrl: rawVideoUrl,
+      photos: hasVideo ? [] : [photo1, photo2].filter(Boolean)
     });
 
     await property.save();

@@ -21,6 +21,21 @@ const upload = multer({ storage: storage });
 
 
 
+function cleanupUploadedFiles(files) {
+  if (!files) return;
+  Object.values(files).forEach(fileArray => {
+    fileArray.forEach(file => {
+      if (file?.path) {
+        fs.unlink(file.path, err => {
+          if (err && err.code !== 'ENOENT') {
+            console.error('Erreur lors de la suppression du fichier uploadé :', err);
+          }
+        });
+      }
+    });
+  });
+}
+
 function slugify(str) {
   return str.toLowerCase()
     .normalize("NFD")
@@ -222,6 +237,104 @@ async function generateLandingPage(property) {
       background-color: #ffffff;
       color: #3c3c3c;
       line-height: 1.5;
+    }
+    body.has-video {
+      background-color: #000;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .video-hero {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .video-card {
+      background: rgba(0, 0, 0, 0.55);
+      padding: 50px 40px;
+      border-radius: 28px;
+      max-width: 960px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .video-card h1 {
+      font-size: 2.8rem;
+      margin: 0;
+      color: #ffffff;
+    }
+    .video-card p {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #f2f2f2;
+    }
+    .video-highlight {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .video-highlight .item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+    .video-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .video-actions .price {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #ffffff;
+    }
+    .video-actions .visit-btn {
+      background-color: #c4b990;
+      border: none;
+      color: #000;
+      padding: 14px 32px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: opacity 0.2s ease;
+    }
+    .video-actions .visit-btn:hover {
+      opacity: 0.85;
+    }
+    .has-video .extra-info-desktop {
+      background: rgba(255,255,255,0.92);
+      color: #3c3c3c;
+      margin-top: 40px;
+      padding: 40px 20px;
+      border-radius: 28px 28px 0 0;
+    }
+    .has-video .extra-info-desktop h2,
+    .has-video .extra-info-desktop .info-label,
+    .has-video .extra-info-desktop .info-item {
+      color: #3c3c3c;
+    }
+    @media (max-width: 768px) {
+      .video-card {
+        padding: 32px 24px;
+      }
+      .video-card h1 {
+        font-size: 2.1rem;
+      }
+      .video-actions .price {
+        font-size: 1.6rem;
+      }
     }
 
     .container {
@@ -934,7 +1047,7 @@ h1 {
     }
   </style>
 </head>
-<body>
+<body class="${embedUrl ? 'has-video' : ''}">
   ${embedUrl ? `
   <div class="video-background">
     <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
@@ -948,6 +1061,42 @@ h1 {
   </noscript>
 
   <!-- Bloc principal -->
+  ${embedUrl ? `
+  <section class="video-hero">
+    <div class="video-card">
+      <p class="property-lorem">${t.adLabel}</p>
+      <h1>${t.propertyHeading} ${property.city}, ${property.country}</h1>
+      <h2 style="font-weight:400; font-size:1.4rem; margin:0;">${t.propertyType}: ${property.propertyType}</h2>
+      ${property.description ? `<p>${property.description}</p>` : `<p>${t.noDescription}</p>`}
+      <div class="video-highlight">
+        <div class="item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
+        ${property.rooms ? `<div class="item"><i class="fal fa-home"></i> ${property.rooms}</div>` : ''}
+        ${property.bedrooms ? `<div class="item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>` : ''}
+        ${property.yearBuilt ? `<div class="item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt}</div>` : ''}
+      </div>
+      ${(property.pool || property.wateringSystem || property.carShelter || property.parking || property.caretakerHouse || property.electricShutters || property.outdoorLighting) ? `<div class="video-highlight">
+        ${property.pool ? `<div class="item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
+        ${property.wateringSystem ? `<div class="item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
+        ${property.carShelter ? `<div class="item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
+        <div class="item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
+        ${property.caretakerHouse ? `<div class="item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
+        ${property.electricShutters ? `<div class="item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
+        ${property.outdoorLighting ? `<div class="item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
+      </div>` : ''}
+      <div class="video-actions">
+        <span class="price">${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</span>
+        <button class="visit-btn" id="visitBtn">${t.visit}</button>
+      </div>
+      <div id="visitModal" class="visit-modal">
+        <div class="visit-modal-content">
+          <span id="closeModal" class="close">&times;</span>
+          <p>${property.contactFirstName || ''} ${property.contactLastName || ''}</p>
+          <p>${property.contactPhone || ''}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  ` : `
   <div class="container">
     <div class="slider">
       <div class="slides">
@@ -995,8 +1144,9 @@ h1 {
       </div>
     </div>
   </div>
+  `}
 
-  ${property.photos.slice(2).length > 0 ? `
+  ${!embedUrl && property.photos.slice(2).length > 0 ? `
   <div class="photo-carousel">
     <button class="carousel-btn prev">&#10094;</button>
     <div class="carousel-track">
@@ -1006,7 +1156,7 @@ h1 {
   </div>
   ` : ''}
 
-  ${property.photos.slice(10).length > 0 ? `
+  ${!embedUrl && property.photos.slice(10).length > 0 ? `
   <div class="mini-carousel">
     <button class="mini-btn prev">&#10094;</button>
     <div class="mini-track">
@@ -1016,11 +1166,10 @@ h1 {
   </div>
   ` : ''}
 
-  <div id="fullscreenOverlay" class="fullscreen-overlay">
+  ${!embedUrl ? `<div id="fullscreenOverlay" class="fullscreen-overlay">
     <span class="close">&times;</span>
     <img id="fullscreenImg" src="" alt="Photo en plein écran" />
-  </div>
-
+  </div>` : ''}
   <!-- Bloc secondaire en dessous -->
  <div class="extra-info-desktop">
 
@@ -1225,54 +1374,60 @@ router.post('/add-property', authMiddleware, upload.fields([
     { name: 'extraPhotos', maxCount: 8 },
     { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
-    const { rooms, surface, price, city, country, dpe, description, videoUrl } = req.body;
+    const { rooms, surface, price, city, country, dpe, description } = req.body;
+    const rawVideoUrl = (req.body.videoUrl || '').trim();
+    const hasVideo = rawVideoUrl.length > 0;
 
     let photo1 = null;
     let photo2 = null;
     let extraPhotos = [];
     let miniPhotos = [];
 
-    if (req.files.photo1) {
-        const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
-        await sharp(req.files.photo1[0].path)
-            .resize(800)
-            .jpeg({ quality: 80 })
-            .toFile(photo1Path);
-        photo1 = path.basename(photo1Path);
-        fs.unlinkSync(req.files.photo1[0].path);
-    }
-
-    if (req.files.photo2) {
-        const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
-        await sharp(req.files.photo2[0].path)
-            .resize(800)
-            .jpeg({ quality: 80 })
-            .toFile(photo2Path);
-        photo2 = path.basename(photo2Path);
-        fs.unlinkSync(req.files.photo2[0].path);
-    }
-
-    if (req.files.extraPhotos) {
-        for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
-            const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
-            await sharp(file.path)
+    if (hasVideo) {
+        cleanupUploadedFiles(req.files);
+    } else {
+        if (req.files.photo1?.[0]) {
+            const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
+            await sharp(req.files.photo1[0].path)
                 .resize(800)
                 .jpeg({ quality: 80 })
-                .toFile(extraPath);
-            extraPhotos.push(path.basename(extraPath));
-            fs.unlinkSync(file.path);
+                .toFile(photo1Path);
+            photo1 = path.basename(photo1Path);
+            fs.unlinkSync(req.files.photo1[0].path);
         }
-    }
 
-    if (req.files.miniPhotos) {
-        for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
-            const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
-            await sharp(file.path)
+        if (req.files.photo2?.[0]) {
+            const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
+            await sharp(req.files.photo2[0].path)
                 .resize(800)
                 .jpeg({ quality: 80 })
-                .toFile(miniPath);
-            miniPhotos.push(path.basename(miniPath));
-            fs.unlinkSync(file.path);
+                .toFile(photo2Path);
+            photo2 = path.basename(photo2Path);
+            fs.unlinkSync(req.files.photo2[0].path);
+        }
+
+        if (req.files.extraPhotos) {
+            for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
+                const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
+                await sharp(file.path)
+                    .resize(800)
+                    .jpeg({ quality: 80 })
+                    .toFile(extraPath);
+                extraPhotos.push(path.basename(extraPath));
+                fs.unlinkSync(file.path);
+            }
+        }
+
+        if (req.files.miniPhotos) {
+            for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
+                const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
+                await sharp(file.path)
+                    .resize(800)
+                    .jpeg({ quality: 80 })
+                    .toFile(miniPath);
+                miniPhotos.push(path.basename(miniPath));
+                fs.unlinkSync(file.path);
+            }
         }
     }
 
@@ -1287,8 +1442,8 @@ router.post('/add-property', authMiddleware, upload.fields([
     description: description || '',
             language: req.body.language || 'fr',
             userId: req.user._id,
-            videoUrl,
-            photos: [photo1, photo2, ...extraPhotos, ...miniPhotos]
+            videoUrl: rawVideoUrl,
+            photos: hasVideo ? [] : [photo1, photo2, ...extraPhotos, ...miniPhotos].filter(Boolean)
         });
 
         await property.save();
@@ -1319,64 +1474,75 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
             return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
         }
 
-        const { rooms, surface, price, city, country, dpe, videoUrl } = req.body;
+        const { rooms, surface, price, city, country, dpe } = req.body;
+        const rawVideoUrl = (req.body.videoUrl || '').trim();
+        const hasVideo = rawVideoUrl.length > 0;
 
         property.rooms = rooms;
         property.surface = surface;
         property.price = price;
         property.city = city;
         property.country = country;
-        property.videoUrl = videoUrl;
+        property.videoUrl = rawVideoUrl;
 
-        if (req.files.photo1) {
-            const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
-            await sharp(req.files.photo1[0].path)
-                .resize(800)
-                .jpeg({ quality: 80 })
-                .toFile(photo1Path);
-            property.photos[0] = path.basename(photo1Path);
-            fs.unlinkSync(req.files.photo1[0].path);
-        }
+        if (hasVideo) {
+            cleanupUploadedFiles(req.files);
+            property.photos = [];
+        } else {
+            if (!Array.isArray(property.photos)) {
+                property.photos = [];
+            }
 
-        if (req.files.photo2) {
-            const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
-            await sharp(req.files.photo2[0].path)
-                .resize(800)
-                .jpeg({ quality: 80 })
-                .toFile(photo2Path);
-            property.photos[1] = path.basename(photo2Path);
-            fs.unlinkSync(req.files.photo2[0].path);
-        }
-
-        let extraPhotos = property.photos.slice(2,10);
-        if (req.files.extraPhotos) {
-            extraPhotos = [];
-            for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
-                const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
-                await sharp(file.path)
+            if (req.files.photo1?.[0]) {
+                const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
+                await sharp(req.files.photo1[0].path)
                     .resize(800)
                     .jpeg({ quality: 80 })
-                    .toFile(extraPath);
-                extraPhotos.push(path.basename(extraPath));
-                fs.unlinkSync(file.path);
+                    .toFile(photo1Path);
+                property.photos[0] = path.basename(photo1Path);
+                fs.unlinkSync(req.files.photo1[0].path);
             }
-        }
 
-        let miniPhotos = property.photos.slice(10,13);
-        if (req.files.miniPhotos) {
-            miniPhotos = [];
-            for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
-                const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
-                await sharp(file.path)
+            if (req.files.photo2?.[0]) {
+                const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
+                await sharp(req.files.photo2[0].path)
                     .resize(800)
                     .jpeg({ quality: 80 })
-                    .toFile(miniPath);
-                miniPhotos.push(path.basename(miniPath));
-                fs.unlinkSync(file.path);
+                    .toFile(photo2Path);
+                property.photos[1] = path.basename(photo2Path);
+                fs.unlinkSync(req.files.photo2[0].path);
             }
-        }
 
-        property.photos = property.photos.slice(0,2).concat(extraPhotos, miniPhotos);
+            let extraPhotos = property.photos.slice(2,10);
+            if (req.files.extraPhotos) {
+                extraPhotos = [];
+                for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
+                    const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
+                    await sharp(file.path)
+                        .resize(800)
+                        .jpeg({ quality: 80 })
+                        .toFile(extraPath);
+                    extraPhotos.push(path.basename(extraPath));
+                    fs.unlinkSync(file.path);
+                }
+            }
+
+            let miniPhotos = property.photos.slice(10,13);
+            if (req.files.miniPhotos) {
+                miniPhotos = [];
+                for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
+                    const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
+                    await sharp(file.path)
+                        .resize(800)
+                        .jpeg({ quality: 80 })
+                        .toFile(miniPath);
+                    miniPhotos.push(path.basename(miniPath));
+                    fs.unlinkSync(file.path);
+                }
+            }
+
+            property.photos = property.photos.slice(0,2).concat(extraPhotos, miniPhotos).filter(Boolean);
+        }
 
         await property.save();
 
