@@ -500,7 +500,8 @@ align-items: stretch;
       justify-content: center;
     }
     .visit-modal-content {
-      background: #fff;
+      background: #c4b990;
+      color: #000;
       padding: 20px;
       border-radius: 4px;
       text-align: center;
