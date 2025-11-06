@@ -3155,7 +3155,6 @@ app.post('/paypal/webhook', async (req, res) => {
     return res.sendStatus(500);
   }
 });
-// ✅ Marquer une commande PayPal comme payée + email facture (asynchrone)
 app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
   try {
     const { orderID, propertyId, amount, currency, captureId } = req.body;
@@ -3192,8 +3191,8 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
         propertyId,
         amount: paidAmount,
         status: 'paid',
-        paypalOrderId: orderID,                 // ex: 8RN80188...
-        paypalCaptureId: effectiveCaptureId,    // ex: 5F4899...
+        paypalOrderId: orderID,              // ex: 8RN80188...
+        paypalCaptureId: effectiveCaptureId, // ex: 5F4899...
         currency: currency || 'EUR',
         paidAt: new Date(),
         expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
@@ -3209,36 +3208,40 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
       await order.save();
     }
 
-   const locale = req.cookies.locale || 'fr';
-res.json({ success: true, redirectUrl: `/${locale}/user` });
+    // ⚡️ Réponse immédiate
+    const responseLocale =
+      (req.cookies && req.cookies.locale) ||
+      (req.params && req.params.locale) ||
+      'fr';
 
-// 📧 Email asynchrone
-const fullName =
-  [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
+    res.json({ success: true, redirectUrl: `/${responseLocale}/user` });
 
-(async () => {
-  try {
-    await sendInvoiceByEmail(
-      req.user.email,                 // to
-      fullName,                       // fullName
-      order.orderId,                  // Réf UAP (ORD-...)
-      order.paypalOrderId,            // PayPal Order ID
-      order.paypalCaptureId || '-',   // PayPal Capture ID (si connu)
-      String(order.amount),           // montant
-      order.currency || 'EUR'         // devise
-    );
-    console.log('📧 Facture envoyée (async) avec succès pour', req.user.email);
-  } catch (e) {
-    console.warn('📧 Envoi facture KO (async) :', e?.message || e);
+    // 📧 Email asynchrone
+    const fullName =
+      [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
 
+    (async () => {
+      try {
+        await sendInvoiceByEmail(
+          req.user.email,                 // to
+          fullName,                       // fullName
+          order.orderId,                  // Réf UAP (ORD-...)
+          order.paypalOrderId,            // PayPal Order ID
+          order.paypalCaptureId || '-',   // PayPal Capture ID (si connu)
+          String(order.amount),           // montant
+          order.currency || 'EUR'         // devise
+        );
+        console.log('📧 Facture envoyée (async) avec succès pour', req.user.email);
+      } catch (e) {
+        console.warn('📧 Envoi facture KO (async) :', e?.message || e);
+      }
+    })(); // ← on ferme bien l’IIFE ici
 
-  } catch (err) {
+  } catch (err) {               // ← puis le catch du try principal
     console.error('❌ /paypal/mark-paid :', err);
     return res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
-
-
 
 
 app.post('/btcpay/webhook', express.json(), async (req, res) => {
