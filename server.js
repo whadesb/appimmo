@@ -2504,7 +2504,8 @@ h1 {
       justify-content: center;
     }
     .visit-modal-content {
-      background: #fff;
+      background: #c4b990;
+      color: #000;
       padding: 30px;
       border-radius: 8px;
       text-align: center;
