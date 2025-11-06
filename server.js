@@ -3209,10 +3209,6 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
       await order.save();
     }
 
-    // ⚡️ Réponse immédiate
-    const locale = req.cookies.locale || 'fr';
-    res.json({ success: true, redirectUrl: `/${locale}/user` });
-
    const locale = req.cookies.locale || 'fr';
 res.json({ success: true, redirectUrl: `/${locale}/user` });
 
