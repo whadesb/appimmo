@@ -3213,22 +3213,28 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
     const locale = req.cookies.locale || 'fr';
     res.json({ success: true, redirectUrl: `/${locale}/user` });
 
-    // 📧 Email asynchrone (si tu utilises la version "détaillée" de l'email)
-    const fullName = [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;ail;
+   const locale = req.cookies.locale || 'fr';
+res.json({ success: true, redirectUrl: `/${locale}/user` });
 
-   Promise.resolve()
-  .then(() =>
-    sendInvoiceByEmail(
-      req.user.email,            // to
-      fullName,                  // fullName
-      order.orderId,             // Réf UAP (ORD-...)
-      order.paypalOrderId,       // PayPal Order ID
-      order.paypalCaptureId || '-', // PayPal Capture/Transaction ID (si connu)
-      String(order.amount),      // montant
-      order.currency || 'EUR'    // devise
-    )
-  )
-  .catch(e => console.warn('📧 Envoi facture KO (async) :', e?.message || e));
+// 📧 Email asynchrone
+const fullName =
+  [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
+
+(async () => {
+  try {
+    await sendInvoiceByEmail(
+      req.user.email,                 // to
+      fullName,                       // fullName
+      order.orderId,                  // Réf UAP (ORD-...)
+      order.paypalOrderId,            // PayPal Order ID
+      order.paypalCaptureId || '-',   // PayPal Capture ID (si connu)
+      String(order.amount),           // montant
+      order.currency || 'EUR'         // devise
+    );
+    console.log('📧 Facture envoyée (async) avec succès pour', req.user.email);
+  } catch (e) {
+    console.warn('📧 Envoi facture KO (async) :', e?.message || e);
+
 
   } catch (err) {
     console.error('❌ /paypal/mark-paid :', err);
