@@ -12,6 +12,11 @@ const orderSchema = new mongoose.Schema({
     unique: true,
     sparse: true
   },
+  paypalCaptureId: {           
+    type: String,
+    index: true,
+    sparse: true
+  },
   btcPayInvoiceId: {
     type: String,
     unique: true,
@@ -30,6 +35,13 @@ const orderSchema = new mongoose.Schema({
   amount: {
     type: Number,
     required: true
+  },
+ currency: {             
+    type: String,
+    default: 'EUR'
+  },
+   paidAt: {                  
+    type: Date
   },
   status: {
     type: String,
