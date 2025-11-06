@@ -60,6 +60,31 @@ function getPaypalConfig() {
     webhookId:isLive ? process.env.PAYPAL_WEBHOOK_ID_LIVE: process.env.PAYPAL_WEBHOOK_ID_SANDBOX
   };
 }
+async function getPaypalAccessToken() {
+  const cfg = getPaypalConfig();
+  const { data } = await axios.post(
+    `${cfg.baseUrl}/v1/oauth2/token`,
+    'grant_type=client_credentials',
+    {
+      auth: { username: cfg.clientId, password: cfg.secret },
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    }
+  );
+  return data.access_token;
+}
+
+async function resolveCaptureIdFromOrder(orderID) {
+  const cfg = getPaypalConfig();
+  const accessToken = await getPaypalAccessToken();
+
+  const { data } = await axios.get(
+    `${cfg.baseUrl}/v2/checkout/orders/${orderID}`,
+    { headers: { Authorization: `Bearer ${accessToken}` } }
+  );
+
+  const cap = data?.purchase_units?.[0]?.payments?.captures?.[0];
+  return cap?.id || null;
+}
 
 // Middleware
 app.use(compression());
@@ -3142,68 +3167,76 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
       });
     }
 
-    // 🔎 Upsert : on cherche une commande existante pour cet user + property + PayPal Order
+    // ✅ Si le captureId n'est pas fourni par le front, on tente de le récupérer chez PayPal
+    let effectiveCaptureId = captureId || null;
+    if (!effectiveCaptureId) {
+      try {
+        effectiveCaptureId = await resolveCaptureIdFromOrder(orderID);
+      } catch (e) {
+        console.warn('⚠️ Impossible de résoudre captureId via PayPal :', e?.message || e);
+      }
+    }
+
+    // 🔎 Upsert commande
     let order = await Order.findOne({
       userId: req.user._id,
       propertyId,
       paypalOrderId: orderID
     });
 
+    const paidAmount = parseFloat(amount || order?.amount || '500.00');
+
     if (!order) {
-      // 🆕 Créer la commande en PAID
       order = new Order({
         userId: req.user._id,
         propertyId,
-        amount: parseFloat(amount || '500.00'),
+        amount: paidAmount,
         status: 'paid',
-        paypalOrderId: orderID,          // ex: 3UY88984...
-        paypalCaptureId: captureId || null, // ex (Transaction ID) : 4SN81215...
+        paypalOrderId: orderID,                 // ex: 8RN80188...
+        paypalCaptureId: effectiveCaptureId,    // ex: 5F4899...
+        currency: currency || 'EUR',
         paidAt: new Date(),
-        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // +90 jours
+        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
       });
       await order.save();
     } else {
-      // ♻️ Mise à jour si déjà existante
       order.status = 'paid';
       order.paidAt = new Date();
-      order.paypalCaptureId = captureId || order.paypalCaptureId;
-      order.amount = parseFloat(amount || order.amount || '500.00');
+      order.amount = paidAmount;
+      order.currency = currency || order.currency || 'EUR';
+      order.paypalCaptureId = effectiveCaptureId || order.paypalCaptureId;
       order.expiryDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
       await order.save();
     }
 
-    // ⚡️ Réponse IMMÉDIATE (ne pas bloquer sur l’email)
+    // ⚡️ Réponse immédiate
     const locale = req.cookies.locale || 'fr';
     res.json({ success: true, redirectUrl: `/${locale}/user` });
 
-    // 📧 Envoi de la facture en ARRIÈRE-PLAN (non bloquant)
+    // 📧 Email asynchrone (si tu utilises la version "détaillée" de l'email)
     const fullName =
       [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
 
     Promise.resolve()
       .then(() =>
         sendInvoiceByEmail(
-          req.user.email,            // destinataire
-          fullName,                  // nom complet
-          order.orderId,             // Réf UAP (ex: ORD-1762420...)
-          order.paypalOrderId,       // PayPal Order ID (ex: 3UY88984...)
-          order.paypalCaptureId,     // PayPal Capture/Transaction ID (ex: 4SN81215...)
-          String(order.amount || amount || '500.00'),
-          currency || 'EUR'
+          req.user.email,           // destinataire
+          fullName,                 // nom complet pour l'email
+          order.orderId,            // Réf UAP (ORD-...)
+          order.paypalOrderId,      // PayPal Order ID
+          order.paypalCaptureId || '-', // PayPal Capture/Transaction ID
+          String(order.amount),     // Montant
+          order.currency || 'EUR'   // Devise
         )
       )
-      .then(info => {
-        console.log('📧 Facture envoyée (async)', info?.messageId || '');
-      })
-      .catch(e => {
-        console.warn('📧 Envoi facture KO (async) :', e?.message || e);
-      });
+      .catch(e => console.warn('📧 Envoi facture KO (async) :', e?.message || e));
 
   } catch (err) {
     console.error('❌ /paypal/mark-paid :', err);
     return res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
+
 
 
 
