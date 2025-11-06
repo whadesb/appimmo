@@ -45,7 +45,7 @@ const pdfRoutes = require('./routes/pdf');
 const LandingPage = require('./models/Page'); // nom du fichier réel
 const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-const { sendInvoiceByEmail, sendMailPending } = require('./utils/email');
+const { sendInvoiceByEmail, sendMailPending, generateInvoicePDF } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
 const { addToSitemap, pingSearchEngines } = require('./utils/seo');
 
@@ -1561,6 +1561,35 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
         console.error('Erreur lors de la récupération des commandes :', error);
         res.status(500).json({ error: 'Erreur lors de la récupération des commandes' });
     }
+});
+
+
+app.get('/user/orders/:orderId/invoice', isAuthenticated, async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const order = await Order.findOne({ _id: orderId, userId: req.user._id });
+
+    if (!order) {
+      return res.status(404).json({ error: 'Commande introuvable' });
+    }
+
+    if (order.status !== 'paid') {
+      return res.status(400).json({ error: 'La facture est disponible après confirmation du paiement.' });
+    }
+
+    const { invoicePath, fileBase } = await generateInvoicePDF({
+      orderIdUap: order.orderId,
+      paypalOrderId: order.paypalOrderId || order.btcPayInvoiceId,
+      paypalCaptureId: order.paypalCaptureId,
+      amount: order.amount,
+      currency: order.currency || 'EUR',
+    });
+
+    return res.download(invoicePath, `facture-${fileBase}.pdf`);
+  } catch (error) {
+    console.error('Erreur lors de la génération de la facture :', error);
+    return res.status(500).json({ error: 'Impossible de générer la facture.' });
+  }
 });
 
 
