@@ -1677,6 +1677,10 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 <script>
+function downloadInvoice(orderId) {
+  window.open(`/user/orders/${orderId}/invoice`, '_blank');
+}
+
 function formatDate(dateString) {
   const date = new Date(dateString);
   const day = String(date.getDate()).padStart(2, '0');
@@ -1713,6 +1717,14 @@ async function loadOrders() {
         if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722';
 
         const url = order.propertyId?.url || `/landing-pages/${order.propertyId?._id}.html`;
+        const canDownloadInvoice = order.status === 'paid';
+        const invoiceButton = canDownloadInvoice
+          ? `<button class="btn btn-sm btn-outline-danger" onclick="downloadInvoice('${order._id}')" title="Télécharger la facture">
+              <i class="bi bi-file-earmark-text"></i>
+            </button>`
+          : `<button class="btn btn-sm btn-outline-secondary disabled" title="Facture disponible après paiement">
+              <i class="bi bi-file-earmark-text"></i>
+            </button>`;
 
         const row = document.createElement('tr');
         row.innerHTML = `
@@ -1734,6 +1746,7 @@ async function loadOrders() {
             <button class="btn btn-sm btn-dark me-1" onclick="window.open('https://uap.immo${url}', '_blank')" title="Voir la page">
               <i class="bi bi-eye"></i>
             </button>
+            ${invoiceButton}
           </td>
         `;
         ordersList.appendChild(row);

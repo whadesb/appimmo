@@ -177,4 +177,5 @@ async function sendMailPending(to, fullName, orderId, amount) {
 module.exports = {
   sendInvoiceByEmail,
   sendMailPending,
+  generateInvoicePDF,
 };
