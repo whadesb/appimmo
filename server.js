@@ -1882,18 +1882,21 @@ async function generateLandingPage(property) {
       gap: 20px;
     }
     .video-actions .price {
-      font-size: 2rem;
-      font-weight: 600;
-      color: #ffffff;
-    }
-    .video-actions .visit-btn {
       background-color: #c4b990;
-      border: none;
-      color: #000;
+      color: #000000;
+      font-size: 1.5rem;
+      font-weight: 600;
       padding: 14px 32px;
       border-radius: 999px;
+    }
+    .video-actions .visit-btn {
+      background: none;
+      border: none;
+      color: #ffffff;
       cursor: pointer;
-      font-size: 1rem;
+      font-size: 1.4rem;
+      padding: 0;
+      text-decoration: underline;
       transition: opacity 0.2s ease;
     }
     .video-actions .visit-btn:hover {
@@ -1919,7 +1922,7 @@ async function generateLandingPage(property) {
         font-size: 2.1rem;
       }
       .video-actions .price {
-        font-size: 1.6rem;
+        font-size: 1.5rem;
       }
     }
 
