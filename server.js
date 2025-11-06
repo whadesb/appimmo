@@ -3130,11 +3130,19 @@ app.post('/paypal/webhook', async (req, res) => {
     return res.sendStatus(500);
   }
 });
+// ✅ Marquer une commande PayPal comme payée + email facture (asynchrone)
 app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
   try {
     const { orderID, propertyId, amount, currency, captureId } = req.body;
 
-    // Upsert côté base : on marque la commande payée
+    if (!orderID || !propertyId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Paramètres manquants (orderID, propertyId).'
+      });
+    }
+
+    // 🔎 Upsert : on cherche une commande existante pour cet user + property + PayPal Order
     let order = await Order.findOne({
       userId: req.user._id,
       propertyId,
@@ -3142,36 +3150,45 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
     });
 
     if (!order) {
+      // 🆕 Créer la commande en PAID
       order = new Order({
         userId: req.user._id,
         propertyId,
         amount: parseFloat(amount || '500.00'),
         status: 'paid',
-        paypalOrderId: orderID,
-        paypalCaptureId: captureId,
+        paypalOrderId: orderID,          // ex: 3UY88984...
+        paypalCaptureId: captureId || null, // ex (Transaction ID) : 4SN81215...
         paidAt: new Date(),
-        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 jours
+        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // +90 jours
       });
       await order.save();
     } else {
+      // ♻️ Mise à jour si déjà existante
       order.status = 'paid';
       order.paidAt = new Date();
       order.paypalCaptureId = captureId || order.paypalCaptureId;
+      order.amount = parseFloat(amount || order.amount || '500.00');
       order.expiryDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
       await order.save();
     }
 
-    // ⚡️ Réponse immédiate (pas de blocage sur l’email)
+    // ⚡️ Réponse IMMÉDIATE (ne pas bloquer sur l’email)
     const locale = req.cookies.locale || 'fr';
     res.json({ success: true, redirectUrl: `/${locale}/user` });
 
-    // 📧 Envoi de la facture en asynchrone (non bloquant)
+    // 📧 Envoi de la facture en ARRIÈRE-PLAN (non bloquant)
+    const fullName =
+      [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
+
     Promise.resolve()
       .then(() =>
         sendInvoiceByEmail(
-          req.user.email,               // destinataire
-          captureId || orderID,         // référence (pour nom du PDF/sujet)
-          amount || String(order.amount),
+          req.user.email,            // destinataire
+          fullName,                  // nom complet
+          order.orderId,             // Réf UAP (ex: ORD-1762420...)
+          order.paypalOrderId,       // PayPal Order ID (ex: 3UY88984...)
+          order.paypalCaptureId,     // PayPal Capture/Transaction ID (ex: 4SN81215...)
+          String(order.amount || amount || '500.00'),
           currency || 'EUR'
         )
       )
@@ -3187,6 +3204,7 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
     return res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
+
 
 
 app.post('/btcpay/webhook', express.json(), async (req, res) => {
