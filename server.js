@@ -3214,22 +3214,21 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
     res.json({ success: true, redirectUrl: `/${locale}/user` });
 
     // 📧 Email asynchrone (si tu utilises la version "détaillée" de l'email)
-    const fullName =
-      [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
+    const fullName = [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;ail;
 
-    Promise.resolve()
-      .then(() =>
-        sendInvoiceByEmail(
-          req.user.email,           // destinataire
-          fullName,                 // nom complet pour l'email
-          order.orderId,            // Réf UAP (ORD-...)
-          order.paypalOrderId,      // PayPal Order ID
-          order.paypalCaptureId || '-', // PayPal Capture/Transaction ID
-          String(order.amount),     // Montant
-          order.currency || 'EUR'   // Devise
-        )
-      )
-      .catch(e => console.warn('📧 Envoi facture KO (async) :', e?.message || e));
+   Promise.resolve()
+  .then(() =>
+    sendInvoiceByEmail(
+      req.user.email,            // to
+      fullName,                  // fullName
+      order.orderId,             // Réf UAP (ORD-...)
+      order.paypalOrderId,       // PayPal Order ID
+      order.paypalCaptureId || '-', // PayPal Capture/Transaction ID (si connu)
+      String(order.amount),      // montant
+      order.currency || 'EUR'    // devise
+    )
+  )
+  .catch(e => console.warn('📧 Envoi facture KO (async) :', e?.message || e));
 
   } catch (err) {
     console.error('❌ /paypal/mark-paid :', err);
