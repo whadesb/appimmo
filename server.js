@@ -99,7 +99,11 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
 }).catch((err) => {
   console.error('Error connecting to MongoDB', err);
 });
-// Middleware global pour rendre isAuthenticated et user accessibles dans toutes les vues EJS
+function isAuthenticatedJson(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  res.status(401).json({ success: false, message: 'Non authentifié' });
+}
+
 
 // Middleware : prolonger la session active
 app.use((req, res, next) => {
@@ -111,13 +115,7 @@ app.use((req, res, next) => {
 
   next();
 });
-// 🔐 Middleware JSON-safe pour APIs (ne renvoie jamais du HTML)
-function isAuthenticatedJson(req, res, next) {
-  try {
-    if (req.isAuthenticated && req.isAuthenticated()) return next();
-  } catch (e) {}
-  return res.status(401).json({ success: false, message: 'Session expirée. Veuillez vous reconnecter.' });
-}
+
 
 // Middleware : définir la locale en fonction de l’URL
 app.use((req, res, next) => {
@@ -3136,7 +3134,12 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
   try {
     const { orderID, propertyId, amount, currency, captureId } = req.body;
 
-    let order = await Order.findOne({ userId: req.user._id, propertyId, paypalOrderId: orderID });
+    // Upsert côté base : on marque la commande payée
+    let order = await Order.findOne({
+      userId: req.user._id,
+      propertyId,
+      paypalOrderId: orderID
+    });
 
     if (!order) {
       order = new Order({
@@ -3147,7 +3150,7 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
         paypalOrderId: orderID,
         paypalCaptureId: captureId,
         paidAt: new Date(),
-        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 jours
       });
       await order.save();
     } else {
@@ -3158,27 +3161,33 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
       await order.save();
     }
 
-    // ⚡️ Répondre D’ABORD, sans bloquer sur le mail
+    // ⚡️ Réponse immédiate (pas de blocage sur l’email)
     const locale = req.cookies.locale || 'fr';
     res.json({ success: true, redirectUrl: `/${locale}/user` });
 
-    // 📧 Envoi de la facture en arrière-plan (non bloquant)
-    Promise.resolve().then(() =>
-      sendInvoiceByEmail(
-        req.user.email,
-        captureId || orderID,
-        amount || String(order.amount),
-        currency || 'EUR'
+    // 📧 Envoi de la facture en asynchrone (non bloquant)
+    Promise.resolve()
+      .then(() =>
+        sendInvoiceByEmail(
+          req.user.email,               // destinataire
+          captureId || orderID,         // référence (pour nom du PDF/sujet)
+          amount || String(order.amount),
+          currency || 'EUR'
+        )
       )
-    ).catch(e => {
-      console.warn('📧 Envoi facture KO (async) :', e?.message || e);
-    });
+      .then(info => {
+        console.log('📧 Facture envoyée (async)', info?.messageId || '');
+      })
+      .catch(e => {
+        console.warn('📧 Envoi facture KO (async) :', e?.message || e);
+      });
 
   } catch (err) {
     console.error('❌ /paypal/mark-paid :', err);
     return res.status(500).json({ success: false, message: 'Erreur serveur' });
   }
 });
+
 
 app.post('/btcpay/webhook', express.json(), async (req, res) => {
   try {
