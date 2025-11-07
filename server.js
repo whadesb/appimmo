@@ -843,23 +843,23 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
   const locale = req.user?.locale || req.locale || 'fr';
   const user = req.user;
   
-  // 1. Définition de isAdminUser (requis par votre EJS)
+  // Définition du drapeau Admin pour le EJS
   const isAdminUser = true; 
 
   try {
     let userLandingPages = await Property.find({ userId: user._id });
 
+    // Chargement des traductions (Aucun changement)
     const userTranslationsPath = `./locales/${locale}/user.json`;
     let userTranslations = {};
-
     try {
-      // NOTE: assurez-vous que 'fs' est importé en haut de server.js
       userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
     } catch (error) {
       console.error(`Erreur lors du chargement des traductions : ${error}`);
       return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
+    // Traitement des statistiques (Aucun changement)
     const statsArray = await Promise.all(
       userLandingPages.map(async (property) => {
         const stats = await getPageStats(property.url);
@@ -870,11 +870,16 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
       })
     );
 
-    // 🚨 LOG CRUCIAL DANS LA ROUTE
-    const adminUsers = await User.find({}).sort({ createdAt: -1 });
+    // 🚨 REQUÊTE CRITIQUE : Utilisation de .lean()
+    const adminUsers = await User.find({}).sort({ createdAt: -1 }).lean();
+    
     console.log(`[ROUTE ADMIN] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
-    if (adminUsers.length === 0) {
-      console.warn('❗ La requête User.find({}) a renvoyé 0 documents. Vérifiez la DB cible.');
+    
+    // Log des données réelles pour diagnostic final
+    if (adminUsers.length > 0) {
+      console.log('[ROUTE ADMIN] Données récupérées (1er utilisateur) :', adminUsers[0]);
+    } else {
+      console.warn('❗ La requête User.find({}).lean() a renvoyé 0 documents DANS LA REQUÊTE HTTP.');
     }
     // FIN DU LOG
 
@@ -886,7 +891,7 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
       userLandingPages,
       stats: statsArray,
       currentUser: user,
-      adminUsers, // Ceci est le tableau VIDE
+      adminUsers, 
       activeSection: 'admin-users',
       isAdminUser: isAdminUser 
     });
