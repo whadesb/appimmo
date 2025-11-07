@@ -77,6 +77,62 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             border: none;
             box-shadow: none;
         }
+        .dashboard-layout {
+            flex-wrap: nowrap;
+        }
+        @media (max-width: 991.98px) {
+            .dashboard-layout {
+                flex-wrap: wrap;
+            }
+        }
+        .navbar-nav .nav-link.admin-nav-link {
+            background-color: #fff;
+            color: #000 !important;
+            border-radius: 999px;
+            padding: 0.4rem 0.9rem;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            margin-left: 0.5rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            font-weight: 600;
+        }
+        .navbar-nav .nav-link.admin-nav-link i {
+            color: inherit;
+        }
+        .navbar-nav .nav-link.admin-nav-link:hover,
+        .navbar-nav .nav-link.admin-nav-link:focus {
+            background-color: #f5f5f5;
+            color: #000 !important;
+        }
+        @media (max-width: 991.98px) {
+            .navbar-nav .nav-link.admin-nav-link {
+                margin-left: 0;
+                margin-bottom: 0.5rem;
+                border-radius: 12px;
+            }
+        }
+        .sidebar .admin-sidebar-link {
+            background-color: #fff;
+            color: #8f97c4 !important;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .sidebar .admin-sidebar-link i {
+            color: inherit;
+        }
+        .sidebar .admin-sidebar-link:hover,
+        .sidebar .admin-sidebar-link:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+        }
 button.disabled {
   pointer-events: none;
   opacity: 0.7;
@@ -622,13 +678,13 @@ progress {
         </li>
         <% if (isAdminUser) { %>
         <li class="nav-item sidebar-mobile-links sidebar-links">
-          <a class="nav-link click-scroll" href="#" onclick="showSection('admin-users')"><i class="fa fa-users"></i> <%= i18n.admin_user_management %></a>
+          <a class="nav-link click-scroll admin-nav-link" href="#" onclick="showSection('admin-users')"><i class="fa fa-users"></i> <%= i18n.admin_user_management %></a>
         </li>
         <li class="nav-item sidebar-mobile-links sidebar-links">
-          <a class="nav-link click-scroll" href="#" onclick="showSection('admin-properties')"><i class="fa fa-building"></i> <%= i18n.admin_property_management %></a>
+          <a class="nav-link click-scroll admin-nav-link" href="#" onclick="showSection('admin-properties')"><i class="fa fa-building"></i> <%= i18n.admin_property_management %></a>
         </li>
         <li class="nav-item sidebar-mobile-links sidebar-links">
-          <a class="nav-link click-scroll" href="#" onclick="showSection('admin-orders')"><i class="fas fa-shopping-basket"></i> <%= i18n.admin_orders_overview_title %></a>
+          <a class="nav-link click-scroll admin-nav-link" href="#" onclick="showSection('admin-orders')"><i class="fas fa-shopping-basket"></i> <%= i18n.admin_orders_overview_title %></a>
         </li>
         <% } %>
 
@@ -714,7 +770,7 @@ progress {
             <% } %>
         </h5>
         <div class="container-fluid">
-            <div class="row mt-4">
+            <div class="row mt-4 dashboard-layout">
                 <div class="col-auto p-0">
                    <div class="sidebar">
   <a href="#" onclick="showSection('account')"><i class="fa fa-user"></i></a>
@@ -723,9 +779,9 @@ progress {
   <a href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i></a>
   <a href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
   <% if (isAdminUser) { %>
-  <a href="#" onclick="showSection('admin-users')" title="<%= i18n.admin_user_management %>"><i class="fa fa-users"></i></a>
-  <a href="#" onclick="showSection('admin-properties')" title="<%= i18n.admin_property_management %>"><i class="fa fa-building"></i></a>
-  <a href="#" onclick="showSection('admin-orders')" title="<%= i18n.admin_orders_overview_title %>"><i class="fas fa-shopping-basket"></i></a>
+  <a class="admin-sidebar-link" href="#" onclick="showSection('admin-users')" title="<%= i18n.admin_user_management %>"><i class="fa fa-users"></i></a>
+  <a class="admin-sidebar-link" href="#" onclick="showSection('admin-properties')" title="<%= i18n.admin_property_management %>"><i class="fa fa-building"></i></a>
+  <a class="admin-sidebar-link" href="#" onclick="showSection('admin-orders')" title="<%= i18n.admin_orders_overview_title %>"><i class="fas fa-shopping-basket"></i></a>
   <% } %>
 </div>
 
@@ -2187,15 +2243,12 @@ async function loadLandingPages() {
                     ${disabled ? '' : `onclick="redirectToPayment('${page._id}')"`}>
               <i class="bi bi-megaphone"></i>
             </button>
-            <button class="btn btn-sm ${disabled ? 'btn-secondary disabled' : 'btn-dark'} me-1" 
-                    ${disabled ? 'disabled' : ''} 
-                    title="${disabled ? 'Modification temporairement désactivée' : 'Modifier'}" 
+            <button class="btn btn-sm ${disabled ? 'btn-secondary disabled' : 'btn-dark'} me-1"
+                    ${disabled ? 'disabled' : ''}
+                    title="${disabled ? 'Modification temporairement désactivée' : 'Modifier'}"
                     ${disabled ? '' : `onclick="editProperty('${page._id}')"`}>
               <i class="bi bi-pencil-square"></i>
             </button>
-            <a class="btn btn-sm btn-outline-primary" href="/pdf/${page._id}" target="_blank" title="PDF">
-              <i class="bi bi-file-earmark-pdf"></i>
-            </a>
           </td>
         `;
         landingPagesList.appendChild(row);
