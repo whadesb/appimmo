@@ -825,62 +825,64 @@ res.render('user', {
 });
 
 
+// ... (Définition du middleware isAdmin)
+
 app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
-  const locale = req.user?.locale || req.locale || 'fr';
-  const user = req.user;
-  
-  // 1. Définition de isAdminUser (requis par votre EJS)
-  // L'utilisateur a passé le middleware 'isAdmin', donc il est Administrateur.
-  const isAdminUser = true; 
+  const locale = req.user?.locale || req.locale || 'fr';
+  const user = req.user;
+  
+  // 1. Définition de isAdminUser (requis par votre EJS)
+  const isAdminUser = true; 
 
-  try {
-    let userLandingPages = await Property.find({ userId: user._id });
+  try {
+    let userLandingPages = await Property.find({ userId: user._id });
 
-    const userTranslationsPath = `./locales/${locale}/user.json`;
-    let userTranslations = {};
+    const userTranslationsPath = `./locales/${locale}/user.json`;
+    let userTranslations = {};
 
-    try {
-      userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-    } catch (error) {
-      console.error(`Erreur lors du chargement des traductions : ${error}`);
-      return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
+    try {
+      // NOTE: assurez-vous que 'fs' est importé en haut de server.js
+      userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+    } catch (error) {
+      console.error(`Erreur lors du chargement des traductions : ${error}`);
+      return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
 
-    const statsArray = await Promise.all(
-      userLandingPages.map(async (property) => {
-        const stats = await getPageStats(property.url);
-        return {
-          page: property.url,
-          ...stats
-        };
-      })
-    );
+    const statsArray = await Promise.all(
+      userLandingPages.map(async (property) => {
+        const stats = await getPageStats(property.url);
+        return {
+          page: property.url,
+          ...stats
+        };
+      })
+    );
 
-    // 2. Vérifiez ce que retourne la requête (à supprimer après le test)
-    const adminUsers = await User.find({}).sort({ createdAt: -1 });
-    console.log(`[Vérification] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
+    // 🚨 LOG CRUCIAL DANS LA ROUTE
+    const adminUsers = await User.find({}).sort({ createdAt: -1 });
+    console.log(`[ROUTE ADMIN] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
+    if (adminUsers.length === 0) {
+      console.warn('❗ La requête User.find({}) a renvoyé 0 documents. Vérifiez la DB cible.');
+    }
+    // FIN DU LOG
 
-    res.render('user', {
-      locale,
-      user,
-      i18n: userTranslations,
-      currentPath: req.originalUrl,
-      userLandingPages,
-      stats: statsArray,
-      currentUser: user,
-      adminUsers,
-      activeSection: 'admin-users',
-      
-      // ✅ AJOUT ESSENTIEL : Passez la variable pour le rendu conditionnel EJS
-      isAdminUser: isAdminUser 
-    });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des utilisateurs admin :', error);
-    next(error);
-  }
+    res.render('user', {
+      locale,
+      user,
+      i18n: userTranslations,
+      currentPath: req.originalUrl,
+      userLandingPages,
+      stats: statsArray,
+      currentUser: user,
+      adminUsers, // Ceci est le tableau VIDE
+      activeSection: 'admin-users',
+      isAdminUser: isAdminUser 
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs admin :', error);
+    next(error);
+  }
 });
-
-
 
 app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   const locale = req.params.locale || 'fr';
