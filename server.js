@@ -840,68 +840,53 @@ res.render('user', {
 // ... (Définition du middleware isAdmin)
 
 app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
-  const locale = req.user?.locale || req.locale || 'fr';
-  const user = req.user;
-  
-  // Définition du drapeau Admin
-  const isAdminUser = true; 
+    const locale = req.user?.locale || req.locale || 'fr';
+    const user = req.user;
+    const isAdminUser = true;
+    
+    // Initialisez les variables qui pourraient être nécessaires dans 'user.ejs' même si on ne les calcule pas ici.
+    let userLandingPages = [];
+    let statsArray = [];
+    let userTranslations = {};
+    
+    try {
+        // --- 🚨 SEULE REQUÊTE AUTORISÉE POUR LE TEST 🚨 ---
+        const UserModel = mongoose.model('User'); 
+        const adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean();
+        
+        console.log(`[ROUTE ADMIN FINAL] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
+        if (adminUsers.length > 0) {
+            console.log('[ROUTE ADMIN FINAL] Premier utilisateur (Email) :', adminUsers[0].email);
+        } else {
+            console.warn('❗ La requête User.find({}) renvoie TOUJOURS 0. Problème de contexte de requête.');
+        }
+        // --- FIN DU TEST ISOLÉ ---
 
-  try {
-    // ⚠️ FIX PROPOSÉ : Récupération sécurisée du modèle à partir de Mongoose
-    const UserModel = mongoose.model('User'); 
-
-    let userLandingPages = await Property.find({ userId: user._id });
-
-    const userTranslationsPath = `./locales/${locale}/user.json`;
-    let userTranslations = {};
-
-    try {
-      // NOTE: assurez-vous que 'fs' est importé en haut de server.js
-      userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-    } catch (error) {
-      console.error(`Erreur lors du chargement des traductions : ${error}`);
-      return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
-
-    const statsArray = await Promise.all(
-      userLandingPages.map(async (property) => {
-        const stats = await getPageStats(property.url);
-        return {
-          page: property.url,
-          ...stats
-        };
-      })
-    );
-
-    // 🚨 REQUÊTE CRITIQUE : Utilisation de UserModel et .lean()
-    const adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean();
-    
-    console.log(`[ROUTE ADMIN] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
-    
-    // Log des données réelles pour diagnostic
-    if (adminUsers.length > 0) {
-      console.log('[ROUTE ADMIN] Premier utilisateur récupéré (Email) :', adminUsers[0].email);
-    } else {
-      console.warn('❗ La requête User.find({}) a renvoyé 0 documents. Problème d\'exécution dans le contexte HTTP.');
-    }
-    // FIN DU LOG
-
-    res.render('user', {
-      locale,
-      user,
-      i18n: userTranslations,
-      currentPath: req.originalUrl,
-      userLandingPages,
-      stats: statsArray,
-      currentUser: user,
-      adminUsers, 
-      activeSection: 'admin-users',
-      isAdminUser: isAdminUser 
-    });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des utilisateurs admin :', error);
-    next(error);
-  }
+        // Récupération des traductions minimales pour ne pas planter la vue
+        const userTranslationsPath = `./locales/${locale}/user.json`;
+        try {
+            const fs = require('fs'); // Assurez-vous que fs est disponible
+            userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+        } catch (error) {
+            console.error(`Erreur lors du chargement des traductions : ${error}`);
+        }
+        
+        res.render('user', {
+            locale,
+            user,
+            i18n: userTranslations,
+            currentPath: req.originalUrl,
+            userLandingPages, // VIDE
+            stats: statsArray, // VIDE
+            currentUser: user,
+            adminUsers,       // Le tableau (espérons-le) rempli
+            activeSection: 'admin-users',
+            isAdminUser: isAdminUser
+        });
+    } catch (error) {
+        console.error('Erreur CRITIQUE lors de la récupération des utilisateurs admin :', error);
+        next(error);
+    }
 });
 app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   const locale = req.params.locale || 'fr';
