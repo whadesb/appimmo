@@ -108,9 +108,9 @@
   "redirect_payment": "Redirecting to payment...",
   "url_modal_title": "Page URL",
   "copy_url": "Copy URL",
-  "open_page": "Open page"
-  ,
+  "open_page": "Open page",
   "admin_user_management": "User Management",
+  "admin_orders_section_hint": "Orders history (use the icon in each row to inspect details)",
   "admin_user_management_description": "Monitor every account created on the platform and verify their security status.",
   "admin_table_role": "Role",
   "admin_table_first_name": "First name",
