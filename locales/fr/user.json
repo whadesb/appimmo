@@ -110,6 +110,8 @@
   "copy_url": "Copier l'URL",
   "open_page": "Ouvrir la page",
   "admin_user_management": "Gestion des Utilisateurs",
+  "admin_property_management": "Gestion des Propriétés",
+  "admin_property_management_description": "Accédez à toutes les pages générées, copiez les ressources et ouvrez-les en édition en un clic.",
   "admin_orders_section_hint": "Commandes (cliquez sur l'icône de chaque ligne pour voir le détail)",
   "admin_user_management_description": "Surveillez l'ensemble des comptes créés sur la plateforme et vérifiez leur statut de sécurité.",
   "admin_table_role": "Rôle",
@@ -153,5 +155,8 @@
   "admin_orders_status_paid": "Payée",
   "admin_orders_status_pending": "En attente",
   "admin_orders_invoice_download": "Télécharger la facture",
-  "admin_orders_invoice_unavailable": "Facture disponible après confirmation du paiement"
+  "admin_orders_invoice_unavailable": "Facture disponible après confirmation du paiement",
+  "admin_no_properties_found": "Aucune propriété n'a été trouvée.",
+  "yes": "Oui",
+  "no": "Non"
 }

@@ -110,6 +110,8 @@
   "copy_url": "Copy URL",
   "open_page": "Open page",
   "admin_user_management": "User Management",
+  "admin_property_management": "Property Management",
+  "admin_property_management_description": "Browse every generated property page, copy resources, and jump into edits.",
   "admin_orders_section_hint": "Orders history (use the icon in each row to inspect details)",
   "admin_user_management_description": "Monitor every account created on the platform and verify their security status.",
   "admin_table_role": "Role",
@@ -153,5 +155,8 @@
   "admin_orders_status_paid": "Paid",
   "admin_orders_status_pending": "Pending",
   "admin_orders_invoice_download": "Download invoice",
-  "admin_orders_invoice_unavailable": "Invoice available after payment confirmation"
+  "admin_orders_invoice_unavailable": "Invoice available after payment confirmation",
+  "admin_no_properties_found": "No properties were found.",
+  "yes": "Yes",
+  "no": "No"
 }
