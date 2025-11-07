@@ -1278,6 +1278,7 @@ progress {
             <th><%= i18n.admin_table_email %></th>
             <th><%= i18n.admin_table_two_factor %></th>
             <th><%= i18n.admin_table_registered_at %></th>
+            <th class="text-center"><%= i18n.admin_table_orders %></th>
           </tr>
         </thead>
         <tbody>
@@ -1296,11 +1297,16 @@ progress {
                   <% } %>
                 </td>
                 <td><%= adminUser.createdAt ? new Date(adminUser.createdAt).toLocaleString(locale === 'en' ? 'en-GB' : 'fr-FR') : '-' %></td>
+                <td class="text-center">
+                  <a href="/<%= locale %>/admin/orders/<%= adminUser._id %>" class="btn btn-sm btn-outline-primary" title="<%= i18n.admin_table_view_orders %>">
+                    <i class="fas fa-shopping-basket"></i>
+                  </a>
+                </td>
               </tr>
             <% }); %>
           <% } else { %>
             <tr>
-              <td colspan="6" class="text-center"><%= i18n.admin_no_users_found %></td>
+              <td colspan="7" class="text-center"><%= i18n.admin_no_users_found %></td>
             </tr>
           <% } %>
         </tbody>

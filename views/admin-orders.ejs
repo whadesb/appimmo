@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="<%= locale %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UAP Immo | <%= i18n.admin_orders_page_title %></title>
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+<body>
+  <div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1 class="h3 mb-0">
+        <% if (targetUser) { %>
+          <%= i18n.admin_orders_title %> <%= [targetUser.firstName, targetUser.lastName].filter(Boolean).join(' ') || targetUser.email || '' %>
+        <% } else { %>
+          <%= i18n.admin_orders_user_not_found %>
+        <% } %>
+      </h1>
+      <a class="btn btn-outline-secondary" href="/<%= locale %>/user#admin-users">
+        <i class="fas fa-arrow-left"></i> <span class="ms-2"><%= i18n.admin_orders_back_to_users %></span>
+      </a>
+    </div>
+
+    <% if (targetUser) { %>
+      <p class="text-muted"><%= i18n.admin_orders_subtitle %></p>
+    <% } %>
+
+    <% if (targetUser && userOrders && userOrders.length > 0) { %>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead class="table-dark">
+            <tr>
+              <th scope="col"><%= i18n.admin_orders_order_reference %></th>
+              <th scope="col"><%= i18n.admin_orders_paypal_order_id %></th>
+              <th scope="col"><%= i18n.admin_orders_amount %></th>
+              <th scope="col"><%= i18n.admin_orders_status %></th>
+              <th scope="col"><%= i18n.admin_orders_paid_at %></th>
+              <th scope="col"><%= i18n.admin_orders_created_at %></th>
+              <th scope="col"><%= i18n.admin_orders_expiry_date %></th>
+            </tr>
+          </thead>
+          <tbody>
+            <% userOrders.forEach(function(order) { %>
+              <tr>
+                <td><%= order.orderId || order._id %></td>
+                <td><%= order.paypalOrderId || '-' %></td>
+                <td>
+                  <% if (typeof order.amount === 'number') { %>
+                    <%= order.amount.toLocaleString(locale === 'en' ? 'en-GB' : 'fr-FR', { style: 'currency', currency: order.currency || 'EUR' }) %>
+                  <% } else { %>
+                    -
+                  <% } %>
+                </td>
+                <td>
+                  <span class="badge <%= order.status === 'paid' ? 'bg-success' : 'bg-warning text-dark' %>">
+                    <%= order.status %>
+                  </span>
+                </td>
+                <td><%= order.paidAt ? new Date(order.paidAt).toLocaleString(locale === 'en' ? 'en-GB' : 'fr-FR') : '-' %></td>
+                <td><%= order.createdAt ? new Date(order.createdAt).toLocaleString(locale === 'en' ? 'en-GB' : 'fr-FR') : '-' %></td>
+                <td><%= order.expiryDate ? new Date(order.expiryDate).toLocaleDateString(locale === 'en' ? 'en-GB' : 'fr-FR') : '-' %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    <% } else if (targetUser) { %>
+      <div class="alert alert-info" role="alert">
+        <%= i18n.admin_orders_no_orders %>
+      </div>
+    <% } %>
+
+    <% if (!targetUser) { %>
+      <div class="alert alert-warning" role="alert">
+        <%= i18n.admin_orders_user_not_found %>
+      </div>
+    <% } %>
+  </div>
+
+  <script src="/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

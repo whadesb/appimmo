@@ -902,6 +902,45 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
         next(error);
     }
 });
+
+const renderAdminOrders = async (req, res, next) => {
+    const { userId } = req.params;
+    const localeParam = req.params.locale;
+    const locale = localeParam || req.user?.locale || req.locale || 'fr';
+    const UserModel = mongoose.model('User');
+    const OrderModel = mongoose.model('Order');
+
+    const i18nPath = `./locales/${locale}/user.json`;
+    let i18n = {};
+    try {
+        i18n = JSON.parse(fs.readFileSync(i18nPath, 'utf8'));
+    } catch (e) {
+        console.error(`Erreur lors du chargement des traductions : ${e}`);
+    }
+
+    try {
+        const userOrders = await OrderModel.find({ userId: userId })
+            .sort({ paidAt: -1, createdAt: -1 })
+            .lean();
+
+        const targetUser = await UserModel.findById(userId).lean();
+
+        res.render('admin-orders', {
+            locale,
+            user: req.user,
+            targetUser,
+            userOrders,
+            i18n,
+            currentPath: req.originalUrl
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des commandes admin :', error);
+        next(error);
+    }
+};
+
+app.get('/admin/orders/:userId', isAuthenticated, isAdmin, renderAdminOrders);
+app.get('/:locale/admin/orders/:userId', isAuthenticated, isAdmin, renderAdminOrders);
 app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   const locale = req.params.locale || 'fr';
 
