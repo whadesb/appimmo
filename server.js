@@ -828,6 +828,10 @@ res.render('user', {
 app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
   const locale = req.user?.locale || req.locale || 'fr';
   const user = req.user;
+  
+  // 1. Définition de isAdminUser (requis par votre EJS)
+  // L'utilisateur a passé le middleware 'isAdmin', donc il est Administrateur.
+  const isAdminUser = true; 
 
   try {
     let userLandingPages = await Property.find({ userId: user._id });
@@ -852,7 +856,9 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
       })
     );
 
+    // 2. Vérifiez ce que retourne la requête (à supprimer après le test)
     const adminUsers = await User.find({}).sort({ createdAt: -1 });
+    console.log(`[Vérification] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
 
     res.render('user', {
       locale,
@@ -863,14 +869,16 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
       stats: statsArray,
       currentUser: user,
       adminUsers,
-      activeSection: 'admin-users'
+      activeSection: 'admin-users',
+      
+      // ✅ AJOUT ESSENTIEL : Passez la variable pour le rendu conditionnel EJS
+      isAdminUser: isAdminUser 
     });
   } catch (error) {
     console.error('Erreur lors de la récupération des utilisateurs admin :', error);
     next(error);
   }
 });
-
 
 
 
