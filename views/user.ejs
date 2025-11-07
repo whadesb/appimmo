@@ -45,6 +45,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     .lang-pt {
       background-image: url('/images/flags/pt.svg');
     }
+        :root {
+            --dashboard-table-row-height: 60px;
+        }
         body {
             display: flex;
             flex-direction: column;
@@ -79,6 +82,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         }
         .dashboard-layout {
             flex-wrap: nowrap;
+        }
+        .table tbody tr {
+            height: var(--dashboard-table-row-height);
+        }
+        .table tbody tr > * {
+            vertical-align: middle;
         }
         @media (max-width: 991.98px) {
             .dashboard-layout {
@@ -502,6 +511,9 @@ input[type="number"] {
                 white-space: nowrap;
                 padding: 8px;
                 text-align: left;
+            }
+            .table tbody tr {
+                height: var(--dashboard-table-row-height);
             }
             .table-responsive {
                 display: block;
