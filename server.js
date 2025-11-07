@@ -843,23 +843,26 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
   const locale = req.user?.locale || req.locale || 'fr';
   const user = req.user;
   
-  // Définition du drapeau Admin pour le EJS
+  // Définition du drapeau Admin
   const isAdminUser = true; 
 
   try {
+    // ⚠️ FIX PROPOSÉ : Récupération sécurisée du modèle à partir de Mongoose
+    const UserModel = mongoose.model('User'); 
+
     let userLandingPages = await Property.find({ userId: user._id });
 
-    // Chargement des traductions (Aucun changement)
     const userTranslationsPath = `./locales/${locale}/user.json`;
     let userTranslations = {};
+
     try {
+      // NOTE: assurez-vous que 'fs' est importé en haut de server.js
       userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
     } catch (error) {
       console.error(`Erreur lors du chargement des traductions : ${error}`);
       return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    // Traitement des statistiques (Aucun changement)
     const statsArray = await Promise.all(
       userLandingPages.map(async (property) => {
         const stats = await getPageStats(property.url);
@@ -870,16 +873,16 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
       })
     );
 
-    // 🚨 REQUÊTE CRITIQUE : Utilisation de .lean()
-    const adminUsers = await User.find({}).sort({ createdAt: -1 }).lean();
+    // 🚨 REQUÊTE CRITIQUE : Utilisation de UserModel et .lean()
+    const adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean();
     
     console.log(`[ROUTE ADMIN] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
     
-    // Log des données réelles pour diagnostic final
+    // Log des données réelles pour diagnostic
     if (adminUsers.length > 0) {
-      console.log('[ROUTE ADMIN] Données récupérées (1er utilisateur) :', adminUsers[0]);
+      console.log('[ROUTE ADMIN] Premier utilisateur récupéré (Email) :', adminUsers[0].email);
     } else {
-      console.warn('❗ La requête User.find({}).lean() a renvoyé 0 documents DANS LA REQUÊTE HTTP.');
+      console.warn('❗ La requête User.find({}) a renvoyé 0 documents. Problème d\'exécution dans le contexte HTTP.');
     }
     // FIN DU LOG
 
@@ -900,7 +903,6 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
     next(error);
   }
 });
-
 app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   const locale = req.params.locale || 'fr';
 
