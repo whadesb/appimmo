@@ -1397,60 +1397,104 @@ progress {
           <tr>
             <th>ID Page</th>
             <th>ID User</th>
-            <th>Type</th>
-            <th>Ville / Pays</th>
-            <th>Surface (m²)</th>
-            <th>Pièces / Ch.</th>
-            <th>Prix (€)</th>
-            <th>Vidéo URL</th>
-            <th>Photos (Toutes)</th>
-            <th>Parking</th>
-            <th>Piscine</th>
-            <th>Actions</th>
+            <th><%= i18n.created_type %></th>
+            <th><%= i18n.created_rooms %></th>
+            <th><%= i18n.created_bedrooms %></th>
+            <th><%= i18n.created_surface %></th>
+            <th><%= i18n.created_price %></th>
+            <th><%= i18n.created_country %></th>
+            <th><%= i18n.created_city %></th>
+            <th><%= i18n.created_postal_code %></th>
+            <th><%= i18n.created_year %></th>
+            <th><%= i18n.created_dpe %></th>
+            <th><%= i18n.created_language %></th>
+            <th><%= i18n.created_pool %></th>
+            <th><%= i18n.created_double_glazing %></th>
+            <th><%= i18n.created_watering %></th>
+            <th><%= i18n.created_barbecue %></th>
+            <th><%= i18n.created_car_shelter %></th>
+            <th><%= i18n.created_parking %></th>
+            <th><%= i18n.created_caretaker %></th>
+            <th><%= i18n.created_electric_shutters %></th>
+            <th><%= i18n.created_outdoor_lighting %></th>
+            <th><%= i18n.created_main_photo %></th>
+            <th><%= i18n.created_secondary_photo %></th>
+            <th><%= i18n.created_extra_photos %></th>
+            <th><%= i18n.created_mini_photos %></th>
+            <th><%= i18n.created_video_url %></th>
+            <th><%= i18n.created_contact %></th>
+            <th><%= i18n.created_phone %></th>
+            <th><%= i18n.created_description %></th>
+            <th><%= i18n.created_actions %></th>
           </tr>
         </thead>
         <tbody id="admin-properties-list">
           <% if (adminProperties && adminProperties.length > 0) { %>
             <% adminProperties.forEach(function(property) { %>
+              <% const photos = Array.isArray(property.photos) ? property.photos : []; %>
+              <% const mainPhotos = photos.slice(0, 2); %>
+              <% const extraPhotos = photos.slice(2, 10).filter(Boolean); %>
+              <% const miniPhotos = photos.slice(10, 13).filter(Boolean); %>
+              <% const descriptionText = property.description || ''; %>
               <tr>
                 <td><%= property._id %></td>
                 <td><%= property.userId %></td>
                 <td><%= property.propertyType || 'NC' %></td>
-                <td><%= [property.city, property.country].filter(Boolean).join(', ') || 'NC' %></td>
+                <td><%= property.rooms ?? 'NC' %></td>
+                <td><%= property.bedrooms ?? 'NC' %></td>
                 <td><%= property.surface ?? 'NC' %></td>
-                <td><%= property.rooms ?? 'NC' %> / <%= property.bedrooms ?? 'NC' %></td>
                 <td><%= typeof property.price === 'number' ? property.price.toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR') : (property.price || 'NC') %></td>
+                <td><%= property.country || 'NC' %></td>
+                <td><%= property.city || 'NC' %></td>
+                <td><%= property.postalCode || 'NC' %></td>
+                <td><%= property.yearBuilt || 'NC' %></td>
+                <td><%= property.dpe || 'NC' %></td>
+                <td><%= property.language ? property.language.toUpperCase() : 'NC' %></td>
+                <td><%= property.pool ? i18n.yes : (property.pool === false ? i18n.no : 'NC') %></td>
+                <td><%= property.doubleGlazing ? i18n.yes : (property.doubleGlazing === false ? i18n.no : 'NC') %></td>
+                <td><%= property.wateringSystem ? i18n.yes : (property.wateringSystem === false ? i18n.no : 'NC') %></td>
+                <td><%= property.barbecue ? i18n.yes : (property.barbecue === false ? i18n.no : 'NC') %></td>
+                <td><%= property.carShelter ? i18n.yes : (property.carShelter === false ? i18n.no : 'NC') %></td>
+                <td><%= property.parking ? i18n.yes : (property.parking === false ? i18n.no : 'NC') %></td>
+                <td><%= property.caretakerHouse ? i18n.yes : (property.caretakerHouse === false ? i18n.no : 'NC') %></td>
+                <td><%= property.electricShutters ? i18n.yes : (property.electricShutters === false ? i18n.no : 'NC') %></td>
+                <td><%= property.outdoorLighting ? i18n.yes : (property.outdoorLighting === false ? i18n.no : 'NC') %></td>
+                <td><%= mainPhotos[0] ? i18n.yes : i18n.no %></td>
+                <td><%= mainPhotos[1] ? i18n.yes : i18n.no %></td>
+                <td><%= extraPhotos.length %></td>
+                <td><%= miniPhotos.length %></td>
                 <td>
                   <% if (property.videoUrl) { %>
-                    <button class="btn btn-sm btn-outline-dark copy-btn" data-url="<%= property.videoUrl %>" title="Copier l'URL Vidéo">
-                      <i class="bi bi-link-45deg"></i> URL
-                    </button>
+                    <a href="<%= property.videoUrl %>" target="_blank" class="text-decoration-underline">URL</a>
                   <% } else { %>
                     NC
                   <% } %>
                 </td>
+                <td><%= [property.contactFirstName, property.contactLastName].filter(Boolean).join(' ') || 'NC' %></td>
+                <td><%= property.contactPhone || 'NC' %></td>
+                <td><%= descriptionText ? (descriptionText.length > 160 ? descriptionText.substring(0, 157) + '…' : descriptionText) : 'NC' %></td>
                 <td>
-                  <% if (property.photos && property.photos.length > 0) { %>
-                    <span class="badge bg-success me-2"><%= property.photos.length %> Photos</span>
-                    <a href="/admin/download-photos/<%= property._id %>" class="btn btn-sm btn-primary" title="Télécharger toutes les photos (ZIP)">
-                      <i class="bi bi-file-earmark-zip"></i> Zip
+                  <div class="d-flex flex-wrap gap-2">
+                    <% if (property.url) { %>
+                      <a href="<%= property.url %>" target="_blank" class="btn btn-sm btn-outline-dark" title="Ouvrir la page">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                      </a>
+                    <% } %>
+                    <% if (property.photos && property.photos.length > 0) { %>
+                      <a href="/admin/download-photos/<%= property._id %>" class="btn btn-sm btn-primary" title="Télécharger toutes les photos (ZIP)">
+                        <i class="bi bi-file-earmark-zip"></i>
+                      </a>
+                    <% } %>
+                    <a href="/property/edit/<%= property._id %>" class="btn btn-sm btn-outline-dark" title="Modifier">
+                      <i class="bi bi-pencil-square"></i>
                     </a>
-                  <% } else { %>
-                    X
-                  <% } %>
-                </td>
-                <td><%= property.parking ? i18n.yes : (property.parking === false ? i18n.no : 'NC') %></td>
-                <td><%= property.pool ? i18n.yes : (property.pool === false ? i18n.no : 'NC') %></td>
-                <td>
-                  <a href="/property/edit/<%= property._id %>" class="btn btn-sm btn-outline-dark" title="Modifier">
-                    <i class="bi bi-pencil-square"></i>
-                  </a>
+                  </div>
                 </td>
               </tr>
             <% }); %>
           <% } else { %>
             <tr>
-              <td colspan="12" class="text-center"><%= i18n.admin_no_properties_found %></td>
+              <td colspan="31" class="text-center"><%= i18n.admin_no_properties_found %></td>
             </tr>
           <% } %>
         </tbody>
@@ -1561,44 +1605,39 @@ progress {
     <div class="table-responsive">
       <table class="table table-striped">
         <thead class="table-dark">
-  <tr>
-    <th>
-      <span data-bs-toggle="tooltip" title="Identifiant unique de la page créée">
-        <%= i18n.created_id %>
-      </span>
-    </th>
-    <th>
-      <span data-bs-toggle="tooltip" title="Type de bien (maison, villa, château…)">
-        <%= i18n.created_type %>
-      </span>
-    </th>
-    <th>
-      <span data-bs-toggle="tooltip" title="Pays dans lequel se situe le bien">
-        <%= i18n.created_country %>
-      </span>
-    </th>
-    <th>
-      <span data-bs-toggle="tooltip" title="Ville dans laquelle se trouve le bien">
-        <%= i18n.created_city %>
-      </span>
-    </th>
-    <th>
-      <span data-bs-toggle="tooltip" title="Prix affiché sur la page d’annonce">
-        <%= i18n.created_price %>
-      </span>
-    </th>
-    <th>
-      <span data-bs-toggle="tooltip" title="Afficher les informations complètes de l'annonce">
-        <%= i18n.created_details %>
-      </span>
-    </th>
-    <th>
-      <span data-bs-toggle="tooltip" title="Copier l’URL, diffuser ou modifier votre page">
-        <%= i18n.created_actions %>
-      </span>
-    </th>
-  </tr>
-</thead>
+          <tr>
+            <th><%= i18n.created_id %></th>
+            <th><%= i18n.created_type %></th>
+            <th><%= i18n.created_rooms %></th>
+            <th><%= i18n.created_bedrooms %></th>
+            <th><%= i18n.created_surface %></th>
+            <th><%= i18n.created_price %></th>
+            <th><%= i18n.created_country %></th>
+            <th><%= i18n.created_city %></th>
+            <th><%= i18n.created_postal_code %></th>
+            <th><%= i18n.created_year %></th>
+            <th><%= i18n.created_dpe %></th>
+            <th><%= i18n.created_language %></th>
+            <th><%= i18n.created_pool %></th>
+            <th><%= i18n.created_double_glazing %></th>
+            <th><%= i18n.created_watering %></th>
+            <th><%= i18n.created_barbecue %></th>
+            <th><%= i18n.created_car_shelter %></th>
+            <th><%= i18n.created_parking %></th>
+            <th><%= i18n.created_caretaker %></th>
+            <th><%= i18n.created_electric_shutters %></th>
+            <th><%= i18n.created_outdoor_lighting %></th>
+            <th><%= i18n.created_main_photo %></th>
+            <th><%= i18n.created_secondary_photo %></th>
+            <th><%= i18n.created_extra_photos %></th>
+            <th><%= i18n.created_mini_photos %></th>
+            <th><%= i18n.created_video_url %></th>
+            <th><%= i18n.created_contact %></th>
+            <th><%= i18n.created_phone %></th>
+            <th><%= i18n.created_description %></th>
+            <th><%= i18n.created_actions %></th>
+          </tr>
+        </thead>
 
         <tbody id="properties-list"></tbody>
       </table>
@@ -1776,39 +1815,107 @@ function showSection(sectionId) {
                 noPropertiesMessage.style.display = 'block';
             } else {
                 noPropertiesMessage.style.display = 'none';
+
+                const entityMap = {
+                  '&': '&amp;',
+                  '<': '&lt;',
+                  '>': '&gt;',
+                  '"': '&quot;',
+                  "'": '&#39;'
+                };
+                const escapeHtml = (value) => {
+                    if (value === null || value === undefined) return '—';
+                    return String(value).replace(/[&<>"']/g, char => entityMap[char]);
+                };
+                const escapeJsString = (value) => {
+                    if (value === null || value === undefined) return '';
+                    return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+                };
+                const formatNumber = (value) => (value === 0 || value) ? escapeHtml(value) : '—';
+                const formatPrice = (value) => {
+                    if (typeof value === 'number' && !Number.isNaN(value)) {
+                        return `${value.toLocaleString(<%- JSON.stringify(locale === 'en' ? 'en-US' : 'fr-FR') %>)} €`;
+                    }
+                    if (value) {
+                        return `${escapeHtml(value)} €`;
+                    }
+                    return '—';
+                };
+                const boolLabel = (value) => value ? <%- JSON.stringify(i18n.yes) %> : <%- JSON.stringify(i18n.no) %>;
+
                 properties.forEach(property => {
                     const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${property.rooms}</td>
-                        <td>${property.surface}</td>
-                        <td>${property.price.toLocaleString('fr-FR')} €</td>
-                        <td>${property.city}</td>
-                        <td>${property.country}</td>
-                        <td><a href="${property.url}" target="_blank">${property.url}</a></td>
-                        <td>
-                            <div class="action-icons">
-                                <i class="bi bi-clipboard" style="color: #333;" onclick="copyURL('${property.url}')"></i>
-                                <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${property._id}')"></i>
-                                <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${property._id}')"></i>
-                            </div>
-                        </td>
-                    `;
+                    const photos = Array.isArray(property.photos) ? property.photos : [];
+                    const mainPhotos = photos.slice(0, 2);
+                    const extraPhotos = photos.slice(2, 10).filter(Boolean);
+                    const miniPhotos = photos.slice(10, 13).filter(Boolean);
+                    const normalizedUrl = property.url ? (property.url.startsWith('http') ? property.url : `https://uap.immo${property.url}`) : '';
+                    const idCell = property._id ? (normalizedUrl ? `<a href="${normalizedUrl}" target="_blank" rel="noopener">${escapeHtml(property._id)}</a>` : escapeHtml(property._id)) : '—';
+                    const videoCell = property.videoUrl ? `<a href="${property.videoUrl}" target="_blank" rel="noopener">${escapeHtml(property.videoUrl)}</a>` : '—';
+                    const contactName = escapeHtml([property.contactFirstName, property.contactLastName].filter(Boolean).join(' ')) || '—';
+                    const contactPhone = escapeHtml(property.contactPhone) || '—';
+                    const description = escapeHtml(property.description || '') || '—';
+                    const truncatedDescription = description !== '—' && description.length > 160 ? `${description.slice(0, 157)}…` : description;
+                    const safeUrlForJs = escapeJsString(property.url || '');
+                    const safeIdForJs = escapeJsString(property._id || '');
+
+                    const actionsHtml = `
+                        <div class="action-icons">
+                          ${property.url ? `<i class="bi bi-clipboard" title="${<%- JSON.stringify(i18n.copy_url) %>}" style="color: #333;" onclick="copyURL('${safeUrlForJs}')"></i>` : ''}
+                          <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${safeIdForJs}')"></i>
+                          <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${safeIdForJs}')"></i>
+                        </div>`;
+
+                    const cells = [
+                        idCell,
+                        escapeHtml(property.propertyType || '—'),
+                        formatNumber(property.rooms),
+                        formatNumber(property.bedrooms),
+                        formatNumber(property.surface),
+                        formatPrice(property.price),
+                        escapeHtml(property.country || '—'),
+                        escapeHtml(property.city || '—'),
+                        escapeHtml(property.postalCode || '—'),
+                        formatNumber(property.yearBuilt),
+                        escapeHtml(property.dpe || '—'),
+                        escapeHtml((property.language || '').toUpperCase() || '—'),
+                        boolLabel(property.pool),
+                        boolLabel(property.doubleGlazing),
+                        boolLabel(property.wateringSystem),
+                        boolLabel(property.barbecue),
+                        boolLabel(property.carShelter),
+                        boolLabel(property.parking),
+                        boolLabel(property.caretakerHouse),
+                        boolLabel(property.electricShutters),
+                        boolLabel(property.outdoorLighting),
+                        boolLabel(Boolean(mainPhotos[0])),
+                        boolLabel(Boolean(mainPhotos[1])),
+                        escapeHtml(extraPhotos.length),
+                        escapeHtml(miniPhotos.length),
+                        videoCell,
+                        contactName,
+                        contactPhone,
+                        truncatedDescription,
+                        actionsHtml
+                    ];
+
+                    row.innerHTML = cells.map(cell => `<td>${cell}</td>`).join('');
                     propertiesList.appendChild(row);
                 });
             }
         } else {
             const propertiesList = document.getElementById('properties-list');
-            propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
+            propertiesList.innerHTML = '<tr><td colspan="30" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
         }
     } catch (error) {
         const propertiesList = document.getElementById('properties-list');
-        propertiesList.innerHTML = '<tr><td colspan="7" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
+        propertiesList.innerHTML = '<tr><td colspan="30" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
     }
 }
 
 
     function copyURL(url) {
-        const fullUrl = `https://uap.immo${url}`;
+        const fullUrl = url && url.startsWith('http') ? url : `https://uap.immo${url}`;
         navigator.clipboard.writeText(fullUrl)
             .then(() => {
                 showCopyMessage();

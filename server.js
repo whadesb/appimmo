@@ -1427,19 +1427,20 @@ app.post('/add-property', isAuthenticated, upload.fields([
     }
 
     const property = new Property({
-      rooms: req.body.rooms,
-      bedrooms: req.body.bedrooms,
-      surface: req.body.surface,
+      rooms: Number(req.body.rooms),
+      bedrooms: Number(req.body.bedrooms),
+      surface: Number(req.body.surface),
       price: parseFloat(req.body.price),
       city: req.body.city,
-postalCode: req.body.postalCode,
+      postalCode: req.body.postalCode,
       country: req.body.country,
       description: req.body.description,
       yearBuilt: req.body.yearBuilt || null,
       pool: req.body.pool === 'true',
       propertyType: req.body.propertyType,
-      fireplace: req.body.fireplace === 'true',
+      doubleGlazing: req.body.doubleGlazing === 'true',
       wateringSystem: req.body.wateringSystem === 'true',
+      barbecue: req.body.barbecue === 'true',
       carShelter: req.body.carShelter === 'true',
       parking: req.body.parking === 'true',
       caretakerHouse: req.body.caretakerHouse === 'true',
@@ -1517,7 +1518,9 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
 
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
-  { name: 'photo2', maxCount: 1 }
+  { name: 'photo2', maxCount: 1 },
+  { name: 'extraPhotos', maxCount: 8 },
+  { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -1526,17 +1529,38 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
       return res.status(403).send("Vous n'êtes pas autorisé à modifier cette propriété.");
     }
 
+    if (typeof req.body.parking === 'undefined') {
+      cleanupUploadedFiles(req.files);
+      return res.status(400).send('Le champ parking est requis.');
+    }
+
+    const rawVideoUrl = (req.body.videoUrl || '').trim();
+    const hasVideo = rawVideoUrl.length > 0;
+    const postalCodePattern = /^\d{5}$/;
+    const allowedLanguages = ['fr', 'en', 'es', 'pt'];
+
+    if (!postalCodePattern.test(req.body.postalCode || '')) {
+      cleanupUploadedFiles(req.files);
+      return res.status(400).send('Le code postal doit contenir exactement 5 chiffres.');
+    }
+
     // Mettre à jour les champs depuis le formulaire
-    property.rooms = req.body.rooms;
-    property.bedrooms = req.body.bedrooms;
-    property.surface = req.body.surface;
-    property.price = req.body.price;
+    property.rooms = Number(req.body.rooms);
+    property.bedrooms = Number(req.body.bedrooms);
+    property.surface = Number(req.body.surface);
+    property.price = parseFloat(req.body.price);
     property.city = req.body.city;
+    property.postalCode = req.body.postalCode;
     property.country = req.body.country;
-    property.yearBuilt = req.body.yearBuilt;
+    property.yearBuilt = req.body.yearBuilt || null;
     property.propertyType = req.body.propertyType;
-    property.dpe = req.body.dpe;
+    property.dpe = req.body.dpe || 'En cours';
     property.description = req.body.description;
+    property.contactFirstName = req.body.contactFirstName;
+    property.contactLastName = req.body.contactLastName;
+    property.contactPhone = req.body.contactPhone;
+    property.language = allowedLanguages.includes(req.body.language) ? req.body.language : property.language;
+    property.videoUrl = rawVideoUrl;
 
     // Champs booléens des équipements (venant de <select> avec 'true' ou 'false' comme valeurs)
     property.pool = req.body.pool === 'true';
@@ -1549,23 +1573,46 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     property.electricShutters = req.body.electricShutters === 'true';
     property.outdoorLighting = req.body.outdoorLighting === 'true';
 
-    // ➕ Mise à jour des photos si présentes
-    if (req.files) {
-      if (req.files.photo1 && req.files.photo1[0]) {
-        property.photo1 = req.files.photo1[0].filename;
+    if (hasVideo) {
+      property.photos = [];
+      cleanupUploadedFiles(req.files);
+    } else {
+      const existingPhotos = Array.isArray(property.photos) ? property.photos : [];
+      let mainPhotos = existingPhotos.slice(0, 2);
+      let extraPhotos = existingPhotos.slice(2, 10);
+      let miniPhotos = existingPhotos.slice(10, 13);
+
+      if (req.files?.photo1?.[0]) {
+        mainPhotos[0] = req.files.photo1[0].filename;
       }
-      if (req.files.photo2 && req.files.photo2[0]) {
-        property.photo2 = req.files.photo2[0].filename;
+      if (req.files?.photo2?.[0]) {
+        mainPhotos[1] = req.files.photo2[0].filename;
       }
+
+      if (req.files?.extraPhotos?.length) {
+        extraPhotos = req.files.extraPhotos.slice(0, 8).map(file => file.filename);
+      }
+
+      if (req.files?.miniPhotos?.length) {
+        miniPhotos = req.files.miniPhotos.slice(0, 3).map(file => file.filename);
+      }
+
+      const combinedPhotos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
+
+      if (combinedPhotos.length < 2) {
+        cleanupUploadedFiles(req.files);
+        return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
+      }
+
+      property.photos = combinedPhotos;
     }
 
-   await property.save();
+    await property.save();
 
-// 🆕 Regénérer la landing page après mise à jour
-const updatedLandingPageUrl = await generateLandingPage(property);
-property.url = updatedLandingPageUrl;
-await property.save();
-
+    // 🆕 Regénérer la landing page après mise à jour
+    const updatedLandingPageUrl = await generateLandingPage(property);
+    property.url = updatedLandingPageUrl;
+    await property.save();
 
     // Localisation + traduction pour le rendu
     const locale = req.language || 'fr';
