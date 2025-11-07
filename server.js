@@ -781,74 +781,78 @@ app.get('/:locale/logout', (req, res, next) => {
     });
 });
 
-// Route pour la page utilisateur avec locale et récupération des propriétés
-const { locale } = req.params;
-    const user = req.user;
+// Assurez-vous que 'mongoose' est importé en haut du fichier
+// ainsi que les modèles 'User' et 'Property', et 'fs'.
 
-    if (!user) {
-        return res.redirect(`/${locale}/login`);
-    }
+app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
+//                                          ^^^^^ Le mot-clé ASYNC est CRUCIAL ici.
+  const { locale } = req.params;
+  const user = req.user;
 
-    // --- LOGIQUE ADMIN POUR LA VUE GLOBALE ---
-    let adminUsers = [];
-    // Le booléen pour le rendu conditionnel EJS
-    const isAdminUser = user && user.role === 'admin';
-    const UserModel = mongoose.model('User'); 
+  if (!user) {
+    return res.redirect(`/${locale}/login`);
+  }
 
-    if (isAdminUser) {
-        try {
-            // Récupère la liste complète UNIQUEMENT si c'est un Admin.
-            // On utilise .lean() pour la robustesse et des objets JS simples.
-            adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); 
-            console.log(`[ROUTE USER] Admin loggué. Utilisateurs pour la vue : ${adminUsers.length}`);
-        } catch (e) {
-            console.error("Erreur Mongoose dans la route /user:", e);
-        }
-    }
-    // --- FIN LOGIQUE ADMIN ---
+  // --- LOGIQUE ADMIN POUR LA VUE GLOBALE ---
+  let adminUsers = [];
+  // Le booléen pour le rendu conditionnel EJS
+  const isAdminUser = user && user.role === 'admin';
+  const UserModel = mongoose.model('User'); 
 
-    // Récupération des propriétés pour l'utilisateur connecté (logique existante)
-    // REMARQUE : J'ai supprimé la ligne "TEMPORAIRE pour debug" et la boucle console.log
-    let userLandingPages = await Property.find({ userId: user._id });
+  if (isAdminUser) {
+      try {
+          // Récupère la liste complète UNIQUEMENT si c'est un Admin.
+          // On utilise .lean() pour la robustesse et des objets JS simples.
+          adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); 
+          console.log(`[ROUTE USER] Admin loggué. Utilisateurs pour la vue : ${adminUsers.length}`);
+      } catch (e) {
+          console.error("Erreur Mongoose dans la route /user lors de la récup. admin:", e);
+          // En cas d'échec, le tableau reste vide pour ne pas crasher.
+      }
+  }
+  // --- FIN LOGIQUE ADMIN ---
 
-    // Récupération des traductions (logique existante)
-    const userTranslationsPath = `./locales/${locale}/user.json`;
-    let userTranslations = {};
-    try {
-        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
-        // Ne pas arrêter, mais utiliser un objet vide
-    }
 
-    // Calcul des statistiques (logique existante)
-    const statsArray = await Promise.all(
-        userLandingPages.map(async (property) => {
-            const stats = await getPageStats(property.url);
-            return {
-                page: property.url,
-                ...stats
-            };
-        })
-    );
+  // ✅ Récupération des propriétés de l'utilisateur connecté (logique existante)
+  let userLandingPages = await Property.find({ userId: user._id });
 
-    res.render('user', {
-        locale,
-        user,
-        i18n: userTranslations,
-        currentPath: req.originalUrl,
-        userLandingPages,
-        stats: statsArray,
-        currentUser: user,
-        
-        // 🔑 PASSAGE DES VARIABLES ADMINISTRATEUR :
-        adminUsers: adminUsers, 
-        isAdminUser: isAdminUser, 
-        
-        activeSection: 'account' // Section par défaut
-    });
+  // ✅ Récupération des traductions (logique existante)
+  const userTranslationsPath = `./locales/${locale}/user.json`;
+  let userTranslations = {};
+
+  try {
+      userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+  } catch (error) {
+      console.error(`Erreur lors du chargement des traductions : ${error}`);
+  }
+
+  // ✅ Calcul des statistiques (logique existante)
+  const statsArray = await Promise.all(
+      userLandingPages.map(async (property) => {
+          const stats = await getPageStats(property.url);
+          return {
+              page: property.url,
+              ...stats
+          };
+      })
+  );
+
+  res.render('user', {
+      locale,
+      user,
+      i18n: userTranslations,
+      currentPath: req.originalUrl,
+      userLandingPages,
+      stats: statsArray,
+      currentUser: user,
+      
+      // 🔑 PASSAGE DES VARIABLES ADMINISTRATEUR :
+      adminUsers: adminUsers, 
+      isAdminUser: isAdminUser, 
+      
+      activeSection: 'account' // Section par défaut
+  });
 });
-
 
 
 app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
