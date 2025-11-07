@@ -46,7 +46,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       background-image: url('/images/flags/pt.svg');
     }
         :root {
-            --dashboard-table-row-height: 60px;
+            --dashboard-table-row-height: 56px;
         }
         body {
             display: flex;
@@ -84,10 +84,25 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             flex-wrap: nowrap;
         }
         .table tbody tr {
+            min-height: var(--dashboard-table-row-height);
             height: var(--dashboard-table-row-height);
         }
         .table tbody tr > * {
             vertical-align: middle;
+            padding-top: 0.6rem;
+            padding-bottom: 0.6rem;
+        }
+        .table tbody tr > * .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            white-space: nowrap;
+        }
+        .table-action-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.35rem;
         }
         @media (max-width: 991.98px) {
             .dashboard-layout {
@@ -2325,58 +2340,167 @@ async function loadLandingPages() {
     const landingPagesList = document.getElementById('properties-list');
     landingPagesList.innerHTML = '';
 
+    const numberLocale = <%- JSON.stringify(locale === 'en' ? 'en-GB' : 'fr-FR') %>;
+    const currencySymbol = <%- JSON.stringify(i18n.currency_symbol || '€') %>;
+    const COPY_TITLE = <%- JSON.stringify(i18n.copy_url || "Copier l'URL") %>;
+    const SHOW_URL_TITLE = <%- JSON.stringify(i18n.show_url || "Afficher l'URL") %>;
+    const QR_CODE_TITLE = <%- JSON.stringify(i18n.qr_code || 'QR Code') %>;
+    const BROADCAST_TITLE = <%- JSON.stringify(i18n.broadcast || 'Diffuser') %>;
+    const EDIT_TITLE = <%- JSON.stringify(i18n.edit || 'Modifier') %>;
+    const ACTIVE_ORDER_TITLE = <%- JSON.stringify(i18n.active_order_in_progress || 'Commande active en cours') %>;
+    const EDIT_DISABLED_TITLE = <%- JSON.stringify(i18n.edit_temporarily_unavailable || 'Modification temporairement désactivée') %>;
+    const URL_UNAVAILABLE_TITLE = <%- JSON.stringify(i18n.url_unavailable || 'URL indisponible') %>;
+    const DETAILS_LABEL = <%- JSON.stringify(i18n.details || 'Détails') %>;
+
+    const entityMap = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    };
+
+    const escapeHtml = (value) => {
+      return String(value).replace(/[&<>"']/g, char => entityMap[char] || char);
+    };
+
+    const formatText = (value) => {
+      if (value === null || value === undefined) {
+        return 'nc';
+      }
+      const stringValue = typeof value === 'string' ? value.trim() : String(value);
+      return stringValue ? escapeHtml(stringValue) : 'nc';
+    };
+
+    const formatPrice = (value) => {
+      if (typeof value === 'number' && !Number.isNaN(value)) {
+        return `${value.toLocaleString(numberLocale)} ${currencySymbol}`;
+      }
+      if (typeof value === 'string') {
+        const trimmed = value.trim();
+        if (!trimmed) {
+          return 'nc';
+        }
+        if (trimmed.toLowerCase() === 'nc') {
+          return 'nc';
+        }
+        return trimmed.includes(currencySymbol)
+          ? escapeHtml(trimmed)
+          : `${escapeHtml(trimmed)} ${currencySymbol}`;
+      }
+      return 'nc';
+    };
+
+    const normalizeUrlPath = (value) => {
+      if (!value && value !== 0) {
+        return '';
+      }
+      const raw = String(value).trim();
+      if (!raw) {
+        return '';
+      }
+      try {
+        const parsed = raw.startsWith('http') ? new URL(raw) : new URL(raw, 'https://uap.immo');
+        const path = `${parsed.pathname || ''}${parsed.search || ''}${parsed.hash || ''}`;
+        if (path && path !== 'null') {
+          return path.startsWith('/') ? path : `/${path}`;
+        }
+        return '';
+      } catch (error) {
+        return raw.startsWith('/') ? raw : `/${raw}`;
+      }
+    };
+
     const noPropertiesMessage = document.getElementById('no-properties-message');
     if (landingPages.length === 0) {
       noPropertiesMessage.style.display = 'block';
     } else {
       noPropertiesMessage.style.display = 'none';
       landingPages.forEach(page => {
-        const disabled = page.hasActiveOrder;
-
         const row = document.createElement('tr');
+        const displayId = formatText(page._id);
+        const displayType = formatText(page.propertyType);
+        const displayCountry = formatText(page.country);
+        const displayCity = formatText(page.city);
+        const displayPrice = formatPrice(page.price);
+        const detailsData = JSON.stringify(page).replace(/'/g, "&apos;");
+        const normalizedPath = normalizeUrlPath(page.url);
+        const hasUrl = Boolean(normalizedPath);
+        const normalizedPathAttr = hasUrl ? escapeHtml(normalizedPath) : '';
+        const hasId = Boolean(page && page._id);
+        const safeIdAttr = hasId ? escapeHtml(String(page._id)) : '';
+        const copyTitleAttr = escapeHtml(COPY_TITLE);
+        const showUrlTitleAttr = escapeHtml(SHOW_URL_TITLE);
+        const qrCodeTitleAttr = escapeHtml(QR_CODE_TITLE);
+        const broadcastTitleAttr = escapeHtml(BROADCAST_TITLE);
+        const editTitleAttr = escapeHtml(EDIT_TITLE);
+        const activeOrderTitleAttr = escapeHtml(ACTIVE_ORDER_TITLE);
+        const editDisabledTitleAttr = escapeHtml(EDIT_DISABLED_TITLE);
+        const urlUnavailableTitleAttr = escapeHtml(URL_UNAVAILABLE_TITLE);
+        const detailsLabelHtml = escapeHtml(DETAILS_LABEL);
+        const disabledByOrder = Boolean(page.hasActiveOrder);
+
+        const copyButtonHtml = hasUrl
+          ? `<button class="btn btn-sm btn-outline-dark copy-btn" data-url="${normalizedPathAttr}" title="${copyTitleAttr}"><i class="bi bi-clipboard"></i></button>`
+          : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${urlUnavailableTitleAttr}"><i class="bi bi-clipboard"></i></button>`;
+
+        const showUrlButtonHtml = hasUrl
+          ? `<button class="btn btn-sm btn-outline-dark show-url-btn" data-url="${normalizedPathAttr}" title="${showUrlTitleAttr}"><i class="bi bi-link-45deg"></i></button>`
+          : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${urlUnavailableTitleAttr}"><i class="bi bi-link-45deg"></i></button>`;
+
+        const qrButtonHtml = hasUrl && hasId
+          ? `<button class="btn btn-sm btn-qr qr-code-btn" data-id="${safeIdAttr}" data-url="${normalizedPathAttr}" title="${qrCodeTitleAttr}"><i class="bi bi-qr-code"></i></button>`
+          : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${urlUnavailableTitleAttr}"><i class="bi bi-qr-code"></i></button>`;
+
+        const broadcastButtonHtml = (hasId && !disabledByOrder)
+          ? `<button class="btn btn-sm btn-dark broadcast-btn" data-id="${safeIdAttr}" title="${broadcastTitleAttr}"><i class="bi bi-megaphone"></i></button>`
+          : `<button class="btn btn-sm ${disabledByOrder ? 'btn-warning' : 'btn-outline-secondary'} disabled" type="button" title="${disabledByOrder ? activeOrderTitleAttr : urlUnavailableTitleAttr}"><i class="bi bi-megaphone"></i></button>`;
+
+        const editButtonHtml = (hasId && !disabledByOrder)
+          ? `<button class="btn btn-sm btn-dark edit-btn" data-id="${safeIdAttr}" title="${editTitleAttr}"><i class="bi bi-pencil-square"></i></button>`
+          : `<button class="btn btn-sm ${disabledByOrder ? 'btn-secondary' : 'btn-outline-secondary'} disabled" type="button" title="${editDisabledTitleAttr}"><i class="bi bi-pencil-square"></i></button>`;
+
         row.innerHTML = `
-          <td>${page._id}</td>
-          <td>${page.propertyType ?? ''}</td>
-          <td>${page.country ?? ''}</td>
-          <td>${page.city ?? ''}</td>
-          <td>${page.price?.toLocaleString('fr-FR') ?? ''} €</td>
+          <td>${displayId}</td>
+          <td>${displayType}</td>
+          <td>${displayCountry}</td>
+          <td>${displayCity}</td>
+          <td>${displayPrice}</td>
           <td>
-            <button class="btn btn-sm btn-outline-dark hover-grey show-details-btn" 
-                    data-details='${JSON.stringify(page).replace(/'/g, "&apos;")}'>
-              <i class="bi bi-info-circle"></i> Détails
+            <button class="btn btn-sm btn-outline-dark hover-grey show-details-btn d-inline-flex align-items-center gap-2"
+                    data-details='${detailsData}'>
+              <i class="bi bi-info-circle"></i>
+              <span>${detailsLabelHtml}</span>
             </button>
           </td>
           <td>
-            <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${page.url}" title="Copier l'URL">
-              <i class="bi bi-clipboard"></i>
-            </button>
-            <button class="btn btn-sm btn-outline-dark me-1 show-url-btn" data-url="${page.url}" title="Afficher l'URL">
-              <i class="bi bi-link-45deg"></i>
-            </button>
-            <button class="btn btn-sm btn-qr me-1 qr-code-btn" data-id="${page._id}" data-url="${page.url}" title="QR Code">
-              <i class="bi bi-qr-code"></i>
-            </button>
-            <button class="btn btn-sm ${disabled ? 'btn-warning disabled' : 'btn-dark'} me-1"
-                    ${disabled ? 'disabled' : ''}
-                    title="${disabled ? 'Commande active en cours' : 'Diffuser'}"
-                    ${disabled ? '' : `onclick="redirectToPayment('${page._id}')"`}>
-              <i class="bi bi-megaphone"></i>
-            </button>
-            <button class="btn btn-sm ${disabled ? 'btn-secondary disabled' : 'btn-dark'} me-1"
-                    ${disabled ? 'disabled' : ''}
-                    title="${disabled ? 'Modification temporairement désactivée' : 'Modifier'}"
-                    ${disabled ? '' : `onclick="editProperty('${page._id}')"`}>
-              <i class="bi bi-pencil-square"></i>
-            </button>
+            <div class="table-action-buttons">
+              ${copyButtonHtml}
+              ${showUrlButtonHtml}
+              ${qrButtonHtml}
+              ${broadcastButtonHtml}
+              ${editButtonHtml}
+            </div>
           </td>
         `;
         landingPagesList.appendChild(row);
       });
     }
 
+    const buildFullUrl = (value) => {
+      if (!value) {
+        return '';
+      }
+      return value.startsWith('http') ? value : `https://uap.immo${value}`;
+    };
+
     document.querySelectorAll('.copy-btn').forEach(button => {
       button.addEventListener('click', function () {
-        const url = `https://uap.immo${this.dataset.url}`;
+        const urlPath = this.dataset.url;
+        if (!urlPath) {
+          return;
+        }
+        const url = buildFullUrl(urlPath);
         navigator.clipboard.writeText(url).then(() => {
           const icon = this.querySelector('i');
           icon.classList.remove('bi-clipboard');
@@ -2390,7 +2514,14 @@ async function loadLandingPages() {
     });
     document.querySelectorAll('.show-url-btn').forEach(button => {
       button.addEventListener('click', function () {
-        const url = `https://uap.immo${this.dataset.url}`;
+        const urlPath = this.dataset.url;
+        if (!urlPath) {
+          return;
+        }
+        const url = buildFullUrl(urlPath);
+        if (!url) {
+          return;
+        }
         document.getElementById('urlModalText').textContent = url;
         const modal = new bootstrap.Modal(document.getElementById('urlModal'));
         modal.show();
@@ -2398,7 +2529,30 @@ async function loadLandingPages() {
     });
     document.querySelectorAll('.qr-code-btn').forEach(button => {
       button.addEventListener('click', function () {
-        showQRCode(this.dataset.id, this.dataset.url);
+        const id = this.dataset.id;
+        const urlPath = this.dataset.url;
+        if (!id || !urlPath) {
+          return;
+        }
+        showQRCode(id, urlPath);
+      });
+    });
+    document.querySelectorAll('.broadcast-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const id = this.dataset.id;
+        if (!id) {
+          return;
+        }
+        redirectToPayment(id);
+      });
+    });
+    document.querySelectorAll('.edit-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const id = this.dataset.id;
+        if (!id) {
+          return;
+        }
+        editProperty(id);
       });
     });
   } catch (error) {
