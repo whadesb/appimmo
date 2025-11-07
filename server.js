@@ -783,11 +783,9 @@ app.get('/:locale/logout', (req, res, next) => {
     });
 });
 
-// Assurez-vous que 'mongoose' est importé en haut du fichier
-// ainsi que les modèles 'User' et 'Property', et 'fs'.
+// Assurez-vous que mongoose est accessible (const mongoose = require('mongoose');)
 
 app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
-//                                          ^^^^^ Le mot-clé ASYNC est CRUCIAL ici.
   const { locale } = req.params;
   const user = req.user;
 
@@ -796,36 +794,36 @@ app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
   }
 
   // --- LOGIQUE ADMIN POUR LA VUE GLOBALE ---
-  let adminUsers = [];
-  let adminOrders = [];
-  let adminProperties = [];
-  // Le booléen pour le rendu conditionnel EJS
+  let adminUsers = [];
+  let adminOrders = [];
+  let adminProperties = []; // Initialisation ici
+  
   const isAdminUser = user && user.role === 'admin';
   const UserModel = mongoose.model('User'); 
+  const PropertyModel = mongoose.model('Property'); // Récupération du modèle Property
 
-  if (isAdminUser) {
-      try {
-          // Récupère la liste complète UNIQUEMENT si c'est un Admin.
-          // On utilise .lean() pour la robustesse et des objets JS simples.
-          adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean();
-          console.log(`[ROUTE USER] Admin loggué. Utilisateurs pour la vue : ${adminUsers.length}`);
-      } catch (e) {
-          console.error("Erreur Mongoose dans la route /user lors de la récup. admin:", e);
-          // En cas d'échec, le tableau reste vide pour ne pas crasher.
-      }
+  if (isAdminUser) {
+      try {
+          // 1. RÉCUPÉRATION DES UTILISATEURS
+          adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); 
+          
+          // 2. RÉCUPÉRATION DES PROPRIÉTÉS (LE FIX)
+          adminProperties = await PropertyModel.find({}) 
+              .sort({ createdAt: -1 })
+              .lean();
+          console.log(`[ROUTE USER] Propriétés Admin chargées : ${adminProperties.length}`);
 
-      try {
-          adminOrders = await Order.find({})
-              .sort({ paidAt: -1, createdAt: -1 })
-              .populate('userId', 'firstName lastName email')
-              .lean();
-          console.log(`[ROUTE USER] Commandes administrateur chargées : ${adminOrders.length}`);
-      } catch (e) {
-          console.error("Erreur lors du chargement des commandes admin :", e);
-      }
-  }
+          // 3. RÉCUPÉRATION DES COMMANDES
+          adminOrders = await Order.find({})
+              .sort({ paidAt: -1, createdAt: -1 })
+              .populate('userId', 'firstName lastName email')
+              .lean();
+          
+      } catch (e) {
+          console.error("Erreur Mongoose dans la route /user lors de la récup. admin:", e);
+      }
+  }
   // --- FIN LOGIQUE ADMIN ---
-
 
   // ✅ Récupération des propriétés de l'utilisateur connecté (logique existante)
   let userLandingPages = await Property.find({ userId: user._id });
@@ -833,7 +831,6 @@ app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
   // ✅ Récupération des traductions (logique existante)
   const userTranslationsPath = `./locales/${locale}/user.json`;
   let userTranslations = {};
-
   try {
       userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
   } catch (error) {
@@ -861,15 +858,14 @@ app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
       currentUser: user,
       
       // 🔑 PASSAGE DES VARIABLES ADMINISTRATEUR :
-      adminUsers: adminUsers,
-      adminOrders: adminOrders,
-      adminProperties: adminProperties,
-      isAdminUser: isAdminUser,
-
-      activeSection: 'account' // Section par défaut
-  });
+      adminUsers: adminUsers, 
+      adminOrders: adminOrders, 
+      adminProperties: adminProperties, // <<--- Maintenant rempli ici
+      isAdminUser: isAdminUser, 
+      
+      activeSection: 'account' // Section par défaut
+  });
 });
-
 
 app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
     const locale = req.user?.locale || req.locale || 'fr';
@@ -928,49 +924,7 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
     }
 });
 
-app.get('/admin/properties', isAuthenticated, isAdmin, async (req, res, next) => {
-    const locale = req.user?.locale || req.locale || 'fr';
-    const user = req.user;
-    const isAdminUser = true;
 
-    let userLandingPages = [];
-    let statsArray = [];
-    let userTranslations = {};
-
-    try {
-        const userTranslationsPath = `./locales/${locale}/user.json`;
-        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
-    }
-
-    try {
-        const PropertyModel = mongoose.model('Property');
-        const adminProperties = await PropertyModel.find({})
-            .sort({ createdAt: -1 })
-            .lean();
-
-        console.log(`[ROUTE ADMIN PROPERTIES] Nombre de propriétés trouvées : ${adminProperties.length}`);
-
-        return res.render('user', {
-            locale,
-            user,
-            i18n: userTranslations,
-            currentPath: req.originalUrl,
-            userLandingPages,
-            stats: statsArray,
-            currentUser: user,
-            adminUsers: [],
-            adminOrders: [],
-            adminProperties,
-            isAdminUser,
-            activeSection: 'admin-properties'
-        });
-    } catch (error) {
-        console.error('Erreur lors de la récupération des propriétés admin :', error);
-        return next(error);
-    }
-});
 
 app.get('/admin/download-photos/:propertyId', isAuthenticated, isAdmin, async (req, res) => {
     const { propertyId } = req.params;
