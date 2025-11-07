@@ -118,7 +118,22 @@
   "admin_table_email": "Email",
   "admin_table_two_factor": "2FA",
   "admin_table_registered_at": "Inscription",
+  "admin_table_orders": "Commandes",
+  "admin_table_view_orders": "Voir les commandes",
   "admin_no_users_found": "Aucun utilisateur n'a été trouvé.",
   "admin_users_2fa_enabled": "Activée",
-  "admin_users_2fa_disabled": "Désactivée"
+  "admin_users_2fa_disabled": "Désactivée",
+  "admin_orders_page_title": "Gestion des commandes",
+  "admin_orders_title": "Commandes de",
+  "admin_orders_subtitle": "Historique complet des commandes associées à ce compte.",
+  "admin_orders_order_reference": "Référence",
+  "admin_orders_paypal_order_id": "ID commande PayPal",
+  "admin_orders_amount": "Montant",
+  "admin_orders_status": "Statut",
+  "admin_orders_paid_at": "Payée le",
+  "admin_orders_created_at": "Créée le",
+  "admin_orders_expiry_date": "Expire le",
+  "admin_orders_no_orders": "Aucune commande n'a été trouvée pour cet utilisateur.",
+  "admin_orders_user_not_found": "Utilisateur introuvable",
+  "admin_orders_back_to_users": "Retour à la gestion des utilisateurs"
 }
