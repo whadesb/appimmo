@@ -30,6 +30,8 @@ const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
+const { spawn } = require('child_process');
+const os = require('os');
 const crypto = require('crypto');
 const { getPageStats } = require('./getStats');
 const Page = require('./models/Page');
@@ -796,6 +798,7 @@ app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
   // --- LOGIQUE ADMIN POUR LA VUE GLOBALE ---
   let adminUsers = [];
   let adminOrders = [];
+  let adminProperties = [];
   // Le booléen pour le rendu conditionnel EJS
   const isAdminUser = user && user.role === 'admin';
   const UserModel = mongoose.model('User'); 
@@ -860,6 +863,7 @@ app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
       // 🔑 PASSAGE DES VARIABLES ADMINISTRATEUR :
       adminUsers: adminUsers,
       adminOrders: adminOrders,
+      adminProperties: adminProperties,
       isAdminUser: isAdminUser,
 
       activeSection: 'account' // Section par défaut
@@ -878,6 +882,7 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
     let userTranslations = {};
     let adminUsers = []; // Initialisation pour le try/catch
     let adminOrders = [];
+    let adminProperties = [];
 
     try {
         // 2. Récupération des traductions (la logique est OK)
@@ -913,12 +918,160 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
             currentUser: user,
             adminUsers,             // Le tableau rempli (taille 6)
             adminOrders,
+            adminProperties,
             activeSection: 'admin-users',
             isAdminUser: isAdminUser
         });
     } catch (error) {
         console.error('Erreur lors de la récupération des utilisateurs admin :', error);
         next(error);
+    }
+});
+
+app.get('/admin/properties', isAuthenticated, isAdmin, async (req, res, next) => {
+    const locale = req.user?.locale || req.locale || 'fr';
+    const user = req.user;
+    const isAdminUser = true;
+
+    let userLandingPages = [];
+    let statsArray = [];
+    let userTranslations = {};
+
+    try {
+        const userTranslationsPath = `./locales/${locale}/user.json`;
+        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+    }
+
+    try {
+        const PropertyModel = mongoose.model('Property');
+        const adminProperties = await PropertyModel.find({})
+            .sort({ createdAt: -1 })
+            .lean();
+
+        console.log(`[ROUTE ADMIN PROPERTIES] Nombre de propriétés trouvées : ${adminProperties.length}`);
+
+        return res.render('user', {
+            locale,
+            user,
+            i18n: userTranslations,
+            currentPath: req.originalUrl,
+            userLandingPages,
+            stats: statsArray,
+            currentUser: user,
+            adminUsers: [],
+            adminOrders: [],
+            adminProperties,
+            isAdminUser,
+            activeSection: 'admin-properties'
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des propriétés admin :', error);
+        return next(error);
+    }
+});
+
+app.get('/admin/download-photos/:propertyId', isAuthenticated, isAdmin, async (req, res) => {
+    const { propertyId } = req.params;
+    let tempDir;
+    let zipPath;
+
+    try {
+        const property = await Property.findById(propertyId).lean();
+
+        if (!property || !Array.isArray(property.photos) || property.photos.length === 0) {
+            return res.status(404).send('Aucune photo trouvée pour cette propriété.');
+        }
+
+        const uploadsDir = path.join(__dirname, 'public/uploads');
+        const filesToArchive = property.photos.reduce((acc, filename) => {
+            const filePath = path.join(uploadsDir, filename);
+            if (fs.existsSync(filePath)) {
+                acc.push(filePath);
+            } else {
+                console.warn(`Fichier photo manquant: ${filePath}`);
+            }
+            return acc;
+        }, []);
+
+        if (filesToArchive.length === 0) {
+            return res.status(404).send('Aucune photo disponible pour cette propriété.');
+        }
+
+        const zipName = `photos-propriete-${propertyId}.zip`;
+        tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'appimmo-'));
+        zipPath = path.join(tempDir, zipName);
+
+        const zipArgs = ['-j', '-q', zipPath, '--', ...filesToArchive];
+
+        await new Promise((resolve, reject) => {
+            const zipProcess = spawn('zip', zipArgs);
+            zipProcess.on('error', reject);
+            zipProcess.stderr.on('data', (data) => {
+                console.error('zip stderr:', data.toString());
+            });
+            zipProcess.on('close', (code) => {
+                if (code === 0) {
+                    resolve();
+                } else {
+                    reject(new Error(`zip process exited with code ${code}`));
+                }
+            });
+        });
+
+        return res.download(zipPath, zipName, async (err) => {
+            try {
+                if (zipPath) {
+                    await fs.promises.unlink(zipPath);
+                }
+            } catch (cleanupError) {
+                if (cleanupError && cleanupError.code !== 'ENOENT') {
+                    console.warn('Erreur lors de la suppression du ZIP temporaire :', cleanupError);
+                }
+            }
+
+            try {
+                if (tempDir) {
+                    await fs.promises.rm(tempDir, { recursive: true, force: true });
+                }
+            } catch (cleanupError) {
+                if (cleanupError && cleanupError.code !== 'ENOENT') {
+                    console.warn('Erreur lors de la suppression du dossier temporaire :', cleanupError);
+                }
+            }
+
+            if (err) {
+                console.error('Erreur lors de l\'envoi du ZIP :', err);
+                if (!res.headersSent) {
+                    res.status(500).send('Erreur lors de l\'envoi du fichier.');
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Erreur lors de la création du ZIP de photos :', error);
+
+        try {
+            if (zipPath) {
+                await fs.promises.unlink(zipPath);
+            }
+        } catch (cleanupError) {
+            if (cleanupError && cleanupError.code !== 'ENOENT') {
+                console.warn('Erreur lors du nettoyage du ZIP temporaire :', cleanupError);
+            }
+        }
+
+        try {
+            if (tempDir) {
+                await fs.promises.rm(tempDir, { recursive: true, force: true });
+            }
+        } catch (cleanupError) {
+            if (cleanupError && cleanupError.code !== 'ENOENT') {
+                console.warn('Erreur lors du nettoyage du dossier temporaire :', cleanupError);
+            }
+        }
+
+        return res.status(500).send('Erreur interne du serveur lors du téléchargement des photos.');
     }
 });
 

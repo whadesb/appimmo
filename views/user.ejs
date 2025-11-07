@@ -625,6 +625,9 @@ progress {
           <a class="nav-link click-scroll" href="#" onclick="showSection('admin-users')"><i class="fa fa-users"></i> <%= i18n.admin_user_management %></a>
         </li>
         <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('admin-properties')"><i class="fa fa-building"></i> <%= i18n.admin_property_management %></a>
+        </li>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
           <a class="nav-link click-scroll" href="#" onclick="showSection('admin-orders')"><i class="fas fa-shopping-basket"></i> <%= i18n.admin_orders_overview_title %></a>
         </li>
         <% } %>
@@ -721,6 +724,7 @@ progress {
   <a href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
   <% if (isAdminUser) { %>
   <a href="#" onclick="showSection('admin-users')" title="<%= i18n.admin_user_management %>"><i class="fa fa-users"></i></a>
+  <a href="#" onclick="showSection('admin-properties')" title="<%= i18n.admin_property_management %>"><i class="fa fa-building"></i></a>
   <a href="#" onclick="showSection('admin-orders')" title="<%= i18n.admin_orders_overview_title %>"><i class="fas fa-shopping-basket"></i></a>
   <% } %>
 </div>
@@ -1326,6 +1330,79 @@ progress {
   </div>
 </div>
 
+<div id="admin-properties" class="card" style="display: none;">
+  <div class="card-body">
+    <h5 class="card-title"><%= i18n.admin_property_management %></h5>
+    <p class="card-text"><%= i18n.admin_property_management_description %></p>
+
+    <div class="table-responsive">
+      <table class="table table-striped table-hover">
+        <thead class="table-dark">
+          <tr>
+            <th>ID Page</th>
+            <th>ID User</th>
+            <th>Type</th>
+            <th>Ville / Pays</th>
+            <th>Surface (m²)</th>
+            <th>Pièces / Ch.</th>
+            <th>Prix (€)</th>
+            <th>Vidéo URL</th>
+            <th>Photos (Toutes)</th>
+            <th>Parking</th>
+            <th>Piscine</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="admin-properties-list">
+          <% if (adminProperties && adminProperties.length > 0) { %>
+            <% adminProperties.forEach(function(property) { %>
+              <tr>
+                <td><%= property._id %></td>
+                <td><%= property.userId %></td>
+                <td><%= property.propertyType || 'NC' %></td>
+                <td><%= [property.city, property.country].filter(Boolean).join(', ') || 'NC' %></td>
+                <td><%= property.surface ?? 'NC' %></td>
+                <td><%= property.rooms ?? 'NC' %> / <%= property.bedrooms ?? 'NC' %></td>
+                <td><%= typeof property.price === 'number' ? property.price.toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR') : (property.price || 'NC') %></td>
+                <td>
+                  <% if (property.videoUrl) { %>
+                    <button class="btn btn-sm btn-outline-dark copy-btn" data-url="<%= property.videoUrl %>" title="Copier l'URL Vidéo">
+                      <i class="bi bi-link-45deg"></i> URL
+                    </button>
+                  <% } else { %>
+                    NC
+                  <% } %>
+                </td>
+                <td>
+                  <% if (property.photos && property.photos.length > 0) { %>
+                    <span class="badge bg-success me-2"><%= property.photos.length %> Photos</span>
+                    <a href="/admin/download-photos/<%= property._id %>" class="btn btn-sm btn-primary" title="Télécharger toutes les photos (ZIP)">
+                      <i class="bi bi-file-earmark-zip"></i> Zip
+                    </a>
+                  <% } else { %>
+                    X
+                  <% } %>
+                </td>
+                <td><%= property.parking ? i18n.yes : (property.parking === false ? i18n.no : 'NC') %></td>
+                <td><%= property.pool ? i18n.yes : (property.pool === false ? i18n.no : 'NC') %></td>
+                <td>
+                  <a href="/property/edit/<%= property._id %>" class="btn btn-sm btn-outline-dark" title="Modifier">
+                    <i class="bi bi-pencil-square"></i>
+                  </a>
+                </td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="12" class="text-center"><%= i18n.admin_no_properties_found %></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
 <div id="admin-orders" class="card" style="display: none;">
   <div class="card-body">
     <div class="d-flex justify-content-between align-items-start mb-3">
@@ -1596,6 +1673,9 @@ function showSection(sectionId) {
     const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders', 'reset-password'];
     if (document.getElementById('admin-users')) {
         sections.push('admin-users');
+    }
+    if (document.getElementById('admin-properties')) {
+        sections.push('admin-properties');
     }
     if (document.getElementById('admin-orders')) {
         sections.push('admin-orders');
@@ -2032,6 +2112,9 @@ function showSection(sectionId) {
   const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
   if (document.getElementById('admin-users')) {
     sections.push('admin-users');
+  }
+  if (document.getElementById('admin-properties')) {
+    sections.push('admin-properties');
   }
   if (document.getElementById('admin-orders')) {
     sections.push('admin-orders');
