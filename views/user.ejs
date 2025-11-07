@@ -572,6 +572,7 @@ progress {
     </style>
 </head>
 <body id="top">
+<% const isAdminUser = currentUser && currentUser.role === 'admin'; %>
 
 <noscript>
   <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
@@ -619,6 +620,11 @@ progress {
         <li class="nav-item sidebar-mobile-links sidebar-links">
           <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
         </li>
+        <% if (isAdminUser) { %>
+        <li class="nav-item sidebar-mobile-links sidebar-links">
+          <a class="nav-link click-scroll" href="#" onclick="showSection('admin-users')"><i class="fa fa-users"></i> <%= i18n.admin_user_management %></a>
+        </li>
+        <% } %>
 
         <!-- Connexion / Compte - version MOBILE -->
         <% if (isAuthenticated) { %>
@@ -710,6 +716,9 @@ progress {
   <a href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
   <a href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i></a>
   <a href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
+  <% if (isAdminUser) { %>
+  <a href="#" onclick="showSection('admin-users')" title="<%= i18n.admin_user_management %>"><i class="fa fa-users"></i></a>
+  <% } %>
 </div>
 
                 </div>
@@ -1253,6 +1262,54 @@ progress {
   </div>
 </div>
 
+<% if (isAdminUser) { %>
+<div id="admin-users" class="card" style="display: none;">
+  <div class="card-body">
+    <h5 class="card-title"><%= i18n.admin_user_management %></h5>
+    <p class="card-text"><%= i18n.admin_user_management_description %></p>
+
+    <div class="table-responsive">
+      <table class="table table-striped">
+        <thead class="table-dark">
+          <tr>
+            <th><%= i18n.admin_table_role %></th>
+            <th><%= i18n.admin_table_first_name %></th>
+            <th><%= i18n.admin_table_last_name %></th>
+            <th><%= i18n.admin_table_email %></th>
+            <th><%= i18n.admin_table_two_factor %></th>
+            <th><%= i18n.admin_table_registered_at %></th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (adminUsers && adminUsers.length > 0) { %>
+            <% adminUsers.forEach(function(adminUser) { %>
+              <tr>
+                <td><span class="badge bg-dark text-uppercase"><%= adminUser.role %></span></td>
+                <td><%= adminUser.firstName || '-' %></td>
+                <td><%= adminUser.lastName || '-' %></td>
+                <td><%= adminUser.email || '-' %></td>
+                <td>
+                  <% if (adminUser.twoFactorEnabled) { %>
+                    <span class="badge bg-success"><%= i18n.admin_users_2fa_enabled %></span>
+                  <% } else { %>
+                    <span class="badge bg-secondary"><%= i18n.admin_users_2fa_disabled %></span>
+                  <% } %>
+                </td>
+                <td><%= adminUser.createdAt ? new Date(adminUser.createdAt).toLocaleString(locale === 'en' ? 'en-GB' : 'fr-FR') : '-' %></td>
+              </tr>
+            <% }); %>
+          <% } else { %>
+            <tr>
+              <td colspan="6" class="text-center"><%= i18n.admin_no_users_found %></td>
+            </tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+<% } %>
+
 <!-- Spinner de chargement pour statistiques -->
 <div id="stats-loading" class="text-center my-3" style="display: none;">
   <div class="spinner-border text-secondary" role="status">
@@ -1435,7 +1492,11 @@ progress {
 
 <script>
 function showSection(sectionId) {
-    const sections = ['account', 'landing', 'donnees', 'created-pages', 'reset-password'];
+    const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders', 'reset-password'];
+    if (document.getElementById('admin-users')) {
+        sections.push('admin-users');
+    }
+
     sections.forEach(id => {
         const sectionElement = document.getElementById(id);
         if (sectionElement) {
@@ -1443,12 +1504,20 @@ function showSection(sectionId) {
         }
     });
 
-    if (sectionId === 'created-pages') {
+    if (sectionId === 'created-pages' && typeof loadProperties === 'function') {
         loadProperties();
     }
 
     if (sectionId === 'donnees') {
-        setTimeout(() => loadStats(), 100);
+        setTimeout(() => {
+            if (typeof loadStats === 'function') {
+                loadStats();
+            }
+        }, 100);
+    }
+
+    if (sectionId === 'orders' && typeof loadOrders === 'function') {
+        loadOrders();
     }
 }
 
@@ -1857,13 +1926,26 @@ async function loadOrders() {
 
 function showSection(sectionId) {
   const sections = ['account', 'landing', 'donnees', 'created-pages', 'orders'];
+  if (document.getElementById('admin-users')) {
+    sections.push('admin-users');
+  }
+
   sections.forEach(id => {
-    document.getElementById(id).style.display = id === sectionId ? 'block' : 'none';
+    const section = document.getElementById(id);
+    if (section) {
+      section.style.display = id === sectionId ? 'block' : 'none';
+    }
   });
 
-  if (sectionId === 'orders') loadOrders();
-  if (sectionId === 'created-pages') loadLandingPages();
-  if (sectionId === 'donnees') loadStats();
+  if (sectionId === 'orders' && typeof loadOrders === 'function') {
+    loadOrders();
+  }
+  if (sectionId === 'created-pages' && typeof loadLandingPages === 'function') {
+    loadLandingPages();
+  }
+  if (sectionId === 'donnees' && typeof loadStats === 'function') {
+    loadStats();
+  }
 }
 </script>
 
@@ -2318,6 +2400,12 @@ function showPageDetails(page) {
         });
       });
     }
+  });
+</script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const defaultSection = '<%= activeSection || 'account' %>';
+    showSection(defaultSection);
   });
 </script>
 

@@ -16,7 +16,7 @@ const UserSchema = new mongoose.Schema({
   resetPasswordCode: String,
   twoFactorSecret: { type: String }, // Secret utilisé pour la 2FA (Google Authenticator)
   twoFactorEnabled: { type: Boolean, default: false } // Indique si 2FA est activé ou non
-});
+}, { timestamps: true });
 
 // Configurer passportLocalMongoose pour utiliser l'email comme nom d'utilisateur
 UserSchema.plugin(passportLocalMongoose, { usernameField: 'email' });

@@ -229,6 +229,23 @@ function isAuthenticated(req, res, next) {
 }
 
 
+function isAdmin(req, res, next) {
+  if (req.user && req.user.role === 'admin') {
+    return next();
+  }
+
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    console.warn('Accès administrateur refusé pour l’utilisateur :', req.user?.email || req.user?._id);
+  }
+
+  if (req.accepts && req.accepts('json')) {
+    return res.status(403).json({ success: false, message: 'Accès administrateur requis' });
+  }
+
+  return res.status(403).send('Accès refusé');
+}
+
+
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -799,9 +816,59 @@ res.render('user', {
   i18n: userTranslations,
   currentPath: req.originalUrl,
   userLandingPages,
-  stats: statsArray
+  stats: statsArray,
+  currentUser: user,
+  adminUsers: [],
+  activeSection: 'account'
 });
 
+});
+
+
+app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
+  const locale = req.user?.locale || req.locale || 'fr';
+  const user = req.user;
+
+  try {
+    let userLandingPages = await Property.find({ userId: user._id });
+
+    const userTranslationsPath = `./locales/${locale}/user.json`;
+    let userTranslations = {};
+
+    try {
+      userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+    } catch (error) {
+      console.error(`Erreur lors du chargement des traductions : ${error}`);
+      return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    const statsArray = await Promise.all(
+      userLandingPages.map(async (property) => {
+        const stats = await getPageStats(property.url);
+        return {
+          page: property.url,
+          ...stats
+        };
+      })
+    );
+
+    const adminUsers = await User.find({}).sort({ createdAt: -1 });
+
+    res.render('user', {
+      locale,
+      user,
+      i18n: userTranslations,
+      currentPath: req.originalUrl,
+      userLandingPages,
+      stats: statsArray,
+      currentUser: user,
+      adminUsers,
+      activeSection: 'admin-users'
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des utilisateurs admin :', error);
+    next(error);
+  }
 });
 
 

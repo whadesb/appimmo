@@ -109,4 +109,16 @@
   "url_modal_title": "Page URL",
   "copy_url": "Copy URL",
   "open_page": "Open page"
+  ,
+  "admin_user_management": "User Management",
+  "admin_user_management_description": "Monitor every account created on the platform and verify their security status.",
+  "admin_table_role": "Role",
+  "admin_table_first_name": "First name",
+  "admin_table_last_name": "Last name",
+  "admin_table_email": "Email",
+  "admin_table_two_factor": "2FA",
+  "admin_table_registered_at": "Registered on",
+  "admin_no_users_found": "No users were found.",
+  "admin_users_2fa_enabled": "Enabled",
+  "admin_users_2fa_disabled": "Disabled"
 }
