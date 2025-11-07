@@ -1136,76 +1136,84 @@ app.use('/pdf', pdfRoutes);
 const axios = require('axios'); // tout en haut de ton fichier
 
 app.post('/:locale/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword, 'g-recaptcha-response': captcha } = req.body;
-  const locale = req.params.locale;
+  const { email, firstName, lastName, password, confirmPassword, 'g-recaptcha-response': captcha } = req.body;
+  const locale = req.params.locale;
 
-  // ⚠️ Si captcha vide
-  if (!captcha) {
-    req.flash('error', 'Veuillez valider le CAPTCHA.');
-    return res.redirect(`/${locale}/register`);
-  }
+  // ⚠️ Attention : Le champ 'role' n'est plus extrait car sa valeur est forcée ci-dessous.
 
-  // 🔍 Vérification reCAPTCHA
-  try {
-    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-    const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
+  // ⚠️ Si captcha vide
+  if (!captcha) {
+    req.flash('error', 'Veuillez valider le CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // 🔍 Vérification reCAPTCHA
+  try {
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
 
 const response = await axios.post(verificationURL, null, {
-  params: {
-    secret: secretKey,
-    response: captcha,
-  },
+  params: {
+    secret: secretKey,
+    response: captcha,
+  },
 });
 
 
-    if (!response.data.success) {
-      req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
-      return res.redirect(`/${locale}/register`);
-    }
-  } catch (err) {
-    console.error("Erreur reCAPTCHA :", err);
-    req.flash('error', 'Erreur de vérification CAPTCHA.');
-    return res.redirect(`/${locale}/register`);
-  }
+    if (!response.data.success) {
+      req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
+      return res.redirect(`/${locale}/register`);
+    }
+  } catch (err) {
+    console.error("Erreur reCAPTCHA :", err);
+    req.flash('error', 'Erreur de vérification CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
 
-  // ✅ Validation email et mot de passe
-  if (!validator.isEmail(email)) {
-    req.flash('error', 'L\'adresse email n\'est pas valide.');
-    return res.redirect(`/${locale}/register`);
-  }
+  // ✅ Validation email et mot de passe
+  if (!validator.isEmail(email)) {
+    req.flash('error', 'L\'adresse email n\'est pas valide.');
+    return res.redirect(`/${locale}/register`);
+  }
 
-  if (password !== confirmPassword) {
-    req.flash('error', 'Les mots de passe ne correspondent pas.');
-    return res.redirect(`/${locale}/register`);
-  }
+  if (password !== confirmPassword) {
+    req.flash('error', 'Les mots de passe ne correspondent pas.');
+    return res.redirect(`/${locale}/register`);
+  }
 
-  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  if (!passwordRequirements.test(password)) {
-    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
-    return res.redirect(`/${locale}/register`);
-  }
+  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRequirements.test(password)) {
+    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
+    return res.redirect(`/${locale}/register`);
+  }
 
-  try {
-    const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
-await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
+  try {
+    // 🔑 FIX : Force le rôle 'user' lors de la création du nouveau document User.
+    const newUser = await User.register(new User({ 
+            email, 
+            firstName, 
+            lastName, 
+            role: 'user' // Rôle fixé pour l'inscription publique
+        }), password);
+        
+        await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
 
-    req.login(newUser, (err) => {
-      if (err) {
-        console.error('Erreur lors de la connexion automatique après inscription :', err);
-        req.flash('error', 'Erreur de connexion automatique.');
-        return res.redirect(`/${locale}/login`);
-      }
+    req.login(newUser, (err) => {
+      if (err) {
+        console.error('Erreur lors de la connexion automatique après inscription :', err);
+        req.flash('error', 'Erreur de connexion automatique.');
+        return res.redirect(`/${locale}/login`);
+      }
 
-      res.redirect(`/${locale}/enable-2fa`);
-    });
+      res.redirect(`/${locale}/enable-2fa`);
+    });
 
-  } catch (error) {
-    console.error('Erreur lors de l\'inscription :', error.message);
-    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
-    res.redirect(`/${locale}/register`);
-  }
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription :', error.message);
+    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
+    res.redirect(`/${locale}/register`);
+  }
 });
-
 app.get('/:locale/2fa', (req, res) => {
   const { locale } = req.params;
 
