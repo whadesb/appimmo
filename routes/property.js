@@ -1378,9 +1378,38 @@ router.post('/add-property', authMiddleware, upload.fields([
     { name: 'extraPhotos', maxCount: 8 },
     { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
-    const { rooms, surface, price, city, country, dpe, description } = req.body;
+    const {
+        rooms,
+        bedrooms,
+        surface,
+        price,
+        city,
+        postalCode,
+        country,
+        yearBuilt,
+        propertyType,
+        dpe,
+        description,
+        contactFirstName,
+        contactLastName,
+        contactPhone
+    } = req.body;
     const rawVideoUrl = (req.body.videoUrl || '').trim();
     const hasVideo = rawVideoUrl.length > 0;
+    const postalCodePattern = /^\d{5}$/;
+    const allowedLanguages = ['fr', 'en', 'es', 'pt'];
+
+    if (typeof req.body.parking === 'undefined') {
+        cleanupUploadedFiles(req.files);
+        return res.status(400).json({ error: 'Le champ parking est requis.' });
+    }
+
+    if (!postalCodePattern.test(postalCode || '')) {
+        cleanupUploadedFiles(req.files);
+        return res.status(400).json({ error: 'Le code postal doit contenir exactement 5 chiffres.' });
+    }
+
+    const language = allowedLanguages.includes(req.body.language) ? req.body.language : 'fr';
 
     let photo1 = null;
     let photo2 = null;
@@ -1437,14 +1466,30 @@ router.post('/add-property', authMiddleware, upload.fields([
 
     try {
         const property = new Property({
-            rooms,
-            surface,
-            price,
+            rooms: Number(rooms),
+            bedrooms: Number(bedrooms),
+            surface: Number(surface),
+            price: parseFloat(price),
             city,
+            postalCode,
             country,
+            yearBuilt: yearBuilt || null,
+            propertyType,
             dpe: dpe || 'En cours',
-    description: description || '',
-            language: req.body.language || 'fr',
+            description: description || '',
+            contactFirstName,
+            contactLastName,
+            contactPhone,
+            pool: req.body.pool === 'true',
+            doubleGlazing: req.body.doubleGlazing === 'true',
+            wateringSystem: req.body.wateringSystem === 'true',
+            barbecue: req.body.barbecue === 'true',
+            carShelter: req.body.carShelter === 'true',
+            parking: req.body.parking === 'true',
+            caretakerHouse: req.body.caretakerHouse === 'true',
+            electricShutters: req.body.electricShutters === 'true',
+            outdoorLighting: req.body.outdoorLighting === 'true',
+            language,
             userId: req.user._id,
             videoUrl: rawVideoUrl,
             photos: hasVideo ? [] : [photo1, photo2, ...extraPhotos, ...miniPhotos].filter(Boolean)
@@ -1474,20 +1519,68 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
     try {
         const property = await Property.findById(req.params.id);
 
-        if (!property || !property.createdBy.equals(req.user._id)) {
+        if (!property || !property.userId.equals(req.user._id)) {
             return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
         }
 
-        const { rooms, surface, price, city, country, dpe } = req.body;
+        if (typeof req.body.parking === 'undefined') {
+            cleanupUploadedFiles(req.files);
+            return res.status(400).json({ error: 'Le champ parking est requis.' });
+        }
+
+        const {
+            rooms,
+            bedrooms,
+            surface,
+            price,
+            city,
+            postalCode,
+            country,
+            yearBuilt,
+            propertyType,
+            dpe,
+            description,
+            contactFirstName,
+            contactLastName,
+            contactPhone
+        } = req.body;
+
         const rawVideoUrl = (req.body.videoUrl || '').trim();
         const hasVideo = rawVideoUrl.length > 0;
+        const postalCodePattern = /^\d{5}$/;
+        const allowedLanguages = ['fr', 'en', 'es', 'pt'];
 
-        property.rooms = rooms;
-        property.surface = surface;
-        property.price = price;
+        if (!postalCodePattern.test(postalCode || '')) {
+            cleanupUploadedFiles(req.files);
+            return res.status(400).json({ error: 'Le code postal doit contenir exactement 5 chiffres.' });
+        }
+
+        property.rooms = Number(rooms);
+        property.bedrooms = Number(bedrooms);
+        property.surface = Number(surface);
+        property.price = parseFloat(price);
         property.city = city;
+        property.postalCode = postalCode;
         property.country = country;
+        property.yearBuilt = yearBuilt || null;
+        property.propertyType = propertyType;
+        property.dpe = dpe || 'En cours';
+        property.description = description;
+        property.contactFirstName = contactFirstName;
+        property.contactLastName = contactLastName;
+        property.contactPhone = contactPhone;
+        property.language = allowedLanguages.includes(req.body.language) ? req.body.language : property.language;
         property.videoUrl = rawVideoUrl;
+
+        property.pool = req.body.pool === 'true';
+        property.doubleGlazing = req.body.doubleGlazing === 'true';
+        property.wateringSystem = req.body.wateringSystem === 'true';
+        property.barbecue = req.body.barbecue === 'true';
+        property.carShelter = req.body.carShelter === 'true';
+        property.parking = req.body.parking === 'true';
+        property.caretakerHouse = req.body.caretakerHouse === 'true';
+        property.electricShutters = req.body.electricShutters === 'true';
+        property.outdoorLighting = req.body.outdoorLighting === 'true';
 
         if (hasVideo) {
             cleanupUploadedFiles(req.files);
@@ -1497,13 +1590,17 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
                 property.photos = [];
             }
 
+            let mainPhotos = property.photos.slice(0, 2);
+            let extraPhotos = property.photos.slice(2, 10);
+            let miniPhotos = property.photos.slice(10, 13);
+
             if (req.files.photo1?.[0]) {
                 const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
                 await sharp(req.files.photo1[0].path)
                     .resize(800)
                     .jpeg({ quality: 80 })
                     .toFile(photo1Path);
-                property.photos[0] = path.basename(photo1Path);
+                mainPhotos[0] = path.basename(photo1Path);
                 fs.unlinkSync(req.files.photo1[0].path);
             }
 
@@ -1513,14 +1610,13 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
                     .resize(800)
                     .jpeg({ quality: 80 })
                     .toFile(photo2Path);
-                property.photos[1] = path.basename(photo2Path);
+                mainPhotos[1] = path.basename(photo2Path);
                 fs.unlinkSync(req.files.photo2[0].path);
             }
 
-            let extraPhotos = property.photos.slice(2,10);
             if (req.files.extraPhotos) {
                 extraPhotos = [];
-                for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
+                for (const [index, file] of req.files.extraPhotos.slice(0, 8).entries()) {
                     const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
                     await sharp(file.path)
                         .resize(800)
@@ -1531,10 +1627,9 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
                 }
             }
 
-            let miniPhotos = property.photos.slice(10,13);
             if (req.files.miniPhotos) {
                 miniPhotos = [];
-                for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
+                for (const [index, file] of req.files.miniPhotos.slice(0, 3).entries()) {
                     const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
                     await sharp(file.path)
                         .resize(800)
@@ -1545,13 +1640,22 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
                 }
             }
 
-            property.photos = property.photos.slice(0,2).concat(extraPhotos, miniPhotos).filter(Boolean);
+            const combinedPhotos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
+
+            if (combinedPhotos.length < 2) {
+                cleanupUploadedFiles(req.files);
+                return res.status(400).json({ error: 'Deux photos sont requises lorsque aucun lien vidéo n’est fourni.' });
+            }
+
+            property.photos = combinedPhotos;
         }
 
         await property.save();
 
         // Régénérer la landing page après la mise à jour
         const landingPageUrl = await generateLandingPage(property);
+        property.url = landingPageUrl;
+        await property.save();
 
         res.redirect('/user');
     } catch (error) {

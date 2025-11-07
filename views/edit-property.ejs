@@ -276,52 +276,66 @@
   </div>
 <% } %>
 
-                    <form action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
+<% 
+  const storedPhotos = Array.isArray(property.photos) ? property.photos : [];
+  const storedMainPhotos = storedPhotos.slice(0, 2);
+  const storedExtraPhotos = storedPhotos.slice(2, 10);
+  const storedMiniPhotos = storedPhotos.slice(10, 13);
+  const hasStoredVideo = (property.videoUrl || '').trim().length > 0;
+  const hasEnoughStoredPhotos = storedPhotos.filter(Boolean).length >= 2;
+  const requireNewMainPhotos = !hasStoredVideo && !hasEnoughStoredPhotos;
+%>
+                    <form id="edit-property-form" action="/property/update/<%= property._id %>" method="POST" enctype="multipart/form-data">
   <input type="hidden" name="userId" value="<%= property.userId %>">
 
-  <div class="mb-3">
-    <label for="rooms" class="form-label">Nombre de pièces</label>
-    <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
+  <div class="progress mb-4">
+    <div class="progress-bar" role="progressbar" id="editFormProgress" style="width: 25%;">Étape 1 sur 4</div>
   </div>
 
-  <div class="mb-3">
-    <label for="bedrooms" class="form-label">Nombre de chambres</label>
-    <input type="number" class="form-control" id="bedrooms" name="bedrooms" value="<%= property.bedrooms %>">
-  </div>
-
-  <div class="mb-3">
-    <label for="surface" class="form-label">Surface (m²)</label>
-    <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
-  </div>
-
-  <div class="mb-3">
-    <label for="price" class="form-label">Prix (€)</label>
-    <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
-  </div>
-
-  <div class="mb-3">
-    <label for="country" class="form-label">Pays</label>
-    <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
-  </div>
-
-  <div class="mb-3">
-    <label for="city" class="form-label">Ville</label>
-    <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
-  </div>
-
-  <div class="mb-3">
-    <label for="yearBuilt" class="form-label">Année de construction</label>
-    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt" value="<%= property.yearBuilt %>">
-  </div>
-
-  <div class="mb-3">
-    <label for="propertyType" class="form-label">Type de bien</label>
-    <select class="form-control" id="propertyType" name="propertyType">
-      <% const types = ['Propriété','Villa','Hôtel particulier','Appartement','Chateau','Maison']; %>
-      <% types.forEach(type => { %>
-        <option value="<%= type %>" <%= property.propertyType === type ? 'selected' : '' %>><%= type %></option>
-      <% }) %>
-    </select>
+  <div class="form-step" data-step="1">
+    <h6 class="mb-3">Informations générales du bien</h6>
+    <div class="mb-3">
+      <label for="rooms" class="form-label">Nombre de pièces</label>
+      <input type="number" class="form-control" id="rooms" name="rooms" value="<%= property.rooms %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="bedrooms" class="form-label">Nombre de chambres</label>
+      <input type="number" class="form-control" id="bedrooms" name="bedrooms" value="<%= property.bedrooms %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="surface" class="form-label">Surface (m²)</label>
+      <input type="number" class="form-control" id="surface" name="surface" value="<%= property.surface %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="price" class="form-label">Prix (€)</label>
+      <input type="number" class="form-control" id="price" name="price" value="<%= property.price %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="country" class="form-label">Pays</label>
+      <input type="text" class="form-control" id="country" name="country" value="<%= property.country %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="postalCode" class="form-label">Code postal</label>
+      <input type="text" class="form-control" id="postalCode" name="postalCode" value="<%= property.postalCode %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="city" class="form-label">Ville</label>
+      <input type="text" class="form-control" id="city" name="city" value="<%= property.city %>" required>
+    </div>
+    <div class="mb-3">
+      <label for="yearBuilt" class="form-label">Année de construction</label>
+      <input type="number" class="form-control" id="yearBuilt" name="yearBuilt" value="<%= property.yearBuilt %>">
+    </div>
+    <div class="mb-3">
+      <label for="propertyType" class="form-label">Type de bien</label>
+      <select class="form-control" id="propertyType" name="propertyType" required>
+        <% const types = ['Propriété','Villa','Hôtel particulier','Appartement','Chateau','Maison']; %>
+        <% types.forEach(type => { %>
+          <option value="<%= type %>" <%= property.propertyType === type ? 'selected' : '' %>><%= type %></option>
+        <% }) %>
+      </select>
+    </div>
+    <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
   </div>
 
   <% const equipmentOptions = [
@@ -330,54 +344,377 @@
     { id: 'wateringSystem', label: 'Arrosage automatique' },
     { id: 'barbecue', label: 'Barbecue' },
     { id: 'carShelter', label: 'Abri de voiture' },
-    { id: 'parking', label: 'Parking' },
+    { id: 'parking', label: 'Parking', required: true },
     { id: 'caretakerHouse', label: 'Maison de gardien' },
     { id: 'electricShutters', label: 'Stores électriques' },
-    { id: 'outdoorLighting', label: 'Eclairage extérieur' }
+    { id: 'outdoorLighting', label: 'Éclairage extérieur' }
   ]; %>
 
-  <% equipmentOptions.forEach(e => { %>
+  <div class="form-step d-none" data-step="2">
+    <h6 class="mb-3">Équipements</h6>
+    <% equipmentOptions.forEach(e => { %>
+      <div class="mb-3">
+        <label for="<%= e.id %>" class="form-label"><%= e.label %></label>
+        <select class="form-control" id="<%= e.id %>" name="<%= e.id %>" <%= e.required ? 'required' : '' %>>
+          <option value="false" <%= property[e.id] === false ? 'selected' : '' %>>Non</option>
+          <option value="true" <%= property[e.id] === true ? 'selected' : '' %>>Oui</option>
+        </select>
+      </div>
+    <% }) %>
+    <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
+    <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
+  </div>
+
+  <div class="form-step d-none" data-step="3">
+    <h6 class="mb-3">Photos et vidéo</h6>
     <div class="mb-3">
-      <label for="<%= e.id %>" class="form-label"><%= e.label %></label>
-      <select class="form-control" id="<%= e.id %>" name="<%= e.id %>">
-        <option value="false" <%= property[e.id] === false ? 'selected' : '' %>>Non</option>
-        <option value="true" <%= property[e.id] === true ? 'selected' : '' %>>Oui</option>
+      <label for="dpe" class="form-label">DPE</label>
+      <select class="form-control" id="dpe" name="dpe" required>
+        <% const dpeOptions = ['A','B','C','D','E','F','G','En cours']; %>
+        <% dpeOptions.forEach(option => { %>
+          <option value="<%= option %>" <%= property.dpe === option ? 'selected' : '' %>><%= option %></option>
+        <% }) %>
       </select>
     </div>
-  <% }) %>
 
-  <div class="mb-3">
-    <label for="photo1" class="form-label">Photo principale</label>
-    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*">
+    <% if (storedPhotos.length || hasStoredVideo) { %>
+      <div class="mb-3">
+        <label class="form-label">Médias actuels</label>
+        <div class="border rounded p-3 bg-light">
+          <% if (hasStoredVideo) { %>
+            <p class="mb-2">Vidéo actuelle : <a href="<%= property.videoUrl %>" target="_blank" rel="noopener">ouvrir</a></p>
+          <% } %>
+          <% if (storedMainPhotos.length) { %>
+            <div class="mb-2">
+              <strong class="d-block">Photos principales</strong>
+              <% storedMainPhotos.forEach((photo, idx) => { if (!photo) return; %>
+                <img src="/uploads/<%= photo %>" alt="Photo principale <%= idx + 1 %>" class="img-thumbnail me-2 mb-2" style="height:60px; object-fit:cover;">
+              <% }); %>
+            </div>
+          <% } %>
+          <% if (storedExtraPhotos.filter(Boolean).length) { %>
+            <div class="mb-2">
+              <strong class="d-block">Photos supplémentaires</strong>
+              <% storedExtraPhotos.forEach(photo => { if (!photo) return; %>
+                <img src="/uploads/<%= photo %>" alt="Photo supplémentaire" class="img-thumbnail me-2 mb-2" style="height:60px; object-fit:cover;">
+              <% }); %>
+            </div>
+          <% } %>
+          <% if (storedMiniPhotos.filter(Boolean).length) { %>
+            <div class="mb-0">
+              <strong class="d-block">Mini photos</strong>
+              <% storedMiniPhotos.forEach(photo => { if (!photo) return; %>
+                <img src="/uploads/<%= photo %>" alt="Mini photo" class="img-thumbnail me-2 mb-2" style="height:60px; object-fit:cover;">
+              <% }); %>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    <% } %>
+
+    <div class="mb-3">
+      <label for="photo1" class="form-label">Photo principale <span class="text-danger"><%= requireNewMainPhotos ? '*' : '' %></span></label>
+      <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" <%= requireNewMainPhotos ? 'required' : '' %> onchange="handleFileUpload(this, 'progress1', 'status1')">
+      <progress id="progress1" value="0" max="100" style="width: 100%; display: none;"></progress>
+      <span id="status1" class="text-muted small d-block mt-1"></span>
+    </div>
+    <div class="mb-3">
+      <label for="photo2" class="form-label">Photo secondaire <span class="text-danger"><%= requireNewMainPhotos ? '*' : '' %></span></label>
+      <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" <%= requireNewMainPhotos ? 'required' : '' %> onchange="handleFileUpload(this, 'progress2', 'status2')">
+      <progress id="progress2" value="0" max="100" style="width: 100%; display: none;"></progress>
+      <span id="status2" class="text-muted small d-block mt-1"></span>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">Photos supplémentaires pour le carrousel</label>
+      <div class="row">
+        <% for (let i = 1; i <= 8; i++) { %>
+          <div class="col-6 col-md-3 mb-3">
+            <input type="file" class="form-control extra-photo-input" id="extraPhoto<%= i %>" name="extraPhotos" accept="image/*">
+            <img id="extraPreview<%= i %>" class="mt-2 border rounded d-none w-100" style="height:80px; object-fit:cover;" />
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="miniPhotos" class="form-label">Petites photos (max 3)</label>
+      <input type="file" class="form-control" id="miniPhotos" name="miniPhotos" accept="image/*" multiple>
+      <div id="miniPhotosPreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+    </div>
+
+    <div class="mb-3">
+      <label for="videoUrl" class="form-label">Lien YouTube</label>
+      <input type="url" class="form-control" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=..." value="<%= property.videoUrl || '' %>">
+      <div id="mediaNotice" class="form-text text-muted mt-1">Ajoutez vos photos ou indiquez un lien vidéo plein écran.</div>
+    </div>
+
+    <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
+    <button type="button" class="btn btn-primary next-step mt-3">Suivant</button>
   </div>
 
-  <div class="mb-3">
-    <label for="photo2" class="form-label">Photo secondaire</label>
-    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*">
+  <div class="form-step d-none" data-step="4">
+    <h6 class="mb-3">Description et contact</h6>
+    <div class="mb-3">
+      <label for="description" class="form-label">Description</label>
+      <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required><%= property.description %></textarea>
+      <small id="charCount" class="text-muted">0/820 caractères</small>
+    </div>
+    <div class="row">
+      <div class="col-md-4 mb-3">
+        <label for="contactFirstName" class="form-label">Prénom</label>
+        <input type="text" class="form-control" id="contactFirstName" name="contactFirstName" value="<%= property.contactFirstName || '' %>">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="contactLastName" class="form-label">Nom</label>
+        <input type="text" class="form-control" id="contactLastName" name="contactLastName" value="<%= property.contactLastName || '' %>">
+      </div>
+      <div class="col-md-4 mb-3">
+        <label for="contactPhone" class="form-label">Téléphone</label>
+        <input type="text" class="form-control" id="contactPhone" name="contactPhone" value="<%= property.contactPhone || '' %>">
+      </div>
+    </div>
+    <div class="mb-3">
+      <label class="form-label d-block">Langue de la page</label>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="language" id="lang-fr" value="fr" <%= property.language === 'fr' ? 'checked' : '' %> required>
+        <label class="form-check-label" for="lang-fr">FR</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="language" id="lang-en" value="en" <%= property.language === 'en' ? 'checked' : '' %> required>
+        <label class="form-check-label" for="lang-en">EN</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="language" id="lang-es" value="es" <%= property.language === 'es' ? 'checked' : '' %> required>
+        <label class="form-check-label" for="lang-es">ES</label>
+      </div>
+      <div class="form-check form-check-inline">
+        <input class="form-check-input" type="radio" name="language" id="lang-pt" value="pt" <%= property.language === 'pt' ? 'checked' : '' %> required>
+        <label class="form-check-label" for="lang-pt">PT</label>
+      </div>
+    </div>
+    <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
+    <button type="submit" class="btn btn-dark py-2 mt-3">
+      <i class="fa fa-check-circle me-2"></i>Mettre à jour
+    </button>
   </div>
-
-  <div class="mb-3">
-    <label for="dpe" class="form-label">DPE</label>
-    <select class="form-control" id="dpe" name="dpe">
-      <% const dpeOptions = ['A','B','C','D','E','F','G','En cours']; %>
-      <% dpeOptions.forEach(option => { %>
-        <option value="<%= option %>" <%= property.dpe === option ? 'selected' : '' %>><%= option %></option>
-      <% }) %>
-    </select>
-  </div>
-
-  <div class="mb-3">
-    <label for="description" class="form-label">Description</label>
-    <textarea class="form-control" id="description" name="description" rows="4"><%= property.description %></textarea>
-  </div>
-
-  <button type="submit" class="btn btn-primary w-100">Mettre à jour</button>
 </form>
                 </div>
             </div>
         </div>
     </div>
 </section>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    let currentStep = 1;
+    const totalSteps = 4;
+    const form = document.getElementById('edit-property-form');
+    const progressBar = document.getElementById('editFormProgress');
+    const requireNewMainPhotos = <%= requireNewMainPhotos ? 'true' : 'false' %> === 'true';
+    const initialHasVideo = <%= hasStoredVideo ? 'true' : 'false' %> === 'true';
+
+    function showStep(step) {
+      document.querySelectorAll('#edit-property-form .form-step').forEach(stepEl => {
+        if (Number(stepEl.getAttribute('data-step')) === step) {
+          stepEl.classList.remove('d-none');
+          stepEl.style.opacity = 1;
+        } else {
+          stepEl.classList.add('d-none');
+          stepEl.style.opacity = 0;
+        }
+      });
+
+      if (progressBar) {
+        const percent = Math.min(Math.max(step, 1), totalSteps) * (100 / totalSteps);
+        progressBar.style.width = `${percent}%`;
+        progressBar.textContent = `Étape ${step} sur ${totalSteps}`;
+      }
+    }
+
+    document.querySelectorAll('#edit-property-form .next-step').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const currentStepEl = document.querySelector(`#edit-property-form .form-step[data-step="${currentStep}"]`);
+        const fields = currentStepEl ? currentStepEl.querySelectorAll('input, select, textarea') : [];
+        for (const field of fields) {
+          if (!field.checkValidity()) {
+            field.reportValidity();
+            return;
+          }
+        }
+        currentStep = Math.min(currentStep + 1, totalSteps);
+        showStep(currentStep);
+      });
+    });
+
+    document.querySelectorAll('#edit-property-form .prev-step').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentStep = Math.max(currentStep - 1, 1);
+        showStep(currentStep);
+      });
+    });
+
+    showStep(currentStep);
+
+    const postalCodePattern = /^\d{5}$/;
+    form?.addEventListener('submit', (event) => {
+      const postalCodeInput = document.getElementById('postalCode');
+      if (postalCodeInput && !postalCodePattern.test(postalCodeInput.value || '')) {
+        event.preventDefault();
+        alert('Le code postal doit contenir exactement 5 chiffres.');
+      }
+    });
+
+    const descriptionInput = document.getElementById('description');
+    const charCount = document.getElementById('charCount');
+    if (descriptionInput && charCount) {
+      const updateCharCount = () => {
+        charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
+      };
+      updateCharCount();
+      descriptionInput.addEventListener('input', updateCharCount);
+    }
+
+    window.handleFileUpload = function (input, progressId, statusId) {
+      const file = input?.files?.[0];
+      const progressBarEl = document.getElementById(progressId);
+      const statusEl = document.getElementById(statusId);
+
+      if (!file || !progressBarEl || !statusEl) return;
+
+      progressBarEl.value = 0;
+      progressBarEl.style.display = 'block';
+      statusEl.style.display = 'block';
+      statusEl.textContent = 'Chargement en cours...';
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress = Math.min(progress + 10, 100);
+        progressBarEl.value = progress;
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          statusEl.textContent = '✅ Image chargée avec succès !';
+          setTimeout(() => {
+            progressBarEl.style.display = 'none';
+            statusEl.style.display = 'none';
+          }, 2000);
+        }
+      }, 200);
+    };
+
+    const extraPhotoIds = Array.from({ length: 8 }, (_, i) => i + 1);
+    const extraPhotoElements = extraPhotoIds.map(i => {
+      const input = document.getElementById(`extraPhoto${i}`);
+      const preview = document.getElementById(`extraPreview${i}`);
+      if (input) {
+        input.addEventListener('change', function () {
+          const file = this.files?.[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = e => {
+              if (preview) {
+                preview.src = e.target.result;
+                preview.classList.remove('d-none');
+              }
+            };
+            reader.readAsDataURL(file);
+          } else if (preview) {
+            preview.src = '';
+            preview.classList.add('d-none');
+          }
+        });
+      }
+      return { input, preview };
+    });
+
+    const miniPhotosInput = document.getElementById('miniPhotos');
+    const miniPreview = document.getElementById('miniPhotosPreview');
+    miniPhotosInput?.addEventListener('change', function () {
+      if (!miniPreview) return;
+      miniPreview.innerHTML = '';
+      if (this.files.length > 3) {
+        alert('Vous pouvez télécharger jusqu\'à 3 photos.');
+        this.value = '';
+        return;
+      }
+      Array.from(this.files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = e => {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.classList.add('border', 'rounded');
+          img.style.height = '60px';
+          img.style.objectFit = 'cover';
+          miniPreview.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    });
+
+    const videoInput = document.getElementById('videoUrl');
+    const mainPhotoInputs = [document.getElementById('photo1'), document.getElementById('photo2')];
+    const mediaNotice = document.getElementById('mediaNotice');
+
+    function clearFileInput(input) {
+      if (!input) return;
+      input.value = '';
+      input.dispatchEvent(new Event('change'));
+    }
+
+    function toggleMediaFields(hasVideo) {
+      mainPhotoInputs.forEach(input => {
+        if (!input) return;
+        input.disabled = hasVideo;
+        input.required = !hasVideo && requireNewMainPhotos;
+        if (hasVideo) {
+          clearFileInput(input);
+        }
+      });
+
+      extraPhotoElements.forEach(({ input, preview }) => {
+        if (!input) return;
+        input.disabled = hasVideo;
+        if (hasVideo) {
+          input.value = '';
+          if (preview) {
+            preview.src = '';
+            preview.classList.add('d-none');
+          }
+        }
+      });
+
+      if (miniPhotosInput) {
+        miniPhotosInput.disabled = hasVideo;
+        if (hasVideo) {
+          miniPhotosInput.value = '';
+          if (miniPreview) {
+            miniPreview.innerHTML = '';
+          }
+        }
+      }
+
+      if (mediaNotice) {
+        if (hasVideo) {
+          mediaNotice.textContent = 'Les photos sont désactivées car un lien vidéo plein écran est renseigné.';
+          mediaNotice.classList.remove('text-muted');
+          mediaNotice.classList.add('text-danger');
+        } else {
+          mediaNotice.textContent = 'Ajoutez vos photos ou indiquez un lien vidéo plein écran.';
+          mediaNotice.classList.remove('text-danger');
+          mediaNotice.classList.add('text-muted');
+        }
+      }
+    }
+
+    if (videoInput) {
+      videoInput.addEventListener('input', () => {
+        const hasVideo = videoInput.value.trim().length > 0;
+        toggleMediaFields(hasVideo);
+      });
+      toggleMediaFields(initialHasVideo);
+    }
+  });
+</script>
     </main>
 <footer class="site-footer section-padding">
             <div class="container">
