@@ -841,46 +841,45 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
     const user = req.user;
     const isAdminUser = true;
 
-    // --- VARIABLES VIDES (pour éviter les erreurs dans le EJS) ---
+    // 1. Définir les variables comme vides avant le bloc try
     let userLandingPages = [];
     let statsArray = [];
     let userTranslations = {};
+    let adminUsers = []; // Initialisation pour le try/catch
 
     try {
-        // Chargement des traductions (seule lecture de fichier non Mongoose autorisée)
+        // 2. Récupération des traductions (la logique est OK)
         const userTranslationsPath = `./locales/${locale}/user.json`;
         try {
             userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
         } catch (error) {
             console.error(`Erreur lors du chargement des traductions : ${error}`);
         }
-        
-        // 🚨 REQUÊTE CRITIQUE ISOLÉE 🚨
-        const UserModel = mongoose.model('User'); 
-        const adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean();
-        
-        console.log(`[ROUTE ADMIN ISOLÉE] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
-        if (adminUsers.length > 0) {
-            console.log('[ROUTE ADMIN ISOLÉE] Premier utilisateur récupéré (Email) :', adminUsers[0].email);
-        } else {
-            console.warn('❗ ÉCHEC ISOLÉ : User.find({}) renvoie 0 documents.');
-        }
 
-        // --- Rendu avec les variables simplifiées ---
+        // 3. Récupération de TOUS les utilisateurs (la requête critique)
+        const UserModel = mongoose.model('User');
+        adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); // On utilise lean() pour la robustesse
+
+        console.log(`[ROUTE ADMIN] Nombre d'utilisateurs trouvés : ${adminUsers.length}`);
+
+        // Note: userLandingPages et statsArray sont laissés vides car ils sont spécifiques
+        // à l'utilisateur, mais nécessaires pour le rendu général de 'user.ejs'.
+
+        // 4. Rendu de la vue 'user' avec toutes les variables attendues
         res.render('user', {
             locale,
             user,
-            i18n: userTranslations,
+            i18n: userTranslations, // Doit être passé après chargement
             currentPath: req.originalUrl,
-            userLandingPages, 
-            stats: statsArray, 
+            userLandingPages,       // Tableau vide si non calculé
+            stats: statsArray,       // Tableau vide
             currentUser: user,
-            adminUsers,       
+            adminUsers,             // Le tableau rempli (taille 6)
             activeSection: 'admin-users',
             isAdminUser: isAdminUser
         });
     } catch (error) {
-        console.error('Erreur CRITIQUE non gérée dans la route admin :', error);
+        console.error('Erreur lors de la récupération des utilisateurs admin :', error);
         next(error);
     }
 });
