@@ -794,22 +794,33 @@ app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
   }
 
   // --- LOGIQUE ADMIN POUR LA VUE GLOBALE ---
-  let adminUsers = [];
+  let adminUsers = [];
+  let adminOrders = [];
   // Le booléen pour le rendu conditionnel EJS
   const isAdminUser = user && user.role === 'admin';
   const UserModel = mongoose.model('User'); 
 
-  if (isAdminUser) {
-      try {
-          // Récupère la liste complète UNIQUEMENT si c'est un Admin.
-          // On utilise .lean() pour la robustesse et des objets JS simples.
-          adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); 
-          console.log(`[ROUTE USER] Admin loggué. Utilisateurs pour la vue : ${adminUsers.length}`);
-      } catch (e) {
-          console.error("Erreur Mongoose dans la route /user lors de la récup. admin:", e);
-          // En cas d'échec, le tableau reste vide pour ne pas crasher.
-      }
-  }
+  if (isAdminUser) {
+      try {
+          // Récupère la liste complète UNIQUEMENT si c'est un Admin.
+          // On utilise .lean() pour la robustesse et des objets JS simples.
+          adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean();
+          console.log(`[ROUTE USER] Admin loggué. Utilisateurs pour la vue : ${adminUsers.length}`);
+      } catch (e) {
+          console.error("Erreur Mongoose dans la route /user lors de la récup. admin:", e);
+          // En cas d'échec, le tableau reste vide pour ne pas crasher.
+      }
+
+      try {
+          adminOrders = await Order.find({})
+              .sort({ paidAt: -1, createdAt: -1 })
+              .populate('userId', 'firstName lastName email')
+              .lean();
+          console.log(`[ROUTE USER] Commandes administrateur chargées : ${adminOrders.length}`);
+      } catch (e) {
+          console.error("Erreur lors du chargement des commandes admin :", e);
+      }
+  }
   // --- FIN LOGIQUE ADMIN ---
 
 
@@ -847,11 +858,12 @@ app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
       currentUser: user,
       
       // 🔑 PASSAGE DES VARIABLES ADMINISTRATEUR :
-      adminUsers: adminUsers, 
-      isAdminUser: isAdminUser, 
-      
-      activeSection: 'account' // Section par défaut
-  });
+      adminUsers: adminUsers,
+      adminOrders: adminOrders,
+      isAdminUser: isAdminUser,
+
+      activeSection: 'account' // Section par défaut
+  });
 });
 
 
@@ -865,6 +877,7 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
     let statsArray = [];
     let userTranslations = {};
     let adminUsers = []; // Initialisation pour le try/catch
+    let adminOrders = [];
 
     try {
         // 2. Récupération des traductions (la logique est OK)
@@ -878,6 +891,11 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
         // 3. Récupération de TOUS les utilisateurs (la requête critique)
         const UserModel = mongoose.model('User');
         adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); // On utilise lean() pour la robustesse
+
+        adminOrders = await Order.find({})
+            .sort({ paidAt: -1, createdAt: -1 })
+            .populate('userId', 'firstName lastName email')
+            .lean();
 
         console.log(`[ROUTE ADMIN] Nombre d'utilisateurs trouvés : ${adminUsers.length}`);
 
@@ -894,6 +912,7 @@ app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
             stats: statsArray,       // Tableau vide
             currentUser: user,
             adminUsers,             // Le tableau rempli (taille 6)
+            adminOrders,
             activeSection: 'admin-users',
             isAdminUser: isAdminUser
         });
@@ -1729,7 +1748,13 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
 app.get('/user/orders/:orderId/invoice', isAuthenticated, async (req, res) => {
   try {
     const { orderId } = req.params;
-    const order = await Order.findOne({ _id: orderId, userId: req.user._id });
+    const query = { _id: orderId };
+
+    if (!req.user || req.user.role !== 'admin') {
+      query.userId = req.user._id;
+    }
+
+    const order = await Order.findOne(query);
 
     if (!order) {
       return res.status(404).json({ error: 'Commande introuvable' });
