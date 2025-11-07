@@ -782,59 +782,74 @@ app.get('/:locale/logout', (req, res, next) => {
 });
 
 // Route pour la page utilisateur avec locale et récupération des propriétés
-app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
-  const { locale } = req.params;
-  const user = req.user;
+const { locale } = req.params;
+    const user = req.user;
 
-  if (!user) {
-    return res.redirect(`/${locale}/login`);
-  }
+    if (!user) {
+        return res.redirect(`/${locale}/login`);
+    }
 
-  // ✅ Débug : on récupère les annonces de tous les utilisateurs
-  let userLandingPages = await Property.find({}); // TEMPORAIRE pour debug
+    // --- LOGIQUE ADMIN POUR LA VUE GLOBALE ---
+    let adminUsers = [];
+    // Le booléen pour le rendu conditionnel EJS
+    const isAdminUser = user && user.role === 'admin';
+    const UserModel = mongoose.model('User'); 
 
-  console.log("Liste brute des userId en base :");
-  userLandingPages.forEach(page => {
-    console.log("➡️", page.userId?.toString());
-  });
-  console.log("Utilisateur connecté :", user._id.toString());
+    if (isAdminUser) {
+        try {
+            // Récupère la liste complète UNIQUEMENT si c'est un Admin.
+            // On utilise .lean() pour la robustesse et des objets JS simples.
+            adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); 
+            console.log(`[ROUTE USER] Admin loggué. Utilisateurs pour la vue : ${adminUsers.length}`);
+        } catch (e) {
+            console.error("Erreur Mongoose dans la route /user:", e);
+        }
+    }
+    // --- FIN LOGIQUE ADMIN ---
 
-  // ✅ Puis on récupère uniquement celles du user connecté (on réutilise la même variable)
-  userLandingPages = await Property.find({ userId: user._id }); // REÉCRITURE de la variable
+    // Récupération des propriétés pour l'utilisateur connecté (logique existante)
+    // REMARQUE : J'ai supprimé la ligne "TEMPORAIRE pour debug" et la boucle console.log
+    let userLandingPages = await Property.find({ userId: user._id });
 
-  const userTranslationsPath = `./locales/${locale}/user.json`;
-  let userTranslations = {};
+    // Récupération des traductions (logique existante)
+    const userTranslationsPath = `./locales/${locale}/user.json`;
+    let userTranslations = {};
+    try {
+        userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        // Ne pas arrêter, mais utiliser un objet vide
+    }
 
-  try {
-    userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-  } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
+    // Calcul des statistiques (logique existante)
+    const statsArray = await Promise.all(
+        userLandingPages.map(async (property) => {
+            const stats = await getPageStats(property.url);
+            return {
+                page: property.url,
+                ...stats
+            };
+        })
+    );
 
-const statsArray = await Promise.all(
-  userLandingPages.map(async (property) => {
-    const stats = await getPageStats(property.url);
-    return {
-      page: property.url,
-      ...stats
-    };
-  })
-);
-
-res.render('user', {
-  locale,
-  user,
-  i18n: userTranslations,
-  currentPath: req.originalUrl,
-  userLandingPages,
-  stats: statsArray,
-  currentUser: user,
-  adminUsers: [],
-  activeSection: 'account'
+    res.render('user', {
+        locale,
+        user,
+        i18n: userTranslations,
+        currentPath: req.originalUrl,
+        userLandingPages,
+        stats: statsArray,
+        currentUser: user,
+        
+        // 🔑 PASSAGE DES VARIABLES ADMINISTRATEUR :
+        adminUsers: adminUsers, 
+        isAdminUser: isAdminUser, 
+        
+        activeSection: 'account' // Section par défaut
+    });
 });
 
-});
+
 
 app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
     const locale = req.user?.locale || req.locale || 'fr';
