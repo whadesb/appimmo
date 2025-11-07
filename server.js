@@ -836,55 +836,51 @@ res.render('user', {
 
 });
 
-
-// ... (Définition du middleware isAdmin)
-
 app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
     const locale = req.user?.locale || req.locale || 'fr';
     const user = req.user;
     const isAdminUser = true;
-    
-    // Initialisez les variables qui pourraient être nécessaires dans 'user.ejs' même si on ne les calcule pas ici.
+
+    // --- VARIABLES VIDES (pour éviter les erreurs dans le EJS) ---
     let userLandingPages = [];
     let statsArray = [];
     let userTranslations = {};
-    
-    try {
-        // --- 🚨 SEULE REQUÊTE AUTORISÉE POUR LE TEST 🚨 ---
-        const UserModel = mongoose.model('User'); 
-        const adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean();
-        
-        console.log(`[ROUTE ADMIN FINAL] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
-        if (adminUsers.length > 0) {
-            console.log('[ROUTE ADMIN FINAL] Premier utilisateur (Email) :', adminUsers[0].email);
-        } else {
-            console.warn('❗ La requête User.find({}) renvoie TOUJOURS 0. Problème de contexte de requête.');
-        }
-        // --- FIN DU TEST ISOLÉ ---
 
-        // Récupération des traductions minimales pour ne pas planter la vue
+    try {
+        // Chargement des traductions (seule lecture de fichier non Mongoose autorisée)
         const userTranslationsPath = `./locales/${locale}/user.json`;
         try {
-            const fs = require('fs'); // Assurez-vous que fs est disponible
             userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
         } catch (error) {
             console.error(`Erreur lors du chargement des traductions : ${error}`);
         }
         
+        // 🚨 REQUÊTE CRITIQUE ISOLÉE 🚨
+        const UserModel = mongoose.model('User'); 
+        const adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean();
+        
+        console.log(`[ROUTE ADMIN ISOLÉE] Nombre d'utilisateurs trouvés : ${adminUsers.length}`); 
+        if (adminUsers.length > 0) {
+            console.log('[ROUTE ADMIN ISOLÉE] Premier utilisateur récupéré (Email) :', adminUsers[0].email);
+        } else {
+            console.warn('❗ ÉCHEC ISOLÉ : User.find({}) renvoie 0 documents.');
+        }
+
+        // --- Rendu avec les variables simplifiées ---
         res.render('user', {
             locale,
             user,
             i18n: userTranslations,
             currentPath: req.originalUrl,
-            userLandingPages, // VIDE
-            stats: statsArray, // VIDE
+            userLandingPages, 
+            stats: statsArray, 
             currentUser: user,
-            adminUsers,       // Le tableau (espérons-le) rempli
+            adminUsers,       
             activeSection: 'admin-users',
             isAdminUser: isAdminUser
         });
     } catch (error) {
-        console.error('Erreur CRITIQUE lors de la récupération des utilisateurs admin :', error);
+        console.error('Erreur CRITIQUE non gérée dans la route admin :', error);
         next(error);
     }
 });
