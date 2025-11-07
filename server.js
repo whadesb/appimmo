@@ -112,7 +112,7 @@ app.use('/property', require('./routes/property'));
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy({
-  usernameField: 'email'
+  usernameField: 'email'
 }, User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -120,15 +120,27 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('Error connecting to MongoDB', err);
-});
-function isAuthenticatedJson(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
-  res.status(401).json({ success: false, message: 'Non authentifié' });
-}
+  console.log('✅ Connected to MongoDB');
 
+    // 🚨 TEST DÉMARRAGE : VÉRIFICATION DE LA COLLECTION 'users'
+    // Ce test doit s'afficher dans votre console Node.js au lancement du serveur
+    User.countDocuments({})
+        .then(count => {
+            console.log(`[TEST DÉMARRAGE] Nombre total de documents dans la collection 'users': ${count}`);
+        })
+        .catch(err => {
+            console.error('[TEST DÉMARRAGE] Erreur lors du comptage:', err);
+        });
+    // FIN DU TEST
+
+}).catch((err) => {
+  console.error('❌ Error connecting to MongoDB', err);
+});
+
+function isAuthenticatedJson(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  res.status(401).json({ success: false, message: 'Non authentifié' });
+}
 
 // Middleware : prolonger la session active
 app.use((req, res, next) => {
