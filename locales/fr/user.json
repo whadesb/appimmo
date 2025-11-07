@@ -109,4 +109,16 @@
   "url_modal_title": "URL de la page",
   "copy_url": "Copier l'URL",
   "open_page": "Ouvrir la page"
+  ,
+  "admin_user_management": "Gestion des Utilisateurs",
+  "admin_user_management_description": "Surveillez l'ensemble des comptes créés sur la plateforme et vérifiez leur statut de sécurité.",
+  "admin_table_role": "Rôle",
+  "admin_table_first_name": "Prénom",
+  "admin_table_last_name": "Nom",
+  "admin_table_email": "Email",
+  "admin_table_two_factor": "2FA",
+  "admin_table_registered_at": "Inscription",
+  "admin_no_users_found": "Aucun utilisateur n'a été trouvé.",
+  "admin_users_2fa_enabled": "Activée",
+  "admin_users_2fa_disabled": "Désactivée"
 }
