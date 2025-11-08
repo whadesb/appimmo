@@ -712,11 +712,9 @@ app.get('/api/stats/:id', async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
   }
 });
-
 app.post('/:locale/login', (req, res, next) => {
     const locale = req.params.locale || 'fr';
 
-    // 💡 LOG pour tracer la tentative
     console.log(`🔍 Tentative de connexion pour: ${req.body.email}`);
 
     passport.authenticate('local', (err, user, info) => {
@@ -726,7 +724,6 @@ app.post('/:locale/login', (req, res, next) => {
             return next(err);
         }
         if (!user) {
-            // ❌ ÉCHEC D'AUTHENTIFICATION (Mauvais email/mot de passe)
             console.log("❌ Authentification échouée: Identifiants incorrects.");
             req.flash('error', 'Identifiants incorrects.');
             return res.redirect(`/${locale}/login`);
@@ -738,20 +735,29 @@ app.post('/:locale/login', (req, res, next) => {
                 console.error("❌ Erreur req.logIn (session):", err);
                 return next(err);
             }
+            
+            // 💡 Correction: On utilise req.session.save pour s'assurer que l'écriture MongoDB est faite
+            // avant d'exécuter la redirection. C'est souvent le coupable derrière ces boucles.
+            req.session.save(error => {
+                if (error) {
+                    console.error("❌ Erreur de sauvegarde de session:", error);
+                    return next(error);
+                }
 
-            if (user.twoFactorEnabled) {
-                console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
-                req.session.tmpUserId = user._id;
-                return res.redirect(`/${locale}/2fa`);
-            }
+                if (user.twoFactorEnabled) {
+                    console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
+                    req.session.tmpUserId = user._id;
+                    return res.redirect(`/${locale}/2fa`);
+                }
 
-            // Si la 2FA n’est pas activée
-            console.log(`✅ Connexion réussie (sans 2FA), redirection vers /user.`);
-            return res.redirect(`/${locale}/user`);
+                // Si la 2FA n’est pas activée
+                console.log(`✅ Connexion réussie (sans 2FA), redirection vers /user.`);
+                return res.redirect(`/${locale}/user`);
+            });
+            
         });
     })(req, res, next);
 });
-
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
     const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
