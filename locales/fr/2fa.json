@@ -18,7 +18,9 @@
 "code_expires_in": "Le code expire dans",
 "seconds": "secondes"
   },
-  "code_expired": "Code expiré. Rechargez la page pour recommencer.",
+  "code_expired": "Code expiré. Veuillez attendre le suivant pour réessayer.",
+  "code_expiring": "Le code arrive à expiration, préparez-vous à saisir le suivant.",
+  "new_code_prompt": "Un nouveau code est disponible, veuillez le saisir pour continuer.",
   "invalid_or_expired": "Le code est invalide ou a expiré. Veuillez recommencer.",
   "code_success": "Code accepté, redirection en cours...",
   "instruction_title": "Étapes à suivre :",

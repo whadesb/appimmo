@@ -477,8 +477,9 @@ main {
 <button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mt-2"><%= i18n.menu.clear_button %></button>
 <button id="submit-code" type="submit" class="btn btn-primary w-100 mt-3" disabled><%= i18n.menu.submit_button %></button>
 
-<input type="hidden" name="code" id="hidden-code">
+<input type="hidden" name="token" id="hidden-code">
 <div id="countdown"><%= i18n.menu.code_expires_in %> <span id="timer">30</span> <%= i18n.menu.seconds %>.</div>
+<p id="expiry-message" class="text-danger text-center fw-semibold" style="display: none;"></p>
 
         <div id="success-check">
           <i class="bi bi-check-circle-fill"></i>
@@ -549,48 +550,76 @@ main {
   <!-- Scripts -->
   <script src="/js/bootstrap.bundle.min.js"></script>
   <script src="/js/jquery.min.js"></script>
-<script>
-  let countdown = 30;
-  const timerDisplay = document.getElementById("timer");
-
-  const interval = setInterval(() => {
-    countdown--;
-    timerDisplay.textContent = countdown;
-    if (countdown <= 0) {
-      clearInterval(interval);
-      document.getElementById("submit-code").disabled = true;
-      alert("<%= i18n.code_expired %>");
-    }
-  }, 1000);
-</script>
-
-<script>
-document.getElementById('submit-code').addEventListener('click', function (e) {
-  e.preventDefault(); // ✅ empêche la soumission immédiate
-
-  const code = document.getElementById('hidden-code').value.trim();
-
-  if (code.length === 6 && countdown > 0) {
-    document.getElementById('success-check').style.display = 'block';
-    this.disabled = true;
-
-    setTimeout(() => {
-      this.closest("form").submit(); // ✅ soumission après succès visuel
-    }, 1500);
-  } else {
-    alert("<%= i18n.invalid_or_expired %>");
-  }
-});
-
-
-</script>
-<script>
+  <script>
     document.addEventListener("DOMContentLoaded", function () {
+      const INTERVAL_DURATION = 30;
+      const timerDisplay = document.getElementById("timer");
+      const countdownContainer = document.getElementById("countdown");
+      const expiryMessage = document.getElementById("expiry-message");
       const keypad = document.getElementById("numeric-keypad");
       const codeDisplay = document.getElementById("code-display");
       const hiddenCode = document.getElementById("hidden-code");
       const clearBtn = document.getElementById("clear-code");
       const submitBtn = document.getElementById("submit-code");
+      const successCheck = document.getElementById("success-check");
+      let previousSecondsRemaining = null;
+
+      function getSecondsRemaining() {
+        const now = Date.now();
+        return Math.ceil((INTERVAL_DURATION * 1000 - (now % (INTERVAL_DURATION * 1000))) / 1000);
+      }
+
+      function showExpiryMessage(message) {
+        expiryMessage.textContent = message;
+        expiryMessage.style.display = "block";
+      }
+
+      function hideExpiryMessage() {
+        expiryMessage.style.display = "none";
+      }
+
+      function resetCodeEntry() {
+        hiddenCode.value = "";
+        codeDisplay.textContent = "";
+        submitBtn.disabled = true;
+      }
+
+      function markAsExpiring() {
+        countdownContainer.classList.add("text-danger");
+        showExpiryMessage("<%= i18n.code_expiring %>");
+        submitBtn.disabled = true;
+      }
+
+      function handleNewCycle() {
+        countdownContainer.classList.remove("text-danger");
+        resetCodeEntry();
+        successCheck.style.display = "none";
+        showExpiryMessage("<%= i18n.new_code_prompt %>");
+      }
+
+      function updateTimer() {
+        const secondsRemaining = getSecondsRemaining();
+        const formatted = secondsRemaining.toString().padStart(2, "0");
+        if (timerDisplay.textContent !== formatted) {
+          timerDisplay.textContent = formatted;
+        }
+
+        if (secondsRemaining === INTERVAL_DURATION && previousSecondsRemaining !== null && previousSecondsRemaining !== INTERVAL_DURATION) {
+          handleNewCycle();
+        } else if (secondsRemaining <= 1) {
+          markAsExpiring();
+        } else {
+          countdownContainer.classList.remove("text-danger");
+          if (expiryMessage.textContent === "<%= i18n.code_expiring %>" || expiryMessage.textContent === "<%= i18n.new_code_prompt %>") {
+            hideExpiryMessage();
+          }
+          if (hiddenCode.value.length === 6) {
+            submitBtn.disabled = false;
+          }
+        }
+
+        previousSecondsRemaining = secondsRemaining;
+      }
 
       function generateRandomDigits() {
         const digits = [...Array(10).keys()];
@@ -604,12 +633,11 @@ document.getElementById('submit-code').addEventListener('click', function (e) {
       function renderKeypad() {
         keypad.innerHTML = "";
         const digits = generateRandomDigits();
-        digits.forEach(digit => {
+        digits.forEach((digit) => {
           const btn = document.createElement("button");
           btn.className = "btn btn-light";
           btn.textContent = digit;
-btn.setAttribute("aria-label", `Chiffre ${digit}`);
-
+          btn.setAttribute("aria-label", `Chiffre ${digit}`);
           btn.type = "button";
           btn.onclick = () => enterDigit(digit);
           keypad.appendChild(btn);
@@ -621,16 +649,35 @@ btn.setAttribute("aria-label", `Chiffre ${digit}`);
           hiddenCode.value += digit;
           codeDisplay.textContent = "*".repeat(hiddenCode.value.length);
         }
-        submitBtn.disabled = hiddenCode.value.length !== 6;
+        hideExpiryMessage();
+        countdownContainer.classList.remove("text-danger");
+        submitBtn.disabled = hiddenCode.value.length !== 6 || getSecondsRemaining() <= 1;
       }
 
-      clearBtn.onclick = () => {
-        hiddenCode.value = "";
-        codeDisplay.textContent = "";
-        submitBtn.disabled = true;
-      };
+      clearBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        resetCodeEntry();
+        hideExpiryMessage();
+      });
+
+      submitBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        const code = hiddenCode.value.trim();
+        if (code.length === 6 && getSecondsRemaining() > 1) {
+          successCheck.style.display = "block";
+          this.disabled = true;
+          hideExpiryMessage();
+          setTimeout(() => {
+            this.closest("form").submit();
+          }, 1500);
+        } else {
+          showExpiryMessage("<%= i18n.invalid_or_expired %>");
+        }
+      });
 
       renderKeypad();
+      updateTimer();
+      setInterval(updateTimer, 250);
     });
   </script>
 </body>
