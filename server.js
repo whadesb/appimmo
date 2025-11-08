@@ -1121,11 +1121,12 @@ app.post('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
       return res.redirect(`/${locale}/enable-2fa`);
     }
 
-    const verified = speakeasy.totp.verify({
-      secret: user.twoFactorSecret,
-      encoding: 'base32',
-      token: code
-    });
+   const verified = speakeasy.totp.verify({
+  secret: user.twoFactorSecret,
+  encoding: 'base32',
+  token: code,
+  window: 2
+});
 
     if (!verified) {
       req.flash('error', 'Code invalide. Veuillez réessayer.');
@@ -1367,12 +1368,12 @@ app.post('/:locale/2fa', async (req, res) => {
       return res.redirect(`/${locale}/login`);
     }
 
-    const verified = speakeasy.totp.verify({
-      secret: user.twoFactorSecret,
-      encoding: 'base32',
-      token: code,
-      window: 1
-    });
+ const verified = speakeasy.totp.verify({
+  secret: user.twoFactorSecret,
+  encoding: 'base32',
+  token: code,
+  window: 2 
+});
 
     if (!verified) {
       req.flash('error', 'Code 2FA invalide.');
