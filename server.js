@@ -736,8 +736,10 @@ app.post('/:locale/login', (req, res, next) => {
                 return next(err);
             }
             
-            // 💡 Correction: On utilise req.session.save pour s'assurer que l'écriture MongoDB est faite
-            // avant d'exécuter la redirection. C'est souvent le coupable derrière ces boucles.
+            // 💡 Ajout pour rafraîchir le cookie de session avant la sauvegarde.
+            req.session.touch(); 
+            
+            // 🔑 Correction: On utilise req.session.save pour forcer l'écriture avant la redirection.
             req.session.save(error => {
                 if (error) {
                     console.error("❌ Erreur de sauvegarde de session:", error);
@@ -758,6 +760,25 @@ app.post('/:locale/login', (req, res, next) => {
         });
     })(req, res, next);
 });
+```
+eof
+
+### ⚠️ Vérification critique du cookie de session
+
+Si la modification ci-dessus ne résout pas le problème, cela signifie que la ligne `secure: true` dans votre configuration `app.use(session({...}))` est incorrecte pour votre environnement de test.
+
+Si vous testez en **HTTP (non sécurisé)** ou sur `localhost`, vous **DEVEZ** commenter ou retirer cette ligne (après avoir redémarré votre serveur) :
+
+```javascript
+// Configuration de express-session (à vérifier au début de server.js)
+app.use(session({
+  // ...
+  cookie: { 
+    maxAge: 1000 * 60 * 60 * 2,
+    // secure: true, // ⚠️ COMMANDEZ CETTE LIGNE SI VOUS N'ÊTES PAS EN HTTPS
+    sameSite: 'lax'
+  }
+}));
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
     const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
