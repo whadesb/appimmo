@@ -93,14 +93,16 @@ main {
 
 
 
+
 .twofa-container {
   max-width: 1100px;
   margin: auto;
   padding: 0 20px;
   display: flex;
+  flex-direction: row;
   gap: 60px;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-wrap: nowrap;
+  align-items: flex-start;
   justify-content: space-between;
 }
 
@@ -142,7 +144,7 @@ main {
 }
 
 .twofa-form-wrapper {
-  flex: 1 1 40%;
+  flex: 0 1 420px;
   background-color: #f8f9fa;
   padding: 32px;
   border-radius: 10px;
@@ -261,6 +263,7 @@ main {
   .twofa-container {
     flex-direction: column;
     gap: 40px;
+    flex-wrap: wrap;
   }
 
   .twofa-form-wrapper {
@@ -268,6 +271,7 @@ main {
     max-width: 100%;
     padding: 24px 16px;
     margin: auto;
+    flex: 1 1 100%;
   }
 
   .twofa-left {
