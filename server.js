@@ -53,6 +53,7 @@ const { addToSitemap, pingSearchEngines } = require('./utils/seo');
 
 
 const app = express();
+app.set('trust proxy', 1);
 function getPaypalConfig() {
   const isLive = process.env.PAYPAL_ENV === 'live';
   return {
@@ -105,8 +106,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
-}));
+ cookie: { 
+    maxAge: 1000 * 60 * 60 * 2, // 2 heures
+    secure: true, // CLÉ : Indique que le cookie doit être transmis sur HTTPS
+    sameSite: 'lax' // Recommandé pour la compatibilité
+  }}));
 
 app.use('/', qrRoutes);
 app.use('/property', require('./routes/property'));
@@ -1351,58 +1355,62 @@ app.get('/:locale/2fa', (req, res) => {
 
 
 
-// server.js, autour de la ligne 1060
 app.post('/:locale/2fa', async (req, res) => {
-    const { locale } = req.params;
-    const { code } = req.body;
-    const tmpUserId = req.session.tmpUserId;
+    const { locale } = req.params;
+    const { code } = req.body;
 
-    if (!tmpUserId) {
-        return res.redirect(`/${locale}/login`);
-    }
+    // IMPORTANT : Utiliser req.session.tmpUserId qui a été stocké par la route /login
+    const tmpUserId = req.session.tmpUserId;
 
-    try {
-        const user = await User.findById(tmpUserId);
-        if (!user || !user.twoFactorSecret) {
-            req.flash('error', 'Erreur de validation 2FA. Utilisateur introuvable.');
-            return res.redirect(`/${locale}/login`);
-        }
+    if (!tmpUserId) {
+        // Redirection si l'utilisateur n'a pas tenté de se connecter
+        return res.redirect(`/${locale}/login`);
+    }
 
-        const verified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,
-            encoding: 'base32',
-            token: code,
-            window: 1 // Garder window: 1 ou 2 si l'horloge serveur est synchro
-        });
+    try {
+        const user = await User.findById(tmpUserId);
+        if (!user || !user.twoFactorSecret) {
+            req.flash('error', 'Erreur critique 2FA. Veuillez vous reconnecter.');
+            delete req.session.tmpUserId; // Nettoyage de la session temporaire
+            return res.redirect(`/${locale}/login`);
+        }
 
-        if (!verified) {
-            req.flash('error', 'Code 2FA invalide.');
-            return res.redirect(`/${locale}/2fa`);
-        }
+        // Augmentation de la fenêtre à 2 pour être plus tolérant au décalage horaire (90s de validité)
+        const verified = speakeasy.totp.verify({
+            secret: user.twoFactorSecret,
+            encoding: 'base32',
+            token: code,
+            window: 2 
+        });
 
-        // --- 🔑 POINT DE CONCENTRATION : Connexion réussie ---
+        if (!verified) {
+            req.flash('error', 'Code 2FA invalide.');
+            // On ne supprime PAS tmpUserId, pour permettre un nouvel essai
+            return res.redirect(`/${locale}/2fa`);
+        }
 
-        // 1. Établir la session Passport (req.login)
-        req.login(user, (err) => {
-            if (err) {
-                console.error("Erreur lors de la connexion après 2FA:", err);
-                req.flash('error', 'Erreur de connexion après 2FA.');
-                return res.redirect(`/${locale}/login`);
-            }
-            
-            // 2. Supprimer l'ID temporaire APRÈS la connexion réussie
-            // C'est la clé pour s'assurer que l'utilisateur est pleinement authentifié
-            delete req.session.tmpUserId;
-            
-            // 3. Redirection vers la page utilisateur
-            return res.redirect(`/${locale}/user`);
-        });
+        // Connexion réussie : Utilisation de req.login avec callback
+        req.login(user, (err) => {
+            if (err) {
+                console.error("Erreur lors de la connexion après 2FA:", err);
+                req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
+                return res.redirect(`/${locale}/login`);
+            }
 
-    } catch (err) {
-        console.error('Erreur 2FA:', err);
-        req.flash('error', 'Une erreur est survenue.');
-        res.redirect(`/${locale}/login`);
-    }
+            // 🔑 CORRECTION CRITIQUE : Suppression de l'ID temporaire APRÈS que Passport ait établi la session
+            delete req.session.tmpUserId;
+            
+            // Redirection finale
+            return res.redirect(`/${locale}/user`);
+        });
+
+    } catch (err) {
+        console.error('Erreur 2FA:', err);
+        req.flash('error', 'Une erreur est survenue.');
+        // S'il y a une erreur Mongoose/serveur, on ne laisse pas l'ID temporaire
+        delete req.session.tmpUserId;
+        res.redirect(`/${locale}/login`);
+    }
 });
 
 app.post('/add-property', isAuthenticated, upload.fields([
