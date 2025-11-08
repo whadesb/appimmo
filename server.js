@@ -1351,50 +1351,58 @@ app.get('/:locale/2fa', (req, res) => {
 
 
 
+// server.js, autour de la ligne 1060
 app.post('/:locale/2fa', async (req, res) => {
-  const { locale } = req.params;
-  const { code } = req.body;
+    const { locale } = req.params;
+    const { code } = req.body;
+    const tmpUserId = req.session.tmpUserId;
 
-  const tmpUserId = req.session.tmpUserId;
-
-  if (!tmpUserId) {
-    return res.redirect(`/${locale}/login`);
-  }
-
-  try {
-    const user = await User.findById(tmpUserId);
-    if (!user || !user.twoFactorSecret) {
-      req.flash('error', 'Erreur de validation 2FA.');
-      return res.redirect(`/${locale}/login`);
-    }
-
- const verified = speakeasy.totp.verify({
-  secret: user.twoFactorSecret,
-  encoding: 'base32',
-  token: code,
-  window: 2 
-});
-
-    if (!verified) {
-      req.flash('error', 'Code 2FA invalide.');
-      return res.redirect(`/${locale}/2fa`);
-    }
-
-    // Connexion réussie
-    delete req.session.tmpUserId;
-    req.login(user, (err) => {
-      if (err) {
-        req.flash('error', 'Erreur de connexion.');
+    if (!tmpUserId) {
         return res.redirect(`/${locale}/login`);
-      }
-      return res.redirect(`/${locale}/user`);
-    });
+    }
 
-  } catch (err) {
-    console.error('Erreur 2FA:', err);
-    req.flash('error', 'Une erreur est survenue.');
-    res.redirect(`/${locale}/login`);
-  }
+    try {
+        const user = await User.findById(tmpUserId);
+        if (!user || !user.twoFactorSecret) {
+            req.flash('error', 'Erreur de validation 2FA. Utilisateur introuvable.');
+            return res.redirect(`/${locale}/login`);
+        }
+
+        const verified = speakeasy.totp.verify({
+            secret: user.twoFactorSecret,
+            encoding: 'base32',
+            token: code,
+            window: 1 // Garder window: 1 ou 2 si l'horloge serveur est synchro
+        });
+
+        if (!verified) {
+            req.flash('error', 'Code 2FA invalide.');
+            return res.redirect(`/${locale}/2fa`);
+        }
+
+        // --- 🔑 POINT DE CONCENTRATION : Connexion réussie ---
+
+        // 1. Établir la session Passport (req.login)
+        req.login(user, (err) => {
+            if (err) {
+                console.error("Erreur lors de la connexion après 2FA:", err);
+                req.flash('error', 'Erreur de connexion après 2FA.');
+                return res.redirect(`/${locale}/login`);
+            }
+            
+            // 2. Supprimer l'ID temporaire APRÈS la connexion réussie
+            // C'est la clé pour s'assurer que l'utilisateur est pleinement authentifié
+            delete req.session.tmpUserId;
+            
+            // 3. Redirection vers la page utilisateur
+            return res.redirect(`/${locale}/user`);
+        });
+
+    } catch (err) {
+        console.error('Erreur 2FA:', err);
+        req.flash('error', 'Une erreur est survenue.');
+        res.redirect(`/${locale}/login`);
+    }
 });
 
 app.post('/add-property', isAuthenticated, upload.fields([
