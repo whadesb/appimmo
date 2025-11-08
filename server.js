@@ -102,16 +102,16 @@ app.use(i18n.init);
 
 
 app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
- cookie: { 
-    maxAge: 1000 * 60 * 60 * 2, // 2 heures
-    secure: true, // CLÉ : Indique que le cookie doit être transmis sur HTTPS
-    sameSite: 'lax' // Recommandé pour la compatibilité
-  }}));
-
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  cookie: { 
+    maxAge: 1000 * 60 * 60 * 2, // 2 heures
+    // secure: true, // Ligne commentée pour les tests locaux en HTTP
+    sameSite: 'lax'
+  }
+}));
 app.use('/', qrRoutes);
 app.use('/property', require('./routes/property'));
 
