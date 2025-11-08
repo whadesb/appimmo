@@ -97,20 +97,17 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(flash());
 app.use(i18n.init);
-
-
-
-
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { 
-    maxAge: 1000 * 60 * 60 * 2, 
+    maxAge: 1000 * 60 * 60 * 2,
     sameSite: 'lax'
   }
 }));
+
 app.use('/', qrRoutes);
 app.use('/property', require('./routes/property'));
 
@@ -759,25 +756,6 @@ app.post('/:locale/login', (req, res, next) => {
         });
     })(req, res, next);
 });
-```
-eof
-
-### ⚠️ Vérification critique du cookie de session
-
-Si la modification ci-dessus ne résout pas le problème, cela signifie que la ligne `secure: true` dans votre configuration `app.use(session({...}))` est incorrecte pour votre environnement de test.
-
-Si vous testez en **HTTP (non sécurisé)** ou sur `localhost`, vous **DEVEZ** commenter ou retirer cette ligne (après avoir redémarré votre serveur) :
-
-```javascript
-// Configuration de express-session (à vérifier au début de server.js)
-app.use(session({
-  // ...
-  cookie: { 
-    maxAge: 1000 * 60 * 60 * 2,
-    // secure: true, // ⚠️ COMMANDEZ CETTE LIGNE SI VOUS N'ÊTES PAS EN HTTPS
-    sameSite: 'lax'
-  }
-}));
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
     const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
