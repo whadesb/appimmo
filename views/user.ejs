@@ -1463,6 +1463,7 @@ progress {
               <% const extraPhotos = photos.slice(2, 10).filter(Boolean); %>
               <% const miniPhotos = photos.slice(10, 13).filter(Boolean); %>
               <% const descriptionText = property.description || ''; %>
+              <% const truncatedDescription = descriptionText && descriptionText.length > 8 ? descriptionText.substring(0, 8) + '...' : descriptionText; %>
               <tr>
                 <td><%= property._id %></td>
                 <td><%= property.userId %></td>
@@ -1499,7 +1500,7 @@ progress {
                 </td>
                 <td><%= [property.contactFirstName, property.contactLastName].filter(Boolean).join(' ') || 'NC' %></td>
                 <td><%= property.contactPhone || 'NC' %></td>
-                <td><%= descriptionText ? (descriptionText.length > 160 ? descriptionText.substring(0, 157) + '…' : descriptionText) : 'NC' %></td>
+                <td <% if (descriptionText) { %>title="<%= descriptionText %>"<% } %>><%= descriptionText ? truncatedDescription : 'NC' %></td>
                 <td>
                   <div class="d-flex flex-wrap gap-2">
                     <% if (property.url) { %>
@@ -1881,8 +1882,14 @@ function showSection(sectionId) {
                     const videoCell = property.videoUrl ? `<a href="${property.videoUrl}" target="_blank" rel="noopener">${escapeHtml(property.videoUrl)}</a>` : '—';
                     const contactName = escapeHtml([property.contactFirstName, property.contactLastName].filter(Boolean).join(' ')) || '—';
                     const contactPhone = escapeHtml(property.contactPhone) || '—';
-                    const description = escapeHtml(property.description || '') || '—';
-                    const truncatedDescription = description !== '—' && description.length > 160 ? `${description.slice(0, 157)}…` : description;
+                    const rawDescription = property.description || '';
+                    const hasDescription = Boolean(rawDescription);
+                    const truncatedDescription = hasDescription
+                        ? (rawDescription.length > 8 ? `${rawDescription.slice(0, 8)}...` : rawDescription)
+                        : '';
+                    const descriptionCell = hasDescription
+                        ? `<span title="${escapeHtml(rawDescription)}">${escapeHtml(truncatedDescription)}</span>`
+                        : '—';
                     const safeUrlForJs = escapeJsString(property.url || '');
                     const safeIdForJs = escapeJsString(property._id || '');
 
@@ -1922,7 +1929,7 @@ function showSection(sectionId) {
                         videoCell,
                         contactName,
                         contactPhone,
-                        truncatedDescription,
+                        descriptionCell,
                         actionsHtml
                     ];
 
