@@ -713,32 +713,44 @@ app.get('/api/stats/:id', async (req, res) => {
   }
 });
 
-
-
 app.post('/:locale/login', (req, res, next) => {
-    const locale = req.params.locale || 'fr';
+    const locale = req.params.locale || 'fr';
 
-    passport.authenticate('local', (err, user, info) => {
-        if (err) return next(err);
-        if (!user) {
-            req.flash('error', 'Identifiants incorrects.');
-            return res.redirect(`/${locale}/login`);
+    // 💡 LOG pour tracer la tentative
+    console.log(`🔍 Tentative de connexion pour: ${req.body.email}`);
+
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error("❌ Erreur Passport (générale):", err);
+            req.flash('error', 'Erreur interne lors de la connexion.');
+            return next(err);
         }
+        if (!user) {
+            // ❌ ÉCHEC D'AUTHENTIFICATION (Mauvais email/mot de passe)
+            console.log("❌ Authentification échouée: Identifiants incorrects.");
+            req.flash('error', 'Identifiants incorrects.');
+            return res.redirect(`/${locale}/login`);
+        }
 
-        req.logIn(user, (err) => {
-            if (err) return next(err);
-
-            if (user.twoFactorEnabled) {
-                req.session.tmpUserId = user._id;
-                return res.redirect(`/${locale}/2fa`);
+        // ✅ SUCCÈS D'AUTHENTIFICATION (Identifiants valides)
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error("❌ Erreur req.logIn (session):", err);
+                return next(err);
             }
 
-            // Si la 2FA n’est pas activée, on va directement sur /user
-            return res.redirect(`/${locale}/user`);
-        });
-    })(req, res, next);
-});
+            if (user.twoFactorEnabled) {
+                console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
+                req.session.tmpUserId = user._id;
+                return res.redirect(`/${locale}/2fa`);
+            }
 
+            // Si la 2FA n’est pas activée
+            console.log(`✅ Connexion réussie (sans 2FA), redirection vers /user.`);
+            return res.redirect(`/${locale}/user`);
+        });
+    })(req, res, next);
+});
 
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
