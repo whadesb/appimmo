@@ -1351,12 +1351,14 @@ const response = await axios.post(verificationURL, null, {
   }
 });
 app.get('/:locale/2fa', (req, res) => {
-  const { locale } = req.params;
+  const { locale } = req.params;
 
-  if (!req.session.tmpUserId) {
-    return res.redirect(`/${locale}/login`);
-  }
+  // 🔑 LOG D'ENTRÉE : Vérifie si l'ID a survécu à la redirection
+  console.log(`🔎 [2FA GET] Tentative d'accès. tmpUserId trouvé: ${req.session.tmpUserId}`); 
 
+  if (!req.session.tmpUserId) { // C'est cette ligne qui vous renvoie à login
+    return res.redirect(`/${locale}/login`);
+  }
   const translationsPath = `./locales/${locale}/2fa.json`;
   let i18n = {};
   try {
