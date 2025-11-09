@@ -725,35 +725,33 @@ app.post('/:locale/login', (req, res, next) => {
             return res.redirect(`/${locale}/login`);
         }
 
-        // ✅ SUCCÈS D'AUTHENTIFICATION (Identifiants valides)
+       if (user.twoFactorEnabled) {
+    console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
+    
+    req.session.tmpUserId = user._id; 
 
-        if (user.twoFactorEnabled) {
-            console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
-            
-            // 🚨 CORRECTION CLÉ : Stocker l'ID temporaire et forcer la déconnexion Passport.
-            req.session.tmpUserId = user._id; 
-            
-            // On utilise req.logout pour annuler l'authentification Passport
-            // et éviter que req.isAuthenticated() ne soit TRUE avant la 2FA.
-            req.logout(logoutErr => {
-                if (logoutErr) {
-                    console.error("❌ Erreur req.logout (pré-2FA):", logoutErr);
-                    return next(logoutErr);
-                }
-
-                // Assurez-vous que la session est sauvegardée après logout.
-                req.session.save(error => {
-                    if (error) {
-                        console.error("❌ Erreur de sauvegarde de session (pré-2FA):", error);
-                        return next(error);
-                    }
-                    // Redirection vers la page 2FA
-                    return res.redirect(`/${locale}/2fa`);
-                });
-            });
-            return; // Fin de l'exécution pour la 2FA
+    req.logout(logoutErr => {
+        if (logoutErr) {
+            console.error("❌ Erreur req.logout (pré-2FA):", logoutErr);
+            return next(logoutErr);
         }
 
+        // 🎯 ÉTAPE CRITIQUE : S'assurer que la session est persistée
+        // AVEC req.session.tmpUserId AVANT la redirection.
+        req.session.save(error => { // <-- Le callback de save() est la clé
+            if (error) {
+                console.error("❌ Erreur de sauvegarde de session (pré-2FA):", error);
+                // Gérer l'erreur, par exemple rediriger vers login avec un message d'erreur
+                req.flash('error', 'Erreur de session. Veuillez réessayer.');
+                return res.redirect(`/${locale}/login`);
+            }
+            
+            // ✅ Redirection uniquement APRES la sauvegarde réussie.
+            return res.redirect(`/${locale}/2fa`);
+        });
+    });
+    return;
+}
         // Si la 2FA n’est pas activée (Logique inchangée pour une connexion classique)
         req.logIn(user, (err) => {
             if (err) {
