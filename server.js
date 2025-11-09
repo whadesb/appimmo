@@ -100,20 +100,22 @@ app.use(i18n.init);
 const isProduction = process.env.NODE_ENV === 'production';
 app.set('trust proxy', 1);
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'fallback_secret',
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI,
-        collectionName: 'sessions',
-        ttl: 14 * 24 * 60 * 60
-    }),
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-       secure: true,  
-        httpOnly: true,
-        sameSite: 'None',
-    }
+    secret: process.env.SESSION_SECRET || 'fallback_secret',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI,
+        collectionName: 'sessions',
+        ttl: 14 * 24 * 60 * 60
+    }),
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7,
+      secure: true,  
+      httpOnly: true,
+      sameSite: 'None', // Reste à 'None'
+      // 🔑 AJOUT CRITIQUE: Assurer que le cookie couvre l'ensemble du domaine
+      path: '/' 
+    }
 }));
 app.use(flash());
 app.use('/', qrRoutes);
