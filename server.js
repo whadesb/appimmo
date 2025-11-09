@@ -95,7 +95,7 @@ app.use(cookieParser());
 app.use('/paypal/webhook', express.raw({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-app.use(flash());
+
 app.use(i18n.init);
 app.use(session({
   secret: process.env.SESSION_SECRET,
@@ -105,10 +105,10 @@ app.use(session({
   cookie: { 
     maxAge: 1000 * 60 * 60 * 2,
     secure: true,
-    sameSite: 'lax'
+    sameSite: 'none'
   } 
 }));
-
+app.use(flash());
 app.use('/', qrRoutes);
 app.use('/property', require('./routes/property'));
 
