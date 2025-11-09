@@ -1494,8 +1494,7 @@ app.post('/:locale/2fa', async (req, res) => {
             return res.redirect(`/${locale}/2fa`);
         }
 
-        // 3. CRITIQUE : Utiliser un objet pur (POJO) pour la sérialisation Passport
-        // Cela évite que Passport essaie de sérialiser des méthodes Mongoose internes.
+        // 3. Préparation pour Passport (Utilisation de toObject pour la stabilité)
         const userToLog = user.toObject ? user.toObject() : user; 
 
         // 4. Établissement de la session Passport finale
@@ -1509,7 +1508,7 @@ app.post('/:locale/2fa', async (req, res) => {
             // Suppression de l'ID temporaire
             delete req.session.tmpUserId;
             
-            // 5. CRITIQUE : Forcer l'enregistrement dans MongoStore AVANT la redirection
+            // 5. Forcer l'enregistrement dans MongoStore AVANT la redirection (avec délai)
             req.session.save(error => {
                 if (error) {
                     console.error("❌ Erreur de sauvegarde de session finale (req.session.save):", error);
@@ -1519,9 +1518,8 @@ app.post('/:locale/2fa', async (req, res) => {
                 
                 console.log(`✅ Connexion complète réussie, redirection vers /user.`);
 
-                // 🎯 SOLUTION HACK : Délai pour contourner la race condition
+                // Solution Hack : Délai de 500 ms
                 setTimeout(() => {
-                    // Redirection finale vers la page utilisateur
                     return res.redirect(`/${locale}/user`); 
                 }, 500);
             });
@@ -1532,11 +1530,10 @@ app.post('/:locale/2fa', async (req, res) => {
         req.flash('error', 'Une erreur est survenue.');
         delete req.session.tmpUserId;
         
-        // 🔑 CORRECTION : Ajout du 'return' ici pour éviter les erreurs "Headers already sent"
         return res.redirect(`/${locale}/login`); 
     }
-}); // N'oubliez pas cette accolade et parenthèse
-});
+}); // <--- VÉRIFIEZ QUE C'EST LA SEULE LIGNE DE CE TYPE APRÈS LE CATCH
+
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 },
