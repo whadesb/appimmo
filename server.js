@@ -124,18 +124,24 @@ app.use(passport.session());
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
+// DANS server.js (remplacez le bloc précédent)
+
+// Sérialisation: Stocke l'ID
 passport.serializeUser(function(user, done) {
-    done(null, user.id); // Stocke seulement l'ID de l'utilisateur
+    // Utiliser user.id est plus sûr que user._id.toString()
+    done(null, user.id); 
 });
 
-passport.deserializeUser(function(id, done) {
-    User.findById(id)
-        .then(user => {
-            done(null, user);
-        })
-        .catch(err => {
-            done(err, null);
-        });
+// Dé-sérialisation: Récupère l'utilisateur
+passport.deserializeUser(async function(id, done) {
+    try {
+        // 🔑 CRITIQUE : Utiliser await ici pour garantir que la promesse est résolue
+        const user = await User.findById(id); 
+        done(null, user);
+    } catch (err) {
+        console.error("❌ Erreur de dé-sérialisation:", err);
+        done(err, null);
+    }
 });
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
