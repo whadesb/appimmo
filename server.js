@@ -124,8 +124,19 @@ app.use(passport.session());
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+passport.serializeUser(function(user, done) {
+    done(null, user.id); // Stocke seulement l'ID de l'utilisateur
+});
+
+passport.deserializeUser(function(id, done) {
+    User.findById(id)
+        .then(user => {
+            done(null, user);
+        })
+        .catch(err => {
+            done(err, null);
+        });
+});
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
