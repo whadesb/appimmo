@@ -710,59 +710,69 @@ app.get('/api/stats/:id', async (req, res) => {
   }
 });
 app.post('/:locale/login', (req, res, next) => {
-    const locale = req.params.locale || 'fr';
+    const locale = req.params.locale || 'fr';
 
-    console.log(`🔍 Tentative de connexion pour: ${req.body.email}`);
+    console.log(`🔍 Tentative de connexion pour: ${req.body.email}`);
 
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            console.error("❌ Erreur Passport (générale):", err);
-            req.flash('error', 'Erreur interne lors de la connexion.');
-            return next(err);
-        }
-        if (!user) {
-            console.log("❌ Authentification échouée: Identifiants incorrects.");
-            req.flash('error', 'Identifiants incorrects.');
-            return res.redirect(`/${locale}/login`);
-        }
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error("❌ Erreur Passport (générale):", err);
+            req.flash('error', 'Erreur interne lors de la connexion.');
+            return next(err);
+        }
+        if (!user) {
+            console.log("❌ Authentification échouée: Identifiants incorrects.");
+            req.flash('error', 'Identifiants incorrects.');
+            return res.redirect(`/${locale}/login`);
+        }
 
-    if (user.twoFactorEnabled) {
-    console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
-    
-    req.session.tmpUserId = user._id; 
+       // ✅ SUCCÈS D'AUTHENTIFICATION (Identifiants valides)
 
-    req.logout(logoutErr => {
-        if (logoutErr) { /* ... */ return next(logoutErr); }
-
-        req.session.save(error => { 
-            if (error) { /* ... */ }
-            
-            // 🔑 LOG DE SORTIE : Confirme que l'ID est dans la session juste avant l'envoi
-            console.log(`✅ [LOGIN SAVE] tmpUserId enregistré: ${req.session.tmpUserId}`); 
+       if (user.twoFactorEnabled) {
+            console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
+            
+            // 🎯 CORRECTION CLÉ : Conserver l'ID utilisateur
+            req.session.tmpUserId = user._id.toString(); 
             
-            return res.redirect(`/${locale}/2fa`);
-        });
-    });
-    return;
-}
-        // Si la 2FA n’est pas activée (Logique inchangée pour une connexion classique)
-        req.logIn(user, (err) => {
-            if (err) {
-                console.error("❌ Erreur req.logIn (session):", err);
-                return next(err);
+            // 🚨 Supprimer SEULEMENT l'état Passport pour désauthentifier sans vider la session
+            if (req.session.passport) {
+                delete req.session.passport;
             }
-            req.session.touch();
-            req.session.save(error => {
-                if (error) {
-                    console.error("❌ Erreur de sauvegarde de session:", error);
-                    return next(error);
-                }
-                console.log(`✅ Connexion réussie (sans 2FA), redirection vers /user.`);
-                return res.redirect(`/${locale}/user`);
-            });
-        });
-        
-    })(req, res, next);
+            // S'assurer que req.user n'est plus défini
+            req.user = undefined;
+
+            // 🎯 Sauvegarder la session AVANT de rediriger
+            req.session.save(error => { 
+                if (error) {
+                    console.error("❌ Erreur de sauvegarde de session (pré-2FA):", error);
+                    req.flash('error', 'Erreur de session. Veuillez réessayer.');
+                    return res.redirect(`/${locale}/login`);
+                }
+                
+                console.log(`✅ [LOGIN SAVE] tmpUserId enregistré: ${req.session.tmpUserId}`); // Log de vérification
+                return res.redirect(`/${locale}/2fa`);
+            });
+            return; // Fin du bloc 2FA
+        }
+        
+        // Si la 2FA n’est pas activée (Logique inchangée pour une connexion classique)
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error("❌ Erreur req.logIn (session):", err);
+                return next(err);
+            }
+            req.session.touch();
+            req.session.save(error => {
+                if (error) {
+                    console.error("❌ Erreur de sauvegarde de session:", error);
+                    return next(error);
+                }
+                console.log(`✅ Connexion réussie (sans 2FA), redirection vers /user.`);
+                return res.redirect(`/${locale}/user`);
+            });
+        });
+        
+    })(req, res, next);
 });
 
 app.post('/set-cookie-consent', (req, res) => {
@@ -1353,32 +1363,32 @@ const response = await axios.post(verificationURL, null, {
 app.get('/:locale/2fa', (req, res) => {
   const { locale } = req.params;
 
-  // 🔑 LOG D'ENTRÉE : Vérifie si l'ID a survécu à la redirection
+  // 🔑 LOG D'ENTRÉE : Vérifie si l'ID a survécu à la redirection
   console.log(`🔎 [2FA GET] Tentative d'accès. tmpUserId trouvé: ${req.session.tmpUserId}`); 
 
-  if (!req.session.tmpUserId) { // C'est cette ligne qui vous renvoie à login
+  if (!req.session.tmpUserId) {
     return res.redirect(`/${locale}/login`);
   }
-  const translationsPath = `./locales/${locale}/2fa.json`;
-  let i18n = {};
-  try {
-    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-  } catch (error) {
-    console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
 
-  res.render('2fa', {
-  locale,
-  i18n,
-  messages: req.flash(),
-  currentPath: req.originalUrl,
-  showAccountButtons: false 
+  const translationsPath = `./locales/${locale}/2fa.json`;
+  let i18n = {};
+  try {
+    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
+
+  res.render('2fa', {
+  locale,
+  i18n,
+  messages: req.flash(),
+  currentPath: req.originalUrl,
+  showAccountButtons: false 
 });
 
 
 });
-
 app.post('/:locale/2fa', async (req, res) => {
     const { locale } = req.params;
     const { code } = req.body;
