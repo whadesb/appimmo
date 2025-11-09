@@ -102,11 +102,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { 
-    maxAge: 1000 * 60 * 60 * 2,
-    sameSite: 'lax',
-    secure: true 
-  }
+  cookie: { 
+    maxAge: 1000 * 60 * 60 * 2,
+    secure: true, // <-- Mettre à true si vous êtes en HTTPS (recommandé)
+    sameSite: 'lax' // Ou 'strict' si vous voulez plus de sécurité
+  } 
 }));
 
 app.use('/', qrRoutes);
