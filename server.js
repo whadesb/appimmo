@@ -1476,12 +1476,11 @@ app.post('/:locale/2fa', async (req, res) => {
             return res.redirect(`/${locale}/2fa`);
         }
 
-        // 3. PRÉPARATION CRITIQUE : Utiliser un objet JS simple pour la sérialisation Passport
-        // Cela réduit les chances d'un crash de sérialisation par Passport/MongoStore.
-        const userToLog = user.toObject ? user.toObject() : user;
+        // 3. Préparation pour Passport : Assurer un objet simple (Mongoose Doc ou POJO)
+        // La conversion n'est plus nécessaire si l'objet est un document Mongoose standard.
 
         // 4. Établissement de la session Passport finale
-        req.login(userToLog, (err) => { 
+        req.login(user, (err) => { 
             if (err) {
                 console.error("❌ Erreur lors de la connexion après 2FA:", err);
                 req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
@@ -1491,7 +1490,7 @@ app.post('/:locale/2fa', async (req, res) => {
             // Suppression de l'ID temporaire
             delete req.session.tmpUserId;
             
-            // 5. CRITIQUE : Forcer l'enregistrement de la session Passport AVANT la redirection
+            // 5. CRITIQUE : Forcer l'enregistrement dans MongoStore AVANT la redirection
             req.session.save(error => {
                 if (error) {
                     console.error("❌ Erreur de sauvegarde de session finale:", error);
@@ -1499,9 +1498,14 @@ app.post('/:locale/2fa', async (req, res) => {
                     return res.redirect(`/${locale}/login`);
                 }
                 
-                console.log(`✅ Connexion complète réussie, redirection vers /user.`);
-                // Redirection finale vers la page utilisateur
-                return res.redirect(`/${locale}/user`);
+                console.log(`✅ Connexion complète réussie, tentative de redirection vers /user.`);
+
+                // 🎯 SOLUTION HACK : Délai de 500 ms pour contourner la race condition
+                // Cela donne le temps au navigateur de recevoir et d'envoyer le nouveau cookie.
+                setTimeout(() => {
+                    // Redirection finale vers la page utilisateur
+                    return res.redirect(`/${locale}/user`); 
+                }, 500);
             });
         });
 
