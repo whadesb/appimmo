@@ -1449,7 +1449,6 @@ app.post('/:locale/2fa', async (req, res) => {
     const tmpUserId = req.session.tmpUserId;
 
     if (!tmpUserId) {
-        // Redirection si l'utilisateur n'a pas tenté de se connecter
         return res.redirect(`/${locale}/login`);
     }
 
@@ -1476,13 +1475,14 @@ app.post('/:locale/2fa', async (req, res) => {
             return res.redirect(`/${locale}/2fa`);
         }
 
-        // 3. Préparation pour Passport : Assurer un objet simple (Mongoose Doc ou POJO)
-        // La conversion n'est plus nécessaire si l'objet est un document Mongoose standard.
+        // 3. CRITIQUE : Utiliser un objet pur (POJO) pour la sérialisation Passport
+        // Cela évite que Passport essaie de sérialiser des méthodes Mongoose internes.
+        const userToLog = user.toObject ? user.toObject() : user; 
 
         // 4. Établissement de la session Passport finale
-        req.login(user, (err) => { 
+        req.login(userToLog, (err) => { 
             if (err) {
-                console.error("❌ Erreur lors de la connexion après 2FA:", err);
+                console.error("❌ Erreur lors de la connexion après 2FA (req.login):", err);
                 req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
                 return res.redirect(`/${locale}/login`);
             }
@@ -1493,15 +1493,14 @@ app.post('/:locale/2fa', async (req, res) => {
             // 5. CRITIQUE : Forcer l'enregistrement dans MongoStore AVANT la redirection
             req.session.save(error => {
                 if (error) {
-                    console.error("❌ Erreur de sauvegarde de session finale:", error);
+                    console.error("❌ Erreur de sauvegarde de session finale (req.session.save):", error);
                     req.flash('error', 'Erreur de session finale. Veuillez réessayer.');
                     return res.redirect(`/${locale}/login`);
                 }
                 
-                console.log(`✅ Connexion complète réussie, tentative de redirection vers /user.`);
+                console.log(`✅ Connexion complète réussie, redirection vers /user.`);
 
-                // 🎯 SOLUTION HACK : Délai de 500 ms pour contourner la race condition
-                // Cela donne le temps au navigateur de recevoir et d'envoyer le nouveau cookie.
+                // 🎯 SOLUTION HACK : Délai pour contourner la race condition
                 setTimeout(() => {
                     // Redirection finale vers la page utilisateur
                     return res.redirect(`/${locale}/user`); 
@@ -1510,12 +1509,14 @@ app.post('/:locale/2fa', async (req, res) => {
         });
 
     } catch (err) {
-        console.error('❌ Erreur 2FA (générale):', err);
+        console.error('❌ Erreur 2FA (générale) avant req.login:', err);
         req.flash('error', 'Une erreur est survenue.');
         delete req.session.tmpUserId;
-        res.redirect(`/${locale}/login`);
+        
+        // 🔑 CORRECTION : Ajout du 'return' ici pour éviter les erreurs "Headers already sent"
+        return res.redirect(`/${locale}/login`); 
     }
-});
+}); // N'oubliez pas cette accolade et parenthèse
 
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
