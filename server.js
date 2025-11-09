@@ -97,16 +97,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use(i18n.init);
+const isProduction = process.env.NODE_ENV === 'production';
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { 
+  cookie: {
     maxAge: 1000 * 60 * 60 * 2,
-    secure: true,
-    sameSite: 'none'
-  } 
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax'
+  }
 }));
 app.use(flash());
 app.use('/', qrRoutes);
