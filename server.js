@@ -717,71 +717,72 @@ app.get('/api/stats/:id', async (req, res) => {
   }
 });
 app.post('/:locale/login', (req, res, next) => {
-    const locale = req.params.locale || 'fr';
+    const locale = req.params.locale || 'fr';
 
-    console.log(`🔍 Tentative de connexion pour: ${req.body.email}`);
+    console.log(`🔍 Tentative de connexion pour: ${req.body.email}`);
 
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            console.error("❌ Erreur Passport (générale):", err);
-            req.flash('error', 'Erreur interne lors de la connexion.');
-            return next(err);
-        }
-        if (!user) {
-            console.log("❌ Authentification échouée: Identifiants incorrects.");
-            req.flash('error', 'Identifiants incorrects.');
-            return res.redirect(`/${locale}/login`);
-        }
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error("❌ Erreur Passport (générale):", err);
+            req.flash('error', 'Erreur interne lors de la connexion.');
+            return next(err);
+        }
+        if (!user) {
+            console.log("❌ Authentification échouée: Identifiants incorrects.");
+            req.flash('error', 'Identifiants incorrects.');
+            return res.redirect(`/${locale}/login`);
+        }
 
-       // ✅ SUCCÈS D'AUTHENTIFICATION (Identifiants valides)
+        // ✅ SUCCÈS D'AUTHENTIFICATION
 
-       if (user.twoFactorEnabled) {
-            console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
-            
-            // 🎯 CORRECTION CLÉ : Conserver l'ID utilisateur
-            req.session.tmpUserId = user._id.toString(); 
+        if (user.twoFactorEnabled) {
+            console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
             
-            // 🚨 Supprimer SEULEMENT l'état Passport pour désauthentifier sans vider la session
+            // 🎯 Stockage de l'ID temporaire
+            req.session.tmpUserId = user._id.toString(); 
+            
+            // 🚨 Suppression de l'état Passport (pour éviter l'authentification complète)
             if (req.session.passport) {
                 delete req.session.passport;
             }
-            // S'assurer que req.user n'est plus défini
             req.user = undefined;
 
-            // 🎯 Sauvegarder la session AVANT de rediriger
-            req.session.save(error => { 
-                if (error) {
-                    console.error("❌ Erreur de sauvegarde de session (pré-2FA):", error);
-                    req.flash('error', 'Erreur de session. Veuillez réessayer.');
-                    return res.redirect(`/${locale}/login`);
-                }
-                
-                console.log(`✅ [LOGIN SAVE] tmpUserId enregistré: ${req.session.tmpUserId}`); // Log de vérification
-                return res.redirect(`/${locale}/2fa`);
-            });
-            return; // Fin du bloc 2FA
-        }
-        
-        // Si la 2FA n’est pas activée (Logique inchangée pour une connexion classique)
-        req.logIn(user, (err) => {
-            if (err) {
-                console.error("❌ Erreur req.logIn (session):", err);
-                return next(err);
-            }
-            req.session.touch();
-            req.session.save(error => {
-                if (error) {
-                    console.error("❌ Erreur de sauvegarde de session:", error);
-                    return next(error);
-                }
-                console.log(`✅ Connexion réussie (sans 2FA), redirection vers /user.`);
-                return res.redirect(`/${locale}/user`);
-            });
-        });
-        
-    })(req, res, next);
+            // 🎯 Sauvegarder la session AVANT de rediriger
+            req.session.save(error => { 
+                if (error) {
+                    console.error("❌ Erreur de sauvegarde de session (pré-2FA):", error);
+                    req.flash('error', 'Erreur de session. Veuillez réessayer.');
+                    return res.redirect(`/${locale}/login`);
+                }
+                
+                console.log(`✅ [LOGIN SAVE] tmpUserId enregistré: ${req.session.tmpUserId}`);
+                
+                // 🔑 INJECTION DU SESSION ID DANS L'URL POUR CONTOURNER LE BUG DU COOKIE
+                const sessionId = req.session.id;
+                return res.redirect(`/${locale}/2fa?sessionId=${sessionId}`); // <-- Changement ici
+            });
+            return; 
+        }
+        
+        // Si la 2FA n’est pas activée (logique classique)
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error("❌ Erreur req.logIn (session):", err);
+                return next(err);
+            }
+            req.session.touch();
+            req.session.save(error => {
+                if (error) {
+                    console.error("❌ Erreur de sauvegarde de session:", error);
+                    return next(error);
+                }
+                console.log(`✅ Connexion réussie (sans 2FA), redirection vers /user.`);
+                return res.redirect(`/${locale}/user`);
+            });
+        });
+        
+    })(req, res, next);
 });
-
 app.post('/set-cookie-consent', (req, res) => {
     const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
 
@@ -1368,34 +1369,80 @@ const response = await axios.post(verificationURL, null, {
   }
 });
 app.get('/:locale/2fa', (req, res) => {
-  const { locale } = req.params;
+    const { locale } = req.params;
+    const { sessionId } = req.query; // Récupère l'ID de session de l'URL
+    
+    let tmpUserId = req.session.tmpUserId;
 
-  // 🔑 LOG D'ENTRÉE : Vérifie si l'ID a survécu à la redirection
-  console.log(`🔎 [2FA GET] Tentative d'accès. tmpUserId trouvé: ${req.session.tmpUserId}`); 
+    // 🔑 CONTOURNEMENT DU BUG : Si le cookie a échoué, utilisons l'ID de l'URL
+    if (!tmpUserId && sessionId) {
+        console.log(`🔎 [2FA GET] tmpUserId manquant. Tentative de rechargement via sessionId URL.`);
+        
+        // Utilise la méthode .get() du MongoStore pour récupérer la session brute
+        req.sessionStore.get(sessionId, (err, sessionData) => {
+            if (err || !sessionData || !sessionData.tmpUserId) {
+                console.log(`🔎 [2FA GET] Échec du rechargement de la session via URL.`);
+                return res.redirect(`/${locale}/login`);
+            }
+            
+            // Si la session est trouvée dans Mongo, la charger dans req.session
+            req.session.tmpUserId = sessionData.tmpUserId;
+            // Note: Nous ne pouvons pas modifier req.session.id car la requête est déjà en cours
+            
+            console.log(`🔎 [2FA GET] Session rechargée avec succès via URL. tmpUserId trouvé: ${sessionData.tmpUserId}`);
+            
+            // Re-vérifier l'ID (maintenant qu'il est chargé)
+            if (!req.session.tmpUserId) {
+                return res.redirect(`/${locale}/login`);
+            }
+            
+            // Procéder au rendu de la vue 2FA (nécessaire dans le callback car c'est asynchrone)
+            const translationsPath = `./locales/${locale}/2fa.json`;
+            let i18n = {};
+            try {
+                i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+            } catch (error) {
+                console.error(`Erreur lors du chargement des traductions pour ${locale} (async):`, error);
+                return res.status(500).send('Erreur lors du chargement des traductions.');
+            }
 
-  if (!req.session.tmpUserId) {
-    return res.redirect(`/${locale}/login`);
-  }
+            // Rendu de la vue 2FA
+            res.render('2fa', {
+                locale,
+                i18n,
+                messages: req.flash(),
+                currentPath: req.originalUrl,
+                showAccountButtons: false
+            });
+        });
+        return; // Arrêter le flux d'exécution ici pour attendre le callback
+    }
+    
+    // Logique standard si tmpUserId était présent au départ (ou si sessionId était absent)
+    console.log(`🔎 [2FA GET] Tentative d'accès. tmpUserId trouvé: ${tmpUserId}`); 
 
-  const translationsPath = `./locales/${locale}/2fa.json`;
-  let i18n = {};
-  try {
-    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-  } catch (error) {
-    console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
+    if (!tmpUserId) {
+        return res.redirect(`/${locale}/login`);
+    }
 
-  res.render('2fa', {
-  locale,
-  i18n,
-  messages: req.flash(),
-  currentPath: req.originalUrl,
-  showAccountButtons: false 
+    const translationsPath = `./locales/${locale}/2fa.json`;
+    let i18n = {};
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
+
+    res.render('2fa', {
+        locale,
+        i18n,
+        messages: req.flash(),
+        currentPath: req.originalUrl,
+        showAccountButtons: false 
+    });
 });
 
-
-});
 app.post('/:locale/2fa', async (req, res) => {
     const { locale } = req.params;
     const { code } = req.body;
