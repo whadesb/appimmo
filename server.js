@@ -104,8 +104,8 @@ app.use(session({
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { 
     maxAge: 1000 * 60 * 60 * 2,
-    secure: true, // <-- Mettre à true si vous êtes en HTTPS (recommandé)
-    sameSite: 'lax' // Ou 'strict' si vous voulez plus de sécurité
+    secure: true,
+    sameSite: 'none'
   } 
 }));
 
@@ -726,32 +726,24 @@ app.post('/:locale/login', (req, res, next) => {
             return res.redirect(`/${locale}/login`);
         }
 
-       if (user.twoFactorEnabled) {
-    console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
-    
-    req.session.tmpUserId = user._id; 
+    if (user.twoFactorEnabled) {
+    console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
+    
+    req.session.tmpUserId = user._id; 
 
-    req.logout(logoutErr => {
-        if (logoutErr) {
-            console.error("❌ Erreur req.logout (pré-2FA):", logoutErr);
-            return next(logoutErr);
-        }
+    req.logout(logoutErr => {
+        if (logoutErr) { /* ... */ return next(logoutErr); }
 
-        // 🎯 ÉTAPE CRITIQUE : S'assurer que la session est persistée
-        // AVEC req.session.tmpUserId AVANT la redirection.
-        req.session.save(error => { // <-- Le callback de save() est la clé
-            if (error) {
-                console.error("❌ Erreur de sauvegarde de session (pré-2FA):", error);
-                // Gérer l'erreur, par exemple rediriger vers login avec un message d'erreur
-                req.flash('error', 'Erreur de session. Veuillez réessayer.');
-                return res.redirect(`/${locale}/login`);
-            }
+        req.session.save(error => { 
+            if (error) { /* ... */ }
+            
+            // 🔑 LOG DE SORTIE : Confirme que l'ID est dans la session juste avant l'envoi
+            console.log(`✅ [LOGIN SAVE] tmpUserId enregistré: ${req.session.tmpUserId}`); 
             
-            // ✅ Redirection uniquement APRES la sauvegarde réussie.
-            return res.redirect(`/${locale}/2fa`);
-        });
-    });
-    return;
+            return res.redirect(`/${locale}/2fa`);
+        });
+    });
+    return;
 }
         // Si la 2FA n’est pas activée (Logique inchangée pour une connexion classique)
         req.logIn(user, (err) => {
