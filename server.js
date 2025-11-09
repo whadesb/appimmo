@@ -1442,7 +1442,6 @@ app.get('/:locale/2fa', (req, res) => {
         showAccountButtons: false 
     });
 });
-
 app.post('/:locale/2fa', async (req, res) => {
     const { locale } = req.params;
     const { code } = req.body;
@@ -1456,10 +1455,12 @@ app.post('/:locale/2fa', async (req, res) => {
     }
 
     try {
-        const user = await User.findById(tmpUserId);
+        // Récupérer le document Mongoose complet (nécessaire pour Passport)
+        const user = await User.findById(tmpUserId); 
+        
         if (!user || !user.twoFactorSecret) {
             req.flash('error', 'Erreur critique 2FA. Veuillez vous reconnecter.');
-            delete req.session.tmpUserId; // Nettoyage de la session temporaire
+            delete req.session.tmpUserId; 
             return res.redirect(`/${locale}/login`);
         }
 
@@ -1468,40 +1469,47 @@ app.post('/:locale/2fa', async (req, res) => {
             secret: user.twoFactorSecret,
             encoding: 'base32',
             token: code,
-            window: 2 
+            window: 2 
         });
 
         if (!verified) {
-            // C'est ici que votre message 'Code 2FA invalide.' est déclenché.
             req.flash('error', 'Code 2FA invalide.');
-            // On ne supprime PAS tmpUserId, pour permettre un nouvel essai
             return res.redirect(`/${locale}/2fa`);
         }
 
         // 🔑 Connexion réussie : Le code est validé.
         // req.login() établit la session Passport finale.
-       req.login(user, (err) => {
-    if (err) {
-        console.error("❌ Erreur lors de la connexion après 2FA:", err);
-        req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
-        return res.redirect(`/${locale}/login`);
-    }
+        req.login(user, (err) => { 
+            if (err) {
+                // Cette erreur est capturée en cas de problème de sérialisation Passport
+                console.error("❌ Erreur lors de la connexion après 2FA:", err);
+                req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
+                return res.redirect(`/${locale}/login`);
+            }
 
-    // NOUVEAU : Suppression de l'ID temporaire
-    delete req.session.tmpUserId;
-    
-    // 🎯 CORRECTION : Forcer l'enregistrement de la session Passport AVANT la redirection
-    req.session.save(error => {
-        if (error) {
-            console.error("❌ Erreur de sauvegarde de session finale:", error);
-            req.flash('error', 'Erreur de session finale. Veuillez réessayer.');
-            return res.redirect(`/${locale}/login`);
-        }
-        
-        console.log(`✅ Connexion complète réussie, redirection vers /user.`);
-        // Redirection finale vers la page utilisateur
-        return res.redirect(`/${locale}/user`);
-    });
+            // Suppression de l'ID temporaire une fois que l'authentification Passport est initiée
+            delete req.session.tmpUserId;
+            
+            // 🎯 CRITIQUE : Forcer l'enregistrement de la session Passport AVANT la redirection
+            req.session.save(error => {
+                if (error) {
+                    console.error("❌ Erreur de sauvegarde de session finale:", error);
+                    req.flash('error', 'Erreur de session finale. Veuillez réessayer.');
+                    return res.redirect(`/${locale}/login`);
+                }
+                
+                console.log(`✅ Connexion complète réussie, redirection vers /user.`);
+                // Redirection finale vers la page utilisateur
+                return res.redirect(`/${locale}/user`);
+            });
+        });
+
+    } catch (err) {
+        console.error('❌ Erreur 2FA (générale):', err);
+        req.flash('error', 'Une erreur est survenue.');
+        delete req.session.tmpUserId;
+        res.redirect(`/${locale}/login`);
+    }
 });
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
