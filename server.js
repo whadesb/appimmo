@@ -1446,7 +1446,6 @@ app.post('/:locale/2fa', async (req, res) => {
     const { locale } = req.params;
     const { code } = req.body;
 
-    // IMPORTANT : Utiliser req.session.tmpUserId qui a été stocké par la route /login
     const tmpUserId = req.session.tmpUserId;
 
     if (!tmpUserId) {
@@ -1455,8 +1454,8 @@ app.post('/:locale/2fa', async (req, res) => {
     }
 
     try {
-        // Récupérer le document Mongoose complet (nécessaire pour Passport)
-        const user = await User.findById(tmpUserId); 
+        // 1. Récupérer le document Mongoose
+        let user = await User.findById(tmpUserId); 
         
         if (!user || !user.twoFactorSecret) {
             req.flash('error', 'Erreur critique 2FA. Veuillez vous reconnecter.');
@@ -1464,7 +1463,7 @@ app.post('/:locale/2fa', async (req, res) => {
             return res.redirect(`/${locale}/login`);
         }
 
-        // Augmentation de la fenêtre à 2 pour être plus tolérant au décalage horaire (90s de validité)
+        // 2. Validation du code TOTP
         const verified = speakeasy.totp.verify({
             secret: user.twoFactorSecret,
             encoding: 'base32',
@@ -1477,20 +1476,22 @@ app.post('/:locale/2fa', async (req, res) => {
             return res.redirect(`/${locale}/2fa`);
         }
 
-        // 🔑 Connexion réussie : Le code est validé.
-        // req.login() établit la session Passport finale.
-        req.login(user, (err) => { 
+        // 3. PRÉPARATION CRITIQUE : Utiliser un objet JS simple pour la sérialisation Passport
+        // Cela réduit les chances d'un crash de sérialisation par Passport/MongoStore.
+        const userToLog = user.toObject ? user.toObject() : user;
+
+        // 4. Établissement de la session Passport finale
+        req.login(userToLog, (err) => { 
             if (err) {
-                // Cette erreur est capturée en cas de problème de sérialisation Passport
                 console.error("❌ Erreur lors de la connexion après 2FA:", err);
                 req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
                 return res.redirect(`/${locale}/login`);
             }
 
-            // Suppression de l'ID temporaire une fois que l'authentification Passport est initiée
+            // Suppression de l'ID temporaire
             delete req.session.tmpUserId;
             
-            // 🎯 CRITIQUE : Forcer l'enregistrement de la session Passport AVANT la redirection
+            // 5. CRITIQUE : Forcer l'enregistrement de la session Passport AVANT la redirection
             req.session.save(error => {
                 if (error) {
                     console.error("❌ Erreur de sauvegarde de session finale:", error);
@@ -1511,6 +1512,7 @@ app.post('/:locale/2fa', async (req, res) => {
         res.redirect(`/${locale}/login`);
     }
 });
+
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 },
