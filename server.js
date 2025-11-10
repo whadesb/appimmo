@@ -1406,7 +1406,6 @@ app.get('/:locale/2fa', (req, res) => {
             
             // Si la session est trouvée dans Mongo, la charger dans req.session
             req.session.tmpUserId = sessionData.tmpUserId;
-            // Note: Nous ne pouvons pas modifier req.session.id car la requête est déjà en cours
             
             console.log(`🔎 [2FA GET] Session rechargée avec succès via URL. tmpUserId trouvé: ${sessionData.tmpUserId}`);
             
@@ -1431,7 +1430,8 @@ app.get('/:locale/2fa', (req, res) => {
                 i18n,
                 messages: req.flash(),
                 currentPath: req.originalUrl,
-                showAccountButtons: false
+                showAccountButtons: false,
+                sessionId: sessionId // 👈 CRITIQUE : Passé au template
             });
         });
         return; // Arrêter le flux d'exécution ici pour attendre le callback
@@ -1458,17 +1458,35 @@ app.get('/:locale/2fa', (req, res) => {
         i18n,
         messages: req.flash(),
         currentPath: req.originalUrl,
-        showAccountButtons: false 
+        showAccountButtons: false,
+        sessionId: sessionId || req.session.id // 👈 CRITIQUE : Passé au template
     });
 });
 app.post('/:locale/2fa', async (req, res) => {
     const { locale } = req.params;
     const { code } = req.body;
+    const { sessionId } = req.query; // 👈 NOUVEAU : Récupère l'ID de session du formulaire
 
-    const tmpUserId = req.session.tmpUserId;
+    let tmpUserId = req.session.tmpUserId;
+
+    if (!tmpUserId && sessionId) {
+        // 🚨 NOUVEAU CORRECTIF POUR LE POST : Tenter de recharger la session si le cookie a échoué
+        await new Promise((resolve) => {
+            req.sessionStore.get(sessionId, (err, sessionData) => {
+                if (err || !sessionData || !sessionData.tmpUserId) {
+                    console.warn(`⚠️ POST /2fa: Échec de la récupération de session via URL.`);
+                } else {
+                    req.session.tmpUserId = sessionData.tmpUserId;
+                    console.log(`✅ POST /2fa: Session rechargée via URL. tmpUserId: ${req.session.tmpUserId}`);
+                }
+                resolve(); // On continue même en cas d'échec
+            });
+        });
+        tmpUserId = req.session.tmpUserId; // Mettre à jour après l'opération asynchrone
+    }
 
     if (!tmpUserId) {
-        console.warn('⚠️ Tentative POST /2fa sans tmpUserId, redirection vers login.');
+        console.warn('⚠️ POST /2fa: tmpUserId non trouvé (échec de session), redirection vers login.');
         return res.redirect(`/${locale}/login`);
     }
 
@@ -1492,11 +1510,12 @@ app.post('/:locale/2fa', async (req, res) => {
 
         if (!verified) {
             req.flash('error', 'Code 2FA invalide.');
-            return res.redirect(`/${locale}/2fa`);
+            // Inclure l'ID de session dans la redirection en cas d'échec pour maintenir le flux
+            return res.redirect(`/${locale}/2fa?sessionId=${sessionId}`); 
         }
 
-        // 3. Établissement de la session Passport finale (Correction Critique)
-        req.login(user, (err) => { // Utiliser l'objet Mongoose 'user'
+        // 3. Établissement de la session Passport finale
+        req.login(user, (err) => { 
             if (err) {
                 console.error("❌ Erreur lors de la connexion après 2FA (req.login):", err);
                 req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
