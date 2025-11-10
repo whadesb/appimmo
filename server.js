@@ -110,7 +110,7 @@ app.use(session({
     }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      sameSite: isProduction ?,
+      sameSite: isProduction,
       httpOnly: true,
       sameSite: 'None', // Reste à 'None
       path: '/' 
