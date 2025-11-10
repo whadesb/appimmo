@@ -50,7 +50,7 @@ const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const { sendInvoiceByEmail, sendMailPending, generateInvoicePDF } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
 const { addToSitemap, pingSearchEngines } = require('./utils/seo');
-
+app.set('trust proxy', 1);
 
 const app = express();
 
@@ -98,7 +98,7 @@ app.use(express.json());
 
 app.use(i18n.init);
 const isProduction = process.env.NODE_ENV === 'production';
-app.set('trust proxy', 1);
+
 app.use(session({
     secret: process.env.SESSION_SECRET || 'fallback_secret',
     resave: false,
