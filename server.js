@@ -113,7 +113,7 @@ app.use(session({
         maxAge: 1000 * 60 * 60 * 24 * 7,
         secure: isProduction,  
         httpOnly: true,
-        sameSite: isProduction ? 'None' : 'Lax', // ✅ Changement pour dev
+        sameSite: isProduction ? 'None' : 'Lax',
         path: '/' 
     }
 }));
