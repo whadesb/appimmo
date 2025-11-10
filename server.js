@@ -110,10 +110,9 @@ app.use(session({
     }),
     cookie: {
       maxAge: 1000 * 60 * 60 * 24 * 7,
-      secure: isProduction,  
+      sameSite: isProduction ?,
       httpOnly: true,
-      sameSite: 'None', // Reste à 'None'
-      // 🔑 AJOUT CRITIQUE: Assurer que le cookie couvre l'ensemble du domaine
+      sameSite: 'None', // Reste à 'None
       path: '/' 
     }
 }));
