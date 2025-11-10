@@ -237,16 +237,16 @@ async function generateLandingPage(property) {
           font-size: 1.8rem;
           font-weight: 600;
         }
-        .visit-btn {
-          background-color: #c4b990;
-          border: none;
-          color: #000;
-          padding: 12px 28px;
-          border-radius: 999px;
-          cursor: pointer;
-          font-size: 1rem;
-          transition: opacity 0.2s ease;
-        }
+        .video-actions .visit-btn {
+      background: none;
+      border: none;
+      border-radius: 999px;
+      color: #ffffff;
+      padding: 14px 32px;
+      cursor: pointer;
+      font-size: 1.4rem;
+      transition: opacity 0.2s ease;
+    }
         .visit-btn:hover {
           opacity: 0.85;
         }
