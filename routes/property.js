@@ -74,7 +74,12 @@ async function generateLandingPage(property) {
       noDescription: 'Aucune description fournie.',
       mapUnavailable: 'Carte non disponible.',
       mapError: 'Erreur lors du chargement de la carte.',
-      inProgress: 'En cours'
+      inProgress: 'En cours',
+      galleryTitle: 'Galerie photos',
+      gallerySubtitle: 'Découvrez d’autres vues du bien.',
+      galleryAlt: 'Photo du bien immobilier',
+      previous: 'Précédent',
+      next: 'Suivant'
     },
     en: {
       adLabel: 'UAP Real Estate Ad',
@@ -100,7 +105,12 @@ async function generateLandingPage(property) {
       noDescription: 'No description provided.',
       mapUnavailable: 'Map not available.',
       mapError: 'Error loading the map.',
-      inProgress: 'In progress'
+      inProgress: 'In progress',
+      galleryTitle: 'Photo gallery',
+      gallerySubtitle: 'Browse additional views of the property.',
+      galleryAlt: 'Property photo',
+      previous: 'Previous',
+      next: 'Next'
     },
     es: {
       adLabel: 'Anuncio UAP Immo',
@@ -126,7 +136,12 @@ async function generateLandingPage(property) {
       noDescription: 'No se proporcionó descripción.',
       mapUnavailable: 'Mapa no disponible.',
       mapError: 'Error al cargar el mapa.',
-      inProgress: 'En curso'
+      inProgress: 'En curso',
+      galleryTitle: 'Galería de fotos',
+      gallerySubtitle: 'Descubre más vistas de la propiedad.',
+      galleryAlt: 'Foto de la propiedad',
+      previous: 'Anterior',
+      next: 'Siguiente'
     },
     pt: {
       adLabel: 'Anúncio UAP Immo',
@@ -152,7 +167,12 @@ async function generateLandingPage(property) {
       noDescription: 'Nenhuma descrição fornecida.',
       mapUnavailable: 'Mapa indisponível.',
       mapError: 'Erro ao carregar o mapa.',
-      inProgress: 'Em andamento'
+      inProgress: 'Em andamento',
+      galleryTitle: 'Galeria de fotos',
+      gallerySubtitle: 'Descubra outras vistas do imóvel.',
+      galleryAlt: 'Foto do imóvel',
+      previous: 'Anterior',
+      next: 'Seguinte'
     }
   };
 
@@ -178,6 +198,11 @@ async function generateLandingPage(property) {
     return '';
   };
   const embedUrl = getEmbedUrl(property.videoUrl);
+  const allPhotos = Array.isArray(property.photos) ? property.photos.filter(Boolean) : [];
+  const extraPhotosFromIndex = Array.isArray(property.photos)
+    ? property.photos.slice(2).filter(Boolean)
+    : [];
+  const videoGalleryPhotos = embedUrl ? (extraPhotosFromIndex.length > 0 ? extraPhotosFromIndex : allPhotos) : [];
 
   const jsonLD = {
     "@context": "https://schema.org",
@@ -327,6 +352,78 @@ async function generateLandingPage(property) {
     .has-video .extra-info-desktop .info-label,
     .has-video .extra-info-desktop .info-item {
       color: #3c3c3c;
+    }
+    .gallery-section {
+      text-align: center;
+    }
+    .gallery-section hr {
+      margin-bottom: 30px;
+    }
+    .gallery-subtitle {
+      margin-bottom: 28px;
+      font-size: 1rem;
+      color: #6a6a6a;
+    }
+    body.has-video .gallery-subtitle {
+      color: #3c3c3c;
+    }
+    .video-gallery {
+      position: relative;
+      max-width: 1100px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+    .video-gallery-track {
+      display: flex;
+      gap: 24px;
+      transition: transform 0.3s ease-in-out;
+    }
+    .video-gallery-item {
+      flex: 0 0 calc((100% - 48px) / 3);
+    }
+    .video-gallery-item img {
+      width: 100%;
+      height: 260px;
+      object-fit: cover;
+      border-radius: 18px;
+    }
+    .video-gallery-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      border: none;
+      background: rgba(0, 0, 0, 0.55);
+      color: #fff;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.2s ease;
+    }
+    .video-gallery-btn.prev { left: 10px; }
+    .video-gallery-btn.next { right: 10px; }
+    .video-gallery-btn:disabled {
+      opacity: 0.35;
+      cursor: default;
+    }
+    body.has-video .video-gallery-btn {
+      background: rgba(0, 0, 0, 0.65);
+    }
+    @media (max-width: 1024px) {
+      .video-gallery-item {
+        flex: 0 0 calc((100% - 24px) / 2);
+      }
+    }
+    @media (max-width: 640px) {
+      .video-gallery-item {
+        flex: 0 0 100%;
+      }
+      .video-gallery-item img {
+        height: 200px;
+      }
     }
     @media (max-width: 768px) {
       .video-card {
@@ -1222,6 +1319,22 @@ h1 {
 
   </div>
 </div>
+${embedUrl && videoGalleryPhotos.length ? `
+<div class="extra-info-desktop gallery-section">
+  <hr />
+  <h2>${t.galleryTitle}</h2>
+  <p class="gallery-subtitle">${t.gallerySubtitle}</p>
+  <div class="video-gallery">
+    <button class="video-gallery-btn prev" aria-label="${t.previous}">&#10094;</button>
+    <div class="video-gallery-track">
+      ${videoGalleryPhotos.map(photo => `
+        <div class="video-gallery-item"><img src="/uploads/${photo}" alt="${t.galleryAlt}" loading="lazy" /></div>
+      `).join('')}
+    </div>
+    <button class="video-gallery-btn next" aria-label="${t.next}">&#10095;</button>
+  </div>
+</div>
+` : ''}
 <script type="application/ld+json">
 ${JSON.stringify(jsonLD)}
 </script>
@@ -1328,6 +1441,64 @@ ${JSON.stringify(jsonLD)}
 
 
 
+    const videoGalleryTrack = document.querySelector('.video-gallery-track');
+    if (videoGalleryTrack) {
+      const galleryItems = Array.from(videoGalleryTrack.querySelectorAll('.video-gallery-item'));
+      const prevGallery = document.querySelector('.video-gallery-btn.prev');
+      const nextGallery = document.querySelector('.video-gallery-btn.next');
+      let galleryIndex = 0;
+
+      const getVisibleGalleryItems = () => {
+        if (window.innerWidth <= 640) return 1;
+        if (window.innerWidth <= 1024) return 2;
+        return 3;
+      };
+
+      const updateGallery = () => {
+        if (!galleryItems.length) return;
+        const style = getComputedStyle(videoGalleryTrack);
+        const gap = parseFloat(style.columnGap || style.gap || '0');
+        const itemWidth = galleryItems[0].getBoundingClientRect().width;
+        const visible = getVisibleGalleryItems();
+        const maxIndex = Math.max(0, galleryItems.length - visible);
+        if (galleryIndex > maxIndex) {
+          galleryIndex = maxIndex;
+        }
+        videoGalleryTrack.style.transform = `translateX(-${galleryIndex * (itemWidth + gap)}px)`;
+        if (prevGallery) {
+          prevGallery.disabled = galleryIndex === 0;
+          prevGallery.style.display = galleryItems.length <= visible ? 'none' : '';
+        }
+        if (nextGallery) {
+          nextGallery.disabled = galleryIndex >= maxIndex;
+          nextGallery.style.display = galleryItems.length <= visible ? 'none' : '';
+        }
+      };
+
+      if (nextGallery) {
+        nextGallery.addEventListener('click', () => {
+          const visible = getVisibleGalleryItems();
+          const maxIndex = Math.max(0, galleryItems.length - visible);
+          if (galleryIndex < maxIndex) {
+            galleryIndex += 1;
+            updateGallery();
+          }
+        });
+      }
+
+      if (prevGallery) {
+        prevGallery.addEventListener('click', () => {
+          if (galleryIndex > 0) {
+            galleryIndex -= 1;
+            updateGallery();
+          }
+        });
+      }
+
+      window.addEventListener('resize', updateGallery);
+      updateGallery();
+    }
+
     const miniTrack = document.querySelector('.mini-track');
     if (miniTrack) {
       const prevMini = document.querySelector('.mini-btn.prev');
@@ -1416,10 +1587,10 @@ router.post('/add-property', authMiddleware, upload.fields([
     let extraPhotos = [];
     let miniPhotos = [];
 
-    if (hasVideo) {
-        cleanupUploadedFiles(req.files);
-    } else {
-        if (req.files.photo1?.[0]) {
+    if (req.files.photo1?.[0]) {
+        if (hasVideo) {
+            fs.unlinkSync(req.files.photo1[0].path);
+        } else {
             const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
             await sharp(req.files.photo1[0].path)
                 .resize(800)
@@ -1428,8 +1599,12 @@ router.post('/add-property', authMiddleware, upload.fields([
             photo1 = path.basename(photo1Path);
             fs.unlinkSync(req.files.photo1[0].path);
         }
+    }
 
-        if (req.files.photo2?.[0]) {
+    if (req.files.photo2?.[0]) {
+        if (hasVideo) {
+            fs.unlinkSync(req.files.photo2[0].path);
+        } else {
             const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
             await sharp(req.files.photo2[0].path)
                 .resize(800)
@@ -1438,29 +1613,29 @@ router.post('/add-property', authMiddleware, upload.fields([
             photo2 = path.basename(photo2Path);
             fs.unlinkSync(req.files.photo2[0].path);
         }
+    }
 
-        if (req.files.extraPhotos) {
-            for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
-                const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
-                await sharp(file.path)
-                    .resize(800)
-                    .jpeg({ quality: 80 })
-                    .toFile(extraPath);
-                extraPhotos.push(path.basename(extraPath));
-                fs.unlinkSync(file.path);
-            }
+    if (req.files.extraPhotos) {
+        for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
+            const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
+            await sharp(file.path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(extraPath);
+            extraPhotos.push(path.basename(extraPath));
+            fs.unlinkSync(file.path);
         }
+    }
 
-        if (req.files.miniPhotos) {
-            for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
-                const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
-                await sharp(file.path)
-                    .resize(800)
-                    .jpeg({ quality: 80 })
-                    .toFile(miniPath);
-                miniPhotos.push(path.basename(miniPath));
-                fs.unlinkSync(file.path);
-            }
+    if (req.files.miniPhotos) {
+        for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
+            const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
+            await sharp(file.path)
+                .resize(800)
+                .jpeg({ quality: 80 })
+                .toFile(miniPath);
+            miniPhotos.push(path.basename(miniPath));
+            fs.unlinkSync(file.path);
         }
     }
 
@@ -1492,7 +1667,9 @@ router.post('/add-property', authMiddleware, upload.fields([
             language,
             userId: req.user._id,
             videoUrl: rawVideoUrl,
-            photos: hasVideo ? [] : [photo1, photo2, ...extraPhotos, ...miniPhotos].filter(Boolean)
+            photos: hasVideo
+                ? [...extraPhotos, ...miniPhotos].filter(Boolean)
+                : [photo1, photo2, ...extraPhotos, ...miniPhotos].filter(Boolean)
         });
 
         await property.save();
@@ -1545,6 +1722,7 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
             contactPhone
         } = req.body;
 
+        const previousVideoUrl = property.videoUrl || '';
         const rawVideoUrl = (req.body.videoUrl || '').trim();
         const hasVideo = rawVideoUrl.length > 0;
         const postalCodePattern = /^\d{5}$/;
@@ -1582,19 +1760,27 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
         property.electricShutters = req.body.electricShutters === 'true';
         property.outdoorLighting = req.body.outdoorLighting === 'true';
 
-        if (hasVideo) {
-            cleanupUploadedFiles(req.files);
+        if (!Array.isArray(property.photos)) {
             property.photos = [];
-        } else {
-            if (!Array.isArray(property.photos)) {
-                property.photos = [];
-            }
+        }
 
-            let mainPhotos = property.photos.slice(0, 2);
-            let extraPhotos = property.photos.slice(2, 10);
-            let miniPhotos = property.photos.slice(10, 13);
+        let mainPhotos = hasVideo ? [] : property.photos.slice(0, 2);
+        let extraPhotos = hasVideo
+            ? (previousVideoUrl ? property.photos.slice(0, 8) : property.photos.slice(2, 10))
+            : property.photos.slice(2, 10);
 
-            if (req.files.photo1?.[0]) {
+        if (hasVideo && extraPhotos.length === 0) {
+            extraPhotos = property.photos.slice(0, 8);
+        }
+
+        let miniPhotos = hasVideo
+            ? (previousVideoUrl ? property.photos.slice(8, 11) : property.photos.slice(10, 13))
+            : property.photos.slice(10, 13);
+
+        if (req.files.photo1?.[0]) {
+            if (hasVideo) {
+                fs.unlinkSync(req.files.photo1[0].path);
+            } else {
                 const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
                 await sharp(req.files.photo1[0].path)
                     .resize(800)
@@ -1603,8 +1789,12 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
                 mainPhotos[0] = path.basename(photo1Path);
                 fs.unlinkSync(req.files.photo1[0].path);
             }
+        }
 
-            if (req.files.photo2?.[0]) {
+        if (req.files.photo2?.[0]) {
+            if (hasVideo) {
+                fs.unlinkSync(req.files.photo2[0].path);
+            } else {
                 const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
                 await sharp(req.files.photo2[0].path)
                     .resize(800)
@@ -1613,42 +1803,44 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
                 mainPhotos[1] = path.basename(photo2Path);
                 fs.unlinkSync(req.files.photo2[0].path);
             }
-
-            if (req.files.extraPhotos) {
-                extraPhotos = [];
-                for (const [index, file] of req.files.extraPhotos.slice(0, 8).entries()) {
-                    const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
-                    await sharp(file.path)
-                        .resize(800)
-                        .jpeg({ quality: 80 })
-                        .toFile(extraPath);
-                    extraPhotos.push(path.basename(extraPath));
-                    fs.unlinkSync(file.path);
-                }
-            }
-
-            if (req.files.miniPhotos) {
-                miniPhotos = [];
-                for (const [index, file] of req.files.miniPhotos.slice(0, 3).entries()) {
-                    const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
-                    await sharp(file.path)
-                        .resize(800)
-                        .jpeg({ quality: 80 })
-                        .toFile(miniPath);
-                    miniPhotos.push(path.basename(miniPath));
-                    fs.unlinkSync(file.path);
-                }
-            }
-
-            const combinedPhotos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
-
-            if (combinedPhotos.length < 2) {
-                cleanupUploadedFiles(req.files);
-                return res.status(400).json({ error: 'Deux photos sont requises lorsque aucun lien vidéo n’est fourni.' });
-            }
-
-            property.photos = combinedPhotos;
         }
+
+        if (req.files.extraPhotos) {
+            extraPhotos = [];
+            for (const [index, file] of req.files.extraPhotos.slice(0, 8).entries()) {
+                const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
+                await sharp(file.path)
+                    .resize(800)
+                    .jpeg({ quality: 80 })
+                    .toFile(extraPath);
+                extraPhotos.push(path.basename(extraPath));
+                fs.unlinkSync(file.path);
+            }
+        }
+
+        if (req.files.miniPhotos) {
+            miniPhotos = [];
+            for (const [index, file] of req.files.miniPhotos.slice(0, 3).entries()) {
+                const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
+                await sharp(file.path)
+                    .resize(800)
+                    .jpeg({ quality: 80 })
+                    .toFile(miniPath);
+                miniPhotos.push(path.basename(miniPath));
+                fs.unlinkSync(file.path);
+            }
+        }
+
+        const combinedPhotos = hasVideo
+            ? [...extraPhotos, ...miniPhotos].filter(Boolean)
+            : [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
+
+        if (!hasVideo && combinedPhotos.length < 2) {
+            cleanupUploadedFiles(req.files);
+            return res.status(400).json({ error: 'Deux photos sont requises lorsque aucun lien vidéo n’est fourni.' });
+        }
+
+        property.photos = combinedPhotos;
 
         await property.save();
 
