@@ -176,6 +176,12 @@ function isAuthenticated(req, res, next) {
     console.warn(`⚠️ [isAuthenticated] Redirection vers login, path: ${req.path}`);
     return res.redirect(`/${locale}/login`);
 }
+
+// 🔑 AJOUT DE LA FONCTION MANQUANTE
+function isAuthenticatedJson(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  res.status(401).json({ success: false, message: 'Non authentifié' });
+}
 // Middleware : prolonger la session active
 app.use((req, res, next) => {
   const path = req.path;
