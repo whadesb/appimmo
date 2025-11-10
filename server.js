@@ -53,7 +53,6 @@ const { addToSitemap, pingSearchEngines } = require('./utils/seo');
 
 
 const app = express();
-
 function getPaypalConfig() {
   const isLive = process.env.PAYPAL_ENV === 'live';
   return {
@@ -95,30 +94,20 @@ app.use(cookieParser());
 app.use('/paypal/webhook', express.raw({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-app.use(i18n.init);
-const isProduction = process.env.NODE_ENV === 'production';
-app.set('trust proxy', 1);
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'fallback_secret',
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI,
-        collectionName: 'sessions',
-        ttl: 14 * 24 * 60 * 60,
-        touchAfter: 24 * 3600 // ✅ Ajout : évite les écritures inutiles
-    }),
-    proxy: isProduction, // ✅ Fait confiance au proxy pour les cookies sécurisés en production
-    cookie: {
-        maxAge: 1000 * 60 * 60 * 24 * 7,
-        secure: isProduction,
-        httpOnly: true,
-        sameSite: isProduction ? 'None' : 'Lax', // ✅ Changement pour dev
-        path: '/'
-    }
-}));
 app.use(flash());
+app.use(i18n.init);
+
+
+
+
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
+}));
+
 app.use('/', qrRoutes);
 app.use('/property', require('./routes/property'));
 
@@ -127,23 +116,8 @@ app.use(passport.session());
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
-passport.serializeUser(function(user, done) {
-    done(null, user._id.toString()); // ✅ OK
-});
-
-passport.deserializeUser(async function(id, done) {
-    try {
-        const user = await User.findById(id).exec(); // ✅ Ajout de .exec()
-        if (!user) {
-            console.error("❌ Utilisateur introuvable lors de la désérialisation:", id);
-            return done(null, false); // ✅ Retourne false au lieu de null
-        }
-        done(null, user);
-    } catch (err) {
-        console.error("❌ Erreur de désérialisation:", err);
-        done(err, null);
-    }
-});
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -165,24 +139,11 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.error('❌ Error connecting to MongoDB', err);
 });
 
-function isAuthenticated(req, res, next) {
-    // ✅ Ajout de logs pour debugging
-    console.log(`🔐 [isAuthenticated] path=${req.path}, isAuth=${req.isAuthenticated?.()}, user=${req.user?._id}`);
-    
-    if (req.isAuthenticated && req.isAuthenticated()) {
-        return next();
-    }
-    
-    const locale = req.params.locale || req.locale || req.cookies.locale || 'fr';
-    console.warn(`⚠️ [isAuthenticated] Redirection vers login, path: ${req.path}`);
-    return res.redirect(`/${locale}/login`);
+function isAuthenticatedJson(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  res.status(401).json({ success: false, message: 'Non authentifié' });
 }
 
-// 🔑 AJOUT DE LA FONCTION MANQUANTE
-function isAuthenticatedJson(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
-  res.status(401).json({ success: false, message: 'Non authentifié' });
-}
 // Middleware : prolonger la session active
 app.use((req, res, next) => {
   const path = req.path;
@@ -747,73 +708,35 @@ app.get('/api/stats/:id', async (req, res) => {
     res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
   }
 });
+
+
+
 app.post('/:locale/login', (req, res, next) => {
     const locale = req.params.locale || 'fr';
 
-    console.log(`🔍 Tentative de connexion pour: ${req.body.email}`);
-
     passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            console.error("❌ Erreur Passport (générale):", err);
-            req.flash('error', 'Erreur interne lors de la connexion.');
-            return next(err);
-        }
+        if (err) return next(err);
         if (!user) {
-            console.log("❌ Authentification échouée: Identifiants incorrects.");
             req.flash('error', 'Identifiants incorrects.');
             return res.redirect(`/${locale}/login`);
         }
 
-        // ✅ SUCCÈS D'AUTHENTIFICATION
-
-        if (user.twoFactorEnabled) {
-            console.log(`🔑 Connexion réussie, redirection vers 2FA.`);
-            
-            // 🎯 Stockage de l'ID temporaire
-            req.session.tmpUserId = user._id.toString(); 
-            
-            // 🚨 Suppression de l'état Passport (pour éviter l'authentification complète)
-            if (req.session.passport) {
-                delete req.session.passport;
-            }
-            req.user = undefined;
-
-            // 🎯 Sauvegarder la session AVANT de rediriger
-            req.session.save(error => { 
-                if (error) {
-                    console.error("❌ Erreur de sauvegarde de session (pré-2FA):", error);
-                    req.flash('error', 'Erreur de session. Veuillez réessayer.');
-                    return res.redirect(`/${locale}/login`);
-                }
-                
-                console.log(`✅ [LOGIN SAVE] tmpUserId enregistré: ${req.session.tmpUserId}`);
-                
-                // 🔑 INJECTION DU SESSION ID DANS L'URL POUR CONTOURNER LE BUG DU COOKIE
-                const sessionId = req.session.id;
-                return res.redirect(`/${locale}/2fa?sessionId=${sessionId}`); // <-- Changement ici
-            });
-            return; 
-        }
-        
-        // Si la 2FA n’est pas activée (logique classique)
         req.logIn(user, (err) => {
-            if (err) {
-                console.error("❌ Erreur req.logIn (session):", err);
-                return next(err);
+            if (err) return next(err);
+
+            if (user.twoFactorEnabled) {
+                req.session.tmpUserId = user._id;
+                return res.redirect(`/${locale}/2fa`);
             }
-            req.session.touch();
-            req.session.save(error => {
-                if (error) {
-                    console.error("❌ Erreur de sauvegarde de session:", error);
-                    return next(error);
-                }
-                console.log(`✅ Connexion réussie (sans 2FA), redirection vers /user.`);
-                return res.redirect(`/${locale}/user`);
-            });
+
+            // Si la 2FA n’est pas activée, on va directement sur /user
+            return res.redirect(`/${locale}/user`);
         });
-        
     })(req, res, next);
 });
+
+
+// Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
     const { duration } = req.body; // Récupère la durée choisie par l'utilisateur
 
@@ -1198,12 +1121,11 @@ app.post('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
       return res.redirect(`/${locale}/enable-2fa`);
     }
 
-   const verified = speakeasy.totp.verify({
-  secret: user.twoFactorSecret,
-  encoding: 'base32',
-  token: code,
-  window: 2
-});
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code
+    });
 
     if (!verified) {
       req.flash('error', 'Code invalide. Veuillez réessayer.');
@@ -1324,7 +1246,7 @@ app.post('/:locale/register', async (req, res) => {
   const { email, firstName, lastName, password, confirmPassword, 'g-recaptcha-response': captcha } = req.body;
   const locale = req.params.locale;
 
-  // [ ... LOGIQUE DE VÉRIFICATION CAPTCHA, EMAIL ET MOT DE PASSE ... ]
+  // ⚠️ Attention : Le champ 'role' n'est plus extrait car sa valeur est forcée ci-dessous.
 
   // ⚠️ Si captcha vide
   if (!captcha) {
@@ -1337,12 +1259,13 @@ app.post('/:locale/register', async (req, res) => {
     const secretKey = process.env.RECAPTCHA_SECRET_KEY;
     const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
 
-    const response = await axios.post(verificationURL, null, {
-        params: {
-            secret: secretKey,
-            response: captcha,
-        },
-    });
+const response = await axios.post(verificationURL, null, {
+  params: {
+    secret: secretKey,
+    response: captcha,
+  },
+});
+
 
     if (!response.data.success) {
       req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
@@ -1356,7 +1279,7 @@ app.post('/:locale/register', async (req, res) => {
 
   // ✅ Validation email et mot de passe
   if (!validator.isEmail(email)) {
-    req.flash('error', "L'adresse email n'est pas valide.");
+    req.flash('error', 'L\'adresse email n\'est pas valide.');
     return res.redirect(`/${locale}/register`);
   }
 
@@ -1373,14 +1296,14 @@ app.post('/:locale/register', async (req, res) => {
 
   try {
     // 🔑 FIX : Force le rôle 'user' lors de la création du nouveau document User.
-    const newUser = await User.register(new User({ 
-            email, 
-            firstName, 
-            lastName, 
-            role: 'user' // Rôle fixé pour l'inscription publique
-        }), password);
-        
-        await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
+    const newUser = await User.register(new User({ 
+            email, 
+            firstName, 
+            lastName, 
+            role: 'user' // Rôle fixé pour l'inscription publique
+        }), password);
+        
+        await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
 
     req.login(newUser, (err) => {
       if (err) {
@@ -1388,17 +1311,8 @@ app.post('/:locale/register', async (req, res) => {
         req.flash('error', 'Erreur de connexion automatique.');
         return res.redirect(`/${locale}/login`);
       }
-      
-      // ✅ Correction: Assurer la sauvegarde de la session après req.login
-      req.session.save((saveErr) => {
-          if (saveErr) {
-              console.error("❌ Erreur session.save après inscription:", saveErr);
-              req.flash('error', 'Erreur de session après inscription. Veuillez vous reconnecter.');
-              return res.redirect(`/${locale}/login`);
-          }
-          // Redirection vers 2FA une fois que la session est persistée
-          res.redirect(`/${locale}/enable-2fa`);
-      });
+
+      res.redirect(`/${locale}/enable-2fa`);
     });
 
   } catch (error) {
@@ -1408,164 +1322,78 @@ app.post('/:locale/register', async (req, res) => {
   }
 });
 app.get('/:locale/2fa', (req, res) => {
-    const { locale } = req.params;
-    const { sessionId } = req.query; // Récupère l'ID de session de l'URL
-    
-    let tmpUserId = req.session.tmpUserId;
+  const { locale } = req.params;
 
-    // 🔑 CONTOURNEMENT DU BUG : Si le cookie a échoué, utilisons l'ID de l'URL
-    if (!tmpUserId && sessionId) {
-        console.log(`🔎 [2FA GET] tmpUserId manquant. Tentative de rechargement via sessionId URL.`);
-        
-        // Utilise la méthode .get() du MongoStore pour récupérer la session brute
-        req.sessionStore.get(sessionId, (err, sessionData) => {
-            if (err || !sessionData || !sessionData.tmpUserId) {
-                console.log(`🔎 [2FA GET] Échec du rechargement de la session via URL.`);
-                return res.redirect(`/${locale}/login`);
-            }
-            
-            // Si la session est trouvée dans Mongo, la charger dans req.session
-            req.session.tmpUserId = sessionData.tmpUserId;
-            
-            console.log(`🔎 [2FA GET] Session rechargée avec succès via URL. tmpUserId trouvé: ${sessionData.tmpUserId}`);
-            
-            // Re-vérifier l'ID (maintenant qu'il est chargé)
-            if (!req.session.tmpUserId) {
-                return res.redirect(`/${locale}/login`);
-            }
-            
-            // Procéder au rendu de la vue 2FA (nécessaire dans le callback car c'est asynchrone)
-            const translationsPath = `./locales/${locale}/2fa.json`;
-            let i18n = {};
-            try {
-                i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-            } catch (error) {
-                console.error(`Erreur lors du chargement des traductions pour ${locale} (async):`, error);
-                return res.status(500).send('Erreur lors du chargement des traductions.');
-            }
+  if (!req.session.tmpUserId) {
+    return res.redirect(`/${locale}/login`);
+  }
 
-            // Rendu de la vue 2FA
-            res.render('2fa', {
-                locale,
-                i18n,
-                messages: req.flash(),
-                currentPath: req.originalUrl,
-                showAccountButtons: false,
-                sessionId: sessionId // 👈 CRITIQUE : Passé au template
-            });
-        });
-        return; // Arrêter le flux d'exécution ici pour attendre le callback
-    }
-    
-    // Logique standard si tmpUserId était présent au départ (ou si sessionId était absent)
-    console.log(`🔎 [2FA GET] Tentative d'accès. tmpUserId trouvé: ${tmpUserId}`); 
+  const translationsPath = `./locales/${locale}/2fa.json`;
+  let i18n = {};
+  try {
+    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+  } catch (error) {
+    console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
+    return res.status(500).send('Erreur lors du chargement des traductions.');
+  }
 
-    if (!tmpUserId) {
-        return res.redirect(`/${locale}/login`);
-    }
-
-    const translationsPath = `./locales/${locale}/2fa.json`;
-    let i18n = {};
-    try {
-        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
-
-    res.render('2fa', {
-        locale,
-        i18n,
-        messages: req.flash(),
-        currentPath: req.originalUrl,
-        showAccountButtons: false,
-        sessionId: sessionId || req.session.id // 👈 CRITIQUE : Passé au template
-    });
+  res.render('2fa', {
+  locale,
+  i18n,
+  messages: req.flash(),
+  currentPath: req.originalUrl,
+  showAccountButtons: false 
 });
+
+
+});
+
+
+
 app.post('/:locale/2fa', async (req, res) => {
-    const { locale } = req.params;
-    const { code } = req.body;
-    const { sessionId } = req.query;
+  const { locale } = req.params;
+  const { code } = req.body;
 
-    let tmpUserId = req.session.tmpUserId;
+  const tmpUserId = req.session.tmpUserId;
 
-    // 🔄 Rechargement de session via sessionId si nécessaire (Logique de contournement NGINX)
-    if (!tmpUserId && sessionId) {
-        await new Promise((resolve) => {
-            req.sessionStore.get(sessionId, (err, sessionData) => {
-                if (err || !sessionData || !sessionData.tmpUserId) {
-                    console.warn(`⚠️ POST /2fa: Échec de la récupération de session via URL.`);
-                } else {
-                    req.session.tmpUserId = sessionData.tmpUserId;
-                    console.log(`✅ POST /2fa: Session rechargée via URL. tmpUserId: ${req.session.tmpUserId}`);
-                }
-                resolve();
-            });
-        });
-        tmpUserId = req.session.tmpUserId;
-    }
+  if (!tmpUserId) {
+    return res.redirect(`/${locale}/login`);
+  }
 
-    if (!tmpUserId) {
-        console.warn('⚠️ POST /2fa: tmpUserId non trouvé, redirection vers login.');
-        return res.redirect(`/${locale}/login`);
-    }
+  try {
+    const user = await User.findById(tmpUserId);
+    if (!user || !user.twoFactorSecret) {
+      req.flash('error', 'Erreur de validation 2FA.');
+      return res.redirect(`/${locale}/login`);
+    }
 
-    try {
-        // 1️⃣ Récupération de l'utilisateur
-        const user = await User.findById(tmpUserId).exec(); // ✅ Ajout .exec()
-        
-        if (!user || !user.twoFactorSecret) {
-            req.flash('error', 'Erreur critique 2FA. Veuillez vous reconnecter.');
-            delete req.session.tmpUserId; 
-            return res.redirect(`/${locale}/login`);
-        }
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code,
+      window: 1
+    });
 
-        // 2️⃣ Validation du code TOTP
-        const verified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,
-            encoding: 'base32',
-            token: code,
-            window: 2 
-        });
+    if (!verified) {
+      req.flash('error', 'Code 2FA invalide.');
+      return res.redirect(`/${locale}/2fa`);
+    }
 
-        if (!verified) {
-            req.flash('error', 'Code 2FA invalide.');
-            // Retourne vers 2fa en conservant l'ID de session pour le contournement NGINX
-            return res.redirect(`/${locale}/2fa?sessionId=${sessionId}`); 
-        }
+    // Connexion réussie
+    delete req.session.tmpUserId;
+    req.login(user, (err) => {
+      if (err) {
+        req.flash('error', 'Erreur de connexion.');
+        return res.redirect(`/${locale}/login`);
+      }
+      return res.redirect(`/${locale}/user`);
+    });
 
-        // 3️⃣ Connexion Passport
-        req.login(user, (err) => {
-            if (err) {
-                console.error("❌ Erreur lors de req.login:", err);
-                req.flash('error', 'Erreur de connexion après 2FA.');
-                delete req.session.tmpUserId;
-                return res.redirect(`/${locale}/login`);
-            }
-
-            // ✅ Suppression de tmpUserId après connexion réussie
-            delete req.session.tmpUserId;
-
-            // 4️⃣ Sauvegarde FORCÉE de la session (CRITIQUE)
-            req.session.save((saveErr) => {
-                if (saveErr) {
-                    console.error("❌ Erreur session.save:", saveErr);
-                    req.flash('error', 'Erreur de session. Veuillez réessayer.');
-                    return res.redirect(`/${locale}/login`);
-                }
-
-                // 5️⃣ Redirection finale
-                console.log(`✅ Connexion complète réussie, redirection vers /${locale}/user`);
-                return res.redirect(`/${locale}/user`);
-            });
-        });
-
-    } catch (err) {
-        console.error('❌ Erreur 2FA (générale):', err);
-        req.flash('error', 'Une erreur est survenue.');
-        delete req.session.tmpUserId;
-        return res.redirect(`/${locale}/login`); 
-    }
+  } catch (err) {
+    console.error('Erreur 2FA:', err);
+    req.flash('error', 'Une erreur est survenue.');
+    res.redirect(`/${locale}/login`);
+  }
 });
 
 app.post('/add-property', isAuthenticated, upload.fields([
