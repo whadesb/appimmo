@@ -3401,7 +3401,7 @@ ${JSON.stringify(jsonLD)}
         if (galleryIndex > maxIndex) {
           galleryIndex = maxIndex;
         }
-        videoGalleryTrack.style.transform = `translateX(-${galleryIndex * (itemWidth + gap)}px)`;
+        videoGalleryTrack.style.transform = \`translateX(-\${galleryIndex * (itemWidth + gap)}px)\`;
         if (prevGallery) {
           prevGallery.disabled = galleryIndex === 0;
           prevGallery.style.display = galleryItems.length <= visible ? 'none' : '';
