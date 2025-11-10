@@ -199,10 +199,7 @@ async function generateLandingPage(property) {
   };
   const embedUrl = getEmbedUrl(property.videoUrl);
   const allPhotos = Array.isArray(property.photos) ? property.photos.filter(Boolean) : [];
-  const extraPhotosFromIndex = Array.isArray(property.photos)
-    ? property.photos.slice(2).filter(Boolean)
-    : [];
-  const videoGalleryPhotos = embedUrl ? (extraPhotosFromIndex.length > 0 ? extraPhotosFromIndex : allPhotos) : [];
+  const videoGalleryPhotos = embedUrl ? allPhotos : [];
 
   const jsonLD = {
     "@context": "https://schema.org",
@@ -1454,21 +1451,18 @@ ${JSON.stringify(jsonLD)}
         return 3;
       };
 
-    const updateGallery = () => {
-        if (!galleryItems.length) return;
-        const style = getComputedStyle(videoGalleryTrack);
-        const gap = parseFloat(style.columnGap || style.gap || '0');
-        const itemWidth = galleryItems[0].getBoundingClientRect().width;
-        const visible = getVisibleGalleryItems();
-        const maxIndex = Math.max(0, galleryItems.length - visible);
-        if (galleryIndex > maxIndex) {
-          galleryIndex = maxIndex;
-        }
-        
-        // 🔑 CORRECTION APPLIQUÉE ICI
-        videoGalleryTrack.style.transform = 'translateX(-' + (galleryIndex * (itemWidth + gap)) + 'px)';
-
-        if (prevGallery) {
+      const updateGallery = () => {
+        if (!galleryItems.length) return;
+        const style = getComputedStyle(videoGalleryTrack);
+        const gap = parseFloat(style.columnGap || style.gap || '0');
+        const itemWidth = galleryItems[0].getBoundingClientRect().width;
+        const visible = getVisibleGalleryItems();
+        const maxIndex = Math.max(0, galleryItems.length - visible);
+        if (galleryIndex > maxIndex) {
+          galleryIndex = maxIndex;
+        }
+        videoGalleryTrack.style.transform = `translateX(-${galleryIndex * (itemWidth + gap)}px)`;
+        if (prevGallery) {
           prevGallery.disabled = galleryIndex === 0;
           prevGallery.style.display = galleryItems.length <= visible ? 'none' : '';
         }
