@@ -1468,16 +1468,17 @@ app.post('/:locale/2fa', async (req, res) => {
     const tmpUserId = req.session.tmpUserId;
 
     if (!tmpUserId) {
+        console.warn('⚠️ Tentative POST /2fa sans tmpUserId, redirection vers login.');
         return res.redirect(`/${locale}/login`);
     }
 
     try {
         // 1. Récupérer le document Mongoose
-        let user = await User.findById(tmpUserId); 
+        let user = await User.findById(tmpUserId); 
         
         if (!user || !user.twoFactorSecret) {
             req.flash('error', 'Erreur critique 2FA. Veuillez vous reconnecter.');
-            delete req.session.tmpUserId; 
+            delete req.session.tmpUserId; 
             return res.redirect(`/${locale}/login`);
         }
 
@@ -1486,7 +1487,7 @@ app.post('/:locale/2fa', async (req, res) => {
             secret: user.twoFactorSecret,
             encoding: 'base32',
             token: code,
-            window: 2 
+            window: 2 
         });
 
         if (!verified) {
@@ -1494,21 +1495,19 @@ app.post('/:locale/2fa', async (req, res) => {
             return res.redirect(`/${locale}/2fa`);
         }
 
-        // 3. Préparation pour Passport (Utilisation de toObject pour la stabilité)
-        const userToLog = user.toObject ? user.toObject() : user; 
-
-        // 4. Établissement de la session Passport finale
-        req.login(userToLog, (err) => { 
+        // 3. Établissement de la session Passport finale (Correction Critique)
+        req.login(user, (err) => { // Utiliser l'objet Mongoose 'user'
             if (err) {
                 console.error("❌ Erreur lors de la connexion après 2FA (req.login):", err);
                 req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
+                delete req.session.tmpUserId;
                 return res.redirect(`/${locale}/login`);
             }
 
             // Suppression de l'ID temporaire
             delete req.session.tmpUserId;
             
-            // 5. Forcer l'enregistrement dans MongoStore AVANT la redirection (avec délai)
+            // 4. Forcer l'enregistrement dans MongoStore AVANT la redirection
             req.session.save(error => {
                 if (error) {
                     console.error("❌ Erreur de sauvegarde de session finale (req.session.save):", error);
@@ -1516,12 +1515,9 @@ app.post('/:locale/2fa', async (req, res) => {
                     return res.redirect(`/${locale}/login`);
                 }
                 
-                console.log(`✅ Connexion complète réussie, redirection vers /user.`);
-
-                // Solution Hack : Délai de 500 ms
-                setTimeout(() => {
-                    return res.redirect(`/${locale}/user`); 
-                }, 500);
+                // Redirection finale vers la page utilisateur
+                console.log(`✅ Connexion complète réussie, redirection vers /${locale}/user.`);
+                return res.redirect(`/${locale}/user`);
             });
         });
 
@@ -1530,10 +1526,9 @@ app.post('/:locale/2fa', async (req, res) => {
         req.flash('error', 'Une erreur est survenue.');
         delete req.session.tmpUserId;
         
-        return res.redirect(`/${locale}/login`); 
+        return res.redirect(`/${locale}/login`); 
     }
-}); // <--- VÉRIFIEZ QUE C'EST LA SEULE LIGNE DE CE TYPE APRÈS LE CATCH
-
+});
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 },
