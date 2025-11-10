@@ -100,21 +100,22 @@ app.use(i18n.init);
 const isProduction = process.env.NODE_ENV === 'production';
 app.set('trust proxy', 1);
 app.use(session({
-    secret: process.env.SESSION_SECRET || 'fallback_secret',
-    resave: false,
-    saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: process.env.MONGODB_URI,
-        collectionName: 'sessions',
-        ttl: 14 * 24 * 60 * 60
-    }),
-    cookie: {
-      maxAge: 1000 * 60 * 60 * 24 * 7,
-      sameSite: isProduction,
-      httpOnly: true,
-      sameSite: 'None', // Reste à 'None
-      path: '/' 
-    }
+    secret: process.env.SESSION_SECRET || 'fallback_secret',
+    resave: false,
+    saveUninitialized: false,
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGODB_URI,
+        collectionName: 'sessions',
+        ttl: 14 * 24 * 60 * 60,
+        touchAfter: 24 * 3600 // ✅ Ajout : évite les écritures inutiles
+    }),
+    cookie: {
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+        secure: isProduction,  
+        httpOnly: true,
+        sameSite: isProduction ? 'None' : 'Lax', // ✅ Changement pour dev
+        path: '/' 
+    }
 }));
 app.use(flash());
 app.use('/', qrRoutes);
@@ -125,22 +126,20 @@ app.use(passport.session());
 passport.use(new LocalStrategy({
   usernameField: 'email'
 }, User.authenticate()));
-// DANS server.js (remplacez le bloc précédent)
-
-// Sérialisation: Stocke l'ID
 passport.serializeUser(function(user, done) {
-    // Utiliser user.id est plus sûr que user._id.toString()
-    done(null, user.id); 
+    done(null, user._id.toString()); // ✅ OK
 });
 
-// Dé-sérialisation: Récupère l'utilisateur
 passport.deserializeUser(async function(id, done) {
     try {
-        // 🔑 CRITIQUE : Utiliser await ici pour garantir que la promesse est résolue
-        const user = await User.findById(id); 
+        const user = await User.findById(id).exec(); // ✅ Ajout de .exec()
+        if (!user) {
+            console.error("❌ Utilisateur introuvable lors de la désérialisation:", id);
+            return done(null, false); // ✅ Retourne false au lieu de null
+        }
         done(null, user);
     } catch (err) {
-        console.error("❌ Erreur de dé-sérialisation:", err);
+        console.error("❌ Erreur de désérialisation:", err);
         done(err, null);
     }
 });
@@ -165,11 +164,18 @@ mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.error('❌ Error connecting to MongoDB', err);
 });
 
-function isAuthenticatedJson(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
-  res.status(401).json({ success: false, message: 'Non authentifié' });
+function isAuthenticated(req, res, next) {
+    // ✅ Ajout de logs pour debugging
+    console.log(`🔐 [isAuthenticated] path=${req.path}, isAuth=${req.isAuthenticated?.()}, user=${req.user?._id}`);
+    
+    if (req.isAuthenticated && req.isAuthenticated()) {
+        return next();
+    }
+    
+    const locale = req.params.locale || req.locale || req.cookies.locale || 'fr';
+    console.warn(`⚠️ [isAuthenticated] Redirection vers login, path: ${req.path}`);
+    return res.redirect(`/${locale}/login`);
 }
-
 // Middleware : prolonger la session active
 app.use((req, res, next) => {
   const path = req.path;
@@ -1464,43 +1470,42 @@ app.get('/:locale/2fa', (req, res) => {
 app.post('/:locale/2fa', async (req, res) => {
     const { locale } = req.params;
     const { code } = req.body;
-    const { sessionId } = req.query; // Récupère l'ID de session si passé en URL
+    const { sessionId } = req.query;
 
     let tmpUserId = req.session.tmpUserId;
 
-    // Tenter de recharger la session si le cookie a échoué (Logique de contournement du bug de cookie)
+    // 🔄 Rechargement de session via sessionId si nécessaire
     if (!tmpUserId && sessionId) {
         await new Promise((resolve) => {
             req.sessionStore.get(sessionId, (err, sessionData) => {
-                if (!err && sessionData && sessionData.tmpUserId) {
+                if (err || !sessionData || !sessionData.tmpUserId) {
+                    console.warn(`⚠️ POST /2fa: Échec de la récupération de session via URL.`);
+                } else {
                     req.session.tmpUserId = sessionData.tmpUserId;
                     console.log(`✅ POST /2fa: Session rechargée via URL. tmpUserId: ${req.session.tmpUserId}`);
-                } else {
-                    console.warn(`⚠️ POST /2fa: Échec de la récupération de session via URL ou session expirée.`);
                 }
-                resolve(); // On continue
+                resolve();
             });
         });
-        tmpUserId = req.session.tmpUserId; // Mettre à jour
+        tmpUserId = req.session.tmpUserId;
     }
 
     if (!tmpUserId) {
         console.warn('⚠️ POST /2fa: tmpUserId non trouvé, redirection vers login.');
-        req.flash('error', locale === 'fr' ? 'Session expirée ou non trouvée. Veuillez vous reconnecter.' : 'Session expired or not found. Please log in again.');
         return res.redirect(`/${locale}/login`);
     }
 
     try {
-        // 1. Récupérer le document Mongoose
-        const user = await User.findById(tmpUserId);
+        // 1️⃣ Récupération de l'utilisateur
+        const user = await User.findById(tmpUserId).exec(); // ✅ Ajout .exec()
         
         if (!user || !user.twoFactorSecret) {
             req.flash('error', 'Erreur critique 2FA. Veuillez vous reconnecter.');
-            delete req.session.tmpUserId;
+            delete req.session.tmpUserId; 
             return res.redirect(`/${locale}/login`);
         }
 
-        // 2. Validation du code TOTP
+        // 2️⃣ Validation du code TOTP
         const verified = speakeasy.totp.verify({
             secret: user.twoFactorSecret,
             encoding: 'base32',
@@ -1509,45 +1514,58 @@ app.post('/:locale/2fa', async (req, res) => {
         });
 
         if (!verified) {
-            req.flash('error', locale === 'fr' ? 'Code 2FA invalide.' : 'Invalid 2FA code.');
-            // Inclure l'ID de session dans la redirection en cas d'échec
+            req.flash('error', 'Code 2FA invalide.');
             return res.redirect(`/${locale}/2fa?sessionId=${sessionId}`); 
         }
 
-        // 3. Établissement de la session Passport finale
-        req.login(user, (err) => { 
+        // 3️⃣ Connexion Passport AVEC callback async
+        req.login(user, async (err) => {
             if (err) {
-                console.error("❌ Erreur lors de la connexion après 2FA (req.login):", err);
-                req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
+                console.error("❌ Erreur lors de req.login:", err);
+                req.flash('error', 'Erreur de connexion après 2FA.');
                 delete req.session.tmpUserId;
                 return res.redirect(`/${locale}/login`);
             }
 
-            // Suppression de l'ID temporaire
+            // ✅ Suppression de tmpUserId AVANT la sauvegarde
             delete req.session.tmpUserId;
-            
-            // 🔑 FIX CRITIQUE: Forcer l'enregistrement dans MongoStore AVANT la redirection
-            req.session.save(error => {
-                if (error) {
-                    console.error("❌ Erreur de sauvegarde de session finale (req.session.save):", error);
-                    req.flash('error', 'Erreur de session finale. Veuillez réessayer.');
-                    return res.redirect(`/${locale}/login`);
-                }
-                
-                // Redirection finale vers la page utilisateur UNIQUEMENT après l'enregistrement
-                console.log(`✅ Connexion complète réussie, redirection vers /${locale}/user.`);
+
+            // 4️⃣ Sauvegarde FORCÉE de la session
+            try {
+                await new Promise((resolve, reject) => {
+                    req.session.save((saveErr) => {
+                        if (saveErr) {
+                            console.error("❌ Erreur session.save:", saveErr);
+                            reject(saveErr);
+                        } else {
+                            resolve();
+                        }
+                    });
+                });
+
+                // ✅ Vérification finale (optionnelle mais utile pour le debug)
+                console.log("✅ Session sauvegardée. passport.user:", req.session.passport?.user);
+                console.log("✅ req.isAuthenticated():", req.isAuthenticated());
+
+                // 5️⃣ Redirection finale
+                console.log(`✅ Connexion complète réussie, redirection vers /${locale}/user`);
                 return res.redirect(`/${locale}/user`);
-            });
+
+            } catch (saveError) {
+                console.error("❌ Erreur fatale lors de la sauvegarde de session:", saveError);
+                req.flash('error', 'Erreur de session. Veuillez réessayer.');
+                return res.redirect(`/${locale}/login`);
+            }
         });
 
     } catch (err) {
-        console.error('❌ Erreur 2FA (générale) avant req.login:', err);
+        console.error('❌ Erreur 2FA (générale):', err);
         req.flash('error', 'Une erreur est survenue.');
         delete req.session.tmpUserId;
-        
         return res.redirect(`/${locale}/login`); 
     }
 });
+
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 },
