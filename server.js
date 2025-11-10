@@ -109,12 +109,13 @@ app.use(session({
         ttl: 14 * 24 * 60 * 60,
         touchAfter: 24 * 3600 // ✅ Ajout : évite les écritures inutiles
     }),
+    proxy: isProduction, // ✅ Fait confiance au proxy pour les cookies sécurisés en production
     cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7,
-        secure: isProduction,  
+        secure: isProduction,
         httpOnly: true,
-        sameSite: isProduction ? 'None' : 'Lax',
-        path: '/' 
+        sameSite: isProduction ? 'None' : 'Lax', // ✅ Changement pour dev
+        path: '/'
     }
 }));
 app.use(flash());
