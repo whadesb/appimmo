@@ -1967,6 +1967,7 @@ async function generateLandingPage(property) {
       addInfo: 'Informations complémentaires',
       keyInfo: 'Informations clés',
       location: 'Localisation',
+      miniGallery: 'Mini galerie',
       pool: 'Piscine',
       wateringSystem: 'Arrosage automatique',
       carShelter: 'Abri voiture',
@@ -1993,6 +1994,7 @@ async function generateLandingPage(property) {
       addInfo: 'Additional information',
       keyInfo: 'Key information',
       location: 'Location',
+      miniGallery: 'Mini gallery',
       pool: 'Pool',
       wateringSystem: 'Watering system',
       carShelter: 'Car shelter',
@@ -2019,6 +2021,7 @@ async function generateLandingPage(property) {
       addInfo: 'Información adicional',
       keyInfo: 'Información clave',
       location: 'Ubicación',
+      miniGallery: 'Mini galería',
       pool: 'Piscina',
       wateringSystem: 'Sistema de riego',
       carShelter: 'Cochera',
@@ -2045,6 +2048,7 @@ async function generateLandingPage(property) {
       addInfo: 'Informações adicionais',
       keyInfo: 'Informações chave',
       location: 'Localização',
+      miniGallery: 'Mini galeria',
       pool: 'Piscina',
       wateringSystem: 'Sistema de irrigação',
       carShelter: 'Abrigo para carro',
@@ -2075,6 +2079,7 @@ async function generateLandingPage(property) {
 
   const keywordsList = seoKeywords[lang]?.[country] || [];
   const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
+  const miniPhotos = Array.isArray(property.photos) ? property.photos.slice(10, 13).filter(Boolean) : [];
 
   const getEmbedUrl = url => {
     const match = url?.match(/(?:youtube\.com\/.*v=|youtu\.be\/)([^&?/]+)/);
@@ -2223,7 +2228,8 @@ async function generateLandingPage(property) {
     .video-actions .visit-btn:hover {
       opacity: 0.85;
     }
-    .has-video .extra-info-desktop {
+    .has-video .extra-info-desktop,
+    .has-video .extra-info-desktop-3 {
       background: rgba(255,255,255,0.92);
       color: #3c3c3c;
       margin-top: 40px;
@@ -2232,7 +2238,10 @@ async function generateLandingPage(property) {
     }
     .has-video .extra-info-desktop h2,
     .has-video .extra-info-desktop .info-label,
-    .has-video .extra-info-desktop .info-item {
+    .has-video .extra-info-desktop .info-item,
+    .has-video .extra-info-desktop-3 h2,
+    .has-video .extra-info-desktop-3 .info-label,
+    .has-video .extra-info-desktop-3 .info-item {
       color: #3c3c3c;
     }
     @media (max-width: 768px) {
@@ -2391,7 +2400,8 @@ align-items: stretch;
     }
 
     /* Bloc Infos complémentaires */
-    .extra-info-desktop {
+    .extra-info-desktop,
+    .extra-info-desktop-3 {
       display: none;
       max-width: 1400px;
       margin: 40px auto;
@@ -2405,6 +2415,27 @@ align-items: stretch;
   gap: 30px;
   border: 1px solid #eee;
   padding: 20px;
+}
+
+.mini-photos.extra-columns {
+  gap: 20px;
+}
+
+.mini-photo-col {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mini-photo-col img {
+  width: 100%;
+  border-radius: 16px;
+  object-fit: cover;
+  max-height: 220px;
+}
+
+.mini-photos .extra-col:not(:last-child)::after {
+  display: none;
 }
 
 .extra-col {
@@ -2512,13 +2543,15 @@ align-items: stretch;
   font-size: 1rem;
 }
 
-    .extra-info-desktop hr {
+    .extra-info-desktop hr,
+    .extra-info-desktop-3 hr {
       border: none;
       border-top: 1px solid #ddd;
       margin-bottom: 25px;
     }
 
-    .extra-info-desktop h2 {
+    .extra-info-desktop h2,
+    .extra-info-desktop-3 h2 {
       font-size: 1.6rem;
       margin-bottom: 20px;
     }
@@ -2569,7 +2602,8 @@ align-items: stretch;
       opacity: 1 !important;
       box-shadow: none !important;
     }
-.extra-info-desktop h2 {
+.extra-info-desktop h2,
+.extra-info-desktop-3 h2 {
   font-size: 1.6rem;
   font-weight: 400;
   margin-bottom: 20px;
@@ -2676,7 +2710,8 @@ h1 {
 }
 
 
-  .extra-info-desktop {
+  .extra-info-desktop,
+  .extra-info-desktop-3 {
     display: block;
     padding: 10px 20px;
     font-family: Arial, sans-serif;
@@ -2684,7 +2719,8 @@ h1 {
     text-align: left; /* aligné comme "Type de bien" */
   }
 
-  .extra-info-desktop h2 {
+  .extra-info-desktop h2,
+  .extra-info-desktop-3 h2 {
     font-size: 1.4rem;
     margin-bottom: 20px;
     text-align: left;
@@ -2741,7 +2777,8 @@ h1 {
 
     /* Affiche le bloc en desktop */
     @media screen and (min-width: 769px) {
-      .extra-info-desktop {
+      .extra-info-desktop,
+      .extra-info-desktop-3 {
         display: block;
       }
 .container {
@@ -3141,13 +3178,26 @@ h1 {
 </div>
 
 <!-- Colonne 3 : Localisation -->
-<div class="extra-col map-col">
+  <div class="extra-col map-col">
   <div class="info-label">${t.location}</div>
   <div id="map"></div>
 </div>
 
   </div>
 </div>
+${miniPhotos.length ? `
+<div class="extra-info-desktop-3">
+  <hr />
+  <h2>${t.miniGallery}</h2>
+  <div class="extra-columns mini-photos">
+    ${miniPhotos.map(photo => `
+      <div class="extra-col mini-photo-col">
+        <img src="/uploads/${photo}" alt="${property.propertyType}" />
+      </div>
+    `).join('')}
+  </div>
+</div>
+` : ''}
 <script type="application/ld+json">
 ${JSON.stringify(jsonLD)}
 </script>

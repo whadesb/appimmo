@@ -42,6 +42,12 @@ async function generateLandingPage(property) {
     fr: {
       propertyIn: 'à',
       price: 'Prix',
+      addInfo: 'Informations complémentaires',
+      keyInfo: 'Informations clés',
+      features: 'Équipements',
+      contact: 'Contact',
+      miniGallery: 'Mini galerie',
+      notProvided: 'Non renseigné',
       pool: 'Piscine',
       wateringSystem: 'Arrosage automatique',
       carShelter: 'Abri voiture',
@@ -56,6 +62,12 @@ async function generateLandingPage(property) {
     en: {
       propertyIn: 'in',
       price: 'Price',
+      addInfo: 'Additional information',
+      keyInfo: 'Key information',
+      features: 'Amenities',
+      contact: 'Contact',
+      miniGallery: 'Mini gallery',
+      notProvided: 'Not provided',
       pool: 'Pool',
       wateringSystem: 'Watering system',
       carShelter: 'Car shelter',
@@ -70,6 +82,12 @@ async function generateLandingPage(property) {
     es: {
       propertyIn: 'en',
       price: 'Precio',
+      addInfo: 'Información adicional',
+      keyInfo: 'Información clave',
+      features: 'Servicios',
+      contact: 'Contacto',
+      miniGallery: 'Mini galería',
+      notProvided: 'No especificado',
       pool: 'Piscina',
       wateringSystem: 'Sistema de riego',
       carShelter: 'Cochera',
@@ -84,6 +102,12 @@ async function generateLandingPage(property) {
     pt: {
       propertyIn: 'em',
       price: 'Preço',
+      addInfo: 'Informações adicionais',
+      keyInfo: 'Informações chave',
+      features: 'Comodidades',
+      contact: 'Contato',
+      miniGallery: 'Mini galeria',
+      notProvided: 'Não fornecido',
       pool: 'Piscina',
       wateringSystem: 'Sistema de irrigação',
       carShelter: 'Abrigo para carro',
@@ -140,6 +164,7 @@ async function generateLandingPage(property) {
   };
 
   const formattedPrice = Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR');
+  const miniPhotos = Array.isArray(property.photos) ? property.photos.slice(10, 13).filter(Boolean) : [];
   const template = `
     <!DOCTYPE html>
     <html lang="${lang}">
@@ -274,6 +299,80 @@ async function generateLandingPage(property) {
           margin: 0;
           font-size: 1rem;
         }
+        .extra-info-desktop,
+        .extra-info-desktop-3 {
+          position: relative;
+          z-index: 1;
+          max-width: 960px;
+          margin: 40px auto;
+          padding: 30px 25px;
+          border-radius: 20px;
+          background: rgba(255,255,255,0.95);
+          color: #3c3c3c;
+        }
+        .has-video .extra-info-desktop,
+        .has-video .extra-info-desktop-3 {
+          background: rgba(255,255,255,0.92);
+        }
+        .extra-info-desktop hr,
+        .extra-info-desktop-3 hr {
+          border: none;
+          border-top: 1px solid #ddd;
+          margin-bottom: 25px;
+        }
+        .extra-info-desktop h2,
+        .extra-info-desktop-3 h2 {
+          font-size: 1.6rem;
+          margin-bottom: 20px;
+          font-weight: 500;
+          color: inherit;
+        }
+        .extra-columns {
+          display: flex;
+          flex-direction: row;
+          justify-content: space-between;
+          gap: 30px;
+        }
+        .extra-col {
+          flex: 1;
+          padding: 0 20px;
+          position: relative;
+        }
+        .extra-col:not(:last-child)::after {
+          content: "";
+          position: absolute;
+          top: 0;
+          right: 0;
+          width: 1px;
+          height: 100%;
+          background-color: #ddd;
+        }
+        .info-label {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-bottom: 12px;
+        }
+        .info-item {
+          font-size: 1rem;
+          margin: 6px 0;
+        }
+        .mini-photos.extra-columns {
+          gap: 20px;
+        }
+        .mini-photo-col {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .mini-photo-col img {
+          width: 100%;
+          border-radius: 16px;
+          object-fit: cover;
+          max-height: 220px;
+        }
+        .mini-photos .extra-col:not(:last-child)::after {
+          display: none;
+        }
         @media (max-width: 768px) {
           .video-card {
             padding: 30px 20px;
@@ -283,6 +382,24 @@ async function generateLandingPage(property) {
           }
           .video-price {
             font-size: 1.4rem;
+          }
+          .extra-info-desktop,
+          .extra-info-desktop-3 {
+            margin: 20px 16px;
+            padding: 20px 18px;
+          }
+          .extra-columns {
+            flex-direction: column;
+            gap: 20px;
+          }
+          .extra-col {
+            padding: 0;
+          }
+          .extra-col:not(:last-child)::after {
+            display: none;
+          }
+          .mini-photo-col img {
+            max-height: none;
           }
         }
       </style>
@@ -344,6 +461,49 @@ async function generateLandingPage(property) {
           ${property.photos?.[0] ? `<div style="margin-top:30px;"><img src="/uploads/${property.photos[0]}" alt="${property.propertyType}" style="max-width:100%;border-radius:12px;"></div>` : ''}
         </div>
       `}
+      <div class="extra-info-desktop">
+        <hr />
+        <h2>${t.addInfo}</h2>
+        <div class="extra-columns">
+          <div class="extra-col">
+            <div class="info-label">${t.keyInfo}</div>
+            <div class="info-item">${t.price} : ${formattedPrice} €</div>
+            <div class="info-item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
+            ${property.rooms ? `<div class="info-item"><i class="fal fa-home"></i> ${property.rooms}</div>` : ''}
+            ${property.bedrooms ? `<div class="info-item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>` : ''}
+            <div class="info-item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt || t.notProvided}</div>
+          </div>
+          <div class="extra-col">
+            <div class="info-label">${t.features}</div>
+            ${property.pool ? `<div class="info-item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
+            ${property.wateringSystem ? `<div class="info-item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
+            ${property.carShelter ? `<div class="info-item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
+            <div class="info-item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
+            ${property.caretakerHouse ? `<div class="info-item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
+            ${property.electricShutters ? `<div class="info-item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
+            ${property.outdoorLighting ? `<div class="info-item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
+          </div>
+          <div class="extra-col">
+            <div class="info-label">${t.contact}</div>
+            ${property.contactFirstName || property.contactLastName ? `<div class="info-item"><i class="fal fa-user"></i> ${property.contactFirstName || ''} ${property.contactLastName || ''}</div>` : ''}
+            ${property.contactPhone ? `<div class="info-item"><i class="fal fa-phone"></i> ${property.contactPhone}</div>` : ''}
+            ${property.contactEmail ? `<div class="info-item"><i class="fal fa-envelope"></i> ${property.contactEmail}</div>` : ''}
+          </div>
+        </div>
+      </div>
+      ${miniPhotos.length ? `
+      <div class="extra-info-desktop-3">
+        <hr />
+        <h2>${t.miniGallery}</h2>
+        <div class="extra-columns mini-photos">
+          ${miniPhotos.map(photo => `
+            <div class="extra-col mini-photo-col">
+              <img src="/uploads/${photo}" alt="${property.propertyType}" />
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      ` : ''}
       <script>
         const visitButton = document.getElementById('visitBtn');
         if (visitButton) {
