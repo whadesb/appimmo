@@ -1324,7 +1324,7 @@ app.post('/:locale/register', async (req, res) => {
   const { email, firstName, lastName, password, confirmPassword, 'g-recaptcha-response': captcha } = req.body;
   const locale = req.params.locale;
 
-  // ⚠️ Attention : Le champ 'role' n'est plus extrait car sa valeur est forcée ci-dessous.
+  // [ ... LOGIQUE DE VÉRIFICATION CAPTCHA, EMAIL ET MOT DE PASSE ... ]
 
   // ⚠️ Si captcha vide
   if (!captcha) {
@@ -1337,13 +1337,12 @@ app.post('/:locale/register', async (req, res) => {
     const secretKey = process.env.RECAPTCHA_SECRET_KEY;
     const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
 
-const response = await axios.post(verificationURL, null, {
-  params: {
-    secret: secretKey,
-    response: captcha,
-  },
-});
-
+    const response = await axios.post(verificationURL, null, {
+        params: {
+            secret: secretKey,
+            response: captcha,
+        },
+    });
 
     if (!response.data.success) {
       req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
@@ -1357,7 +1356,7 @@ const response = await axios.post(verificationURL, null, {
 
   // ✅ Validation email et mot de passe
   if (!validator.isEmail(email)) {
-    req.flash('error', 'L\'adresse email n\'est pas valide.');
+    req.flash('error', "L'adresse email n'est pas valide.");
     return res.redirect(`/${locale}/register`);
   }
 
@@ -1374,14 +1373,14 @@ const response = await axios.post(verificationURL, null, {
 
   try {
     // 🔑 FIX : Force le rôle 'user' lors de la création du nouveau document User.
-    const newUser = await User.register(new User({ 
-            email, 
-            firstName, 
-            lastName, 
-            role: 'user' // Rôle fixé pour l'inscription publique
-        }), password);
-        
-        await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
+    const newUser = await User.register(new User({ 
+            email, 
+            firstName, 
+            lastName, 
+            role: 'user' // Rôle fixé pour l'inscription publique
+        }), password);
+        
+        await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
 
     req.login(newUser, (err) => {
       if (err) {
@@ -1389,8 +1388,17 @@ const response = await axios.post(verificationURL, null, {
         req.flash('error', 'Erreur de connexion automatique.');
         return res.redirect(`/${locale}/login`);
       }
-
-      res.redirect(`/${locale}/enable-2fa`);
+      
+      // ✅ Correction: Assurer la sauvegarde de la session après req.login
+      req.session.save((saveErr) => {
+          if (saveErr) {
+              console.error("❌ Erreur session.save après inscription:", saveErr);
+              req.flash('error', 'Erreur de session après inscription. Veuillez vous reconnecter.');
+              return res.redirect(`/${locale}/login`);
+          }
+          // Redirection vers 2FA une fois que la session est persistée
+          res.redirect(`/${locale}/enable-2fa`);
+      });
     });
 
   } catch (error) {
@@ -1475,102 +1483,89 @@ app.get('/:locale/2fa', (req, res) => {
     });
 });
 app.post('/:locale/2fa', async (req, res) => {
-    const { locale } = req.params;
-    const { code } = req.body;
-    const { sessionId } = req.query;
+    const { locale } = req.params;
+    const { code } = req.body;
+    const { sessionId } = req.query;
 
-    let tmpUserId = req.session.tmpUserId;
+    let tmpUserId = req.session.tmpUserId;
 
-    // 🔄 Rechargement de session via sessionId si nécessaire
-    if (!tmpUserId && sessionId) {
-        await new Promise((resolve) => {
-            req.sessionStore.get(sessionId, (err, sessionData) => {
-                if (err || !sessionData || !sessionData.tmpUserId) {
-                    console.warn(`⚠️ POST /2fa: Échec de la récupération de session via URL.`);
-                } else {
-                    req.session.tmpUserId = sessionData.tmpUserId;
-                    console.log(`✅ POST /2fa: Session rechargée via URL. tmpUserId: ${req.session.tmpUserId}`);
-                }
-                resolve();
-            });
-        });
-        tmpUserId = req.session.tmpUserId;
-    }
+    // 🔄 Rechargement de session via sessionId si nécessaire (Logique de contournement NGINX)
+    if (!tmpUserId && sessionId) {
+        await new Promise((resolve) => {
+            req.sessionStore.get(sessionId, (err, sessionData) => {
+                if (err || !sessionData || !sessionData.tmpUserId) {
+                    console.warn(`⚠️ POST /2fa: Échec de la récupération de session via URL.`);
+                } else {
+                    req.session.tmpUserId = sessionData.tmpUserId;
+                    console.log(`✅ POST /2fa: Session rechargée via URL. tmpUserId: ${req.session.tmpUserId}`);
+                }
+                resolve();
+            });
+        });
+        tmpUserId = req.session.tmpUserId;
+    }
 
-    if (!tmpUserId) {
-        console.warn('⚠️ POST /2fa: tmpUserId non trouvé, redirection vers login.');
-        return res.redirect(`/${locale}/login`);
-    }
+    if (!tmpUserId) {
+        console.warn('⚠️ POST /2fa: tmpUserId non trouvé, redirection vers login.');
+        return res.redirect(`/${locale}/login`);
+    }
 
-    try {
-        // 1️⃣ Récupération de l'utilisateur
-        const user = await User.findById(tmpUserId).exec(); // ✅ Ajout .exec()
-        
-        if (!user || !user.twoFactorSecret) {
-            req.flash('error', 'Erreur critique 2FA. Veuillez vous reconnecter.');
-            delete req.session.tmpUserId; 
-            return res.redirect(`/${locale}/login`);
-        }
+    try {
+        // 1️⃣ Récupération de l'utilisateur
+        const user = await User.findById(tmpUserId).exec(); // ✅ Ajout .exec()
+        
+        if (!user || !user.twoFactorSecret) {
+            req.flash('error', 'Erreur critique 2FA. Veuillez vous reconnecter.');
+            delete req.session.tmpUserId; 
+            return res.redirect(`/${locale}/login`);
+        }
 
-        // 2️⃣ Validation du code TOTP
-        const verified = speakeasy.totp.verify({
-            secret: user.twoFactorSecret,
-            encoding: 'base32',
-            token: code,
-            window: 2 
-        });
+        // 2️⃣ Validation du code TOTP
+        const verified = speakeasy.totp.verify({
+            secret: user.twoFactorSecret,
+            encoding: 'base32',
+            token: code,
+            window: 2 
+        });
 
-        if (!verified) {
-            req.flash('error', 'Code 2FA invalide.');
-            return res.redirect(`/${locale}/2fa?sessionId=${sessionId}`); 
-        }
+        if (!verified) {
+            req.flash('error', 'Code 2FA invalide.');
+            // Retourne vers 2fa en conservant l'ID de session pour le contournement NGINX
+            return res.redirect(`/${locale}/2fa?sessionId=${sessionId}`); 
+        }
 
-        // 3️⃣ Connexion Passport AVEC callback async
-        req.login(user, async (err) => {
-            if (err) {
-                console.error("❌ Erreur lors de req.login:", err);
-                req.flash('error', 'Erreur de connexion après 2FA.');
-                delete req.session.tmpUserId;
-                return res.redirect(`/${locale}/login`);
-            }
+        // 3️⃣ Connexion Passport
+        req.login(user, (err) => {
+            if (err) {
+                console.error("❌ Erreur lors de req.login:", err);
+                req.flash('error', 'Erreur de connexion après 2FA.');
+                delete req.session.tmpUserId;
+                return res.redirect(`/${locale}/login`);
+            }
 
-            // ✅ Suppression de tmpUserId AVANT la sauvegarde
-            delete req.session.tmpUserId;
+            // ✅ Suppression de tmpUserId après connexion réussie
+            delete req.session.tmpUserId;
 
-            // 4️⃣ Sauvegarde FORCÉE de la session
-            try {
-                await new Promise((resolve, reject) => {
-                    req.session.save((saveErr) => {
-                        if (saveErr) {
-                            console.error("❌ Erreur session.save:", saveErr);
-                            reject(saveErr);
-                        } else {
-                            resolve();
-                        }
-                    });
-                });
+            // 4️⃣ Sauvegarde FORCÉE de la session (CRITIQUE)
+            req.session.save((saveErr) => {
+                if (saveErr) {
+                    console.error("❌ Erreur session.save:", saveErr);
+                    req.flash('error', 'Erreur de session. Veuillez réessayer.');
+                    return res.redirect(`/${locale}/login`);
+                }
 
-                // ✅ Vérification finale (optionnelle mais utile pour le debug)
-                console.log("✅ Session sauvegardée. passport.user:", req.session.passport?.user);
-                console.log("✅ req.isAuthenticated():", req.isAuthenticated());
+                // 5️⃣ Redirection finale
+                console.log(`✅ Connexion complète réussie, redirection vers /${locale}/user`);
+                return res.redirect(`/${locale}/user`);
+            });
+        });
 
-                // 5️⃣ Redirection finale
-                console.log(`✅ Connexion complète réussie, redirection vers /${locale}/user`);
-                return res.redirect(`/${locale}/user`);
-
-            } catch (saveError) {
-                console.error("❌ Erreur fatale lors de la sauvegarde de session:", saveError);
-                req.flash('error', 'Erreur de session. Veuillez réessayer.');
-                return res.redirect(`/${locale}/login`);
-            }
-        });
-
-    } catch (err) {
-        console.error('❌ Erreur 2FA (générale):', err);
-        req.flash('error', 'Une erreur est survenue.');
-        delete req.session.tmpUserId;
-        return res.redirect(`/${locale}/login`); 
-    }
+    } catch (err) {
+        console.error('❌ Erreur 2FA (générale):', err);
+        req.flash('error', 'Une erreur est survenue.');
+        delete req.session.tmpUserId;
+        return res.redirect(`/${locale}/login`); 
+    }
 });
 
 app.post('/add-property', isAuthenticated, upload.fields([
