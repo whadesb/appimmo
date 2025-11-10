@@ -2213,11 +2213,11 @@ async function generateLandingPage(property) {
     .video-actions .visit-btn {
       background: none;
       border: none;
-      border-radius: 999px;
       color: #ffffff;
-      padding: 14px 32px;
       cursor: pointer;
       font-size: 1.4rem;
+      padding: 0;
+      text-decoration: underline;
       transition: opacity 0.2s ease;
     }
     .video-actions .visit-btn:hover {

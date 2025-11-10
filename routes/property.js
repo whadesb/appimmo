@@ -74,12 +74,7 @@ async function generateLandingPage(property) {
       noDescription: 'Aucune description fournie.',
       mapUnavailable: 'Carte non disponible.',
       mapError: 'Erreur lors du chargement de la carte.',
-      inProgress: 'En cours',
-      galleryTitle: 'Galerie photos',
-      gallerySubtitle: 'Découvrez d’autres vues du bien.',
-      galleryAlt: 'Photo du bien immobilier',
-      previous: 'Précédent',
-      next: 'Suivant'
+      inProgress: 'En cours'
     },
     en: {
       adLabel: 'UAP Real Estate Ad',
@@ -105,12 +100,7 @@ async function generateLandingPage(property) {
       noDescription: 'No description provided.',
       mapUnavailable: 'Map not available.',
       mapError: 'Error loading the map.',
-      inProgress: 'In progress',
-      galleryTitle: 'Photo gallery',
-      gallerySubtitle: 'Browse additional views of the property.',
-      galleryAlt: 'Property photo',
-      previous: 'Previous',
-      next: 'Next'
+      inProgress: 'In progress'
     },
     es: {
       adLabel: 'Anuncio UAP Immo',
@@ -136,12 +126,7 @@ async function generateLandingPage(property) {
       noDescription: 'No se proporcionó descripción.',
       mapUnavailable: 'Mapa no disponible.',
       mapError: 'Error al cargar el mapa.',
-      inProgress: 'En curso',
-      galleryTitle: 'Galería de fotos',
-      gallerySubtitle: 'Descubre más vistas de la propiedad.',
-      galleryAlt: 'Foto de la propiedad',
-      previous: 'Anterior',
-      next: 'Siguiente'
+      inProgress: 'En curso'
     },
     pt: {
       adLabel: 'Anúncio UAP Immo',
@@ -167,12 +152,7 @@ async function generateLandingPage(property) {
       noDescription: 'Nenhuma descrição fornecida.',
       mapUnavailable: 'Mapa indisponível.',
       mapError: 'Erro ao carregar o mapa.',
-      inProgress: 'Em andamento',
-      galleryTitle: 'Galeria de fotos',
-      gallerySubtitle: 'Descubra outras vistas do imóvel.',
-      galleryAlt: 'Foto do imóvel',
-      previous: 'Anterior',
-      next: 'Seguinte'
+      inProgress: 'Em andamento'
     }
   };
 
@@ -198,8 +178,6 @@ async function generateLandingPage(property) {
     return '';
   };
   const embedUrl = getEmbedUrl(property.videoUrl);
-  const allPhotos = Array.isArray(property.photos) ? property.photos.filter(Boolean) : [];
-  const videoGalleryPhotos = embedUrl ? allPhotos : [];
 
   const jsonLD = {
     "@context": "https://schema.org",
@@ -338,6 +316,9 @@ async function generateLandingPage(property) {
     .video-actions .visit-btn:hover {
       opacity: 0.85;
     }
+    .video-empty-block {
+      display: none;
+    }
     .has-video .extra-info-desktop {
       background: rgba(255,255,255,0.92);
       color: #3c3c3c;
@@ -350,77 +331,13 @@ async function generateLandingPage(property) {
     .has-video .extra-info-desktop .info-item {
       color: #3c3c3c;
     }
-    .gallery-section {
-      text-align: center;
-    }
-    .gallery-section hr {
-      margin-bottom: 30px;
-    }
-    .gallery-subtitle {
-      margin-bottom: 28px;
-      font-size: 1rem;
-      color: #6a6a6a;
-    }
-    body.has-video .gallery-subtitle {
-      color: #3c3c3c;
-    }
-    .video-gallery {
-      position: relative;
-      max-width: 1100px;
-      margin: 0 auto;
-      overflow: hidden;
-    }
-    .video-gallery-track {
-      display: flex;
-      gap: 24px;
-      transition: transform 0.3s ease-in-out;
-    }
-    .video-gallery-item {
-      flex: 0 0 calc((100% - 48px) / 3);
-    }
-    .video-gallery-item img {
-      width: 100%;
-      height: 260px;
-      object-fit: cover;
-      border-radius: 18px;
-    }
-    .video-gallery-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      border: none;
-      background: rgba(0, 0, 0, 0.55);
-      color: #fff;
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.2s ease;
-    }
-    .video-gallery-btn.prev { left: 10px; }
-    .video-gallery-btn.next { right: 10px; }
-    .video-gallery-btn:disabled {
-      opacity: 0.35;
-      cursor: default;
-    }
-    body.has-video .video-gallery-btn {
-      background: rgba(0, 0, 0, 0.65);
-    }
-    @media (max-width: 1024px) {
-      .video-gallery-item {
-        flex: 0 0 calc((100% - 24px) / 2);
-      }
-    }
-    @media (max-width: 640px) {
-      .video-gallery-item {
-        flex: 0 0 100%;
-      }
-      .video-gallery-item img {
-        height: 200px;
-      }
+    .has-video .video-empty-block {
+      display: block;
+      max-width: 1400px;
+      margin: 0 auto 40px;
+      padding: 40px 20px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 0 0 28px 28px;
     }
     @media (max-width: 768px) {
       .video-card {
@@ -594,8 +511,7 @@ align-items: stretch;
       justify-content: center;
     }
     .visit-modal-content {
-      background: #c4b990;
-      color: #000;
+      background: #fff;
       padding: 20px;
       border-radius: 4px;
       text-align: center;
@@ -1316,22 +1232,7 @@ h1 {
 
   </div>
 </div>
-${embedUrl && videoGalleryPhotos.length ? `
-<div class="extra-info-desktop gallery-section">
-  <hr />
-  <h2>${t.galleryTitle}</h2>
-  <p class="gallery-subtitle">${t.gallerySubtitle}</p>
-  <div class="video-gallery">
-    <button class="video-gallery-btn prev" aria-label="${t.previous}">&#10094;</button>
-    <div class="video-gallery-track">
-      ${videoGalleryPhotos.map(photo => `
-        <div class="video-gallery-item"><img src="/uploads/${photo}" alt="${t.galleryAlt}" loading="lazy" /></div>
-      `).join('')}
-    </div>
-    <button class="video-gallery-btn next" aria-label="${t.next}">&#10095;</button>
-  </div>
-</div>
-` : ''}
+${embedUrl ? `<div class="video-empty-block"></div>` : ''}
 <script type="application/ld+json">
 ${JSON.stringify(jsonLD)}
 </script>
@@ -1438,46 +1339,6 @@ ${JSON.stringify(jsonLD)}
 
 
 
-    const videoGalleryTrack = document.querySelector('.video-gallery-track');
-    if (videoGalleryTrack) {
-      const galleryItems = Array.from(videoGalleryTrack.querySelectorAll('.video-gallery-item'));
-      const prevGallery = document.querySelector('.video-gallery-btn.prev');
-      const nextGallery = document.querySelector('.video-gallery-btn.next');
-      let galleryIndex = 0;
-
-      const getVisibleGalleryItems = () => {
-        if (window.innerWidth <= 640) return 1;
-        if (window.innerWidth <= 1024) return 2;
-        return 3;
-      };
-
-     const updateGallery = () => {
-        if (!galleryItems.length) return;
-        const style = getComputedStyle(videoGalleryTrack);
-        const gap = parseFloat(style.columnGap || style.gap || '0');
-        const itemWidth = galleryItems[0].getBoundingClientRect().width;
-        const visible = getVisibleGalleryItems();
-        const maxIndex = Math.max(0, galleryItems.length - visible);
-        if (galleryIndex > maxIndex) {
-          galleryIndex = maxIndex;
-        }
-        
-        // 🔑 CORRECTION APPLIQUÉE ICI
-        videoGalleryTrack.style.transform = 'translateX(-' + (galleryIndex * (itemWidth + gap)) + 'px)';
-
-        if (prevGallery) {
-        prevGallery.addEventListener('click', () => {
-          if (galleryIndex > 0) {
-            galleryIndex -= 1;
-            updateGallery();
-          }
-        });
-      }
-
-      window.addEventListener('resize', updateGallery);
-      updateGallery();
-    }
-
     const miniTrack = document.querySelector('.mini-track');
     if (miniTrack) {
       const prevMini = document.querySelector('.mini-btn.prev');
@@ -1528,48 +1389,19 @@ router.post('/add-property', authMiddleware, upload.fields([
     { name: 'extraPhotos', maxCount: 8 },
     { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
-    const {
-        rooms,
-        bedrooms,
-        surface,
-        price,
-        city,
-        postalCode,
-        country,
-        yearBuilt,
-        propertyType,
-        dpe,
-        description,
-        contactFirstName,
-        contactLastName,
-        contactPhone
-    } = req.body;
+    const { rooms, surface, price, city, country, dpe, description } = req.body;
     const rawVideoUrl = (req.body.videoUrl || '').trim();
     const hasVideo = rawVideoUrl.length > 0;
-    const postalCodePattern = /^\d{5}$/;
-    const allowedLanguages = ['fr', 'en', 'es', 'pt'];
-
-    if (typeof req.body.parking === 'undefined') {
-        cleanupUploadedFiles(req.files);
-        return res.status(400).json({ error: 'Le champ parking est requis.' });
-    }
-
-    if (!postalCodePattern.test(postalCode || '')) {
-        cleanupUploadedFiles(req.files);
-        return res.status(400).json({ error: 'Le code postal doit contenir exactement 5 chiffres.' });
-    }
-
-    const language = allowedLanguages.includes(req.body.language) ? req.body.language : 'fr';
 
     let photo1 = null;
     let photo2 = null;
     let extraPhotos = [];
     let miniPhotos = [];
 
-    if (req.files.photo1?.[0]) {
-        if (hasVideo) {
-            fs.unlinkSync(req.files.photo1[0].path);
-        } else {
+    if (hasVideo) {
+        cleanupUploadedFiles(req.files);
+    } else {
+        if (req.files.photo1?.[0]) {
             const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
             await sharp(req.files.photo1[0].path)
                 .resize(800)
@@ -1578,12 +1410,8 @@ router.post('/add-property', authMiddleware, upload.fields([
             photo1 = path.basename(photo1Path);
             fs.unlinkSync(req.files.photo1[0].path);
         }
-    }
 
-    if (req.files.photo2?.[0]) {
-        if (hasVideo) {
-            fs.unlinkSync(req.files.photo2[0].path);
-        } else {
+        if (req.files.photo2?.[0]) {
             const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
             await sharp(req.files.photo2[0].path)
                 .resize(800)
@@ -1592,63 +1420,45 @@ router.post('/add-property', authMiddleware, upload.fields([
             photo2 = path.basename(photo2Path);
             fs.unlinkSync(req.files.photo2[0].path);
         }
-    }
 
-    if (req.files.extraPhotos) {
-        for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
-            const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
-            await sharp(file.path)
-                .resize(800)
-                .jpeg({ quality: 80 })
-                .toFile(extraPath);
-            extraPhotos.push(path.basename(extraPath));
-            fs.unlinkSync(file.path);
+        if (req.files.extraPhotos) {
+            for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
+                const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
+                await sharp(file.path)
+                    .resize(800)
+                    .jpeg({ quality: 80 })
+                    .toFile(extraPath);
+                extraPhotos.push(path.basename(extraPath));
+                fs.unlinkSync(file.path);
+            }
         }
-    }
 
-    if (req.files.miniPhotos) {
-        for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
-            const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
-            await sharp(file.path)
-                .resize(800)
-                .jpeg({ quality: 80 })
-                .toFile(miniPath);
-            miniPhotos.push(path.basename(miniPath));
-            fs.unlinkSync(file.path);
+        if (req.files.miniPhotos) {
+            for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
+                const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
+                await sharp(file.path)
+                    .resize(800)
+                    .jpeg({ quality: 80 })
+                    .toFile(miniPath);
+                miniPhotos.push(path.basename(miniPath));
+                fs.unlinkSync(file.path);
+            }
         }
     }
 
     try {
         const property = new Property({
-            rooms: Number(rooms),
-            bedrooms: Number(bedrooms),
-            surface: Number(surface),
-            price: parseFloat(price),
+            rooms,
+            surface,
+            price,
             city,
-            postalCode,
             country,
-            yearBuilt: yearBuilt || null,
-            propertyType,
             dpe: dpe || 'En cours',
-            description: description || '',
-            contactFirstName,
-            contactLastName,
-            contactPhone,
-            pool: req.body.pool === 'true',
-            doubleGlazing: req.body.doubleGlazing === 'true',
-            wateringSystem: req.body.wateringSystem === 'true',
-            barbecue: req.body.barbecue === 'true',
-            carShelter: req.body.carShelter === 'true',
-            parking: req.body.parking === 'true',
-            caretakerHouse: req.body.caretakerHouse === 'true',
-            electricShutters: req.body.electricShutters === 'true',
-            outdoorLighting: req.body.outdoorLighting === 'true',
-            language,
+    description: description || '',
+            language: req.body.language || 'fr',
             userId: req.user._id,
             videoUrl: rawVideoUrl,
-            photos: hasVideo
-                ? [...extraPhotos, ...miniPhotos].filter(Boolean)
-                : [photo1, photo2, ...extraPhotos, ...miniPhotos].filter(Boolean)
+            photos: hasVideo ? [] : [photo1, photo2, ...extraPhotos, ...miniPhotos].filter(Boolean)
         });
 
         await property.save();
@@ -1675,158 +1485,84 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
     try {
         const property = await Property.findById(req.params.id);
 
-        if (!property || !property.userId.equals(req.user._id)) {
+        if (!property || !property.createdBy.equals(req.user._id)) {
             return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
         }
 
-        if (typeof req.body.parking === 'undefined') {
-            cleanupUploadedFiles(req.files);
-            return res.status(400).json({ error: 'Le champ parking est requis.' });
-        }
-
-        const {
-            rooms,
-            bedrooms,
-            surface,
-            price,
-            city,
-            postalCode,
-            country,
-            yearBuilt,
-            propertyType,
-            dpe,
-            description,
-            contactFirstName,
-            contactLastName,
-            contactPhone
-        } = req.body;
-
-        const previousVideoUrl = property.videoUrl || '';
+        const { rooms, surface, price, city, country, dpe } = req.body;
         const rawVideoUrl = (req.body.videoUrl || '').trim();
         const hasVideo = rawVideoUrl.length > 0;
-        const postalCodePattern = /^\d{5}$/;
-        const allowedLanguages = ['fr', 'en', 'es', 'pt'];
 
-        if (!postalCodePattern.test(postalCode || '')) {
-            cleanupUploadedFiles(req.files);
-            return res.status(400).json({ error: 'Le code postal doit contenir exactement 5 chiffres.' });
-        }
-
-        property.rooms = Number(rooms);
-        property.bedrooms = Number(bedrooms);
-        property.surface = Number(surface);
-        property.price = parseFloat(price);
+        property.rooms = rooms;
+        property.surface = surface;
+        property.price = price;
         property.city = city;
-        property.postalCode = postalCode;
         property.country = country;
-        property.yearBuilt = yearBuilt || null;
-        property.propertyType = propertyType;
-        property.dpe = dpe || 'En cours';
-        property.description = description;
-        property.contactFirstName = contactFirstName;
-        property.contactLastName = contactLastName;
-        property.contactPhone = contactPhone;
-        property.language = allowedLanguages.includes(req.body.language) ? req.body.language : property.language;
         property.videoUrl = rawVideoUrl;
 
-        property.pool = req.body.pool === 'true';
-        property.doubleGlazing = req.body.doubleGlazing === 'true';
-        property.wateringSystem = req.body.wateringSystem === 'true';
-        property.barbecue = req.body.barbecue === 'true';
-        property.carShelter = req.body.carShelter === 'true';
-        property.parking = req.body.parking === 'true';
-        property.caretakerHouse = req.body.caretakerHouse === 'true';
-        property.electricShutters = req.body.electricShutters === 'true';
-        property.outdoorLighting = req.body.outdoorLighting === 'true';
-
-        if (!Array.isArray(property.photos)) {
+        if (hasVideo) {
+            cleanupUploadedFiles(req.files);
             property.photos = [];
-        }
+        } else {
+            if (!Array.isArray(property.photos)) {
+                property.photos = [];
+            }
 
-        let mainPhotos = hasVideo ? [] : property.photos.slice(0, 2);
-        let extraPhotos = hasVideo
-            ? (previousVideoUrl ? property.photos.slice(0, 8) : property.photos.slice(2, 10))
-            : property.photos.slice(2, 10);
-
-        if (hasVideo && extraPhotos.length === 0) {
-            extraPhotos = property.photos.slice(0, 8);
-        }
-
-        let miniPhotos = hasVideo
-            ? (previousVideoUrl ? property.photos.slice(8, 11) : property.photos.slice(10, 13))
-            : property.photos.slice(10, 13);
-
-        if (req.files.photo1?.[0]) {
-            if (hasVideo) {
-                fs.unlinkSync(req.files.photo1[0].path);
-            } else {
+            if (req.files.photo1?.[0]) {
                 const photo1Path = `public/uploads/${Date.now()}-photo1.jpg`;
                 await sharp(req.files.photo1[0].path)
                     .resize(800)
                     .jpeg({ quality: 80 })
                     .toFile(photo1Path);
-                mainPhotos[0] = path.basename(photo1Path);
+                property.photos[0] = path.basename(photo1Path);
                 fs.unlinkSync(req.files.photo1[0].path);
             }
-        }
 
-        if (req.files.photo2?.[0]) {
-            if (hasVideo) {
-                fs.unlinkSync(req.files.photo2[0].path);
-            } else {
+            if (req.files.photo2?.[0]) {
                 const photo2Path = `public/uploads/${Date.now()}-photo2.jpg`;
                 await sharp(req.files.photo2[0].path)
                     .resize(800)
                     .jpeg({ quality: 80 })
                     .toFile(photo2Path);
-                mainPhotos[1] = path.basename(photo2Path);
+                property.photos[1] = path.basename(photo2Path);
                 fs.unlinkSync(req.files.photo2[0].path);
             }
-        }
 
-        if (req.files.extraPhotos) {
-            extraPhotos = [];
-            for (const [index, file] of req.files.extraPhotos.slice(0, 8).entries()) {
-                const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
-                await sharp(file.path)
-                    .resize(800)
-                    .jpeg({ quality: 80 })
-                    .toFile(extraPath);
-                extraPhotos.push(path.basename(extraPath));
-                fs.unlinkSync(file.path);
+            let extraPhotos = property.photos.slice(2,10);
+            if (req.files.extraPhotos) {
+                extraPhotos = [];
+                for (const [index, file] of req.files.extraPhotos.slice(0,8).entries()) {
+                    const extraPath = `public/uploads/${Date.now()}-extra-${index}.jpg`;
+                    await sharp(file.path)
+                        .resize(800)
+                        .jpeg({ quality: 80 })
+                        .toFile(extraPath);
+                    extraPhotos.push(path.basename(extraPath));
+                    fs.unlinkSync(file.path);
+                }
             }
-        }
 
-        if (req.files.miniPhotos) {
-            miniPhotos = [];
-            for (const [index, file] of req.files.miniPhotos.slice(0, 3).entries()) {
-                const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
-                await sharp(file.path)
-                    .resize(800)
-                    .jpeg({ quality: 80 })
-                    .toFile(miniPath);
-                miniPhotos.push(path.basename(miniPath));
-                fs.unlinkSync(file.path);
+            let miniPhotos = property.photos.slice(10,13);
+            if (req.files.miniPhotos) {
+                miniPhotos = [];
+                for (const [index, file] of req.files.miniPhotos.slice(0,3).entries()) {
+                    const miniPath = `public/uploads/${Date.now()}-mini-${index}.jpg`;
+                    await sharp(file.path)
+                        .resize(800)
+                        .jpeg({ quality: 80 })
+                        .toFile(miniPath);
+                    miniPhotos.push(path.basename(miniPath));
+                    fs.unlinkSync(file.path);
+                }
             }
+
+            property.photos = property.photos.slice(0,2).concat(extraPhotos, miniPhotos).filter(Boolean);
         }
-
-        const combinedPhotos = hasVideo
-            ? [...extraPhotos, ...miniPhotos].filter(Boolean)
-            : [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
-
-        if (!hasVideo && combinedPhotos.length < 2) {
-            cleanupUploadedFiles(req.files);
-            return res.status(400).json({ error: 'Deux photos sont requises lorsque aucun lien vidéo n’est fourni.' });
-        }
-
-        property.photos = combinedPhotos;
 
         await property.save();
 
         // Régénérer la landing page après la mise à jour
         const landingPageUrl = await generateLandingPage(property);
-        property.url = landingPageUrl;
-        await property.save();
 
         res.redirect('/user');
     } catch (error) {

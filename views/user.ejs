@@ -2165,19 +2165,30 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
 
-        extraPhotoElements.forEach(({ input }) => {
+        extraPhotoElements.forEach(({ input, preview }) => {
             if (!input) return;
-            input.disabled = false;
+            input.disabled = hasVideo;
+            if (hasVideo) {
+                input.value = "";
+                if (preview) {
+                    preview.src = "";
+                    preview.classList.add("d-none");
+                }
+            }
         });
 
         if (miniPhotosInput) {
-            miniPhotosInput.disabled = false;
+            miniPhotosInput.disabled = hasVideo;
+            if (hasVideo) {
+                miniPhotosInput.value = "";
+                miniPreview.innerHTML = "";
+            }
         }
 
         if (hasVideo) {
             resetMainPhotoFeedback();
             if (mediaNotice) {
-                mediaNotice.textContent = "Les photos principales sont désactivées car un lien vidéo plein écran est renseigné. Vous pouvez toujours ajouter des photos supplémentaires pour la galerie.";
+                mediaNotice.textContent = "Les photos sont désactivées car un lien vidéo plein écran est renseigné.";
                 mediaNotice.classList.remove("text-muted");
                 mediaNotice.classList.add("text-danger");
             }
