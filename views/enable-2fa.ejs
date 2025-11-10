@@ -93,14 +93,16 @@ main {
 
 
 
+
 .twofa-container {
   max-width: 1100px;
   margin: auto;
   padding: 0 20px;
   display: flex;
+  flex-direction: row;
   gap: 60px;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-wrap: nowrap;
+  align-items: flex-start;
   justify-content: space-between;
 }
 
@@ -142,7 +144,7 @@ main {
 }
 
 .twofa-form-wrapper {
-  flex: 1 1 40%;
+  flex: 0 1 420px;
   background-color: #f8f9fa;
   padding: 32px;
   border-radius: 10px;
@@ -261,6 +263,7 @@ main {
   .twofa-container {
     flex-direction: column;
     gap: 40px;
+    flex-wrap: wrap;
   }
 
   .twofa-form-wrapper {
@@ -268,6 +271,7 @@ main {
     max-width: 100%;
     padding: 24px 16px;
     margin: auto;
+    flex: 1 1 100%;
   }
 
   .twofa-left {
@@ -460,6 +464,7 @@ main {
     <!-- Colonne gauche -->
     <div class="twofa-left">
       <h2><%= i18n.instruction %></h2>
+      <p class="text-muted"><%= i18n.step_title %></p>
       <ul>
         <% i18n.steps.forEach(function(step) { %>
           <li><%= step %></li>
@@ -484,15 +489,17 @@ main {
         </div>
 
         <!-- Zone de code et clavier -->
-        <input type="hidden" name="code" id="hidden-code">
         <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
-        <div class="mb-4">
-  <div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;"></div>
-</div>
+
+        <div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;">
+          <!-- Touches générées par JS -->
+        </div>
 
         <!-- Boutons -->
-        <button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mb-2">Effacer</button>
-<button id="submit-code" type="submit" class="btn btn-primary w-100" disabled>Valider</button>
+        <button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mt-2"><%= i18n.menu && i18n.menu.clear_button ? i18n.menu.clear_button : (locale === 'fr' ? 'Effacer' : 'Clear') %></button>
+        <button id="submit-code" type="submit" class="btn btn-primary w-100 mt-3" disabled><%= i18n.menu && i18n.menu.submit_button ? i18n.menu.submit_button : i18n.verify %></button>
+
+        <input type="hidden" name="code" id="hidden-code">
       </form>
     </div>
   </div>

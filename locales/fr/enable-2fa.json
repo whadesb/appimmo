@@ -19,6 +19,8 @@
   },
   "menu": {
     "home": "Accueil",
-    "contact": "Contact"
+    "contact": "Contact",
+    "clear_button": "Effacer",
+    "submit_button": "Valider"
   }
 }

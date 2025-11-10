@@ -30,6 +30,8 @@ const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
+const { spawn } = require('child_process');
+const os = require('os');
 const crypto = require('crypto');
 const { getPageStats } = require('./getStats');
 const Page = require('./models/Page');
@@ -112,7 +114,7 @@ app.use('/property', require('./routes/property'));
 app.use(passport.initialize());
 app.use(passport.session());
 passport.use(new LocalStrategy({
-  usernameField: 'email'
+  usernameField: 'email'
 }, User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -120,15 +122,27 @@ app.set('view engine', 'ejs');
 app.use(express.static(path.join(__dirname, 'public')));
 
 mongoose.connect(process.env.MONGODB_URI).then(() => {
-  console.log('Connected to MongoDB');
-}).catch((err) => {
-  console.error('Error connecting to MongoDB', err);
-});
-function isAuthenticatedJson(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
-  res.status(401).json({ success: false, message: 'Non authentifié' });
-}
+  console.log('✅ Connected to MongoDB');
 
+    // 🚨 TEST DÉMARRAGE : VÉRIFICATION DE LA COLLECTION 'users'
+    // Ce test doit s'afficher dans votre console Node.js au lancement du serveur
+    User.countDocuments({})
+        .then(count => {
+            console.log(`[TEST DÉMARRAGE] Nombre total de documents dans la collection 'users': ${count}`);
+        })
+        .catch(err => {
+            console.error('[TEST DÉMARRAGE] Erreur lors du comptage:', err);
+        });
+    // FIN DU TEST
+
+}).catch((err) => {
+  console.error('❌ Error connecting to MongoDB', err);
+});
+
+function isAuthenticatedJson(req, res, next) {
+  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  res.status(401).json({ success: false, message: 'Non authentifié' });
+}
 
 // Middleware : prolonger la session active
 app.use((req, res, next) => {
@@ -226,6 +240,23 @@ function isAuthenticated(req, res, next) {
   if (req.isAuthenticated && req.isAuthenticated()) return next();
   const locale = req.params.locale || req.locale || req.cookies.locale || 'fr';
   return res.redirect(`/${locale}/login`);
+}
+
+
+function isAdmin(req, res, next) {
+  if (req.user && req.user.role === 'admin') {
+    return next();
+  }
+
+  if (req.isAuthenticated && req.isAuthenticated()) {
+    console.warn('Accès administrateur refusé pour l’utilisateur :', req.user?.email || req.user?._id);
+  }
+
+  if (req.accepts && req.accepts('json')) {
+    return res.status(403).json({ success: false, message: 'Accès administrateur requis' });
+  }
+
+  return res.status(403).send('Accès refusé');
 }
 
 
@@ -752,61 +783,290 @@ app.get('/:locale/logout', (req, res, next) => {
     });
 });
 
-// Route pour la page utilisateur avec locale et récupération des propriétés
+// Assurez-vous que mongoose est accessible (const mongoose = require('mongoose');)
+
 app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
-  const { locale } = req.params;
-  const user = req.user;
+  const { locale } = req.params;
+  const user = req.user;
 
-  if (!user) {
-    return res.redirect(`/${locale}/login`);
-  }
+  if (!user) {
+    return res.redirect(`/${locale}/login`);
+  }
 
-  // ✅ Débug : on récupère les annonces de tous les utilisateurs
-  let userLandingPages = await Property.find({}); // TEMPORAIRE pour debug
+  // --- LOGIQUE ADMIN POUR LA VUE GLOBALE ---
+  let adminUsers = [];
+  let adminOrders = [];
+  let adminProperties = []; // Initialisation ici
+  
+  const isAdminUser = user && user.role === 'admin';
+  const UserModel = mongoose.model('User'); 
+  const PropertyModel = mongoose.model('Property'); // Récupération du modèle Property
 
-  console.log("Liste brute des userId en base :");
-  userLandingPages.forEach(page => {
-    console.log("➡️", page.userId?.toString());
-  });
-  console.log("Utilisateur connecté :", user._id.toString());
+  if (isAdminUser) {
+      try {
+          // 1. RÉCUPÉRATION DES UTILISATEURS
+          adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); 
+          
+          // 2. RÉCUPÉRATION DES PROPRIÉTÉS (LE FIX)
+          adminProperties = await PropertyModel.find({}) 
+              .sort({ createdAt: -1 })
+              .lean();
+          console.log(`[ROUTE USER] Propriétés Admin chargées : ${adminProperties.length}`);
 
-  // ✅ Puis on récupère uniquement celles du user connecté (on réutilise la même variable)
-  userLandingPages = await Property.find({ userId: user._id }); // REÉCRITURE de la variable
+          // 3. RÉCUPÉRATION DES COMMANDES
+          adminOrders = await Order.find({})
+              .sort({ paidAt: -1, createdAt: -1 })
+              .populate('userId', 'firstName lastName email')
+              .lean();
+          
+      } catch (e) {
+          console.error("Erreur Mongoose dans la route /user lors de la récup. admin:", e);
+      }
+  }
+  // --- FIN LOGIQUE ADMIN ---
 
-  const userTranslationsPath = `./locales/${locale}/user.json`;
-  let userTranslations = {};
+  // ✅ Récupération des propriétés de l'utilisateur connecté (logique existante)
+  let userLandingPages = await Property.find({ userId: user._id });
 
-  try {
-    userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-  } catch (error) {
-    console.error(`Erreur lors du chargement des traductions : ${error}`);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
+  // ✅ Récupération des traductions (logique existante)
+  const userTranslationsPath = `./locales/${locale}/user.json`;
+  let userTranslations = {};
+  try {
+      userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+  } catch (error) {
+      console.error(`Erreur lors du chargement des traductions : ${error}`);
+  }
 
-const statsArray = await Promise.all(
-  userLandingPages.map(async (property) => {
-    const stats = await getPageStats(property.url);
-    return {
-      page: property.url,
-      ...stats
-    };
-  })
-);
+  // ✅ Calcul des statistiques (logique existante)
+  const statsArray = await Promise.all(
+      userLandingPages.map(async (property) => {
+          const stats = await getPageStats(property.url);
+          return {
+              page: property.url,
+              ...stats
+          };
+      })
+  );
 
-res.render('user', {
-  locale,
-  user,
-  i18n: userTranslations,
-  currentPath: req.originalUrl,
-  userLandingPages,
-  stats: statsArray
+  res.render('user', {
+      locale,
+      user,
+      i18n: userTranslations,
+      currentPath: req.originalUrl,
+      userLandingPages,
+      stats: statsArray,
+      currentUser: user,
+      
+      // 🔑 PASSAGE DES VARIABLES ADMINISTRATEUR :
+      adminUsers: adminUsers, 
+      adminOrders: adminOrders, 
+      adminProperties: adminProperties, // <<--- Maintenant rempli ici
+      isAdminUser: isAdminUser, 
+      
+      activeSection: 'account' // Section par défaut
+  });
 });
 
+app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
+    const locale = req.user?.locale || req.locale || 'fr';
+    const user = req.user;
+    const isAdminUser = true;
+
+    // 1. Définir les variables comme vides avant le bloc try
+    let userLandingPages = [];
+    let statsArray = [];
+    let userTranslations = {};
+    let adminUsers = []; // Initialisation pour le try/catch
+    let adminOrders = [];
+    let adminProperties = [];
+
+    try {
+        // 2. Récupération des traductions (la logique est OK)
+        const userTranslationsPath = `./locales/${locale}/user.json`;
+        try {
+            userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+        } catch (error) {
+            console.error(`Erreur lors du chargement des traductions : ${error}`);
+        }
+
+        // 3. Récupération de TOUS les utilisateurs (la requête critique)
+        const UserModel = mongoose.model('User');
+        adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); // On utilise lean() pour la robustesse
+
+        adminOrders = await Order.find({})
+            .sort({ paidAt: -1, createdAt: -1 })
+            .populate('userId', 'firstName lastName email')
+            .lean();
+
+        console.log(`[ROUTE ADMIN] Nombre d'utilisateurs trouvés : ${adminUsers.length}`);
+
+        // Note: userLandingPages et statsArray sont laissés vides car ils sont spécifiques
+        // à l'utilisateur, mais nécessaires pour le rendu général de 'user.ejs'.
+
+        // 4. Rendu de la vue 'user' avec toutes les variables attendues
+        res.render('user', {
+            locale,
+            user,
+            i18n: userTranslations, // Doit être passé après chargement
+            currentPath: req.originalUrl,
+            userLandingPages,       // Tableau vide si non calculé
+            stats: statsArray,       // Tableau vide
+            currentUser: user,
+            adminUsers,             // Le tableau rempli (taille 6)
+            adminOrders,
+            adminProperties,
+            activeSection: 'admin-users',
+            isAdminUser: isAdminUser
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des utilisateurs admin :', error);
+        next(error);
+    }
 });
 
 
 
+app.get('/admin/download-photos/:propertyId', isAuthenticated, isAdmin, async (req, res) => {
+    const { propertyId } = req.params;
+    let tempDir;
+    let zipPath;
 
+    try {
+        const property = await Property.findById(propertyId).lean();
+
+        if (!property || !Array.isArray(property.photos) || property.photos.length === 0) {
+            return res.status(404).send('Aucune photo trouvée pour cette propriété.');
+        }
+
+        const uploadsDir = path.join(__dirname, 'public/uploads');
+        const filesToArchive = property.photos.reduce((acc, filename) => {
+            const filePath = path.join(uploadsDir, filename);
+            if (fs.existsSync(filePath)) {
+                acc.push(filePath);
+            } else {
+                console.warn(`Fichier photo manquant: ${filePath}`);
+            }
+            return acc;
+        }, []);
+
+        if (filesToArchive.length === 0) {
+            return res.status(404).send('Aucune photo disponible pour cette propriété.');
+        }
+
+        const zipName = `photos-propriete-${propertyId}.zip`;
+        tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'appimmo-'));
+        zipPath = path.join(tempDir, zipName);
+
+        const zipArgs = ['-j', '-q', zipPath, '--', ...filesToArchive];
+
+        await new Promise((resolve, reject) => {
+            const zipProcess = spawn('zip', zipArgs);
+            zipProcess.on('error', reject);
+            zipProcess.stderr.on('data', (data) => {
+                console.error('zip stderr:', data.toString());
+            });
+            zipProcess.on('close', (code) => {
+                if (code === 0) {
+                    resolve();
+                } else {
+                    reject(new Error(`zip process exited with code ${code}`));
+                }
+            });
+        });
+
+        return res.download(zipPath, zipName, async (err) => {
+            try {
+                if (zipPath) {
+                    await fs.promises.unlink(zipPath);
+                }
+            } catch (cleanupError) {
+                if (cleanupError && cleanupError.code !== 'ENOENT') {
+                    console.warn('Erreur lors de la suppression du ZIP temporaire :', cleanupError);
+                }
+            }
+
+            try {
+                if (tempDir) {
+                    await fs.promises.rm(tempDir, { recursive: true, force: true });
+                }
+            } catch (cleanupError) {
+                if (cleanupError && cleanupError.code !== 'ENOENT') {
+                    console.warn('Erreur lors de la suppression du dossier temporaire :', cleanupError);
+                }
+            }
+
+            if (err) {
+                console.error('Erreur lors de l\'envoi du ZIP :', err);
+                if (!res.headersSent) {
+                    res.status(500).send('Erreur lors de l\'envoi du fichier.');
+                }
+            }
+        });
+    } catch (error) {
+        console.error('Erreur lors de la création du ZIP de photos :', error);
+
+        try {
+            if (zipPath) {
+                await fs.promises.unlink(zipPath);
+            }
+        } catch (cleanupError) {
+            if (cleanupError && cleanupError.code !== 'ENOENT') {
+                console.warn('Erreur lors du nettoyage du ZIP temporaire :', cleanupError);
+            }
+        }
+
+        try {
+            if (tempDir) {
+                await fs.promises.rm(tempDir, { recursive: true, force: true });
+            }
+        } catch (cleanupError) {
+            if (cleanupError && cleanupError.code !== 'ENOENT') {
+                console.warn('Erreur lors du nettoyage du dossier temporaire :', cleanupError);
+            }
+        }
+
+        return res.status(500).send('Erreur interne du serveur lors du téléchargement des photos.');
+    }
+});
+
+const renderAdminOrders = async (req, res, next) => {
+    const { userId } = req.params;
+    const localeParam = req.params.locale;
+    const locale = localeParam || req.user?.locale || req.locale || 'fr';
+    const UserModel = mongoose.model('User');
+    const OrderModel = mongoose.model('Order');
+
+    const i18nPath = `./locales/${locale}/user.json`;
+    let i18n = {};
+    try {
+        i18n = JSON.parse(fs.readFileSync(i18nPath, 'utf8'));
+    } catch (e) {
+        console.error(`Erreur lors du chargement des traductions : ${e}`);
+    }
+
+    try {
+        const userOrders = await OrderModel.find({ userId: userId })
+            .sort({ paidAt: -1, createdAt: -1 })
+            .lean();
+
+        const targetUser = await UserModel.findById(userId).lean();
+
+        res.render('admin-orders', {
+            locale,
+            user: req.user,
+            targetUser,
+            userOrders,
+            i18n,
+            currentPath: req.originalUrl
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des commandes admin :', error);
+        next(error);
+    }
+};
+
+app.get('/admin/orders/:userId', isAuthenticated, isAdmin, renderAdminOrders);
+app.get('/:locale/admin/orders/:userId', isAuthenticated, isAdmin, renderAdminOrders);
 app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
   const locale = req.params.locale || 'fr';
 
@@ -983,76 +1243,84 @@ app.use('/pdf', pdfRoutes);
 const axios = require('axios'); // tout en haut de ton fichier
 
 app.post('/:locale/register', async (req, res) => {
-  const { email, firstName, lastName, role, password, confirmPassword, 'g-recaptcha-response': captcha } = req.body;
-  const locale = req.params.locale;
+  const { email, firstName, lastName, password, confirmPassword, 'g-recaptcha-response': captcha } = req.body;
+  const locale = req.params.locale;
 
-  // ⚠️ Si captcha vide
-  if (!captcha) {
-    req.flash('error', 'Veuillez valider le CAPTCHA.');
-    return res.redirect(`/${locale}/register`);
-  }
+  // ⚠️ Attention : Le champ 'role' n'est plus extrait car sa valeur est forcée ci-dessous.
 
-  // 🔍 Vérification reCAPTCHA
-  try {
-    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-    const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
+  // ⚠️ Si captcha vide
+  if (!captcha) {
+    req.flash('error', 'Veuillez valider le CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // 🔍 Vérification reCAPTCHA
+  try {
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
 
 const response = await axios.post(verificationURL, null, {
-  params: {
-    secret: secretKey,
-    response: captcha,
-  },
+  params: {
+    secret: secretKey,
+    response: captcha,
+  },
 });
 
 
-    if (!response.data.success) {
-      req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
-      return res.redirect(`/${locale}/register`);
-    }
-  } catch (err) {
-    console.error("Erreur reCAPTCHA :", err);
-    req.flash('error', 'Erreur de vérification CAPTCHA.');
-    return res.redirect(`/${locale}/register`);
-  }
+    if (!response.data.success) {
+      req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
+      return res.redirect(`/${locale}/register`);
+    }
+  } catch (err) {
+    console.error("Erreur reCAPTCHA :", err);
+    req.flash('error', 'Erreur de vérification CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
 
-  // ✅ Validation email et mot de passe
-  if (!validator.isEmail(email)) {
-    req.flash('error', 'L\'adresse email n\'est pas valide.');
-    return res.redirect(`/${locale}/register`);
-  }
+  // ✅ Validation email et mot de passe
+  if (!validator.isEmail(email)) {
+    req.flash('error', 'L\'adresse email n\'est pas valide.');
+    return res.redirect(`/${locale}/register`);
+  }
 
-  if (password !== confirmPassword) {
-    req.flash('error', 'Les mots de passe ne correspondent pas.');
-    return res.redirect(`/${locale}/register`);
-  }
+  if (password !== confirmPassword) {
+    req.flash('error', 'Les mots de passe ne correspondent pas.');
+    return res.redirect(`/${locale}/register`);
+  }
 
-  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-  if (!passwordRequirements.test(password)) {
-    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
-    return res.redirect(`/${locale}/register`);
-  }
+  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRequirements.test(password)) {
+    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
+    return res.redirect(`/${locale}/register`);
+  }
 
-  try {
-    const newUser = await User.register(new User({ email, firstName, lastName, role }), password);
-await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
+  try {
+    // 🔑 FIX : Force le rôle 'user' lors de la création du nouveau document User.
+    const newUser = await User.register(new User({ 
+            email, 
+            firstName, 
+            lastName, 
+            role: 'user' // Rôle fixé pour l'inscription publique
+        }), password);
+        
+        await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
 
-    req.login(newUser, (err) => {
-      if (err) {
-        console.error('Erreur lors de la connexion automatique après inscription :', err);
-        req.flash('error', 'Erreur de connexion automatique.');
-        return res.redirect(`/${locale}/login`);
-      }
+    req.login(newUser, (err) => {
+      if (err) {
+        console.error('Erreur lors de la connexion automatique après inscription :', err);
+        req.flash('error', 'Erreur de connexion automatique.');
+        return res.redirect(`/${locale}/login`);
+      }
 
-      res.redirect(`/${locale}/enable-2fa`);
-    });
+      res.redirect(`/${locale}/enable-2fa`);
+    });
 
-  } catch (error) {
-    console.error('Erreur lors de l\'inscription :', error.message);
-    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
-    res.redirect(`/${locale}/register`);
-  }
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription :', error.message);
+    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
+    res.redirect(`/${locale}/register`);
+  }
 });
-
 app.get('/:locale/2fa', (req, res) => {
   const { locale } = req.params;
 
@@ -1159,19 +1427,20 @@ app.post('/add-property', isAuthenticated, upload.fields([
     }
 
     const property = new Property({
-      rooms: req.body.rooms,
-      bedrooms: req.body.bedrooms,
-      surface: req.body.surface,
+      rooms: Number(req.body.rooms),
+      bedrooms: Number(req.body.bedrooms),
+      surface: Number(req.body.surface),
       price: parseFloat(req.body.price),
       city: req.body.city,
-postalCode: req.body.postalCode,
+      postalCode: req.body.postalCode,
       country: req.body.country,
       description: req.body.description,
       yearBuilt: req.body.yearBuilt || null,
       pool: req.body.pool === 'true',
       propertyType: req.body.propertyType,
-      fireplace: req.body.fireplace === 'true',
+      doubleGlazing: req.body.doubleGlazing === 'true',
       wateringSystem: req.body.wateringSystem === 'true',
+      barbecue: req.body.barbecue === 'true',
       carShelter: req.body.carShelter === 'true',
       parking: req.body.parking === 'true',
       caretakerHouse: req.body.caretakerHouse === 'true',
@@ -1249,7 +1518,9 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
 
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
-  { name: 'photo2', maxCount: 1 }
+  { name: 'photo2', maxCount: 1 },
+  { name: 'extraPhotos', maxCount: 8 },
+  { name: 'miniPhotos', maxCount: 3 }
 ]), async (req, res) => {
   try {
     const property = await Property.findById(req.params.id);
@@ -1258,17 +1529,38 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
       return res.status(403).send("Vous n'êtes pas autorisé à modifier cette propriété.");
     }
 
+    if (typeof req.body.parking === 'undefined') {
+      cleanupUploadedFiles(req.files);
+      return res.status(400).send('Le champ parking est requis.');
+    }
+
+    const rawVideoUrl = (req.body.videoUrl || '').trim();
+    const hasVideo = rawVideoUrl.length > 0;
+    const postalCodePattern = /^\d{5}$/;
+    const allowedLanguages = ['fr', 'en', 'es', 'pt'];
+
+    if (!postalCodePattern.test(req.body.postalCode || '')) {
+      cleanupUploadedFiles(req.files);
+      return res.status(400).send('Le code postal doit contenir exactement 5 chiffres.');
+    }
+
     // Mettre à jour les champs depuis le formulaire
-    property.rooms = req.body.rooms;
-    property.bedrooms = req.body.bedrooms;
-    property.surface = req.body.surface;
-    property.price = req.body.price;
+    property.rooms = Number(req.body.rooms);
+    property.bedrooms = Number(req.body.bedrooms);
+    property.surface = Number(req.body.surface);
+    property.price = parseFloat(req.body.price);
     property.city = req.body.city;
+    property.postalCode = req.body.postalCode;
     property.country = req.body.country;
-    property.yearBuilt = req.body.yearBuilt;
+    property.yearBuilt = req.body.yearBuilt || null;
     property.propertyType = req.body.propertyType;
-    property.dpe = req.body.dpe;
+    property.dpe = req.body.dpe || 'En cours';
     property.description = req.body.description;
+    property.contactFirstName = req.body.contactFirstName;
+    property.contactLastName = req.body.contactLastName;
+    property.contactPhone = req.body.contactPhone;
+    property.language = allowedLanguages.includes(req.body.language) ? req.body.language : property.language;
+    property.videoUrl = rawVideoUrl;
 
     // Champs booléens des équipements (venant de <select> avec 'true' ou 'false' comme valeurs)
     property.pool = req.body.pool === 'true';
@@ -1281,23 +1573,46 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     property.electricShutters = req.body.electricShutters === 'true';
     property.outdoorLighting = req.body.outdoorLighting === 'true';
 
-    // ➕ Mise à jour des photos si présentes
-    if (req.files) {
-      if (req.files.photo1 && req.files.photo1[0]) {
-        property.photo1 = req.files.photo1[0].filename;
+    if (hasVideo) {
+      property.photos = [];
+      cleanupUploadedFiles(req.files);
+    } else {
+      const existingPhotos = Array.isArray(property.photos) ? property.photos : [];
+      let mainPhotos = existingPhotos.slice(0, 2);
+      let extraPhotos = existingPhotos.slice(2, 10);
+      let miniPhotos = existingPhotos.slice(10, 13);
+
+      if (req.files?.photo1?.[0]) {
+        mainPhotos[0] = req.files.photo1[0].filename;
       }
-      if (req.files.photo2 && req.files.photo2[0]) {
-        property.photo2 = req.files.photo2[0].filename;
+      if (req.files?.photo2?.[0]) {
+        mainPhotos[1] = req.files.photo2[0].filename;
       }
+
+      if (req.files?.extraPhotos?.length) {
+        extraPhotos = req.files.extraPhotos.slice(0, 8).map(file => file.filename);
+      }
+
+      if (req.files?.miniPhotos?.length) {
+        miniPhotos = req.files.miniPhotos.slice(0, 3).map(file => file.filename);
+      }
+
+      const combinedPhotos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
+
+      if (combinedPhotos.length < 2) {
+        cleanupUploadedFiles(req.files);
+        return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
+      }
+
+      property.photos = combinedPhotos;
     }
 
-   await property.save();
+    await property.save();
 
-// 🆕 Regénérer la landing page après mise à jour
-const updatedLandingPageUrl = await generateLandingPage(property);
-property.url = updatedLandingPageUrl;
-await property.save();
-
+    // 🆕 Regénérer la landing page après mise à jour
+    const updatedLandingPageUrl = await generateLandingPage(property);
+    property.url = updatedLandingPageUrl;
+    await property.save();
 
     // Localisation + traduction pour le rendu
     const locale = req.language || 'fr';
@@ -1595,7 +1910,13 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
 app.get('/user/orders/:orderId/invoice', isAuthenticated, async (req, res) => {
   try {
     const { orderId } = req.params;
-    const order = await Order.findOne({ _id: orderId, userId: req.user._id });
+    const query = { _id: orderId };
+
+    if (!req.user || req.user.role !== 'admin') {
+      query.userId = req.user._id;
+    }
+
+    const order = await Order.findOne(query);
 
     if (!order) {
       return res.status(404).json({ error: 'Commande introuvable' });
@@ -2504,7 +2825,8 @@ h1 {
       justify-content: center;
     }
     .visit-modal-content {
-      background: #fff;
+      background: #c4b990;
+      color: #000;
       padding: 30px;
       border-radius: 8px;
       text-align: center;
