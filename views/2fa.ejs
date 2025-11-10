@@ -1,684 +1,684 @@
 <!DOCTYPE html>
 <html lang="<%= locale %>">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Two-Factor Authentication page for UAP Immo.">
-  <title>UAP Immo | <%= i18n.title %></title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Two-Factor Authentication page for UAP Immo.">
+  <title>UAP Immo | <%= i18n.title %></title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <link href="/css/bootstrap.min.css" rel="stylesheet">
-  <link href="/css/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="/css/styles-main.css">
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="/css/styles-main.css">
 
-  <style>
- body {
-  font-family: 'Inter', sans-serif;
-  background-color: #fff;
-  color: #212529;
-  margin: 0;
-  padding: 0;
- display: flex;
-  flex-direction: column;
-  min-height: 100vh;
+  <style>
+ body {
+  font-family: 'Inter', sans-serif;
+  background-color: #fff;
+  color: #212529;
+  margin: 0;
+  padding: 0;
+ display: flex;
+  flex-direction: column;
+  min-height: 100vh;
 }
 main {
-  flex: 1;
+  flex: 1;
 }
- .navbar {
-            background-color: #C4B990; 
-        }
-        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #000; 
-        }
-        .navbar .navbar-icon {
-            font-size: 1.5rem;
-        }
-        .navbar .navbar-icon.bi-person {
-            color: #000 !important;
-        }
+ .navbar {
+            background-color: #C4B990; 
+        }
+        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+            color: #000; 
+        }
+        .navbar .navbar-icon {
+            font-size: 1.5rem;
+        }
+        .navbar .navbar-icon.bi-person {
+            color: #000 !important;
+        }
 
- .lang-flag {
-      width: 24px;
-      height: 16px;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
-      display: inline-block;
-      flex-shrink: 0;
-    }
-    .lang-fr {
-      background-image: url('https://flagcdn.com/fr.svg');
-    }
-    .lang-en {
-      background-image: url('https://flagcdn.com/gb.svg');
-    }
+ .lang-flag {
+      width: 24px;
+      height: 16px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+    .lang-fr {
+      background-image: url('https://flagcdn.com/fr.svg');
+    }
+    .lang-en {
+      background-image: url('https://flagcdn.com/gb.svg');
+    }
 .language-switcher .dropdown-menu {
-  min-width: 140px;
-  transition: all 0.2s ease-in-out;
+  min-width: 140px;
+  transition: all 0.2s ease-in-out;
 }
 
 .language-switcher .dropdown-item:hover {
-  background-color: #f1f1f1;
-  color: #000;
-  transition: 0.2s;
+  background-color: #f1f1f1;
+  color: #000;
+  transition: 0.2s;
 }
 
 .language-switcher .btn-light {
-  background-color: white;
-  border-color: #ddd;
-  transition: background-color 0.2s ease;
-  font-size: 1.2rem;
+  background-color: white;
+  border-color: #ddd;
+  transition: background-color 0.2s ease;
+  font-size: 1.2rem;
 }
 
 .language-switcher .btn-light:hover {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa;
 }
 .navbar .btn-outline-dark:hover {
-  background-color: #52566f;
-  color: #fff;
-  border-color: #52566f;
+  background-color: #52566f;
+  color: #fff;
+  border-color: #52566f;
 }
 
-  .navbar .btn-outline-dark {
-    margin-right: 12px;
-  }
+  .navbar .btn-outline-dark {
+    margin-right: 12px;
+  }
 main {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 80px); /* On retire juste le footer, le padding-top compense la navbar */
-  padding: 120px 20px 60px; /* top | horizontal | bottom */
-  background-color: #fff;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: calc(100vh - 80px); /* On retire juste le footer, le padding-top compense la navbar */
+  padding: 120px 20px 60px; /* top | horizontal | bottom */
+  background-color: #fff;
 }
 
 
 
 .twofa-container {
-  max-width: 1100px;
-  margin: auto;
-  padding: 0 20px;
-  display: flex;
-  gap: 60px;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
+  max-width: 1100px;
+  margin: auto;
+  padding: 0 20px;
+  display: flex;
+  gap: 60px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .twofa-left {
-  flex: 1 1 48%;
+  flex: 1 1 48%;
 }
 
 .twofa-left h2 {
-  font-size: 1.9rem;
-  font-weight: 600;
-  margin-bottom: 14px;
+  font-size: 1.9rem;
+  font-weight: 600;
+  margin-bottom: 14px;
 }
 
 .twofa-left p {
-  font-size: 1rem;
-  color: #6c757d;
-  margin-bottom: 20px;
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 20px;
 }
 
 .twofa-left ul {
-  list-style: none;
-  padding-left: 0;
-  border-left: 3px solid #dee2e6;
-  padding-left: 16px;
-  margin-top: 12px;
+  list-style: none;
+  padding-left: 0;
+  border-left: 3px solid #dee2e6;
+  padding-left: 16px;
+  margin-top: 12px;
 }
 
 .twofa-left li {
-  font-size: 0.95rem;
-  margin-bottom: 8px;
-  color: #444;
-  position: relative;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: #444;
+  position: relative;
 }
 
 .twofa-left li::before {
-  content: "✓";
-  color: #8f97c4;
-  margin-right: 8px;
+  content: "✓";
+  color: #8f97c4;
+  margin-right: 8px;
 }
 
 .twofa-form-wrapper {
-  flex: 1 1 40%;
-  background-color: #f8f9fa;
-  padding: 32px;
-  border-radius: 10px;
-  border: 1px solid #e2e6ea;
+  flex: 1 1 40%;
+  background-color: #f8f9fa;
+  padding: 32px;
+  border-radius: 10px;
+  border: 1px solid #e2e6ea;
 }
 
 .twofa-form-wrapper label {
-  display: block;
-  font-weight: 500;
-  margin-bottom: 8px;
+  display: block;
+  font-weight: 500;
+  margin-bottom: 8px;
 }
 #numeric-keypad button {
-  font-size: 1.6rem;
-  padding: 16px 0;
-  border-radius: 8px;
-  border: 1px solid #ced4da;
-  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  font-size: 1.6rem;
+  padding: 16px 0;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 #numeric-keypad {
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  max-width: 300px;
-  margin: 20px auto;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  max-width: 300px;
+  margin: 20px auto;
 }
 
 #numeric-keypad button:active {
-  transform: scale(0.97);
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  transform: scale(0.97);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 #numeric-keypad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  max-width: 300px;
-  margin: 20px auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  max-width: 300px;
+  margin: 20px auto;
 }
 
 #code {
-  width: 100%;
-  padding: 14px;
-  font-size: 1.6rem;
-  font-weight: 600;
-  text-align: center;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  letter-spacing: 6px;
-  background-color: #fff;
+  width: 100%;
+  padding: 14px;
+  font-size: 1.6rem;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  letter-spacing: 6px;
+  background-color: #fff;
 }
 
 #code:focus {
-  border-color: #8f97c4;
-  outline: none;
-  box-shadow: 0 0 0 2px rgba(143, 151, 196, 0.2);
+  border-color: #8f97c4;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(143, 151, 196, 0.2);
 }
 
 #countdown {
- font-size: 0.875rem;
-  color: #000; /* Noir */
-  text-align: center;
-  margin-top: 12px;
-  margin-bottom: 20px;
+ font-size: 0.875rem;
+  color: #000; /* Noir */
+  text-align: center;
+  margin-top: 12px;
+  margin-bottom: 20px;
 }
 
 #success-check {
-  display: none;
-  text-align: center;
-  margin-bottom: 20px;
+  display: none;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
 #success-check i {
-  font-size: 2rem;
-  color: #28a745;
+  font-size: 2rem;
+  color: #28a745;
 }
 
 #success-check p {
-  font-weight: 500;
-  color: #28a745;
-  margin-top: 8px;
+  font-weight: 500;
+  color: #28a745;
+  margin-top: 8px;
 }
 
 .btn-primary {
-  width: 100%;
-  background-color: #8f97c4;
-  border: none;
-  padding: 14px;
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 8px;
-  transition: background-color 0.2s ease;
+  width: 100%;
+  background-color: #8f97c4;
+  border: none;
+  padding: 14px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
 }
 
 .btn-primary:hover {
-  background-color: #7a81b8;
+  background-color: #7a81b8;
 }
 
 .text-muted a {
-  color: #000 !important; /* Forcer noir */
-  font-size: 0.875rem;
+  color: #000 !important; /* Forcer noir */
+  font-size: 0.875rem;
 }
 
 .text-muted a:hover {
-  color: #444;
+  color: #444;
 }
 #code-display {
-  height: 50px;
-  background: #fff;
-  border: 1px solid #ced4da;
-  border-radius: 8px;
-  line-height: 50px;
+  height: 50px;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 8px;
+  line-height: 50px;
 }
 
 @media (max-width: 768px) {
-  .twofa-container {
-    flex-direction: column;
-    gap: 40px;
-  }
+  .twofa-container {
+    flex-direction: column;
+    gap: 40px;
+  }
 
-  .twofa-form-wrapper {
-    width: 100%;
-    max-width: 100%;
-    padding: 24px 16px;
-    margin: auto;
-  }
+  .twofa-form-wrapper {
+    width: 100%;
+    max-width: 100%;
+    padding: 24px 16px;
+    margin: auto;
+  }
 
-  .twofa-left {
-    text-align: center;
-  }
+  .twofa-left {
+    text-align: center;
+  }
 
-  .twofa-left ul {
-    margin: auto;
-    max-width: 320px;
-  }
+  .twofa-left ul {
+    margin: auto;
+    max-width: 320px;
+  }
 
-  #code-display {
-    font-size: 1.8rem;
-    height: 52px;
-    line-height: 52px;
-    letter-spacing: 12px;
-  }
+  #code-display {
+    font-size: 1.8rem;
+    height: 52px;
+    line-height: 52px;
+    letter-spacing: 12px;
+  }
 
-  #numeric-keypad {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    max-width: 300px;
-    margin-bottom: 20px;
-    padding: 0 10px;
-  }
+  #numeric-keypad {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    max-width: 300px;
+    margin-bottom: 20px;
+    padding: 0 10px;
+  }
 
-  #numeric-keypad button {
-    font-size: 1.6rem;
-    padding: 16px 0;
-    border-radius: 8px;
-    border: 1px solid #ced4da;
-    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);
-    background-color: #ffffff;
-    transition: transform 0.1s ease, box-shadow 0.1s ease;
-    touch-action: manipulation;
-  }
+  #numeric-keypad button {
+    font-size: 1.6rem;
+    padding: 16px 0;
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    box-shadow: inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+    touch-action: manipulation;
+  }
 
-  #numeric-keypad button:active {
-    transform: scale(0.97);
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
+  #numeric-keypad button:active {
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
 
 #clear-code {
-  border: 1px solid #000;
-  color: #000;
-  background-color: transparent;
-  transition: background-color 0.2s ease, color 0.2s ease;
+  border: 1px solid #000;
+  color: #000;
+  background-color: transparent;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 #clear-code:hover,
 #clear-code:active {
-  background-color: #000;
-  color: #fff;
+  background-color: #000;
+  color: #fff;
 }
 #submit-code:enabled {
-  background-color: #212529; /* Gris très foncé */
-  color: #fff;
-  border: none;
+  background-color: #212529; /* Gris très foncé */
+  color: #fff;
+  border: none;
 }
 #clear-code,
 #submit-code {
-  font-size: 1.1rem;
-  padding: 14px;
+  font-size: 1.1rem;
+  padding: 14px;
 }
 
 #submit-code:enabled {
-  background-color: #212529; /* même en mobile */
+  background-color: #212529; /* même en mobile */
 }
-  main {
-    padding-bottom: 100px;
-  }
+  main {
+    padding-bottom: 100px;
+  }
 }
 
-  </style>
+  </style>
 </head>
 <body id="top">
 
 <noscript>
-  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
-  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-  <main>
+  <main>
 <% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
 
 <nav class="navbar navbar-expand-lg fixed-top">
-  <div class="container">
-    <!-- Logo -->
-    <a class="navbar-brand" href="/<%= locale %>">
-      <span>UAP Immo</span>
-    </a>
+  <div class="container">
+    <!-- Logo -->
+    <a class="navbar-brand" href="/<%= locale %>">
+      <span>UAP Immo</span>
+    </a>
 
-    <!-- Burger -->
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
+    <!-- Burger -->
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
-    <!-- Contenu menu -->
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav me-auto">
-        <li class="nav-item">
-          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
-        </li>
+    <!-- Contenu menu -->
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
+        </li>
 
-        <!-- Mobile uniquement -->
-        <% if (isAuthenticated && showAccountButtons !== false) { %>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
-              <i class="bi bi-person-circle"></i>
-              <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
-            </a>
-          </li>
-          <li class="nav-item d-lg-none">
-            <form action="/logout" method="POST" class="w-100">
-              <button type="submit" class="nav-link btn btn-link text-start d-flex align-items-center gap-2 w-100" style="border: none; background: none;">
-                <i class="bi bi-box-arrow-right"></i>
-                <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
-              </button>
-            </form>
-          </li>
-        <% } else { %>
-          <li class="nav-item d-lg-none">
-            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
-              <i class="bi bi-person-fill"></i>
-              <%= locale === 'fr' ? 'Connexion' : 'Login' %>
-            </a>
-          </li>
-        <% } %>
+        <!-- Mobile uniquement -->
+        <% if (isAuthenticated && showAccountButtons !== false) { %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
+              <i class="bi bi-person-circle"></i>
+              <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+            </a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <form action="/logout" method="POST" class="w-100">
+              <button type="submit" class="nav-link btn btn-link text-start d-flex align-items-center gap-2 w-100" style="border: none; background: none;">
+                <i class="bi bi-box-arrow-right"></i>
+                <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+              </button>
+            </form>
+          </li>
+        <% } else { %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/login">
+              <i class="bi bi-person-fill"></i>
+              <%= locale === 'fr' ? 'Connexion' : 'Login' %>
+            </a>
+          </li>
+        <% } %>
 
-      </ul>
+      </ul>
 
-      <!-- Desktop à droite -->
-      <div class="d-none d-lg-flex align-items-center ms-auto">
-        <% if (isAuthenticated && showAccountButtons !== false) { %>
-          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
-            <i class="bi bi-person-circle"></i>
-            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
-          </a>
-          <form action="/logout" method="POST" class="d-inline">
-            <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
-              <i class="bi bi-box-arrow-right"></i>
-              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
-            </button>
-          </form>
-        <% } else { %>
-          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
-            <i class="bi bi-person-fill"></i>
-            <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
-          </a>
-        <% } %>
+      <!-- Desktop à droite -->
+      <div class="d-none d-lg-flex align-items-center ms-auto">
+        <% if (isAuthenticated && showAccountButtons !== false) { %>
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+            <i class="bi bi-person-circle"></i>
+            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+          </a>
+          <form action="/logout" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+              <i class="bi bi-box-arrow-right"></i>
+              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+            </button>
+          </form>
+        <% } else { %>
+          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+            <i class="bi bi-person-fill"></i>
+            <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+          </a>
+        <% } %>
 
-        <!-- Desktop : sélecteur de langue -->
-        <div class="dropdown language-switcher">
-          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-            <i class="bi bi-chevron-down small"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-  <% if (locale === 'fr') { %>
-    <li>
-      <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
-        <span class="lang-flag lang-en"></span> English
-      </a>
-    </li>
-  <% } else { %>
-    <li>
-      <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">
-        <span class="lang-flag lang-fr"></span> Français
-      </a>
-    </li>
-  <% } %>
+        <!-- Desktop : sélecteur de langue -->
+        <div class="dropdown language-switcher">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+  <% if (locale === 'fr') { %>
+    <li>
+      <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
+        <span class="lang-flag lang-en"></span> English
+      </a>
+    </li>
+  <% } else { %>
+    <li>
+      <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">
+        <span class="lang-flag lang-fr"></span> Français
+      </a>
+    </li>
+  <% } %>
 </ul>
 
-        </div>
-      </div>
-    </div>
-  </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </nav>
 
 
-  <div class="twofa-container">
-    <div class="twofa-left">
-      <h2><%= i18n.heading %></h2>
-      <p><%= i18n.description %></p>
-      <ul>
-        <% i18n.instruction_steps.forEach(function(step) { %>
-          <li><%= step %></li>
-        <% }); %>
-      </ul>
-    </div>
+  <div class="twofa-container">
+    <div class="twofa-left">
+      <h2><%= i18n.heading %></h2>
+      <p><%= i18n.description %></p>
+      <ul>
+        <% i18n.instruction_steps.forEach(function(step) { %>
+          <li><%= step %></li>
+        <% }); %>
+      </ul>
+    </div>
 
-    <div class="twofa-form-wrapper">
-      <% if (messages.error && messages.error.length > 0) { %>
-        <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
-      <% } %>
+    <div class="twofa-form-wrapper">
+      <% if (messages.error && messages.error.length > 0) { %>
+        <p class="text-danger text-center fw-bold"><%= messages.error[0] %></p>
+      <% } %>
 
-      <form method="POST" action="/<%= locale %>/2fa">
-        <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
+      <form method="POST" action="/<%= locale %>/2fa<% if (typeof sessionId !== 'undefined' && sessionId) { %>?sessionId=<%= sessionId %><% } %>">
+        <div id="code-display" class="form-control mb-3 text-center fs-4" style="letter-spacing: 10px;" readonly></div>
 
 <div id="numeric-keypad" class="d-grid gap-2" style="grid-template-columns: repeat(3, 1fr); max-width: 300px; margin: auto;">
-  <!-- Touches générées par JS -->
+  <!-- Touches générées par JS -->
 </div>
 
 <button type="button" id="clear-code" class="btn btn-outline-secondary w-100 mt-2"><%= i18n.menu.clear_button %></button>
 <button id="submit-code" type="submit" class="btn btn-primary w-100 mt-3" disabled><%= i18n.menu.submit_button %></button>
 
-<input type="hidden" name="token" id="hidden-code">
+<input type="hidden" name="code" id="hidden-code">
 <div id="countdown"><%= i18n.menu.code_expires_in %> <span id="timer">30</span> <%= i18n.menu.seconds %>.</div>
 <p id="expiry-message" class="text-danger text-center fw-semibold" style="display: none;"></p>
 
-        <div id="success-check">
-          <i class="bi bi-check-circle-fill"></i>
-          <p><%= i18n.code_success %></p>
-        </div>
+        <div id="success-check">
+          <i class="bi bi-check-circle-fill"></i>
+          <p><%= i18n.code_success %></p>
+        </div>
 
-      
-      </form>
+      
+      </form>
 
-      <div class="text-center mt-3">
-        <a href="/<%= locale %>/logout" class="text-muted"><%= i18n.logout %></a>
-      </div>
-    </div>
-  </div>
+      <div class="text-center mt-3">
+        <a href="/<%= locale %>/logout" class="text-muted"><%= i18n.logout %></a>
+      </div>
+    </div>
+  </div>
 </main>
 
-  <!-- Footer -->
+  <!-- Footer -->
 <footer class="site-footer section-padding">
-  <div class="container">
-    <div class="row">
-      <div class="col-lg-3 col-12 mb-4 pb-2">
-        <a class="navbar-brand mb-2" href="/<%= locale %>">
-          <span>UAP Immo</span>
-        </a>
-      </div>
-      <div class="col-lg-3 col-md-4 col-6">
-        <h6 class="site-footer-title mb-3"><%= i18n.footer.information %></h6>
-        <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link"><%= i18n.menu.home %></a></li>
-          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
-        </ul>
-      </div>
-      <div class="col-lg-3 col-md-4 col-6">
-        <h6 class="site-footer-title mb-3"><%= i18n.footer.access %></h6>
-        <ul class="site-footer-links">
-          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link"><%= i18n.footer.contact %></a></li>
-        </ul>
-      </div>
-      <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-        <div class="dropdown">
-          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-            <i class="bi bi-chevron-down small"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-  <% if (locale === 'fr') { %>
-    <li>
-      <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
-        <span class="lang-flag lang-en"></span> English
-      </a>
-    </li>
-  <% } else { %>
-    <li>
-      <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">
-        <span class="lang-flag lang-fr"></span> Français
-      </a>
-    </li>
-  <% } %>
-</ul>
-        </div>
-      </div>
-    </div>
-    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-12 mb-4 pb-2">
+        <a class="navbar-brand mb-2" href="/<%= locale %>">
+          <span>UAP Immo</span>
+        </a>
+        <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %>
 </p>
-  </div>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.information %></h6>
+        <ul class="site-footer-links">
+          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link"><%= i18n.menu.home %></a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.access %></h6>
+        <ul class="site-footer-links">
+          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link"><%= i18n.footer.contact %></a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+  <% if (locale === 'fr') { %>
+    <li>
+      <a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>">
+        <span class="lang-flag lang-en"></span> English
+      </a>
+    </li>
+  <% } else { %>
+    <li>
+      <a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>">
+        <span class="lang-flag lang-fr"></span> Français
+      </a>
+      </li>
+  <% } %>
+</ul>
+        </div>
+      </div>
+    </div>
+  </div>
 </footer>
 
-  <!-- Scripts -->
-  <script src="/js/bootstrap.bundle.min.js"></script>
-  <script src="/js/jquery.min.js"></script>
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const INTERVAL_DURATION = 30;
-      const timerDisplay = document.getElementById("timer");
-      const countdownContainer = document.getElementById("countdown");
-      const expiryMessage = document.getElementById("expiry-message");
-      const keypad = document.getElementById("numeric-keypad");
-      const codeDisplay = document.getElementById("code-display");
-      const hiddenCode = document.getElementById("hidden-code");
-      const clearBtn = document.getElementById("clear-code");
-      const submitBtn = document.getElementById("submit-code");
-      const successCheck = document.getElementById("success-check");
-      let previousSecondsRemaining = null;
+  <!-- Scripts -->
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script src="/js/jquery.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const INTERVAL_DURATION = 30;
+      const timerDisplay = document.getElementById("timer");
+      const countdownContainer = document.getElementById("countdown");
+      const expiryMessage = document.getElementById("expiry-message");
+      const keypad = document.getElementById("numeric-keypad");
+      const codeDisplay = document.getElementById("code-display");
+      const hiddenCode = document.getElementById("hidden-code");
+      const clearBtn = document.getElementById("clear-code");
+      const submitBtn = document.getElementById("submit-code");
+      const successCheck = document.getElementById("success-check");
+      let previousSecondsRemaining = null;
 
-      function getSecondsRemaining() {
-        const now = Date.now();
-        return Math.ceil((INTERVAL_DURATION * 1000 - (now % (INTERVAL_DURATION * 1000))) / 1000);
-      }
+      function getSecondsRemaining() {
+        const now = Date.now();
+        return Math.ceil((INTERVAL_DURATION * 1000 - (now % (INTERVAL_DURATION * 1000))) / 1000);
+      }
 
-      function showExpiryMessage(message) {
-        expiryMessage.textContent = message;
-        expiryMessage.style.display = "block";
-      }
+      function showExpiryMessage(message) {
+        expiryMessage.textContent = message;
+        expiryMessage.style.display = "block";
+      }
 
-      function hideExpiryMessage() {
-        expiryMessage.style.display = "none";
-      }
+      function hideExpiryMessage() {
+        expiryMessage.style.display = "none";
+      }
 
-      function resetCodeEntry() {
-        hiddenCode.value = "";
-        codeDisplay.textContent = "";
-        submitBtn.disabled = true;
-      }
+      function resetCodeEntry() {
+        hiddenCode.value = "";
+        codeDisplay.textContent = "";
+        submitBtn.disabled = true;
+      }
 
-      function markAsExpiring() {
-        countdownContainer.classList.add("text-danger");
-        showExpiryMessage("<%= i18n.code_expiring %>");
-        submitBtn.disabled = true;
-      }
+      function markAsExpiring() {
+        countdownContainer.classList.add("text-danger");
+        showExpiryMessage("<%= i18n.code_expiring %>");
+        submitBtn.disabled = true;
+      }
 
-      function handleNewCycle() {
-        countdownContainer.classList.remove("text-danger");
-        resetCodeEntry();
-        successCheck.style.display = "none";
-        showExpiryMessage("<%= i18n.new_code_prompt %>");
-      }
+      function handleNewCycle() {
+        countdownContainer.classList.remove("text-danger");
+        resetCodeEntry();
+        successCheck.style.display = "none";
+        showExpiryMessage("<%= i18n.new_code_prompt %>");
+      }
 
-      function updateTimer() {
-        const secondsRemaining = getSecondsRemaining();
-        const formatted = secondsRemaining.toString().padStart(2, "0");
-        if (timerDisplay.textContent !== formatted) {
-          timerDisplay.textContent = formatted;
-        }
+      function updateTimer() {
+        const secondsRemaining = getSecondsRemaining();
+        const formatted = secondsRemaining.toString().padStart(2, "0");
+        if (timerDisplay.textContent !== formatted) {
+          timerDisplay.textContent = formatted;
+        }
 
-        if (secondsRemaining === INTERVAL_DURATION && previousSecondsRemaining !== null && previousSecondsRemaining !== INTERVAL_DURATION) {
-          handleNewCycle();
-        } else if (secondsRemaining <= 1) {
-          markAsExpiring();
-        } else {
-          countdownContainer.classList.remove("text-danger");
-          if (expiryMessage.textContent === "<%= i18n.code_expiring %>" || expiryMessage.textContent === "<%= i18n.new_code_prompt %>") {
-            hideExpiryMessage();
-          }
-          if (hiddenCode.value.length === 6) {
-            submitBtn.disabled = false;
-          }
-        }
+        if (secondsRemaining === INTERVAL_DURATION && previousSecondsRemaining !== null && previousSecondsRemaining !== INTERVAL_DURATION) {
+          handleNewCycle();
+        } else if (secondsRemaining <= 1) {
+          markAsExpiring();
+        } else {
+          countdownContainer.classList.remove("text-danger");
+          if (expiryMessage.textContent === "<%= i18n.code_expiring %>" || expiryMessage.textContent === "<%= i18n.new_code_prompt %>") {
+            hideExpiryMessage();
+          }
+          if (hiddenCode.value.length === 6) {
+            submitBtn.disabled = false;
+          }
+        }
 
-        previousSecondsRemaining = secondsRemaining;
-      }
+        previousSecondsRemaining = secondsRemaining;
+      }
 
-      function generateRandomDigits() {
-        const digits = [...Array(10).keys()];
-        for (let i = digits.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [digits[i], digits[j]] = [digits[j], digits[i]];
-        }
-        return digits;
-      }
+      function generateRandomDigits() {
+        const digits = [...Array(10).keys()];
+        for (let i = digits.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [digits[i], digits[j]] = [digits[j], digits[i]];
+        }
+        return digits;
+      }
 
-      function renderKeypad() {
-        keypad.innerHTML = "";
-        const digits = generateRandomDigits();
-        digits.forEach((digit) => {
-          const btn = document.createElement("button");
-          btn.className = "btn btn-light";
-          btn.textContent = digit;
-          btn.setAttribute("aria-label", `Chiffre ${digit}`);
-          btn.type = "button";
-          btn.onclick = () => enterDigit(digit);
-          keypad.appendChild(btn);
-        });
-      }
+      function renderKeypad() {
+        keypad.innerHTML = "";
+        const digits = generateRandomDigits();
+        digits.forEach((digit) => {
+          const btn = document.createElement("button");
+          btn.className = "btn btn-light";
+          btn.textContent = digit;
+          btn.setAttribute("aria-label", `Chiffre ${digit}`);
+          btn.type = "button";
+          btn.onclick = () => enterDigit(digit);
+          keypad.appendChild(btn);
+        });
+      }
 
-      function enterDigit(digit) {
-        if (hiddenCode.value.length < 6) {
-          hiddenCode.value += digit;
-          codeDisplay.textContent = "*".repeat(hiddenCode.value.length);
-        }
-        hideExpiryMessage();
-        countdownContainer.classList.remove("text-danger");
-        submitBtn.disabled = hiddenCode.value.length !== 6 || getSecondsRemaining() <= 1;
-      }
+      function enterDigit(digit) {
+        if (hiddenCode.value.length < 6) {
+          hiddenCode.value += digit;
+          codeDisplay.textContent = "*".repeat(hiddenCode.value.length);
+        }
+        hideExpiryMessage();
+        countdownContainer.classList.remove("text-danger");
+        submitBtn.disabled = hiddenCode.value.length !== 6 || getSecondsRemaining() <= 1;
+      }
 
-      clearBtn.addEventListener("click", (event) => {
-        event.preventDefault();
-        resetCodeEntry();
-        hideExpiryMessage();
-      });
+      clearBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        resetCodeEntry();
+        hideExpiryMessage();
+      });
 
-      submitBtn.addEventListener("click", function (e) {
-        e.preventDefault();
-        const code = hiddenCode.value.trim();
-        if (code.length === 6 && getSecondsRemaining() > 1) {
-          successCheck.style.display = "block";
-          this.disabled = true;
-          hideExpiryMessage();
-          setTimeout(() => {
-            this.closest("form").submit();
-          }, 1500);
-        } else {
-          showExpiryMessage("<%= i18n.invalid_or_expired %>");
-        }
-      });
+      submitBtn.addEventListener("click", function (e) {
+        e.preventDefault();
+        const code = hiddenCode.value.trim();
+        if (code.length === 6 && getSecondsRemaining() > 1) {
+          successCheck.style.display = "block";
+          this.disabled = true;
+          hideExpiryMessage();
+          setTimeout(() => {
+            this.closest("form").submit();
+          }, 1500);
+        } else {
+          showExpiryMessage("<%= i18n.invalid_or_expired %>");
+        }
+      });
 
-      renderKeypad();
-      updateTimer();
-      setInterval(updateTimer, 250);
-    });
-  </script>
+      renderKeypad();
+      updateTimer();
+      setInterval(updateTimer, 250);
+    });
+  </script>
 </body>
 </html>
