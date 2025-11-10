@@ -1465,38 +1465,39 @@ app.get('/:locale/2fa', (req, res) => {
 app.post('/:locale/2fa', async (req, res) => {
     const { locale } = req.params;
     const { code } = req.body;
-    const { sessionId } = req.query; // 👈 NOUVEAU : Récupère l'ID de session du formulaire
+    const { sessionId } = req.query; // Récupère l'ID de session si passé en URL
 
     let tmpUserId = req.session.tmpUserId;
 
+    // Tenter de recharger la session si le cookie a échoué (Logique de contournement du bug de cookie)
     if (!tmpUserId && sessionId) {
-        // 🚨 NOUVEAU CORRECTIF POUR LE POST : Tenter de recharger la session si le cookie a échoué
         await new Promise((resolve) => {
             req.sessionStore.get(sessionId, (err, sessionData) => {
-                if (err || !sessionData || !sessionData.tmpUserId) {
-                    console.warn(`⚠️ POST /2fa: Échec de la récupération de session via URL.`);
-                } else {
+                if (!err && sessionData && sessionData.tmpUserId) {
                     req.session.tmpUserId = sessionData.tmpUserId;
                     console.log(`✅ POST /2fa: Session rechargée via URL. tmpUserId: ${req.session.tmpUserId}`);
+                } else {
+                    console.warn(`⚠️ POST /2fa: Échec de la récupération de session via URL ou session expirée.`);
                 }
-                resolve(); // On continue même en cas d'échec
+                resolve(); // On continue
             });
         });
-        tmpUserId = req.session.tmpUserId; // Mettre à jour après l'opération asynchrone
+        tmpUserId = req.session.tmpUserId; // Mettre à jour
     }
 
     if (!tmpUserId) {
-        console.warn('⚠️ POST /2fa: tmpUserId non trouvé (échec de session), redirection vers login.');
+        console.warn('⚠️ POST /2fa: tmpUserId non trouvé, redirection vers login.');
+        req.flash('error', locale === 'fr' ? 'Session expirée ou non trouvée. Veuillez vous reconnecter.' : 'Session expired or not found. Please log in again.');
         return res.redirect(`/${locale}/login`);
     }
 
     try {
         // 1. Récupérer le document Mongoose
-        let user = await User.findById(tmpUserId); 
+        const user = await User.findById(tmpUserId);
         
         if (!user || !user.twoFactorSecret) {
             req.flash('error', 'Erreur critique 2FA. Veuillez vous reconnecter.');
-            delete req.session.tmpUserId; 
+            delete req.session.tmpUserId;
             return res.redirect(`/${locale}/login`);
         }
 
@@ -1505,17 +1506,17 @@ app.post('/:locale/2fa', async (req, res) => {
             secret: user.twoFactorSecret,
             encoding: 'base32',
             token: code,
-            window: 2 
+            window: 2 
         });
 
         if (!verified) {
-            req.flash('error', 'Code 2FA invalide.');
-            // Inclure l'ID de session dans la redirection en cas d'échec pour maintenir le flux
+            req.flash('error', locale === 'fr' ? 'Code 2FA invalide.' : 'Invalid 2FA code.');
+            // Inclure l'ID de session dans la redirection en cas d'échec
             return res.redirect(`/${locale}/2fa?sessionId=${sessionId}`); 
         }
 
         // 3. Établissement de la session Passport finale
-        req.login(user, (err) => { 
+        req.login(user, (err) => { 
             if (err) {
                 console.error("❌ Erreur lors de la connexion après 2FA (req.login):", err);
                 req.flash('error', 'Erreur de connexion après 2FA. Réessayez de vous connecter.');
@@ -1526,7 +1527,7 @@ app.post('/:locale/2fa', async (req, res) => {
             // Suppression de l'ID temporaire
             delete req.session.tmpUserId;
             
-            // 4. Forcer l'enregistrement dans MongoStore AVANT la redirection
+            // 🔑 FIX CRITIQUE: Forcer l'enregistrement dans MongoStore AVANT la redirection
             req.session.save(error => {
                 if (error) {
                     console.error("❌ Erreur de sauvegarde de session finale (req.session.save):", error);
@@ -1534,7 +1535,7 @@ app.post('/:locale/2fa', async (req, res) => {
                     return res.redirect(`/${locale}/login`);
                 }
                 
-                // Redirection finale vers la page utilisateur
+                // Redirection finale vers la page utilisateur UNIQUEMENT après l'enregistrement
                 console.log(`✅ Connexion complète réussie, redirection vers /${locale}/user.`);
                 return res.redirect(`/${locale}/user`);
             });
@@ -1545,7 +1546,7 @@ app.post('/:locale/2fa', async (req, res) => {
         req.flash('error', 'Une erreur est survenue.');
         delete req.session.tmpUserId;
         
-        return res.redirect(`/${locale}/login`); 
+        return res.redirect(`/${locale}/login`); 
     }
 });
 app.post('/add-property', isAuthenticated, upload.fields([
