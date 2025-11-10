@@ -255,6 +255,22 @@ const upload = multer({
 });
 
 
+function cleanupUploadedFiles(files) {
+  if (!files) return;
+  Object.values(files).forEach(fileArray => {
+    fileArray.forEach(file => {
+      if (file?.path) {
+        fs.unlink(file.path, err => {
+          if (err && err.code !== 'ENOENT') {
+            console.error('Erreur lors de la suppression du fichier uploadé :', err);
+          }
+        });
+      }
+    });
+  });
+}
+
+
 
 app.get('/', (req, res) => {
     const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
@@ -1122,12 +1138,24 @@ app.post('/add-property', isAuthenticated, upload.fields([
     if (typeof req.body.parking === 'undefined') {
       return res.status(400).send('Le champ parking est requis.');
     }
-    const photos = [req.files.photo1[0].filename, req.files.photo2[0].filename];
-    if (req.files.extraPhotos) {
-      req.files.extraPhotos.slice(0, 8).forEach(f => photos.push(f.filename));
-    }
-    if (req.files.miniPhotos) {
-      req.files.miniPhotos.slice(0, 3).forEach(f => photos.push(f.filename));
+    const rawVideoUrl = (req.body.videoUrl || '').trim();
+    const hasVideo = rawVideoUrl.length > 0;
+
+    const photos = [];
+
+    if (hasVideo) {
+      cleanupUploadedFiles(req.files);
+    } else {
+      if (!req.files.photo1?.[0] || !req.files.photo2?.[0]) {
+        return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
+      }
+      photos.push(req.files.photo1[0].filename, req.files.photo2[0].filename);
+      if (req.files.extraPhotos) {
+        req.files.extraPhotos.slice(0, 8).forEach(f => photos.push(f.filename));
+      }
+      if (req.files.miniPhotos) {
+        req.files.miniPhotos.slice(0, 3).forEach(f => photos.push(f.filename));
+      }
     }
 
     const property = new Property({
@@ -1152,11 +1180,11 @@ postalCode: req.body.postalCode,
       contactFirstName: req.body.contactFirstName,
       contactLastName: req.body.contactLastName,
       contactPhone: req.body.contactPhone,
-      videoUrl: req.body.videoUrl,
+      videoUrl: rawVideoUrl,
       language: req.body.language || 'fr',
       userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
-      photos
+      photos: hasVideo ? [] : photos.filter(Boolean)
     });
 
     await property.save();
@@ -1795,6 +1823,107 @@ async function generateLandingPage(property) {
       background-color: #ffffff;
       color: #3c3c3c;
       line-height: 1.5;
+    }
+    body.has-video {
+      background-color: #000;
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .video-hero {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 60px 20px;
+      text-align: center;
+    }
+    .video-card {
+      background: rgba(0, 0, 0, 0.55);
+      padding: 50px 40px;
+      border-radius: 28px;
+      max-width: 960px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .video-card h1 {
+      font-size: 2.8rem;
+      margin: 0;
+      color: #ffffff;
+    }
+    .video-card p {
+      margin: 0;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      color: #f2f2f2;
+    }
+    .video-highlight {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .video-highlight .item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.1rem;
+    }
+    .video-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+    .video-actions .price {
+      background-color: #c4b990;
+      color: #000000;
+      font-size: 1.5rem;
+      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 999px;
+    }
+    .video-actions .visit-btn {
+      background: none;
+      border: none;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 1.4rem;
+      padding: 0;
+      text-decoration: underline;
+      transition: opacity 0.2s ease;
+    }
+    .video-actions .visit-btn:hover {
+      opacity: 0.85;
+    }
+    .has-video .extra-info-desktop {
+      background: rgba(255,255,255,0.92);
+      color: #3c3c3c;
+      margin-top: 40px;
+      padding: 40px 20px;
+      border-radius: 28px 28px 0 0;
+    }
+    .has-video .extra-info-desktop h2,
+    .has-video .extra-info-desktop .info-label,
+    .has-video .extra-info-desktop .info-item {
+      color: #3c3c3c;
+    }
+    @media (max-width: 768px) {
+      .video-card {
+        padding: 32px 24px;
+      }
+      .video-card h1 {
+        font-size: 2.1rem;
+      }
+      .video-actions .price {
+        font-size: 1.5rem;
+      }
     }
 
     .container {
@@ -2527,7 +2656,7 @@ h1 {
     }
   </style>
 </head>
-<body>
+<body class="${embedUrl ? 'has-video' : ''}">
   ${embedUrl ? `
   <div class="video-background">
     <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
@@ -2541,6 +2670,42 @@ h1 {
   </noscript>
 
   <!-- Bloc principal -->
+  ${embedUrl ? `
+  <section class="video-hero">
+    <div class="video-card">
+      <p class="property-lorem">${t.adLabel}</p>
+      <h1>${t.propertyHeading} ${property.city}, ${property.country}</h1>
+      <h2 style="font-weight:400; font-size:1.4rem; margin:0;">${t.propertyType}: ${property.propertyType}</h2>
+      ${property.description ? `<p>${property.description}</p>` : `<p>${t.noDescription}</p>`}
+      <div class="video-highlight">
+        <div class="item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
+        ${property.rooms ? `<div class="item"><i class="fal fa-home"></i> ${property.rooms}</div>` : ''}
+        ${property.bedrooms ? `<div class="item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>` : ''}
+        ${property.yearBuilt ? `<div class="item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt}</div>` : ''}
+      </div>
+      ${(property.pool || property.wateringSystem || property.carShelter || property.parking || property.caretakerHouse || property.electricShutters || property.outdoorLighting) ? `<div class="video-highlight">
+        ${property.pool ? `<div class="item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
+        ${property.wateringSystem ? `<div class="item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
+        ${property.carShelter ? `<div class="item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
+        <div class="item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
+        ${property.caretakerHouse ? `<div class="item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
+        ${property.electricShutters ? `<div class="item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
+        ${property.outdoorLighting ? `<div class="item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
+      </div>` : ''}
+      <div class="video-actions">
+        <span class="price">${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</span>
+        <button class="visit-btn" id="visitBtn">${t.visit}</button>
+      </div>
+      <div id="visitModal" class="visit-modal">
+        <div class="visit-modal-content">
+          <span id="closeModal" class="close">&times;</span>
+          <p>${property.contactFirstName || ''} ${property.contactLastName || ''}</p>
+          <p>${property.contactPhone || ''}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+  ` : `
   <div class="container">
     <div class="slider">
       <div class="slides">
@@ -2548,12 +2713,10 @@ h1 {
         <img src="/uploads/${property.photos[1] || 'default.jpg'}" alt="Image 2" />
       </div>
     </div>
-
     <div class="property-info">
       <p class="property-lorem">${t.adLabel}</p>
       <h1>${t.propertyHeading}<br> ${property.city}, ${property.country}</h1>
       <h2>${t.propertyType}: ${property.propertyType}</h2>
-
       <div class="property-details one-line">
   <div class="detail">
     <i class="fal fa-ruler-combined"></i>
@@ -2580,24 +2743,19 @@ h1 {
       <div class="price-row">
         <div class="price">${Number(property.price).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
         <button class="visit-btn" id="visitBtn">${t.visit}</button>
-      </div>
-      <div id="visitModal" class="visit-modal">
-        <div class="visit-modal-content">
-          <span id="closeModal" class="close">&times;</span>
-          <div class="contact-item">
-            <span id="contactPhone">${property.contactPhone || ''}</span>
-            <button id="copyPhoneBtn">Copier le téléphone</button>
-          </div>
-          <div class="contact-item">
-            <span id="contactName">${property.contactFirstName || ''} ${property.contactLastName || ''}</span>
-            <button id="copyNameBtn">Copier le nom</button>
+        <div id="visitModal" class="visit-modal">
+          <div class="visit-modal-content">
+            <span id="closeModal" class="close">&times;</span>
+            <p>${property.contactFirstName || ''} ${property.contactLastName || ''}</p>
+            <p>${property.contactPhone || ''}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
+  `}
 
-  ${property.photos.slice(2).length > 0 ? `
+  ${!embedUrl && property.photos.slice(2).length > 0 ? `
   <div class="photo-carousel">
     <button class="carousel-btn prev">&#10094;</button>
     <div class="carousel-track">
@@ -2607,7 +2765,7 @@ h1 {
   </div>
   ` : ''}
 
-  ${property.photos.slice(10).length > 0 ? `
+  ${!embedUrl && property.photos.slice(10).length > 0 ? `
   <div class="mini-carousel">
     <button class="mini-btn prev">&#10094;</button>
     <div class="mini-track">
@@ -2617,11 +2775,10 @@ h1 {
   </div>
   ` : ''}
 
-  <div id="fullscreenOverlay" class="fullscreen-overlay">
+  ${!embedUrl ? `<div id="fullscreenOverlay" class="fullscreen-overlay">
     <span class="close">&times;</span>
     <img id="fullscreenImg" src="" alt="Photo en plein écran" />
-  </div>
-
+  </div>` : ''}
   <!-- Bloc secondaire en dessous -->
  <div class="extra-info-desktop">
   <hr />

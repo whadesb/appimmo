@@ -920,52 +920,53 @@ progress {
         </div>
 
         <div class="form-group">
-    <label for="photo1"><%= i18n.main_photo %> <span class="text-danger">*</span></label>
-    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required onchange="handleFileUpload(this, 'progress1', 'status1')">
-    <progress id="progress1" value="0" max="100" style="width: 100%; display: none;"></progress>
-    <span id="status1" class="text-muted small d-block mt-1"></span>
-  </div>
+          <label for="photo1"><%= i18n.main_photo %> <span class="text-danger">*</span></label>
+          <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required onchange="handleFileUpload(this, 'progress1', 'status1')">
+          <progress id="progress1" value="0" max="100" style="width: 100%; display: none;"></progress>
+          <span id="status1" class="text-muted small d-block mt-1"></span>
+        </div>
 
-  <div class="form-group">
-    <label for="photo2"><%= i18n.secondary_photo %> <span style="color:red">*</span></label>
-    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required onchange="handleFileUpload(this, 'progress2', 'status2')">
-    <progress id="progress2" value="0" max="100" style="width: 100%; display: none;"></progress>
-    <span id="status2" class="text-muted small d-block mt-1"></span>
-  </div>
+        <div class="form-group">
+          <label for="photo2"><%= i18n.secondary_photo %> <span style="color:red">*</span></label>
+          <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required onchange="handleFileUpload(this, 'progress2', 'status2')">
+          <progress id="progress2" value="0" max="100" style="width: 100%; display: none;"></progress>
+          <span id="status2" class="text-muted small d-block mt-1"></span>
+        </div>
 
-<div class="form-group">
-  <label>Photos supplémentaires pour le carrousel</label>
-  <div class="row">
-    <% for (let i = 1; i <= 8; i++) { %>
-      <div class="col-6 col-md-3 mb-3">
-        <input
-          type="file"
-          class="form-control extra-photo-input"
-          id="extraPhoto<%= i %>"
-          name="extraPhotos"
-          accept="image/*">
-        <img
-          id="extraPreview<%= i %>"
-          class="mt-2 border rounded d-none w-100"
-          style="height:80px; object-fit:cover;" />
-      </div>
+        <div class="form-group">
+          <label>Photos supplémentaires pour le carrousel</label>
+          <div class="row">
+            <% for (let i = 1; i <= 8; i++) { %>
+              <div class="col-6 col-md-3 mb-3">
+                <input
+                  type="file"
+                  class="form-control extra-photo-input"
+                  id="extraPhoto<%= i %>"
+                  name="extraPhotos"
+                  accept="image/*">
+                <img
+                  id="extraPreview<%= i %>"
+                  class="mt-2 border rounded d-none w-100"
+                  style="height:80px; object-fit:cover;" />
+              </div>
 
-    <% } %>
-  </div>
-</div>
+            <% } %>
+          </div>
+        </div>
 
 
 
-  <div class="form-group">
-    <label for="miniPhotos">Petites photos (max 3)</label>
-    <input type="file" class="form-control" id="miniPhotos" name="miniPhotos" accept="image/*" multiple>
-    <div id="miniPhotosPreview" class="d-flex flex-wrap gap-2 mt-2"></div>
-  </div>
+        <div class="form-group">
+          <label for="miniPhotos">Petites photos (max 3)</label>
+          <input type="file" class="form-control" id="miniPhotos" name="miniPhotos" accept="image/*" multiple>
+          <div id="miniPhotosPreview" class="d-flex flex-wrap gap-2 mt-2"></div>
+        </div>
 
-  <div class="form-group">
-    <label for="videoUrl">Lien YouTube</label>
-    <input type="url" class="form-control" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
-  </div>
+        <div class="form-group">
+          <label for="videoUrl">Lien YouTube</label>
+          <input type="url" class="form-control" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
+          <div id="mediaNotice" class="form-text text-muted mt-1">Ajoutez vos photos ou indiquez un lien vidéo plein écran.</div>
+        </div>
 
         <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
         <button type="button" class="btn btn-primary next-step mt-3"><%= i18n.next %></button>
@@ -1634,7 +1635,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const extraPhotoIds = Array.from({ length: 8 }, (_, i) => i + 1);
-    extraPhotoIds.forEach(i => {
+    const extraPhotoElements = extraPhotoIds.map(i => {
         const input = document.getElementById(`extraPhoto${i}`);
         const preview = document.getElementById(`extraPreview${i}`);
         input.addEventListener("change", function () {
@@ -1651,11 +1652,13 @@ document.addEventListener("DOMContentLoaded", function () {
                 preview.classList.add("d-none");
             }
         });
+        return { input, preview };
     });
 
-    document.getElementById("miniPhotos").addEventListener("change", function () {
-        const preview = document.getElementById("miniPhotosPreview");
-        preview.innerHTML = "";
+    const miniPhotosInput = document.getElementById("miniPhotos");
+    const miniPreview = document.getElementById("miniPhotosPreview");
+    miniPhotosInput.addEventListener("change", function () {
+        miniPreview.innerHTML = "";
         if (this.files.length > 3) {
             alert("Vous pouvez télécharger jusqu'à 3 photos.");
             this.value = "";
@@ -1669,11 +1672,90 @@ document.addEventListener("DOMContentLoaded", function () {
                 img.classList.add("border", "rounded");
                 img.style.height = "60px";
                 img.style.objectFit = "cover";
-                preview.appendChild(img);
+                miniPreview.appendChild(img);
             };
             reader.readAsDataURL(file);
         });
     });
+
+    const videoInput = document.getElementById("videoUrl");
+    const mainPhotoInputs = [document.getElementById("photo1"), document.getElementById("photo2")];
+    const progressBars = [
+        { progress: document.getElementById("progress1"), status: document.getElementById("status1") },
+        { progress: document.getElementById("progress2"), status: document.getElementById("status2") }
+    ];
+    const mediaNotice = document.getElementById("mediaNotice");
+
+    function resetMainPhotoFeedback() {
+        progressBars.forEach(({ progress, status }) => {
+            if (progress) {
+                progress.value = 0;
+                progress.style.display = "none";
+            }
+            if (status) {
+                status.textContent = "";
+            }
+        });
+    }
+
+    function clearFileInput(input) {
+        if (!input) return;
+        input.value = "";
+        const event = new Event("change");
+        input.dispatchEvent(event);
+    }
+
+    function toggleMediaFields(hasVideo) {
+        mainPhotoInputs.forEach(input => {
+            if (!input) return;
+            input.required = !hasVideo;
+            input.disabled = hasVideo;
+            if (hasVideo) {
+                clearFileInput(input);
+            }
+        });
+
+        extraPhotoElements.forEach(({ input, preview }) => {
+            if (!input) return;
+            input.disabled = hasVideo;
+            if (hasVideo) {
+                input.value = "";
+                if (preview) {
+                    preview.src = "";
+                    preview.classList.add("d-none");
+                }
+            }
+        });
+
+        if (miniPhotosInput) {
+            miniPhotosInput.disabled = hasVideo;
+            if (hasVideo) {
+                miniPhotosInput.value = "";
+                miniPreview.innerHTML = "";
+            }
+        }
+
+        if (hasVideo) {
+            resetMainPhotoFeedback();
+            if (mediaNotice) {
+                mediaNotice.textContent = "Les photos sont désactivées car un lien vidéo plein écran est renseigné.";
+                mediaNotice.classList.remove("text-muted");
+                mediaNotice.classList.add("text-danger");
+            }
+        } else if (mediaNotice) {
+            mediaNotice.textContent = "Ajoutez vos photos ou indiquez un lien vidéo plein écran.";
+            mediaNotice.classList.remove("text-danger");
+            mediaNotice.classList.add("text-muted");
+        }
+    }
+
+    if (videoInput) {
+        videoInput.addEventListener("input", function () {
+            const hasVideo = this.value.trim().length > 0;
+            toggleMediaFields(hasVideo);
+        });
+        toggleMediaFields(videoInput.value.trim().length > 0);
+    }
 });
 </script>
 <script>
