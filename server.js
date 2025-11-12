@@ -1952,26 +1952,6 @@ function slugify(str) {
 }
 
 // Multer configuration
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, '../public/uploads')),
-  filename: (req, file, cb) => cb(null, Date.now() + path.extname(file.originalname))
-});
-const upload = multer({ storage });
-
-function cleanupUploadedFiles(files) {
-  if (!files) return;
-  Object.values(files).forEach(fileArray => {
-    fileArray.forEach(file => {
-      if (file?.path) {
-        fs.unlink(file.path, err => {
-          if (err && err.code !== 'ENOENT') {
-            console.error('Erreur lors de la suppression du fichier uploadé :', err);
-          }
-        });
-      }
-    });
-  });
-}
 
 // Génération de la landing page HTML
 async function generateLandingPage(property) {
