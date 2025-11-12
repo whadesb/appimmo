@@ -1951,10 +1951,6 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 const seoKeywords = require('./utils/seoKeywords'); 
-const path = require('path');
-const slugify = require('slugify');
-const Property = require('../models/Property');
-const authMiddleware = require('../middleware/auth');
 const { addToSitemap, pingSearchEngines } = require('../utils/seo');
 const seoKeywords = require('../utils/seoKeywords');
 
