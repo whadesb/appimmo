@@ -60,6 +60,11 @@ async function generateLandingPage(property) {
       addInfo: 'Informations complémentaires',
       keyInfo: 'Informations clés',
       location: 'Localisation',
+      contact: 'Contact',
+      phone: 'Téléphone',
+      cityLabel: 'Ville',
+      postalCodeLabel: 'Code postal',
+      countryLabel: 'Pays',
       pool: 'Piscine',
       wateringSystem: 'Arrosage automatique',
       carShelter: 'Abri voiture',
@@ -86,6 +91,11 @@ async function generateLandingPage(property) {
       addInfo: 'Additional information',
       keyInfo: 'Key information',
       location: 'Location',
+      contact: 'Contact',
+      phone: 'Phone',
+      cityLabel: 'City',
+      postalCodeLabel: 'Postal code',
+      countryLabel: 'Country',
       pool: 'Pool',
       wateringSystem: 'Watering system',
       carShelter: 'Car shelter',
@@ -112,6 +122,11 @@ async function generateLandingPage(property) {
       addInfo: 'Información adicional',
       keyInfo: 'Información clave',
       location: 'Ubicación',
+      contact: 'Contacto',
+      phone: 'Teléfono',
+      cityLabel: 'Ciudad',
+      postalCodeLabel: 'Código postal',
+      countryLabel: 'País',
       pool: 'Piscina',
       wateringSystem: 'Sistema de riego',
       carShelter: 'Cochera',
@@ -138,6 +153,11 @@ async function generateLandingPage(property) {
       addInfo: 'Informações adicionais',
       keyInfo: 'Informações chave',
       location: 'Localização',
+      contact: 'Contato',
+      phone: 'Telefone',
+      cityLabel: 'Cidade',
+      postalCodeLabel: 'Código postal',
+      countryLabel: 'País',
       pool: 'Piscina',
       wateringSystem: 'Sistema de irrigação',
       carShelter: 'Abrigo para carro',
@@ -199,6 +219,11 @@ async function generateLandingPage(property) {
     "priceCurrency": "EUR",
     "url": fullUrl
   };
+
+  const contactFullName = [property.contactFirstName, property.contactLastName]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
 
   const template = `
     <!DOCTYPE html>
@@ -599,6 +624,12 @@ align-items: stretch;
   margin: 2px 0;
   border-radius: 4px;
   width: fit-content;
+}
+
+.extra-col .info-item--text {
+  width: 100%;
+  line-height: 1.6;
+  white-space: normal;
 }
 
 .extra-columns {
@@ -1222,6 +1253,30 @@ h1 {
 
   </div>
 </div>
+
+  ${embedUrl ? `
+  <div class="extra-info-desktop extra-info-desktop--extended">
+    <hr />
+    <h2>${t.addInfo}</h2>
+    <div class="extra-columns">
+      <div class="extra-col">
+        <div class="info-label">${t.contact}</div>
+        <div class="info-item">${contactFullName || t.notProvided}</div>
+        <div class="info-item">${t.phone}: ${property.contactPhone || t.notProvided}</div>
+      </div>
+      <div class="extra-col">
+        <div class="info-label">${t.guidedTour}</div>
+        <div class="info-item info-item--text">${property.description || t.noDescription}</div>
+      </div>
+      <div class="extra-col">
+        <div class="info-label">${t.location}</div>
+        <div class="info-item">${t.cityLabel}: ${property.city || t.notProvided}</div>
+        <div class="info-item">${t.postalCodeLabel}: ${property.postalCode || t.notProvided}</div>
+        <div class="info-item">${t.countryLabel}: ${property.country || t.notProvided}</div>
+      </div>
+    </div>
+  </div>
+  ` : ''}
 <script type="application/ld+json">
 ${JSON.stringify(jsonLD)}
 </script>
