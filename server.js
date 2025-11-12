@@ -1951,7 +1951,6 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 const seoKeywords = require('./utils/seoKeywords'); 
-const { addToSitemap, pingSearchEngines } = require('../utils/seo');
 const seoKeywords = require('../utils/seoKeywords');
 
 // Multer configuration
