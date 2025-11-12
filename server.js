@@ -1952,7 +1952,6 @@ function slugify(str) {
 }
 const seoKeywords = require('./utils/seoKeywords'); 
 const router = express.Router();
-const multer = require('multer');
 const sharp = require('sharp');
 const fs = require('fs');
 const path = require('path');
