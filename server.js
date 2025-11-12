@@ -1951,6 +1951,7 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 const seoKeywords = require('./utils/seoKeywords'); 
+// Génération de la landing page HTML
 async function generateLandingPage(property) {
   const lang = property.language || 'fr';
   const city = property.city || '';
@@ -3087,8 +3088,8 @@ h1 {
     <button class="mini-btn prev">&#10094;</button>
     <div class="mini-track">
       ${property.photos.slice(10,13).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
-    </div>
-    <button class="mini-btn next">&#10095;</button>
+      <button class="mini-btn next">&#10095;</button>
+  </div>
   </div>
   ` : ''}
 
@@ -3141,24 +3142,24 @@ h1 {
 </div>
 
 <div class="extra-info-desktop">
-    <hr />
-    <h2>${t.addInfo} - Seconde Section</h2>
-    <div class="extra-columns">
-        <div class="extra-col">
-            <div class="info-label">Titre 1 (Futur Contenu)</div>
-            <p style="font-size:1rem; color:#666;">Ce conteneur est prêt à recevoir votre contenu futur. Il a le même style que le conteneur d'informations complémentaires.</p>
-        </div>
+    <hr />
+    <h2>${t.addInfo} - Seconde Section</h2>
+    <div class="extra-columns">
+        <div class="extra-col">
+            <div class="info-label">Titre 1 (Futur Contenu)</div>
+            <p style="font-size:1rem; color:#666;">Ce conteneur est prêt à recevoir votre contenu futur. Il a le même style que le conteneur d'informations complémentaires.</p>
+        </div>
 
-        <div class="extra-col">
-            <div class="info-label">Titre 2 (Futur Contenu)</div>
-            <p style="font-size:1rem; color:#666;">Il est structuré en colonnes pour faciliter l'ajout d'informations.</p>
-        </div>
+        <div class="extra-col">
+            <div class="info-label">Titre 2 (Futur Contenu)</div>
+            <p style="font-size:1rem; color:#666;">Il est structuré en colonnes pour faciliter l'ajout d'informations.</p>
+        </div>
 
-        <div class="extra-col map-col">
-            <div class="info-label">Titre 3 (Futur Contenu)</div>
-            <p style="font-size:1rem; color:#666;">Même design en mode vidéo (fond blanc/gris) ou mode photo (fond blanc/gris).</p>
-        </div>
-    </div>
+        <div class="extra-col map-col">
+            <div class="info-label">Titre 3 (Futur Contenu)</div>
+            <p style="font-size:1rem; color:#666;">Même design en mode vidéo (fond blanc/gris) ou mode photo (fond blanc/gris).</p>
+        </div>
+    </div>
 </div>
 <script type="application/ld+json">
 ${JSON.stringify(jsonLD)}
@@ -3290,8 +3291,8 @@ ${JSON.stringify(jsonLD)}
         const visibleMini = window.innerWidth <= 768 ? 1 : 3;
         if (miniIndex < miniTrack.children.length - visibleMini) {
           miniIndex += visibleMini;
-          if (miniIndex > miniTrack.children.length - visibleMini) {
-            miniIndex = miniTrack.children.length - visibleMini;
+          if (miniIndex > track.children.length - visibleMini) {
+            miniIndex = track.children.length - visibleMini;
           }
           updateMini();
         }
@@ -3318,7 +3319,6 @@ ${JSON.stringify(jsonLD)}
 
   return `/landing-pages/${filename}`;
 }
-    
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.ionos.fr',
