@@ -1951,9 +1951,6 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 const seoKeywords = require('./utils/seoKeywords'); 
-const router = express.Router();
-const sharp = require('sharp');
-const fs = require('fs');
 const path = require('path');
 const slugify = require('slugify');
 const Property = require('../models/Property');
