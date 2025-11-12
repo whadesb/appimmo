@@ -31,8 +31,6 @@ function cleanupUploadedFiles(files) {
     });
   });
 }
-
-// Génération de la landing page HTML
 // Génération de la landing page HTML
 async function generateLandingPage(property) {
   const lang = property.language || 'fr';
@@ -139,7 +137,6 @@ async function generateLandingPage(property) {
       yes: 'Sim',
       no: 'Não',
       notProvided: 'Não fornecido',
-      noDescription: 'Nenhuma descrição fornecida.',
       mapUnavailable: 'Mapa indisponível.',
       mapError: 'Erro ao carregar o mapa.',
       inProgress: 'Em andamento'
@@ -388,10 +385,6 @@ align-items: stretch;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  /* Removed fixed height to avoid overflowing */
-  /* height: 100%; */
-  /* Eliminated gap to keep elements compact */
-  /* gap: 15px; */
 }
 
     .property-lorem {
@@ -509,13 +502,13 @@ align-items: stretch;
   margin: 0;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* Aligne en haut */
+  justify-content: flex-start;
   align-items: flex-start;
 }
 
 
 .other-info li {
-  font-size: 1.2rem; /* Plus grande et pro */
+  font-size: 1.2rem;
   color: #2b2b2b;
   margin-bottom: 12px;
   font-family: Arial, sans-serif;
@@ -816,7 +809,6 @@ h1 {
     border: 1px solid #ccc;
   }
 }
-
 
 
     /* Affiche le bloc en desktop */
@@ -1170,8 +1162,8 @@ h1 {
     <button class="mini-btn prev">&#10094;</button>
     <div class="mini-track">
       ${property.photos.slice(10,13).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
-      <button class="mini-btn next">&#10095;</button>
-  </div>
+    </div>
+    <button class="mini-btn next">&#10095;</button>
   </div>
   ` : ''}
 
@@ -1392,7 +1384,7 @@ ${JSON.stringify(jsonLD)}
   });
 </script>
 </html>
-  `;
+`;
 
   fs.writeFileSync(filePath, template);
 
@@ -1401,6 +1393,7 @@ ${JSON.stringify(jsonLD)}
 
   return `/landing-pages/${filename}`;
 }
+
 
 // Route POST pour ajouter une propriété
 router.post('/add-property', authMiddleware, upload.fields([
