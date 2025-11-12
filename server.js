@@ -1951,7 +1951,6 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 const seoKeywords = require('./utils/seoKeywords'); 
-const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const sharp = require('sharp');
