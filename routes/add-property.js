@@ -1221,14 +1221,14 @@ h1 {
 
   </div>
 </div>
-****
+
 <div class="extra-info-desktop">
     <hr />
     <h2>${t.addInfo} - Seconde Section</h2>
     <div class="extra-columns">
         <div class="extra-col">
             <div class="info-label">Titre 1 (Futur Contenu)</div>
-            <p style="font-size:1rem; color:#666;">Ce conteneur est prêt à recevoir votre contenu futur.</p>
+            <p style="font-size:1rem; color:#666;">Ce conteneur est prêt à recevoir votre contenu futur. Il a le même style que le conteneur d'informations complémentaires.</p>
         </div>
 
         <div class="extra-col">
@@ -1238,11 +1238,10 @@ h1 {
 
         <div class="extra-col map-col">
             <div class="info-label">Titre 3 (Futur Contenu)</div>
-            <p style="font-size:1rem; color:#666;">Même design en mode vidéo ou mode photo.</p>
+            <p style="font-size:1rem; color:#666;">Même design en mode vidéo (fond blanc/gris) ou mode photo (fond blanc/gris).</p>
         </div>
     </div>
 </div>
-****
 <script type="application/ld+json">
 ${JSON.stringify(jsonLD)}
 </script>
