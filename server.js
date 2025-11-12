@@ -28,6 +28,7 @@ const multer = require('multer');
 const sharp = require('sharp');
 const { v4: uuidv4 } = require('uuid');
 const validator = require('validator');
+const seoKeywords = require('./utils/seoKeywords'); // <-- Cette ligne manquait
 const speakeasy = require('speakeasy');
 const QRCode = require('qrcode');
 const { spawn } = require('child_process');
