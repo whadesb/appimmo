@@ -1950,8 +1950,6 @@ function slugify(str) {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
-const seoKeywords = require('./utils/seoKeywords'); 
-const seoKeywords = require('../utils/seoKeywords');
 
 // Multer configuration
 const storage = multer.diskStorage({
