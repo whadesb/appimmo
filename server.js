@@ -1953,50 +1953,58 @@ function slugify(str) {
 const seoKeywords = require('./utils/seoKeywords'); 
 // Assurez-vous que les dépendances (fs, path, slugify, seoKeywords, addToSitemap, pingSearchEngines) sont déclarées une seule fois en début de fichier.
 
+// Assurez-vous que les dépendances (fs, path, slugify, seoKeywords, addToSitemap, pingSearchEngines) sont déclarées une seule fois en début de fichier.
+
 async function generateLandingPage(property) {
     const lang = property.language || 'fr';
     const city = property.city || '';
     const country = property.country || '';
 
-    // --- Traductions étendues ---
+    // --- Traductions étendues et ajout du label pour le 3e conteneur vidéo ---
     const translations = {
         fr: {
-            propertyIn: 'à', price: 'Prix', pool: 'Piscine', wateringSystem: 'Arrosage automatique', carShelter: 'Abri voiture',
-            parking: 'Parking', caretakerHouse: 'Maison de gardien', electricShutters: 'Stores électriques', outdoorLighting: 'Éclairage extérieur',
-            visit: 'Visiter', yes: 'Oui', no: 'Non', addInfo: 'Informations complémentaires', keyInfo: 'Informations clés',
-            location: 'Localisation', inProgress: 'En cours', notProvided: 'Non renseigné', secondSection: 'Seconde Section',
-            mapUnavailable: 'Carte non disponible.', mapError: 'Erreur lors du chargement de la carte.'
+            adLabel: 'UAP Immo Annonce', propertyHeading: 'Propriété à', propertyType: 'Type de bien', yearBuilt: 'Année de construction', guidedTour: 'Visite guidée', price: 'Prix',
+            addInfo: 'Informations complémentaires', keyInfo: 'Informations clés', location: 'Localisation', pool: 'Piscine', wateringSystem: 'Arrosage automatique',
+            carShelter: 'Abri voiture', parking: 'Parking', caretakerHouse: 'Maison de gardien', electricShutters: 'Stores électriques', outdoorLighting: 'Éclairage extérieur',
+            visit: 'Visiter', yes: 'Oui', no: 'Non', notProvided: 'Non renseignée', noDescription: 'Aucune description fournie.',
+            mapUnavailable: 'Carte non disponible.', mapError: 'Erreur lors du chargement de la carte.', inProgress: 'En cours',
+            secondSection: 'Seconde Section', // Ajout du label de la seconde section
+            videoExtra: 'Troisième Bloc Vidéo' // Nouveau label pour le bloc conditionnel
         },
-        en: { 
-             propertyIn: 'in', price: 'Price', pool: 'Pool', wateringSystem: 'Watering system', carShelter: 'Car shelter', 
-             parking: 'Parking', caretakerHouse: 'Caretaker house', electricShutters: 'Electric shutters', outdoorLighting: 'Outdoor lighting', 
-             visit: 'Visit', yes: 'Yes', no: 'No', addInfo: 'Additional information', keyInfo: 'Key information', 
-             location: 'Location', inProgress: 'In progress', notProvided: 'Not provided', secondSection: 'Second Section',
-             mapUnavailable: 'Map not available.', mapError: 'Error loading the map.'
+        en: {
+            adLabel: 'UAP Real Estate Ad', propertyHeading: 'Property in', propertyType: 'Property Type', yearBuilt: 'Year built', guidedTour: 'Guided tour', price: 'Price',
+            addInfo: 'Additional information', keyInfo: 'Key information', location: 'Location', pool: 'Pool', wateringSystem: 'Watering system',
+            carShelter: 'Car shelter', parking: 'Parking', caretakerHouse: 'Caretaker house', electricShutters: 'Electric shutters', outdoorLighting: 'Outdoor lighting',
+            visit: 'Visit', yes: 'Yes', no: 'No', notProvided: 'Not provided', noDescription: 'No description provided.',
+            mapUnavailable: 'Map not available.', mapError: 'Error loading the map.', inProgress: 'In progress',
+            secondSection: 'Second Section', videoExtra: 'Third Video Block'
         },
-        es: { 
-            propertyIn: 'en', price: 'Precio', pool: 'Piscina', wateringSystem: 'Sistema de riego', carShelter: 'Cochera', 
-            parking: 'Estacionamiento', caretakerHouse: 'Casa del guardián', electricShutters: 'Persianas eléctricas', outdoorLighting: 'Iluminación exterior', 
-            visit: 'Visitar', yes: 'Sí', no: 'No', addInfo: 'Información adicional', keyInfo: 'Información clave', 
-            location: 'Ubicación', inProgress: 'En curso', notProvided: 'No especificado', secondSection: 'Segunda Sección',
-            mapUnavailable: 'Mapa no disponible.', mapError: 'Error al cargar el mapa.'
+        es: {
+            adLabel: 'Anuncio UAP Immo', propertyHeading: 'Propiedad en', propertyType: 'Tipo de propiedad', yearBuilt: 'Año de construcción', guidedTour: 'Visita guiada', price: 'Precio',
+            addInfo: 'Información adicional', keyInfo: 'Información clave', location: 'Ubicación', pool: 'Piscina', wateringSystem: 'Sistema de riego',
+            carShelter: 'Cochera', parking: 'Estacionamiento', caretakerHouse: 'Casa del guardián', electricShutters: 'Persianas eléctricas', outdoorLighting: 'Iluminación exterior',
+            visit: 'Visitar', yes: 'Sí', no: 'No', notProvided: 'No especificado', noDescription: 'No se proporcionó descripción.',
+            mapUnavailable: 'Mapa no disponible.', mapError: 'Error al cargar el mapa.', inProgress: 'En curso',
+            secondSection: 'Segunda Sección', videoExtra: 'Tercer Bloque de Vídeo'
         },
         pt: {
-            propertyIn: 'em', price: 'Preço', pool: 'Piscina', wateringSystem: 'Sistema de irrigação', carShelter: 'Abrigo para carro', 
-            parking: 'Estacionamento', caretakerHouse: 'Casa do zelador', electricShutters: 'Persianas elétricas', outdoorLighting: 'Iluminação externa', 
-            visit: 'Visitar', yes: 'Sim', no: 'Não', addInfo: 'Informações adicionais', keyInfo: 'Informações chave', 
-            location: 'Localização', inProgress: 'Em andamento', notProvided: 'Não fornecido', secondSection: 'Segunda Seção',
-            mapUnavailable: 'Mapa indisponível.', mapError: 'Erro ao carregar o mapa.'
+            adLabel: 'Anúncio UAP Immo', propertyHeading: 'Propriedade em', propertyType: 'Tipo de imóvel', yearBuilt: 'Ano de construção', guidedTour: 'Visita guiada', price: 'Preço',
+            addInfo: 'Informações adicionais', keyInfo: 'Informações chave', location: 'Localização', pool: 'Piscina', wateringSystem: 'Sistema de irrigação',
+            carShelter: 'Abrigo para carro', parking: 'Estacionamento', caretakerHouse: 'Casa do zelador', electricShutters: 'Persianas elétricas', outdoorLighting: 'Iluminação externa',
+            visit: 'Visitar', yes: 'Sim', no: 'Não', notProvided: 'Não fornecido', noDescription: 'Nenhuma descrição fornecida.',
+            mapUnavailable: 'Mapa indisponível.', mapError: 'Erro ao carregar o mapa.', inProgress: 'Em andamento',
+            secondSection: 'Segunda Seção', videoExtra: 'Terceiro Bloco de Vídeo'
         }
     };
     // --- Fin Traductions ---
 
     const t = translations[lang] || translations.fr;
+
     const slug = slugify(`${property.propertyType}-${city}-${country}`, { lower: true });
     const filename = `${property._id}-${slug}.html`;
     
-    // CHEMIN D'ÉCRITURE (basé sur votre dernière version stable)
-   const filePath = path.join(__dirname, 'public', 'landing-pages', filename);
+    // CHEMIN D'ÉCRITURE (Corrigé pour correspondre au express.static(path.join(__dirname, 'public')))
+    const filePath = path.join(__dirname, 'public', 'landing-pages', filename); 
     const fullUrl = `https://uap.immo/landing-pages/${filename}`;
 
     const keywordsList = seoKeywords[lang]?.[country] || [];
@@ -2013,8 +2021,10 @@ async function generateLandingPage(property) {
     const embedUrl = getEmbedUrl(property.videoUrl);
 
     const GTM_ID = 'GTM-TF7HSC3N';
+    // const GA_MEASUREMENT_ID = 'G-0LN60RQ12K'; // Non utilisé dans le template, mais gardé en commentaire.
 
     const jsonLD = {
+        // ... (JSON-LD reste inchangé) ...
         "@context": "https://schema.org",
         "@type": "Residence",
         "name": `${property.propertyType} à vendre à ${city}`,
@@ -2037,7 +2047,8 @@ async function generateLandingPage(property) {
 
     const formattedPrice = Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR');
     
-    // --- CONTENEURS D'INFORMATIONS ADDITIONNELLES ---
+    // --- CONTENEUR D'INFORMATIONS ADDITIONNELLES (Section 1 et 2) ---
+    // Ce bloc est affiché dans les deux modes (Vidéo et Photo)
     const extraInfoContainer = `
         <div class="extra-info-desktop">
             <hr />
@@ -2078,7 +2089,6 @@ async function generateLandingPage(property) {
                     <div class="info-label">${t.location}</div>
                     <div id="map" style="height: 250px;">${t.mapUnavailable}</div>
                 </div>
-
             </div>
             
             <hr />
@@ -2101,7 +2111,16 @@ async function generateLandingPage(property) {
             </div>
         </div>
     `;
-    // --- FIN CONTENEURS ADDITIONNELS ---
+    
+    // --- CONTENEUR SUPPLÉMENTAIRE SPÉCIFIQUE VIDÉO (Le 3ème conteneur que vous voulez après les deux premiers) ---
+    const videoOnlyExtraContainer = `
+        <div class="extra-info-desktop video-specific-container">
+            <hr />
+            <h2>${t.videoExtra}</h2>
+            <p style="font-size:1rem; color:#666;">Ce conteneur est visible uniquement en mode vidéo et suit les deux sections d'informations complémentaires.</p>
+        </div>
+    `;
+    // --- FIN CONTENEUR SUPPLÉMENTAIRE ---
 
     const template = `
         <!DOCTYPE html>
@@ -2116,136 +2135,53 @@ async function generateLandingPage(property) {
             <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
             <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
             <style>
+                /* Styles de base de votre ancienne version */
+                * {
+                    margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif;
+                }
                 body {
-                    margin: 0;
-                    font-family: Arial, sans-serif;
-                    background-color: ${embedUrl ? '#000' : '#ffffff'};
-                    color: ${embedUrl ? '#ffffff' : '#000000'};
+                    background-color: #ffffff; color: #3c3c3c; line-height: 1.5;
                 }
+                /* Correction clé pour le mode vidéo : retire le flexbox du body pour permettre le scroll */
                 body.has-video {
-                    min-height: 100vh;
+                    background-color: #000; color: #ffffff; min-height: 100vh;
+                    /* Retiré: display: flex; flex-direction: column; */
                 }
-                .video-background {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    overflow: hidden;
-                    z-index: -1;
-                }
-                .video-background iframe {
-                    width: 100%;
-                    height: 100%;
-                    pointer-events: none;
-                }
-                .video-overlay {
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    background: rgba(0,0,0,0.5);
-                    z-index: -1;
-                }
-                .video-hero {
-                    position: relative;
-                    z-index: 1;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    text-align: center;
-                    padding: 40px 20px;
-                    min-height: 100vh;
-                }
-                .video-card {
-                    background: rgba(0, 0, 0, 0.55);
-                    padding: 40px 30px;
-                    border-radius: 20px;
-                    max-width: 820px;
-                    width: 100%;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 20px;
-                }
-                .video-card h1 {
-                    font-size: 2.4rem;
-                    margin: 0;
-                }
-                .video-card p {
-                    margin: 0;
-                    font-size: 1.1rem;
-                    line-height: 1.6;
-                }
-                .video-details {
-                    display: flex;
-                    flex-wrap: wrap;
-                    justify-content: center;
-                    gap: 18px;
-                }
-                .video-detail {
-                    display: flex;
-                    align-items: center;
-                    gap: 8px;
-                    font-size: 1.1rem;
-                }
-                .video-actions {
-                    display: flex;
-                    flex-wrap: wrap;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 18px;
-                }
-                .video-price {
-                    font-size: 1.8rem;
-                    font-weight: 600;
-                }
-                .video-actions .visit-btn {
-                    background: none;
-                    border: none;
-                    border-radius: 999px;
-                    color: #ffffff;
-                    padding: 14px 32px;
-                    cursor: pointer;
-                    font-size: 1.4rem;
-                    transition: opacity 0.2s ease;
-                }
-                .visit-btn:hover {
-                    opacity: 0.85;
-                }
-                .page-content {
-                    position: relative;
-                    z-index: 1;
-                    padding: 40px 20px;
-                    max-width: 960px;
-                    margin: 0 auto;
-                }
-                .page-content h1 {
-                    font-size: 2rem;
-                }
-                .page-content p {
-                    font-size: 1.1rem;
-                    line-height: 1.6;
-                }
-                .page-content .info-row {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 15px;
-                    margin: 20px 0;
-                }
-                .page-content .info-row p {
-                    margin: 0;
-                    font-size: 1rem;
-                }
-                /* STYLES POUR LE CONTENEUR ADDITIONNEL */
+                /* Styles Vidéo */
+                .video-background { position: fixed; top: 0; left: 0; width: 100%; height: 100%; overflow: hidden; z-index: -1; }
+                .video-background iframe { width: 100%; height: 100%; pointer-events: none; }
+                .video-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: -1; }
+                .video-hero { position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; min-height: 100vh; padding: 60px 20px; text-align: center; }
+                .video-card { background: rgba(0, 0, 0, 0.55); padding: 50px 40px; border-radius: 28px; max-width: 960px; width: 100%; display: flex; flex-direction: column; gap: 24px; }
+                .video-card h1 { font-size: 2.8rem; margin: 0; color: #ffffff; }
+                .video-card p { margin: 0; font-size: 1.1rem; line-height: 1.6; color: #f2f2f2; }
+                .video-highlight { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
+                .video-highlight .item { display: flex; align-items: center; gap: 10px; font-size: 1.1rem; }
+                .video-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px; }
+                .video-actions .price { background-color: #c4b990; color: #000000; font-size: 1.5rem; font-weight: 600; padding: 14px 32px; border-radius: 999px; }
+                .video-actions .visit-btn { background: none; border: none; border-radius: 999px; color: #ffffff; padding: 14px 32px; cursor: pointer; font-size: 1.4rem; transition: opacity 0.2s ease; }
+                .video-actions .visit-btn:hover { opacity: 0.85; }
+                /* Styles Page Photo */
+                .container { max-width: 1400px; width: 100%; display: flex; flex-direction: row; background-color: white; border-radius: 0; overflow: hidden; margin: 0 auto; height: auto; padding: 40px 20px; gap: 30px; align-items: stretch; }
+                .property-info { flex: 0.8; padding: 0 40px; display: flex; flex-direction: column; justify-content: space-between; }
+                .property-lorem { font-size: 1.2rem; border-bottom: 1px solid #C4B990; padding-bottom: 5px; }
+                /* Styles de base de vos éléments (H1, details, price, etc.) */
+                h1 { font-size: 1.8rem; font-weight: 400; line-height: 1.15; margin-bottom: 15px; }
+                .property-details.one-line { display: flex; flex-direction: row; gap: 30px; margin: 20px 0; }
+                .detail { display: flex; align-items: center; gap: 8px; margin: 8px 0; }
+                .detail i { color: #C4B990; }
+                .price-row { display: flex; gap: 10px; }
+                .price { background-color: #f7f7f7; padding: 10px 20px; font-size: 1.5rem; font-weight: 500; width: 100%; text-transform: uppercase; margin: 20px 0; text-align: center; flex: 1; }
+                /* NOUVEAUX STYLES (Infos complémentaires) */
                 .extra-info-desktop {
-                    max-width: 960px; 
+                    max-width: 960px; /* Alignement avec le contenu principal du mode photo */
                     margin: 40px auto;
                     padding: 20px;
                     background: #ffffff;
                     color: #000;
                     position: relative; 
                     z-index: 2;
+                    display: block; /* Force l'affichage pour le mode photo */
                 }
                 .has-video .extra-info-desktop {
                     background: rgba(255, 255, 255, 0.95); 
@@ -2254,77 +2190,28 @@ async function generateLandingPage(property) {
                     padding: 30px;
                     margin-top: 20px;
                 }
-                .extra-info-desktop h2 {
-                    font-size: 1.6rem;
-                    margin-bottom: 20px;
-                    color: #333;
-                    border-bottom: 1px solid #ddd;
-                    padding-bottom: 10px;
-                }
-                .extra-columns {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 30px;
-                    justify-content: space-between;
-                    padding: 20px 0;
-                }
-                .extra-col {
-                    flex: 1;
-                    min-width: 250px;
-                    padding: 0 10px;
-                }
-                .info-label {
-                    font-weight: bold;
-                    margin-bottom: 10px;
-                }
-                .info-item {
-                    margin: 8px 0;
-                    display: flex;
-                    align-items: center;
-                    gap: 10px;
-                    font-size: 1rem;
-                }
-                .info-item i {
-                    color: #000;
-                }
+                .extra-info-desktop h2 { font-size: 1.6rem; margin-bottom: 20px; color: #333; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+                .extra-columns { display: flex; flex-wrap: wrap; gap: 30px; justify-content: space-between; padding: 20px 0; }
+                .extra-col { flex: 1; min-width: 250px; padding: 0 10px; position: relative; }
+                .info-label { font-weight: bold; margin-bottom: 10px; }
+                .info-item { margin: 8px 0; display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+                .info-item i { color: #000; }
                 .dpe-bar { display: flex; flex-direction: column; width: 100%; max-width: 200px; }
                 .bar { padding: 4px 8px; color: white; font-weight: bold; margin: 2px 0; border-radius: 4px; opacity: 0.5; }
-                .bar.A { background-color: #009966; } .bar.B { background-color: #66CC00; }
-                .bar.C { background-color: #FFCC00; } .bar.D { background-color: #FF9900; }
-                .bar.E { background-color: #FF6600; } .bar.F { background-color: #FF3300; }
+                .bar.A { background-color: #009966; } .bar.B { background-color: #66CC00; } .bar.C { background-color: #FFCC00; } 
+                .bar.D { background-color: #FF9900; } .bar.E { background-color: #FF6600; } .bar.F { background-color: #FF3300; }
                 .bar.G { background-color: #CC0000; } .bar.active { opacity: 1; box-shadow: 0 0 5px rgba(0, 0, 0, 0.4); }
-                /* Responsive */
+                /* Responsive Ajusté */
                 @media (max-width: 768px) {
-                    .video-card {
-                        padding: 30px 20px;
-                    }
-                    .video-card h1 {
-                        font-size: 1.8rem;
-                    }
-                    .video-price {
-                        font-size: 1.4rem;
-                    }
-                    .extra-info-desktop {
-                        margin: 20px auto;
-                        padding: 10px;
-                        background: #ffffff;
-                    }
-                    .has-video .extra-info-desktop {
-                         border-radius: 0;
-                         padding: 20px 10px;
-                    }
-                    .extra-columns {
-                        flex-direction: column;
-                        gap: 10px;
-                    }
-                    .extra-col {
-                         min-width: unset;
-                         padding: 0 5px;
-                    }
-                    #map { height: 200px; }
+                     .extra-info-desktop { padding: 10px; margin: 20px auto; }
+                     .has-video .extra-info-desktop { border-radius: 0; padding: 20px 10px; }
+                     .extra-columns { flex-direction: column; gap: 10px; padding: 10px 0; }
+                     .extra-col { min-width: unset; padding: 0 5px; }
+                     #map { height: 200px; }
                 }
             </style>
             <script>
+                // Google Tag Manager
                 (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
                 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
                 j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
@@ -2346,7 +2233,7 @@ async function generateLandingPage(property) {
                 <div class="video-hero">
                     <div class="video-card">
                         <h1>${property.propertyType} ${t.propertyIn} ${city}, ${country}</h1>
-                        ${property.description ? `<p>${property.description}</p>` : ''}
+                        ${property.description ? `<p>${property.description}</p>` : `<p>${t.noDescription}</p>`}
                         <div class="video-details">
                             <div class="video-detail"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
                             ${property.rooms ? `<div class="video-detail"><i class="fal fa-home"></i> ${property.rooms}</div>` : ''}
@@ -2362,7 +2249,7 @@ async function generateLandingPage(property) {
             ` : `
                 <div class="page-content">
                     <h1>${property.propertyType} ${t.propertyIn} ${city}, ${country}</h1>
-                    ${property.description ? `<p>${property.description}</p>` : ''}
+                    ${property.description ? `<p>${property.description}</p>` : `<p>${t.noDescription}</p>`}
                     <div class="info-row">
                         <p><i class="fal fa-ruler-combined"></i> ${property.surface} m²</p>
                         ${property.rooms ? `<p><i class="fal fa-home"></i> ${property.rooms}</p>` : ''}
@@ -2386,11 +2273,13 @@ async function generateLandingPage(property) {
             
             ${extraInfoContainer}
 
+            ${embedUrl ? videoOnlyExtraContainer : ''}
+
             <script>
-                // Logique de la carte (Leaflet) et bouton de visite
+                // Logique JS
                 document.addEventListener("DOMContentLoaded", function () {
-                    const visitButton = document.getElementById('visitBtn');
                     const contactInfo = '${property.contactFirstName || ''} ${property.contactLastName || ''} - ${property.contactPhone || ''}';
+                    const visitButton = document.getElementById('visitBtn');
 
                     if (visitButton) {
                         visitButton.addEventListener('click', function() {
@@ -2398,8 +2287,9 @@ async function generateLandingPage(property) {
                         });
                     }
 
+                    // Logique de la carte (Leaflet)
                     const mapElement = document.getElementById('map');
-                    if (mapElement && typeof L !== 'undefined') { // Vérifie Leaflet
+                    if (mapElement && typeof L !== 'undefined') { 
                         const city = "${property.city || ''}".replace(/"/g, '');
                         const country = "${property.country || ''}".replace(/"/g, '');
                         const fullAddress = city + ", " + country;
@@ -2412,7 +2302,7 @@ async function generateLandingPage(property) {
                                     const lon = data[0].lon;
                                     
                                     const map = L.map('map').setView([lat, lon], 13);
-                                    setTimeout(() => { map.invalidateSize(); }, 400); // S'assure que la map s'affiche correctement
+                                    setTimeout(() => { map.invalidateSize(); }, 400); 
 
                                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -2429,13 +2319,14 @@ async function generateLandingPage(property) {
                                 mapElement.innerHTML = "${t.mapError}";
                             });
                     }
+                    // Le reste du JS (carousel, etc.) devrait être ici si nécessaire.
                 });
             </script>
         </body>
         </html>`;
     
     // --- Écriture du fichier avec vérification du répertoire ---
-    const targetDir = path.join(__dirname, '../public/landing-pages');
+    const targetDir = path.join(__dirname, 'public', 'landing-pages'); 
     
     if (!fs.existsSync(targetDir)) {
         fs.mkdirSync(targetDir, { recursive: true });
