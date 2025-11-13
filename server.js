@@ -1946,8 +1946,6 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 const seoKeywords = require('./utils/seoKeywords'); 
-// REMPLACEZ VOTRE FONCTION generateLandingPage PAR CECI :
- 
 // Assurez-vous que les dépendances (fs, path, slugify, seoKeywords, addToSitemap, pingSearchEngines) sont déclarées une seule fois en début de fichier.
 
 async function generateLandingPage(property) {
@@ -1996,7 +1994,7 @@ async function generateLandingPage(property) {
 
     const slug = slugify(`${property.propertyType}-${city}-${country}`, { lower: true });
     const filename = `${property._id}-${slug}.html`;
-    const filePath = path.join(__dirname, 'public/landing-pages', filename); // Chemin corrigé
+    const filePath = path.join(__dirname, 'public/landing-pages', filename); 
     const fullUrl = `https://uap.immo/landing-pages/${filename}`;
 
     const keywordsList = (seoKeywords[lang] && seoKeywords[lang][country]) || [];
@@ -2019,6 +2017,10 @@ async function generateLandingPage(property) {
 
     const dpeValue = (property.dpe || '').toString();
     const isDpePending = dpeValue.toLowerCase() === 'en cours';
+    
+    // CORRECTION : Déclaration des variables GTM/GA/JSON-LD AVANT le template
+    const GTM_ID = 'GTM-TF7HSC3N';
+    const GA_MEASUREMENT_ID = 'G-0LN60RQ12K'; 
 
     const jsonLD = {
         "@context": "https://schema.org",
@@ -2110,20 +2112,14 @@ async function generateLandingPage(property) {
             min-height: auto; 
         }
         
-        /* CORRECTION ESPACEMENT: Applique un margin-top sur toutes les sections non-héro */
-        .extra-info-desktop.snap-section:first-of-type {
-            margin-top: 40px; /* Écart après le Hero */
-        }
+        /* CORRECTION ESPACEMENT: Applique un margin-top sur toutes les sections défilantes pour l'écart */
         .extra-info-desktop.snap-section {
-            margin-bottom: 40px; /* Écart entre les sections */
-            margin-top: 40px;
-            /* Le margin-top du premier bloc est déjà géré par le sélecteur ci-dessus */
+            margin-top: 40px; 
+            margin-bottom: 40px;
         }
+        /* Supprime la marge supérieure sur le premier élément de la séquence pour éviter un double espacement après le Hero */
         .extra-info-desktop.snap-section:first-of-type {
-            margin-top: 40px; /* Assure l'écart après le Hero */
-        }
-        .extra-info-desktop.snap-section:last-of-type {
-             margin-bottom: 80px; /* Marge en bas de page */
+            margin-top: 40px; /* L'écart désiré */
         }
         
         /* Surcharge pour le mode vidéo */
@@ -2131,22 +2127,15 @@ async function generateLandingPage(property) {
             background: rgba(255, 255, 255, 0.95); border-radius: 12px; padding: 30px; 
             color: #000;
         }
+        .extra-info-desktop.video-specific-container {
+             min-height: 40vh; /* Hauteur minimale pour ce bloc spécifique */
+        }
         
         /* Styles Columns, DPE, etc. (Conserver le reste du CSS de vos anciennes versions) */
         .extra-columns { display: flex; flex-wrap: wrap; gap: 30px; justify-content: space-between; padding: 20px 0; }
         .extra-col { flex: 1; min-width: 250px; padding: 0 10px; position: relative; }
         .dpe-bar { display: flex; flex-direction: column; width: 220px; }
         /* ... (Reste des styles non modifiés) ... */
-        
-        @media screen and (max-width: 768px) {
-            .snap-section {
-                min-height: auto; /* Désactive 100vh sur mobile pour le contenu */
-            }
-            .video-hero {
-                min-height: 100vh; /* Seul le hero reste 100vh */
-            }
-            /* ... (Reste des media queries) ... */
-        }
     </style>
 </head>
 <body class="${embedUrl ? 'has-video' : ''}">
@@ -2181,6 +2170,10 @@ async function generateLandingPage(property) {
         </div>
     `}
 
+    ${!embedUrl && photos.slice(2, 10).length > 0 ? `<div class="photo-carousel">...</div>` : ''}
+    ${!embedUrl && photos.slice(10, 13).length > 0 ? `<div class="mini-carousel">...</div>` : ''}
+    ${photos.length > 0 ? `<div id="fullscreenOverlay" class="fullscreen-overlay">...</div>` : ''}
+
     <div class="extra-info-desktop snap-section">
         <hr />
         <h2>${t.addInfo}</h2>
@@ -2194,6 +2187,10 @@ async function generateLandingPage(property) {
             <div class="extra-col">
                 <div class="info-label">${t.keyInfo}</div>
                 <div class="info-item">${t.price} : ${formattedPrice} €</div>
+                <div class="info-item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
+                <div class="info-item"><i class="fal fa-home"></i> ${property.rooms || ''}</div>
+                <div class="info-item"><i class="fal fa-bed"></i> ${property.bedrooms || ''}</div>
+                <div class="info-item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt || t.notProvided}</div>
                 </div>
             <div class="extra-col map-col">
                 <div class="info-label">${t.location}</div>
@@ -2256,6 +2253,7 @@ async function generateLandingPage(property) {
                             const lon = data[0].lon;
                             const map = L.map('map').setView([lat, lon], 13);
                             
+                            // Corrigé le bug d'affichage de la carte
                             setTimeout(() => { map.invalidateSize(); }, 200); 
 
                             L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
@@ -2276,7 +2274,11 @@ async function generateLandingPage(property) {
                     });
             }
             
-            // --- Logique Carrousel (À intégrer) ---
+            // --- Logique Modale et Fullscreen ---
+            const visitBtn = document.getElementById('visitBtn');
+            // ... (logique visitBtn, visitModal, closeModal, fullscreenOverlay, etc. doit être complétée ici) ...
+            
+            // --- Logique Carrousel (Intégrée) ---
             function setupCarousel(trackSelector, btnPrevSelector, btnNextSelector, visibleFn, imgSelector = 'img') {
                 const track = document.querySelector(trackSelector);
                 if (!track || !track.children.length) return;
@@ -2370,7 +2372,7 @@ async function generateLandingPage(property) {
 </body>
 </html>
 `;
-
+    
     // --- Écriture du fichier avec vérification du répertoire ---
     const targetDir = path.join(__dirname, 'public/landing-pages');
     
