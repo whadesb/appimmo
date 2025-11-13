@@ -1426,6 +1426,21 @@ app.post('/add-property', isAuthenticated, upload.fields([
     if (req.files.extraPhotos) {
       req.files.extraPhotos.slice(0, 8).forEach(f => extraPhotos.push(f.filename));
     }
+    if (req.files.photo2?.[0]) {
+      mainPhotos.push(req.files.photo2[0].filename);
+    }
+
+    const extraPhotos = [];
+    if (req.files.extraPhotos) {
+      req.files.extraPhotos.slice(0, 8).forEach(f => extraPhotos.push(f.filename));
+    }
+
+    const miniPhotos = [];
+    if (req.files.miniPhotos) {
+      req.files.miniPhotos.slice(0, 3).forEach(f => miniPhotos.push(f.filename));
+    }
+
+    const photos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
 
     const miniPhotos = [];
     if (req.files.miniPhotos) {
@@ -2890,10 +2905,17 @@ ${JSON.stringify(jsonLD)}
       .mini-carousel img { width: 33.33%; }
 
       .discover-gallery {
+        --discover-gap: 20px;
         margin-top: 20px;
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: var(--discover-gap);
+        width: 100%;
+        border: 1px solid #eee;
+        border-radius: 18px;
+        padding: 20px;
+        box-sizing: border-box;
+        background: #ffffff;
       }
 
       .discover-track-wrapper {
@@ -2903,13 +2925,14 @@ ${JSON.stringify(jsonLD)}
 
       .discover-track {
         display: flex;
-        gap: 16px;
+        gap: var(--discover-gap);
         transition: transform 0.3s ease;
       }
 
       .discover-track img {
-        width: 240px;
-        height: 160px;
+        flex: 0 0 calc((100% - (var(--discover-gap) * 2)) / 3);
+        max-width: calc((100% - (var(--discover-gap) * 2)) / 3);
+        height: 220px;
         object-fit: cover;
         border-radius: 18px;
         box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
@@ -2942,8 +2965,10 @@ ${JSON.stringify(jsonLD)}
 
       @media (max-width: 768px) {
         .discover-gallery {
+          --discover-gap: 12px;
           flex-direction: column;
-          gap: 12px;
+          gap: var(--discover-gap);
+          padding: 16px;
         }
 
         .discover-track {
@@ -2951,8 +2976,8 @@ ${JSON.stringify(jsonLD)}
         }
 
         .discover-track img {
-          width: 100%;
-          max-width: 320px;
+          flex: 0 0 100%;
+          max-width: 100%;
           height: auto;
         }
 
@@ -3321,11 +3346,44 @@ ${JSON.stringify(jsonLD)}
           return 3;
         }
 
+        function clampDiscoverIndex() {
+          const visible = visibleDiscover();
+          const maxIndex = Math.max(0, discoverTrack.children.length - visible);
+          if (discoverIndex > maxIndex) {
+            discoverIndex = maxIndex;
+          }
+          if (discoverIndex < 0) {
+            discoverIndex = 0;
+          }
+          return maxIndex;
+        }
+
+        function updateDiscoverControls() {
+          const visible = visibleDiscover();
+          const shouldShow = discoverTrack.children.length > visible;
+          if (prevDiscover) {
+            prevDiscover.style.display = shouldShow ? 'flex' : 'none';
+          }
+          if (nextDiscover) {
+            nextDiscover.style.display = shouldShow ? 'flex' : 'none';
+          }
+        }
+
         function updateDiscover() {
           const firstImg = discoverTrack.querySelector('img');
-          if (!firstImg) return;
-          const imgWidth = firstImg.clientWidth + 16;
-          discoverTrack.style.transform = 'translateX(-' + (discoverIndex * imgWidth) + 'px)';
+          if (!firstImg) {
+            updateDiscoverControls();
+            return;
+          }
+
+          const trackStyles = window.getComputedStyle(discoverTrack);
+          const gapValue = parseFloat(trackStyles.columnGap || trackStyles.gap || '0');
+          const imgWidth = firstImg.getBoundingClientRect().width;
+          clampDiscoverIndex();
+
+          discoverTrack.style.transform = 'translateX(-' + (discoverIndex * (imgWidth + gapValue)) + 'px)';
+
+          updateDiscoverControls();
         }
 
         if (nextDiscover) {
@@ -3333,10 +3391,7 @@ ${JSON.stringify(jsonLD)}
             const visible = visibleDiscover();
             const maxIndex = Math.max(0, discoverTrack.children.length - visible);
             if (discoverIndex < maxIndex) {
-              discoverIndex += visible;
-              if (discoverIndex > maxIndex) {
-                discoverIndex = maxIndex;
-              }
+              discoverIndex = Math.min(maxIndex, discoverIndex + visible);
               updateDiscover();
             }
           });
@@ -3346,10 +3401,7 @@ ${JSON.stringify(jsonLD)}
           prevDiscover.addEventListener('click', () => {
             const visible = visibleDiscover();
             if (discoverIndex > 0) {
-              discoverIndex -= visible;
-              if (discoverIndex < 0) {
-                discoverIndex = 0;
-              }
+              discoverIndex = Math.max(0, discoverIndex - visible);
               updateDiscover();
             }
           });
