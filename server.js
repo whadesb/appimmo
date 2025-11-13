@@ -2904,88 +2904,100 @@ ${JSON.stringify(jsonLD)}
 
       .mini-carousel img { width: 33.33%; }
 
-      .discover-gallery {
-        --discover-gap: 20px;
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
-        gap: var(--discover-gap);
-        width: 100%;
-        border: 1px solid #eee;
-        border-radius: 18px;
-        padding: 20px;
-        box-sizing: border-box;
-        background: #ffffff;
-      }
+      
 
-      .discover-track-wrapper {
-        flex: 1;
-        overflow: hidden;
-      }
+    /* ... (Collez ceci à la place de vos styles .discover-gallery existants) ... */
 
-      .discover-track {
-        display: flex;
-        gap: var(--discover-gap);
-        transition: transform 0.3s ease;
-      }
+    /* Styles pour la nouvelle galerie 'discover' */
+    .discover-gallery {
+      --discover-gap: 20px;
+      margin-top: 20px;
+      display: flex;
+      align-items: center;
+      gap: var(--discover-gap);
+      width: 100%;
+      border: 1px solid #eee;
+      border-radius: 18px;
+      padding: 20px;
+      box-sizing: border-box;
+      background: #ffffff;
+      /* On s'assure qu'il reste horizontal */
+      flex-direction: row; 
+    }
+    .discover-track-wrapper {
+      flex: 1;
+      overflow: hidden;
+    }
+    .discover-track {
+      display: flex;
+      gap: var(--discover-gap);
+      transition: transform 0.3s ease;
+    }
+    .discover-track img {
+      /* Desktop: Affiche 3 images */
+      flex: 0 0 calc((100% - (var(--discover-gap) * 2)) / 3);
+      max-width: calc((100% - (var(--discover-gap) * 2)) / 3);
+      height: 220px; /* Taille vignette desktop */
+      object-fit: cover;
+      border-radius: 18px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+    }
+    .discover-btn {
+      background: #c4b990;
+      border: none;
+      color: #000;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: transform 0.2s ease, background 0.2s ease;
+      flex-shrink: 0; /* Empêche les boutons de rétrécir */
+    }
+    .discover-btn:hover {
+      transform: translateY(-2px);
+      background: #b3a579;
+    }
+    .has-video .discover-btn {
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    }
 
+    /* Tablette: Affiche 2 images */
+    @media (max-width: 1024px) {
       .discover-track img {
-        flex: 0 0 calc((100% - (var(--discover-gap) * 2)) / 3);
-        max-width: calc((100% - (var(--discover-gap) * 2)) / 3);
-        height: 220px;
-        object-fit: cover;
-        border-radius: 18px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
+        flex: 0 0 calc(50% - (var(--discover-gap) / 2));
+        max-width: calc(50% - (var(--discover-gap) / 2));
+        height: 180px; /* Taille vignette tablette */
       }
+    }
 
+    /* Mobile: Affiche 2 images */
+    @media (max-width: 768px) {
+      .discover-gallery {
+        --discover-gap: 12px;
+        /* flex-direction: column; <== SUPPRESSION de cette ligne */
+        gap: var(--discover-gap);
+        padding: 16px;
+      }
+      .discover-track {
+        width: 100%;
+      }
+      .discover-track img {
+        /* Affiche 2 images sur mobile */
+        flex: 0 0 calc(50% - (var(--discover-gap) / 2)); 
+        max-width: calc(50% - (var(--discover-gap) / 2));
+        height: 150px; /* Taille vignette mobile */
+      }
       .discover-btn {
-        background: #c4b990;
-        border: none;
-        color: #000;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        cursor: pointer;
-        transition: transform 0.2s ease, background 0.2s ease;
+        width: 42px;
+        height: 42px;
       }
+    }
 
-      .discover-btn:hover {
-        transform: translateY(-2px);
-        background: #b3a579;
-      }
-
-      .has-video .discover-btn {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      }
-
-      @media (max-width: 768px) {
-        .discover-gallery {
-          --discover-gap: 12px;
-          flex-direction: column;
-          gap: var(--discover-gap);
-          padding: 16px;
-        }
-
-        .discover-track {
-          width: 100%;
-        }
-
-        .discover-track img {
-          flex: 0 0 100%;
-          max-width: 100%;
-          height: auto;
-        }
-
-        .discover-btn {
-          width: 42px;
-          height: 42px;
-        }
-      }
     }
 
     @media screen and (min-width: 769px) {
@@ -3340,8 +3352,8 @@ ${JSON.stringify(jsonLD)}
         const nextDiscover = document.querySelector('.discover-btn.next');
         let discoverIndex = 0;
 
-        function visibleDiscover() {
-          if (window.innerWidth <= 768) return 1;
+       function visibleDiscover() {
+          if (window.innerWidth <= 768) return 2; 
           if (window.innerWidth <= 1024) return 2;
           return 3;
         }
