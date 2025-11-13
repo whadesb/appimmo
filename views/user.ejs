@@ -2159,42 +2159,18 @@ document.addEventListener("DOMContentLoaded", function () {
         mainPhotoInputs.forEach(input => {
             if (!input) return;
             input.required = !hasVideo;
-            input.disabled = hasVideo;
-            if (hasVideo) {
-                clearFileInput(input);
-            }
         });
-
-        extraPhotoElements.forEach(({ input, preview }) => {
-            if (!input) return;
-            input.disabled = hasVideo;
-            if (hasVideo) {
-                input.value = "";
-                if (preview) {
-                    preview.src = "";
-                    preview.classList.add("d-none");
-                }
-            }
-        });
-
-        if (miniPhotosInput) {
-            miniPhotosInput.disabled = hasVideo;
-            if (hasVideo) {
-                miniPhotosInput.value = "";
-                miniPreview.innerHTML = "";
-            }
-        }
 
         if (hasVideo) {
             resetMainPhotoFeedback();
             if (mediaNotice) {
-                mediaNotice.textContent = "Les photos sont désactivées car un lien vidéo plein écran est renseigné.";
-                mediaNotice.classList.remove("text-muted");
-                mediaNotice.classList.add("text-danger");
+                mediaNotice.textContent = "Vous avez renseigné un lien vidéo. Ajoutez également des photos pour enrichir la galerie \"Découvrez le bien\".";
+                mediaNotice.classList.remove("text-muted", "text-danger");
+                mediaNotice.classList.add("text-info");
             }
         } else if (mediaNotice) {
             mediaNotice.textContent = "Ajoutez vos photos ou indiquez un lien vidéo plein écran.";
-            mediaNotice.classList.remove("text-danger");
+            mediaNotice.classList.remove("text-info", "text-danger");
             mediaNotice.classList.add("text-muted");
         }
     }

@@ -1409,22 +1409,30 @@ app.post('/add-property', isAuthenticated, upload.fields([
     const rawVideoUrl = (req.body.videoUrl || '').trim();
     const hasVideo = rawVideoUrl.length > 0;
 
-    const photos = [];
-
-    if (hasVideo) {
+    if (!hasVideo && (!req.files.photo1?.[0] || !req.files.photo2?.[0])) {
       cleanupUploadedFiles(req.files);
-    } else {
-      if (!req.files.photo1?.[0] || !req.files.photo2?.[0]) {
-        return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
-      }
-      photos.push(req.files.photo1[0].filename, req.files.photo2[0].filename);
-      if (req.files.extraPhotos) {
-        req.files.extraPhotos.slice(0, 8).forEach(f => photos.push(f.filename));
-      }
-      if (req.files.miniPhotos) {
-        req.files.miniPhotos.slice(0, 3).forEach(f => photos.push(f.filename));
-      }
+      return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
     }
+
+    const mainPhotos = [];
+    if (req.files.photo1?.[0]) {
+      mainPhotos.push(req.files.photo1[0].filename);
+    }
+    if (req.files.photo2?.[0]) {
+      mainPhotos.push(req.files.photo2[0].filename);
+    }
+
+    const extraPhotos = [];
+    if (req.files.extraPhotos) {
+      req.files.extraPhotos.slice(0, 8).forEach(f => extraPhotos.push(f.filename));
+    }
+
+    const miniPhotos = [];
+    if (req.files.miniPhotos) {
+      req.files.miniPhotos.slice(0, 3).forEach(f => miniPhotos.push(f.filename));
+    }
+
+    const photos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
 
     const property = new Property({
       rooms: Number(req.body.rooms),
@@ -1453,7 +1461,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
       language: req.body.language || 'fr',
       userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
-      photos: hasVideo ? [] : photos.filter(Boolean)
+      photos
     });
 
     await property.save();
@@ -1573,39 +1581,34 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     property.electricShutters = req.body.electricShutters === 'true';
     property.outdoorLighting = req.body.outdoorLighting === 'true';
 
-    if (hasVideo) {
-      property.photos = [];
-      cleanupUploadedFiles(req.files);
-    } else {
-      const existingPhotos = Array.isArray(property.photos) ? property.photos : [];
-      let mainPhotos = existingPhotos.slice(0, 2);
-      let extraPhotos = existingPhotos.slice(2, 10);
-      let miniPhotos = existingPhotos.slice(10, 13);
+    const existingPhotos = Array.isArray(property.photos) ? property.photos : [];
+    let mainPhotos = existingPhotos.slice(0, 2);
+    let extraPhotos = existingPhotos.slice(2, 10);
+    let miniPhotos = existingPhotos.slice(10, 13);
 
-      if (req.files?.photo1?.[0]) {
-        mainPhotos[0] = req.files.photo1[0].filename;
-      }
-      if (req.files?.photo2?.[0]) {
-        mainPhotos[1] = req.files.photo2[0].filename;
-      }
-
-      if (req.files?.extraPhotos?.length) {
-        extraPhotos = req.files.extraPhotos.slice(0, 8).map(file => file.filename);
-      }
-
-      if (req.files?.miniPhotos?.length) {
-        miniPhotos = req.files.miniPhotos.slice(0, 3).map(file => file.filename);
-      }
-
-      const combinedPhotos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
-
-      if (combinedPhotos.length < 2) {
-        cleanupUploadedFiles(req.files);
-        return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
-      }
-
-      property.photos = combinedPhotos;
+    if (req.files?.photo1?.[0]) {
+      mainPhotos[0] = req.files.photo1[0].filename;
     }
+    if (req.files?.photo2?.[0]) {
+      mainPhotos[1] = req.files.photo2[0].filename;
+    }
+
+    if (req.files?.extraPhotos?.length) {
+      extraPhotos = req.files.extraPhotos.slice(0, 8).map(file => file.filename);
+    }
+
+    if (req.files?.miniPhotos?.length) {
+      miniPhotos = req.files.miniPhotos.slice(0, 3).map(file => file.filename);
+    }
+
+    const combinedPhotos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
+
+    if (!hasVideo && combinedPhotos.slice(0, 2).length < 2) {
+      cleanupUploadedFiles(req.files);
+      return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
+    }
+
+    property.photos = combinedPhotos;
 
     await property.save();
 
@@ -2885,6 +2888,89 @@ ${JSON.stringify(jsonLD)}
       .photo-carousel img { width: 50%; }
 
       .mini-carousel img { width: 33.33%; }
+
+      .discover-gallery {
+        --discover-gap: 20px;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        gap: var(--discover-gap);
+        width: 100%;
+        border: 1px solid #eee;
+        border-radius: 18px;
+        padding: 20px;
+        box-sizing: border-box;
+        background: #ffffff;
+      }
+
+      .discover-track-wrapper {
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .discover-track {
+        display: flex;
+        gap: var(--discover-gap);
+        transition: transform 0.3s ease;
+      }
+
+      .discover-track img {
+        flex: 0 0 calc((100% - (var(--discover-gap) * 2)) / 3);
+        max-width: calc((100% - (var(--discover-gap) * 2)) / 3);
+        height: 220px;
+        object-fit: cover;
+        border-radius: 18px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+      }
+
+      .discover-btn {
+        background: #c4b990;
+        border: none;
+        color: #000;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+
+      .discover-btn:hover {
+        transform: translateY(-2px);
+        background: #b3a579;
+      }
+
+      .has-video .discover-btn {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      @media (max-width: 768px) {
+        .discover-gallery {
+          --discover-gap: 12px;
+          flex-direction: column;
+          gap: var(--discover-gap);
+          padding: 16px;
+        }
+
+        .discover-track {
+          width: 100%;
+        }
+
+        .discover-track img {
+          flex: 0 0 100%;
+          max-width: 100%;
+          height: auto;
+        }
+
+        .discover-btn {
+          width: 42px;
+          height: 42px;
+        }
+      }
     }
 
     @media screen and (min-width: 769px) {
@@ -3015,7 +3101,7 @@ ${JSON.stringify(jsonLD)}
   </div>
   ` : ''}
 
-  ${!embedUrl ? `
+  ${photos.length > 0 ? `
   <div id="fullscreenOverlay" class="fullscreen-overlay">
     <span class="close">&times;</span>
     <img id="fullscreenImg" src="" alt="Photo en plein écran" />
@@ -3071,6 +3157,17 @@ ${JSON.stringify(jsonLD)}
   <div class="extra-info-desktop">
     <hr />
     <h2>${t.discoverProperty}</h2>
+    ${embedUrl && photos.length > 0 ? `
+    <div class="discover-gallery">
+      <button class="discover-btn prev" type="button">&#10094;</button>
+      <div class="discover-track-wrapper">
+        <div class="discover-track">
+          ${photos.map(p => `<img src="/uploads/${p}" alt="Photo du bien" />`).join('')}
+        </div>
+      </div>
+      <button class="discover-btn next" type="button">&#10095;</button>
+    </div>
+    ` : ''}
   </div>
 
   <script>
@@ -3125,6 +3222,22 @@ ${JSON.stringify(jsonLD)}
         });
       }
 
+      const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+      const fullscreenImg = document.getElementById('fullscreenImg');
+      const closeFs = fullscreenOverlay ? fullscreenOverlay.querySelector('.close') : null;
+
+      if (fullscreenOverlay && closeFs) {
+        closeFs.addEventListener('click', () => {
+          fullscreenOverlay.style.display = 'none';
+        });
+
+        fullscreenOverlay.addEventListener('click', (e) => {
+          if (e.target === fullscreenOverlay) {
+            fullscreenOverlay.style.display = 'none';
+          }
+        });
+      }
+
       const track = document.querySelector('.carousel-track');
       if (track) {
         const prev = document.querySelector('.carousel-btn.prev');
@@ -3160,26 +3273,12 @@ ${JSON.stringify(jsonLD)}
 
         window.addEventListener('resize', updateCarousel);
 
-        const fullscreenOverlay = document.getElementById('fullscreenOverlay');
-        const fullscreenImg = document.getElementById('fullscreenImg');
-        const closeFs = fullscreenOverlay ? fullscreenOverlay.querySelector('.close') : null;
-
-        if (fullscreenOverlay && fullscreenImg && closeFs) {
+        if (fullscreenOverlay && fullscreenImg) {
           track.querySelectorAll('img').forEach(img => {
             img.addEventListener('click', () => {
               fullscreenImg.src = img.src;
               fullscreenOverlay.style.display = 'flex';
             });
-          });
-
-          closeFs.addEventListener('click', () => {
-            fullscreenOverlay.style.display = 'none';
-          });
-
-          fullscreenOverlay.addEventListener('click', (e) => {
-            if (e.target === fullscreenOverlay) {
-              fullscreenOverlay.style.display = 'none';
-            }
           });
         }
       }
@@ -3218,6 +3317,92 @@ ${JSON.stringify(jsonLD)}
         });
 
         window.addEventListener('resize', updateMini);
+      }
+
+      const discoverTrack = document.querySelector('.discover-track');
+      if (discoverTrack) {
+        const prevDiscover = document.querySelector('.discover-btn.prev');
+        const nextDiscover = document.querySelector('.discover-btn.next');
+        let discoverIndex = 0;
+
+        function visibleDiscover() {
+          if (window.innerWidth <= 768) return 1;
+          if (window.innerWidth <= 1024) return 2;
+          return 3;
+        }
+
+        function clampDiscoverIndex() {
+          const visible = visibleDiscover();
+          const maxIndex = Math.max(0, discoverTrack.children.length - visible);
+          if (discoverIndex > maxIndex) {
+            discoverIndex = maxIndex;
+          }
+          if (discoverIndex < 0) {
+            discoverIndex = 0;
+          }
+          return maxIndex;
+        }
+
+        function updateDiscoverControls() {
+          const visible = visibleDiscover();
+          const shouldShow = discoverTrack.children.length > visible;
+          if (prevDiscover) {
+            prevDiscover.style.display = shouldShow ? 'flex' : 'none';
+          }
+          if (nextDiscover) {
+            nextDiscover.style.display = shouldShow ? 'flex' : 'none';
+          }
+        }
+
+        function updateDiscover() {
+          const firstImg = discoverTrack.querySelector('img');
+          if (!firstImg) {
+            updateDiscoverControls();
+            return;
+          }
+
+          const trackStyles = window.getComputedStyle(discoverTrack);
+          const gapValue = parseFloat(trackStyles.columnGap || trackStyles.gap || '0');
+          const imgWidth = firstImg.getBoundingClientRect().width;
+          clampDiscoverIndex();
+
+          discoverTrack.style.transform = 'translateX(-' + (discoverIndex * (imgWidth + gapValue)) + 'px)';
+
+          updateDiscoverControls();
+        }
+
+        if (nextDiscover) {
+          nextDiscover.addEventListener('click', () => {
+            const visible = visibleDiscover();
+            const maxIndex = Math.max(0, discoverTrack.children.length - visible);
+            if (discoverIndex < maxIndex) {
+              discoverIndex = Math.min(maxIndex, discoverIndex + visible);
+              updateDiscover();
+            }
+          });
+        }
+
+        if (prevDiscover) {
+          prevDiscover.addEventListener('click', () => {
+            const visible = visibleDiscover();
+            if (discoverIndex > 0) {
+              discoverIndex = Math.max(0, discoverIndex - visible);
+              updateDiscover();
+            }
+          });
+        }
+
+        window.addEventListener('resize', updateDiscover);
+        updateDiscover();
+
+        if (fullscreenOverlay && fullscreenImg) {
+          discoverTrack.querySelectorAll('img').forEach(img => {
+            img.addEventListener('click', () => {
+              fullscreenImg.src = img.src;
+              fullscreenOverlay.style.display = 'flex';
+            });
+          });
+        }
       }
     });
   </script>
