@@ -965,6 +965,79 @@ ${JSON.stringify(jsonLD)}
       .photo-carousel img { width: 50%; }
 
       .mini-carousel img { width: 33.33%; }
+
+      .discover-gallery {
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+      }
+
+      .discover-track-wrapper {
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .discover-track {
+        display: flex;
+        gap: 16px;
+        transition: transform 0.3s ease;
+      }
+
+      .discover-track img {
+        width: 240px;
+        height: 160px;
+        object-fit: cover;
+        border-radius: 18px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+      }
+
+      .discover-btn {
+        background: #c4b990;
+        border: none;
+        color: #000;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+
+      .discover-btn:hover {
+        transform: translateY(-2px);
+        background: #b3a579;
+      }
+
+      .has-video .discover-btn {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      }
+
+      @media (max-width: 768px) {
+        .discover-gallery {
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .discover-track {
+          width: 100%;
+        }
+
+        .discover-track img {
+          width: 100%;
+          max-width: 320px;
+          height: auto;
+        }
+
+        .discover-btn {
+          width: 42px;
+          height: 42px;
+        }
+      }
     }
 
     @media screen and (min-width: 769px) {
@@ -1095,7 +1168,7 @@ ${JSON.stringify(jsonLD)}
   </div>
   ` : ''}
 
-  ${!embedUrl ? `
+  ${photos.length > 0 ? `
   <div id="fullscreenOverlay" class="fullscreen-overlay">
     <span class="close">&times;</span>
     <img id="fullscreenImg" src="" alt="Photo en plein écran" />
@@ -1151,6 +1224,17 @@ ${JSON.stringify(jsonLD)}
   <div class="extra-info-desktop">
     <hr />
     <h2>${t.discoverProperty}</h2>
+    ${embedUrl && photos.length > 0 ? `
+    <div class="discover-gallery">
+      <button class="discover-btn prev" type="button">&#10094;</button>
+      <div class="discover-track-wrapper">
+        <div class="discover-track">
+          ${photos.map(p => `<img src="/uploads/${p}" alt="Photo du bien" />`).join('')}
+        </div>
+      </div>
+      <button class="discover-btn next" type="button">&#10095;</button>
+    </div>
+    ` : ''}
   </div>
 
   <script>
@@ -1205,6 +1289,22 @@ ${JSON.stringify(jsonLD)}
         });
       }
 
+      const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+      const fullscreenImg = document.getElementById('fullscreenImg');
+      const closeFs = fullscreenOverlay ? fullscreenOverlay.querySelector('.close') : null;
+
+      if (fullscreenOverlay && closeFs) {
+        closeFs.addEventListener('click', () => {
+          fullscreenOverlay.style.display = 'none';
+        });
+
+        fullscreenOverlay.addEventListener('click', (e) => {
+          if (e.target === fullscreenOverlay) {
+            fullscreenOverlay.style.display = 'none';
+          }
+        });
+      }
+
       const track = document.querySelector('.carousel-track');
       if (track) {
         const prev = document.querySelector('.carousel-btn.prev');
@@ -1240,26 +1340,12 @@ ${JSON.stringify(jsonLD)}
 
         window.addEventListener('resize', updateCarousel);
 
-        const fullscreenOverlay = document.getElementById('fullscreenOverlay');
-        const fullscreenImg = document.getElementById('fullscreenImg');
-        const closeFs = fullscreenOverlay ? fullscreenOverlay.querySelector('.close') : null;
-
-        if (fullscreenOverlay && fullscreenImg && closeFs) {
+        if (fullscreenOverlay && fullscreenImg) {
           track.querySelectorAll('img').forEach(img => {
             img.addEventListener('click', () => {
               fullscreenImg.src = img.src;
               fullscreenOverlay.style.display = 'flex';
             });
-          });
-
-          closeFs.addEventListener('click', () => {
-            fullscreenOverlay.style.display = 'none';
-          });
-
-          fullscreenOverlay.addEventListener('click', (e) => {
-            if (e.target === fullscreenOverlay) {
-              fullscreenOverlay.style.display = 'none';
-            }
           });
         }
       }
@@ -1298,6 +1384,65 @@ ${JSON.stringify(jsonLD)}
         });
 
         window.addEventListener('resize', updateMini);
+      }
+
+      const discoverTrack = document.querySelector('.discover-track');
+      if (discoverTrack) {
+        const prevDiscover = document.querySelector('.discover-btn.prev');
+        const nextDiscover = document.querySelector('.discover-btn.next');
+        let discoverIndex = 0;
+
+        function visibleDiscover() {
+          if (window.innerWidth <= 768) return 1;
+          if (window.innerWidth <= 1024) return 2;
+          return 3;
+        }
+
+        function updateDiscover() {
+          const firstImg = discoverTrack.querySelector('img');
+          if (!firstImg) return;
+          const imgWidth = firstImg.clientWidth + 16;
+          discoverTrack.style.transform = 'translateX(-' + (discoverIndex * imgWidth) + 'px)';
+        }
+
+        if (nextDiscover) {
+          nextDiscover.addEventListener('click', () => {
+            const visible = visibleDiscover();
+            const maxIndex = Math.max(0, discoverTrack.children.length - visible);
+            if (discoverIndex < maxIndex) {
+              discoverIndex += visible;
+              if (discoverIndex > maxIndex) {
+                discoverIndex = maxIndex;
+              }
+              updateDiscover();
+            }
+          });
+        }
+
+        if (prevDiscover) {
+          prevDiscover.addEventListener('click', () => {
+            const visible = visibleDiscover();
+            if (discoverIndex > 0) {
+              discoverIndex -= visible;
+              if (discoverIndex < 0) {
+                discoverIndex = 0;
+              }
+              updateDiscover();
+            }
+          });
+        }
+
+        window.addEventListener('resize', updateDiscover);
+        updateDiscover();
+
+        if (fullscreenOverlay && fullscreenImg) {
+          discoverTrack.querySelectorAll('img').forEach(img => {
+            img.addEventListener('click', () => {
+              fullscreenImg.src = img.src;
+              fullscreenOverlay.style.display = 'flex';
+            });
+          });
+        }
       }
     });
   </script>
@@ -1339,22 +1484,23 @@ if (!/^\d{5}$/.test(postalCode)) {
 
     let photo1 = null, photo2 = null;
 
-    if (hasVideo) {
+    if (!hasVideo && (!req.files.photo1?.[0] || !req.files.photo2?.[0])) {
       cleanupUploadedFiles(req.files);
-    } else {
-      if (req.files.photo1?.[0]) {
-        const p1 = `public/uploads/${Date.now()}-photo1.jpg`;
-        await sharp(req.files.photo1[0].path).resize(800).jpeg({ quality: 80 }).toFile(p1);
-        photo1 = path.basename(p1);
-        fs.unlinkSync(req.files.photo1[0].path);
-      }
+      return res.status(400).json({ error: 'Deux photos sont requises lorsque aucun lien vidéo n’est fourni.' });
+    }
 
-      if (req.files.photo2?.[0]) {
-        const p2 = `public/uploads/${Date.now()}-photo2.jpg`;
-        await sharp(req.files.photo2[0].path).resize(800).jpeg({ quality: 80 }).toFile(p2);
-        photo2 = path.basename(p2);
-        fs.unlinkSync(req.files.photo2[0].path);
-      }
+    if (req.files.photo1?.[0]) {
+      const p1 = `public/uploads/${Date.now()}-photo1.jpg`;
+      await sharp(req.files.photo1[0].path).resize(800).jpeg({ quality: 80 }).toFile(p1);
+      photo1 = path.basename(p1);
+      fs.unlinkSync(req.files.photo1[0].path);
+    }
+
+    if (req.files.photo2?.[0]) {
+      const p2 = `public/uploads/${Date.now()}-photo2.jpg`;
+      await sharp(req.files.photo2[0].path).resize(800).jpeg({ quality: 80 }).toFile(p2);
+      photo2 = path.basename(p2);
+      fs.unlinkSync(req.files.photo2[0].path);
     }
 
     const property = new Property({
@@ -1371,7 +1517,7 @@ postalCode,
       language: req.body.language || 'fr',
       userId,
       videoUrl: rawVideoUrl,
-      photos: hasVideo ? [] : [photo1, photo2].filter(Boolean)
+      photos: [photo1, photo2].filter(Boolean)
     });
 
     await property.save();
