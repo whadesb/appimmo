@@ -1404,6 +1404,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
 ]), async (req, res) => {
   try {
     if (typeof req.body.parking === 'undefined') {
+      cleanupUploadedFiles(req.files); // Nettoyer les fichiers en cas d'erreur
       return res.status(400).send('Le champ parking est requis.');
     }
     const rawVideoUrl = (req.body.videoUrl || '').trim();
@@ -1426,28 +1427,19 @@ app.post('/add-property', isAuthenticated, upload.fields([
     if (req.files.extraPhotos) {
       req.files.extraPhotos.slice(0, 8).forEach(f => extraPhotos.push(f.filename));
     }
-    if (req.files.photo2?.[0]) {
-      mainPhotos.push(req.files.photo2[0].filename);
-    }
-
-    const extraPhotos = [];
-    if (req.files.extraPhotos) {
-      req.files.extraPhotos.slice(0, 8).forEach(f => extraPhotos.push(f.filename));
-    }
 
     const miniPhotos = [];
     if (req.files.miniPhotos) {
       req.files.miniPhotos.slice(0, 3).forEach(f => miniPhotos.push(f.filename));
     }
 
+    // Combine toutes les photos en un seul tableau
     const photos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
 
-    const miniPhotos = [];
-    if (req.files.miniPhotos) {
-      req.files.miniPhotos.slice(0, 3).forEach(f => miniPhotos.push(f.filename));
+    // Si on a une vidéo, on nettoie les fichiers uploadés et on vide le tableau 'photos'
+    if (hasVideo) {
+        cleanupUploadedFiles(req.files);
     }
-
-    const photos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
 
     const property = new Property({
       rooms: Number(req.body.rooms),
@@ -1476,7 +1468,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
       language: req.body.language || 'fr',
       userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
-      photos
+      photos: hasVideo ? [] : photos // Correction : assigner le tableau 'photos'
     });
 
     await property.save();
@@ -1499,11 +1491,11 @@ app.post('/add-property', isAuthenticated, upload.fields([
     👉 <a href="#" onclick="showSection('created-pages'); return false;" class="btn btn-link p-0 align-baseline">Voir ma page dans la liste</a>
   </p>
 </div>
-
 `;
     res.send(successMessage);
   } catch (error) {
     console.error("Erreur lors de l'ajout de la propriété :", error);
+    cleanupUploadedFiles(req.files); // Nettoyer en cas d'erreur
     res.status(500).send('Erreur lors de l\'ajout de la propriété.');
   }
 });
