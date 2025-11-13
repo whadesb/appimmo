@@ -1996,7 +1996,7 @@ async function generateLandingPage(property) {
     const filename = `${property._id}-${slug}.html`;
     
     // CHEMIN D'ÉCRITURE (basé sur votre dernière version stable)
-    const filePath = path.join(__dirname, '../public/landing-pages', filename); 
+   const filePath = path.join(__dirname, 'public', 'landing-pages', filename);
     const fullUrl = `https://uap.immo/landing-pages/${filename}`;
 
     const keywordsList = seoKeywords[lang]?.[country] || [];
