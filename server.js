@@ -2154,13 +2154,30 @@ async function generateLandingPage(property) {
         color: #3c3c3c;
         line-height: 1.5;
       }
-      body.has-video {
-        background-color: #000;
-        color: #ffffff;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
+    body.has-video {
+  background-color: #000;
+  color: #ffffff;
+  min-height: 100vh;
+  /* Correction clé: Retire le flexbox du body pour permettre le scroll. */
+}
+
+/* Ajout des styles globaux pour l'effet Hero Scroll */
+html {
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+    height: 100%;
+    overflow-y: scroll;
+}
+.snap-section {
+    scroll-snap-align: start;
+    min-height: 100vh;
+    width: 100%;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* Permet au contenu de la section d'être centré */
+    align-items: center;
+}
       .video-hero {
         position: relative;
         z-index: 1;
@@ -2232,13 +2249,26 @@ async function generateLandingPage(property) {
       .video-actions .visit-btn:hover {
         opacity: 0.85;
       }
-      .has-video .extra-info-desktop {
-        background: rgba(255,255,255,0.92);
-        color: #3c3c3c;
-        margin-top: 40px;
-        padding: 40px 20px;
-        border-radius: 28px;
-      }
+      /* Style des conteneurs additionnels (Commun) */
+.extra-info-desktop {
+    max-width: 960px; /* Aligné avec .page-content */
+    margin: 40px auto;
+    padding: 20px;
+    background: #ffffff;
+    color: #000;
+    position: relative; 
+    z-index: 2;
+    display: block; /* S'assurer qu'il s'affiche */
+}
+/* Surcharge du style pour le mode vidéo */
+.has-video .extra-info-desktop {
+    background: rgba(255, 255, 255, 0.95); 
+    color: #000;
+    border-radius: 12px;
+    padding: 30px;
+    margin-top: 20px;
+    min-height: auto; /* Ne force pas 100vh s'il y a plus de contenu */
+}
       .has-video .extra-info-desktop h2,
       .has-video .extra-info-desktop .info-label,
       .has-video .extra-info-desktop .info-item {
@@ -2892,7 +2922,7 @@ async function generateLandingPage(property) {
     </noscript>
 
     ${embedUrl ? `
-    <section class="video-hero">
+    <section class="video-hero snap-section">
       <div class="video-card">
         <p class="property-lorem">${t.adLabel}</p>
         <h1>${t.propertyHeading} ${property.city}, ${property.country}</h1>
@@ -2928,7 +2958,7 @@ async function generateLandingPage(property) {
       </div>
     </section>
     ` : `
-    <div class="container">
+    <div class="container snap-section">
       <div class="slider">
         <div class="slides">
           <img src="/uploads/${mainPhoto1}" alt="Image 1" />
@@ -3003,7 +3033,7 @@ async function generateLandingPage(property) {
       <img id="fullscreenImg" src="" alt="Photo en plein écran" />
     </div>` : ''}
 
-    <div class="extra-info-desktop">
+    <div class="extra-info-desktop snap-section">
       <hr />
       <h2>${t.addInfo}</h2>
       <div class="extra-columns">
@@ -3065,36 +3095,64 @@ async function generateLandingPage(property) {
       </div>
       ` : ''}
     </div>
-
+${embedUrl ? `
+    <div class="extra-info-desktop video-specific-container snap-section">
+        <hr />
+        <h2>${t.discoverProperty}</h2>
+        ${(photos.length > 0) ? `
+        <div class="discover-gallery">
+            <button class="discover-btn prev" type="button">&#10094;</button>
+            <div class="discover-track-wrapper">
+                <div class="discover-track">
+                    ${photos.map(p => `<img src="/uploads/${p}" alt="Photo du bien" />`).join('')}
+                </div>
+            </div>
+            <button class="discover-btn next" type="button">&#10095;</button>
+        </div>
+        ` : `<p style="font-size:1rem; color:#666;">Aucune photo supplémentaire n'est disponible pour la version vidéo.</p>`}
+    </div>
+    ` : ''}
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const city = "${(property.city || '').replace(/"/g, '\\"')}";
         const country = "${(property.country || '').replace(/"/g, '\\"')}";
         const fullAddress = city + ", " + country;
-
-        if (document.getElementById('map')) {
-          fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(fullAddress))
-            .then(response => response.json())
-            .then(data => {
-              if (data && data.length > 0) {
+// DANS LA BALISE <script> EN BAS DE LA PAGE, remplacez la logique de la carte :
+if (document.getElementById('map')) {
+    const city = "${(property.city || '').replace(/"/g, '\\"')}";
+    const country = "${(property.country || '').replace(/"/g, '\\"')}";
+    const fullAddress = city + ", " + country;
+    const mapElement = document.getElementById('map');
+    
+    fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(fullAddress))
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.length > 0) {
                 const lat = data[0].lat;
                 const lon = data[0].lon;
                 const map = L.map('map').setView([lat, lon], 13);
+                
+                // IMPORTANT: InvalidateSize pour corriger le rendu
+                setTimeout(() => { map.invalidateSize(); }, 200); 
+
+                // Rétablissement de la couche CARTO qui était dans votre ancienne version
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-                  subdomains: 'abcd',
-                  maxZoom: 19
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+                    subdomains: 'abcd',
+                    maxZoom: 19
                 }).addTo(map);
+
                 L.marker([lat, lon]).addTo(map)
-                  .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
-              } else {
-                document.getElementById('map').innerHTML = "${t.mapUnavailable}";
-              }
-            })
-            .catch(err => {
-              console.error(err);
-              document.getElementById('map').innerHTML = "${t.mapError}";
-            });
+                    .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
+            } else {
+                mapElement.innerHTML = "${t.mapUnavailable}";
+            }
+        })
+        .catch(err => {
+            console.error('Erreur Leaflet:', err);
+            mapElement.innerHTML = "${t.mapError}";
+        });
+
         }
 
         const visitBtn = document.getElementById('visitBtn');
