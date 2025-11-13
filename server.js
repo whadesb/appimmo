@@ -2237,7 +2237,7 @@ async function generateLandingPage(property) {
         color: #3c3c3c;
         margin-top: 40px;
         padding: 40px 20px;
-        border-radius: 28px 28px 0 0;
+        border-radius: 28px;
       }
       .has-video .extra-info-desktop h2,
       .has-video .extra-info-desktop .info-label,
@@ -2668,7 +2668,6 @@ async function generateLandingPage(property) {
         border-radius: 18px;
         padding: 20px;
         box-sizing: border-box;
-        background: #ffffff;
         flex-direction: row; 
       }
       .discover-track-wrapper {
