@@ -913,7 +913,7 @@ h1 {
       text-align: center;
       display: flex;
       flex-direction: column;
-  D     align-items: center;
+      align-items: center;
       gap: 15px;
       min-width: 320px;
     }
@@ -1325,7 +1325,7 @@ ${JSON.stringify(jsonLD)}
           updateCarousel();
         }
       });
-  D     window.addEventListener('resize', updateCarousel);
+       window.addEventListener('resize', updateCarousel);
 
       const fullscreenOverlay = document.getElementById('fullscreenOverlay');
       const fullscreenImg = document.getElementById('fullscreenImg');
@@ -1356,7 +1356,7 @@ ${JSON.stringify(jsonLD)}
       }
       nextMini.addEventListener('click', () => {
         const visibleMini = window.innerWidth <= 768 ? 1 : 3;
-DE         if (miniIndex < miniTrack.children.length - visibleMini) {
+         if (miniIndex < miniTrack.children.length - visibleMini) {
           miniIndex += visibleMini;
           if (miniIndex > miniTrack.children.length - visibleMini) {
             miniIndex = miniTrack.children.length - visibleMini;
