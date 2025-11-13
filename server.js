@@ -1426,6 +1426,21 @@ app.post('/add-property', isAuthenticated, upload.fields([
     if (req.files.extraPhotos) {
       req.files.extraPhotos.slice(0, 8).forEach(f => extraPhotos.push(f.filename));
     }
+    if (req.files.photo2?.[0]) {
+      mainPhotos.push(req.files.photo2[0].filename);
+    }
+
+    const extraPhotos = [];
+    if (req.files.extraPhotos) {
+      req.files.extraPhotos.slice(0, 8).forEach(f => extraPhotos.push(f.filename));
+    }
+
+    const miniPhotos = [];
+    if (req.files.miniPhotos) {
+      req.files.miniPhotos.slice(0, 3).forEach(f => miniPhotos.push(f.filename));
+    }
+
+    const photos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
 
     const miniPhotos = [];
     if (req.files.miniPhotos) {
