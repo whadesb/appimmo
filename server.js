@@ -1396,8 +1396,6 @@ app.post('/:locale/2fa', async (req, res) => {
   }
 });
 
-// REMPLACEZ CETTE FONCTION DANS server.js
-
 // REMPLACEZ app.post('/add-property', ...) PAR CECI :
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
@@ -1637,22 +1635,6 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
   }
 });
 
-    res.render('edit-property', {
-      property,
-      successMessage: "Votre annonce a été mise à jour avec succès.",
-      locale,
-      currentPath,
-      i18n,
-      isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false
-    });
-
-  } catch (error) {
-    console.error('Erreur lors de la mise à jour de la propriété :', error.message);
-    console.error(error.stack);
-    cleanupUploadedFiles(req.files); // Nettoyer en cas d'erreur
-    res.status(500).send("Erreur interne du serveur.");
-  }
-});
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ userId: req.user._id });
