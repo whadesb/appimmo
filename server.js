@@ -1396,6 +1396,8 @@ app.post('/:locale/2fa', async (req, res) => {
   }
 });
 
+// REMPLACEZ CETTE FONCTION DANS server.js
+
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 },
@@ -1404,17 +1406,19 @@ app.post('/add-property', isAuthenticated, upload.fields([
 ]), async (req, res) => {
   try {
     if (typeof req.body.parking === 'undefined') {
-      cleanupUploadedFiles(req.files); // Nettoyer les fichiers en cas d'erreur
+      cleanupUploadedFiles(req.files); // Nettoyer en cas d'erreur
       return res.status(400).send('Le champ parking est requis.');
     }
     const rawVideoUrl = (req.body.videoUrl || '').trim();
     const hasVideo = rawVideoUrl.length > 0;
 
+    // On vérifie les photos obligatoires SEULEMENT s'il n'y a PAS de vidéo
     if (!hasVideo && (!req.files.photo1?.[0] || !req.files.photo2?.[0])) {
       cleanupUploadedFiles(req.files);
       return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
     }
 
+    // On traite TOUJOURS les photos, qu'il y ait une vidéo ou non
     const mainPhotos = [];
     if (req.files.photo1?.[0]) {
       mainPhotos.push(req.files.photo1[0].filename);
@@ -1433,13 +1437,10 @@ app.post('/add-property', isAuthenticated, upload.fields([
       req.files.miniPhotos.slice(0, 3).forEach(f => miniPhotos.push(f.filename));
     }
 
-    // Combine toutes les photos en un seul tableau
     const photos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
 
-    // Si on a une vidéo, on nettoie les fichiers uploadés et on vide le tableau 'photos'
-    if (hasVideo) {
-        cleanupUploadedFiles(req.files);
-    }
+    // On ne nettoie plus les fichiers si 'hasVideo' est vrai
+    // (L'ancienne logique 'if (hasVideo) { cleanup... }' est supprimée)
 
     const property = new Property({
       rooms: Number(req.body.rooms),
@@ -1468,7 +1469,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
       language: req.body.language || 'fr',
       userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
-      photos: hasVideo ? [] : photos // Correction : assigner le tableau 'photos'
+      photos: photos // <-- CORRECTION : On sauvegarde toujours les photos
     });
 
     await property.save();
@@ -1531,6 +1532,8 @@ app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
   }
 });
 
+// REMPLACEZ AUSSI CETTE FONCTION DANS server.js
+
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 },
@@ -1577,7 +1580,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     property.language = allowedLanguages.includes(req.body.language) ? req.body.language : property.language;
     property.videoUrl = rawVideoUrl;
 
-    // Champs booléens des équipements (venant de <select> avec 'true' ou 'false' comme valeurs)
+    // Champs booléens
     property.pool = req.body.pool === 'true';
     property.doubleGlazing = req.body.doubleGlazing === 'true';
     property.wateringSystem = req.body.wateringSystem === 'true';
@@ -1588,6 +1591,8 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     property.electricShutters = req.body.electricShutters === 'true';
     property.outdoorLighting = req.body.outdoorLighting === 'true';
 
+    // --- LOGIQUE PHOTOS CORRIGÉE ---
+    // On traite TOUJOURS les photos, même s'il y a une vidéo
     const existingPhotos = Array.isArray(property.photos) ? property.photos : [];
     let mainPhotos = existingPhotos.slice(0, 2);
     let extraPhotos = existingPhotos.slice(2, 10);
@@ -1610,12 +1615,15 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
 
     const combinedPhotos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
 
+    // On vérifie les photos obligatoires SEULEMENT s'il n'y a PAS de vidéo
     if (!hasVideo && combinedPhotos.slice(0, 2).length < 2) {
       cleanupUploadedFiles(req.files);
       return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
     }
-
+    
+    // On sauvegarde toujours le tableau de photos combinées
     property.photos = combinedPhotos;
+    // --- FIN DE LA LOGIQUE CORRIGÉE ---
 
     await property.save();
 
@@ -1646,10 +1654,10 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
   } catch (error) {
     console.error('Erreur lors de la mise à jour de la propriété :', error.message);
     console.error(error.stack);
+    cleanupUploadedFiles(req.files); // Nettoyer en cas d'erreur
     res.status(500).send("Erreur interne du serveur.");
   }
 });
-
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ userId: req.user._id });
