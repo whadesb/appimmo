@@ -1951,6 +1951,8 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 const seoKeywords = require('./utils/seoKeywords'); 
+// Assurez-vous que les dépendances (fs, path, slugify, seoKeywords, addToSitemap, pingSearchEngines) sont déclarées une seule fois en début de fichier.
+
 async function generateLandingPage(property) {
     const lang = property.language || 'fr';
     const city = property.city || '';
@@ -1959,92 +1961,32 @@ async function generateLandingPage(property) {
     // --- Traductions étendues ---
     const translations = {
         fr: {
-            propertyIn: 'à',
-            price: 'Prix',
-            pool: 'Piscine',
-            wateringSystem: 'Arrosage automatique',
-            carShelter: 'Abri voiture',
-            parking: 'Parking',
-            caretakerHouse: 'Maison de gardien',
-            electricShutters: 'Stores électriques',
-            outdoorLighting: 'Éclairage extérieur',
-            visit: 'Visiter',
-            yes: 'Oui',
-            no: 'Non',
-            addInfo: 'Informations complémentaires',
-            keyInfo: 'Informations clés',
-            location: 'Localisation',
-            inProgress: 'En cours',
-            notProvided: 'Non renseigné',
-            secondSection: 'Seconde Section',
-            mapUnavailable: 'Carte non disponible.',
-            mapError: 'Erreur lors du chargement de la carte.'
+            propertyIn: 'à', price: 'Prix', pool: 'Piscine', wateringSystem: 'Arrosage automatique', carShelter: 'Abri voiture',
+            parking: 'Parking', caretakerHouse: 'Maison de gardien', electricShutters: 'Stores électriques', outdoorLighting: 'Éclairage extérieur',
+            visit: 'Visiter', yes: 'Oui', no: 'Non', addInfo: 'Informations complémentaires', keyInfo: 'Informations clés',
+            location: 'Localisation', inProgress: 'En cours', notProvided: 'Non renseigné', secondSection: 'Seconde Section',
+            mapUnavailable: 'Carte non disponible.', mapError: 'Erreur lors du chargement de la carte.'
         },
-        en: {
-             propertyIn: 'in',
-             price: 'Price',
-             pool: 'Pool',
-             wateringSystem: 'Watering system',
-             carShelter: 'Car shelter',
-             parking: 'Parking',
-             caretakerHouse: 'Caretaker house',
-             electricShutters: 'Electric shutters',
-             outdoorLighting: 'Outdoor lighting',
-             visit: 'Visit',
-             yes: 'Yes',
-             no: 'No',
-             addInfo: 'Additional information',
-             keyInfo: 'Key information',
-             location: 'Location',
-             inProgress: 'In progress',
-             notProvided: 'Not provided',
-             secondSection: 'Second Section',
-             mapUnavailable: 'Map not available.',
-             mapError: 'Error loading the map.'
+        en: { 
+             propertyIn: 'in', price: 'Price', pool: 'Pool', wateringSystem: 'Watering system', carShelter: 'Car shelter', 
+             parking: 'Parking', caretakerHouse: 'Caretaker house', electricShutters: 'Electric shutters', outdoorLighting: 'Outdoor lighting', 
+             visit: 'Visit', yes: 'Yes', no: 'No', addInfo: 'Additional information', keyInfo: 'Key information', 
+             location: 'Location', inProgress: 'In progress', notProvided: 'Not provided', secondSection: 'Second Section',
+             mapUnavailable: 'Map not available.', mapError: 'Error loading the map.'
         },
-        es: {
-             propertyIn: 'en',
-             price: 'Precio',
-             pool: 'Piscina',
-             wateringSystem: 'Sistema de riego',
-             carShelter: 'Cochera',
-             parking: 'Estacionamiento',
-             caretakerHouse: 'Casa del guardián',
-             electricShutters: 'Persianas eléctricas',
-             outdoorLighting: 'Iluminación exterior',
-             visit: 'Visitar',
-             yes: 'Sí',
-             no: 'No',
-             addInfo: 'Información adicional',
-             keyInfo: 'Información clave',
-             location: 'Ubicación',
-             inProgress: 'En curso',
-             notProvided: 'No especificado',
-             secondSection: 'Segunda Sección',
-             mapUnavailable: 'Mapa no disponible.',
-             mapError: 'Error al cargar el mapa.'
+        es: { 
+            propertyIn: 'en', price: 'Precio', pool: 'Piscina', wateringSystem: 'Sistema de riego', carShelter: 'Cochera', 
+            parking: 'Estacionamiento', caretakerHouse: 'Casa del guardián', electricShutters: 'Persianas eléctricas', outdoorLighting: 'Iluminación exterior', 
+            visit: 'Visitar', yes: 'Sí', no: 'No', addInfo: 'Información adicional', keyInfo: 'Información clave', 
+            location: 'Ubicación', inProgress: 'En curso', notProvided: 'No especificado', secondSection: 'Segunda Sección',
+            mapUnavailable: 'Mapa no disponible.', mapError: 'Error al cargar el mapa.'
         },
         pt: {
-             propertyIn: 'em',
-             price: 'Preço',
-             pool: 'Piscina',
-             wateringSystem: 'Sistema de irrigação',
-             carShelter: 'Abrigo para carro',
-             parking: 'Estacionamento',
-             caretakerHouse: 'Casa do zelador',
-             electricShutters: 'Persianas elétricas',
-             outdoorLighting: 'Iluminação externa',
-             visit: 'Visitar',
-             yes: 'Sim',
-             no: 'Não',
-             addInfo: 'Informações adicionais',
-             keyInfo: 'Informações chave',
-             location: 'Localização',
-             inProgress: 'Em andamento',
-             notProvided: 'Não fornecido',
-             secondSection: 'Segunda Seção',
-             mapUnavailable: 'Mapa indisponível.',
-             mapError: 'Erro ao carregar o mapa.'
+            propertyIn: 'em', price: 'Preço', pool: 'Piscina', wateringSystem: 'Sistema de irrigação', carShelter: 'Abrigo para carro', 
+            parking: 'Estacionamento', caretakerHouse: 'Casa do zelador', electricShutters: 'Persianas elétricas', outdoorLighting: 'Iluminação externa', 
+            visit: 'Visitar', yes: 'Sim', no: 'Não', addInfo: 'Informações adicionais', keyInfo: 'Informações chave', 
+            location: 'Localização', inProgress: 'Em andamento', notProvided: 'Não fornecido', secondSection: 'Segunda Seção',
+            mapUnavailable: 'Mapa indisponível.', mapError: 'Erro ao carregar o mapa.'
         }
     };
     // --- Fin Traductions ---
@@ -2053,9 +1995,8 @@ async function generateLandingPage(property) {
     const slug = slugify(`${property.propertyType}-${city}-${country}`, { lower: true });
     const filename = `${property._id}-${slug}.html`;
     
-    // Assurez-vous que le chemin est correct par rapport à l'emplacement de ce fichier.
-    // L'ancienne version était: path.join(__dirname, '../public/landing-pages', filename);
-    const filePath = path.join(__dirname, 'public', 'landing-pages', filename);
+    // CHEMIN D'ÉCRITURE (basé sur votre dernière version stable)
+    const filePath = path.join(__dirname, '../public/landing-pages', filename); 
     const fullUrl = `https://uap.immo/landing-pages/${filename}`;
 
     const keywordsList = seoKeywords[lang]?.[country] || [];
@@ -2096,7 +2037,7 @@ async function generateLandingPage(property) {
 
     const formattedPrice = Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR');
     
-    // --- NOUVEAU CONTENEUR D'INFORMATIONS ADDITIONNELLES (facteur commun aux deux designs) ---
+    // --- CONTENEURS D'INFORMATIONS ADDITIONNELLES ---
     const extraInfoContainer = `
         <div class="extra-info-desktop">
             <hr />
@@ -2160,7 +2101,7 @@ async function generateLandingPage(property) {
             </div>
         </div>
     `;
-    // --- FIN NOUVEAU CONTENEUR ---
+    // --- FIN CONTENEURS ADDITIONNELS ---
 
     const template = `
         <!DOCTYPE html>
@@ -2181,7 +2122,6 @@ async function generateLandingPage(property) {
                     background-color: ${embedUrl ? '#000' : '#ffffff'};
                     color: ${embedUrl ? '#ffffff' : '#000000'};
                 }
-                /* CORRECTION CLÉ: Retirer le flexbox sur body.has-video pour permettre le scroll du contenu additionnel */
                 body.has-video {
                     min-height: 100vh;
                 }
@@ -2472,8 +2412,7 @@ async function generateLandingPage(property) {
                                     const lon = data[0].lon;
                                     
                                     const map = L.map('map').setView([lat, lon], 13);
-                                    // Utiliser setTimeout pour assurer que Leaflet est bien rendu
-                                    setTimeout(() => { map.invalidateSize(); }, 400); 
+                                    setTimeout(() => { map.invalidateSize(); }, 400); // S'assure que la map s'affiche correctement
 
                                     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                                         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -2499,7 +2438,6 @@ async function generateLandingPage(property) {
     const targetDir = path.join(__dirname, '../public/landing-pages');
     
     if (!fs.existsSync(targetDir)) {
-        // Crée le répertoire si nécessaire (résout l'erreur ENOENT)
         fs.mkdirSync(targetDir, { recursive: true });
     }
     
@@ -2510,7 +2448,6 @@ async function generateLandingPage(property) {
 
     return `/landing-pages/${filename}`;
 }
-
 const transporter = nodemailer.createTransport({
   host: 'smtp.ionos.fr',
   port: 587,
