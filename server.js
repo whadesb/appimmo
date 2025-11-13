@@ -1398,6 +1398,7 @@ app.post('/:locale/2fa', async (req, res) => {
 
 // REMPLACEZ CETTE FONCTION DANS server.js
 
+// REMPLACEZ app.post('/add-property', ...) PAR CECI :
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 },
@@ -1439,8 +1440,18 @@ app.post('/add-property', isAuthenticated, upload.fields([
 
     const photos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
 
-    // On ne nettoie plus les fichiers si 'hasVideo' est vrai
-    // (L'ancienne logique 'if (hasVideo) { cleanup... }' est supprimée)
+    // Si vidéo, on nettoie les fichiers uploadés (Multer les sauvegarde par défaut)
+    // MAIS on garde 'photos' pour la galerie
+    if (hasVideo) {
+        // Note : si 'photos' est vide, on pourrait vouloir quand même nettoyer
+    } else {
+        // S'il n'y a pas de vidéo, on nettoie les fichiers que si les photos principales manquent
+        if (photos.length < 2) {
+             cleanupUploadedFiles(req.files);
+             return res.status(400).send('Deux photos principales sont requises lorsque aucun lien vidéo n’est fourni.');
+        }
+    }
+
 
     const property = new Property({
       rooms: Number(req.body.rooms),
@@ -1469,7 +1480,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
       language: req.body.language || 'fr',
       userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
-      photos: photos // <-- CORRECTION : On sauvegarde toujours les photos
+      photos: photos // <-- On sauvegarde TOUJOURS les photos
     });
 
     await property.save();
@@ -1501,39 +1512,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
   }
 });
 
-app.get('/property/edit/:id', isAuthenticated, async (req, res) => {
-  try {
-    const property = await Property.findById(req.params.id);
-
-    if (!property || !property.userId.equals(req.user._id)) {
-      return res.status(403).send('Vous n\'êtes pas autorisé à modifier cette propriété.');
-    }
-
-    const locale = req.language || 'fr'; // ou req.query.lang || 'fr' selon ton système
-    const currentPath = req.originalUrl;
-
-    const i18n = {
-      menu: {
-        home: locale === 'fr' ? 'Accueil' : 'Home',
-        contact: locale === 'fr' ? 'Contact' : 'Contact',
-      }
-    };
-
-    res.render('edit-property', {
-      property,
-      locale,
-      currentPath,
-      i18n,
-      isAuthenticated: req.isAuthenticated()
-    });
-  } catch (error) {
-    console.error('Erreur lors de la récupération de la propriété:', error);
-    res.status(500).send('Une erreur est survenue lors de la récupération de la propriété.');
-  }
-});
-
-// REMPLACEZ AUSSI CETTE FONCTION DANS server.js
-
+// REMPLACEZ app.post('/property/update/:id', ...) PAR CECI :
 app.post('/property/update/:id', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
   { name: 'photo2', maxCount: 1 },
@@ -1592,7 +1571,6 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     property.outdoorLighting = req.body.outdoorLighting === 'true';
 
     // --- LOGIQUE PHOTOS CORRIGÉE ---
-    // On traite TOUJOURS les photos, même s'il y a une vidéo
     const existingPhotos = Array.isArray(property.photos) ? property.photos : [];
     let mainPhotos = existingPhotos.slice(0, 2);
     let extraPhotos = existingPhotos.slice(2, 10);
@@ -1616,7 +1594,7 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     const combinedPhotos = [...mainPhotos, ...extraPhotos, ...miniPhotos].filter(Boolean);
 
     // On vérifie les photos obligatoires SEULEMENT s'il n'y a PAS de vidéo
-    if (!hasVideo && combinedPhotos.slice(0, 2).length < 2) {
+    if (!hasVideo && combinedPhotos.length < 2) {
       cleanupUploadedFiles(req.files);
       return res.status(400).send('Deux photos sont requises lorsque aucun lien vidéo n’est fourni.');
     }
@@ -1641,6 +1619,23 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
         contact: locale === 'fr' ? 'Contact' : 'Contact',
       }
     };
+
+    res.render('edit-property', {
+      property,
+      successMessage: "Votre annonce a été mise à jour avec succès.",
+      locale,
+      currentPath,
+      i18n,
+      isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de la propriété :', error.message);
+    console.error(error.stack);
+    cleanupUploadedFiles(req.files); // Nettoyer en cas d'erreur
+    res.status(500).send("Erreur interne du serveur.");
+  }
+});
 
     res.render('edit-property', {
       property,
@@ -1969,6 +1964,8 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 const seoKeywords = require('./utils/seoKeywords'); 
+// REMPLACEZ VOTRE FONCTION generateLandingPage PAR CECI :
+
 async function generateLandingPage(property) {
   const lang = property.language || 'fr';
   const city = property.city || '';
@@ -2108,7 +2105,7 @@ async function generateLandingPage(property) {
   };
 
   const embedUrl = getEmbedUrl(property.videoUrl);
-
+  
   const photos = Array.isArray(property.photos) ? property.photos : [];
   const mainPhoto1 = photos[0] || 'default.jpg';
   const mainPhoto2 = photos[1] || mainPhoto1;
@@ -2120,7 +2117,7 @@ async function generateLandingPage(property) {
     "@context": "https://schema.org",
     "@type": "Residence",
     "name": `${property.propertyType} à vendre à ${city}`,
-    "description": property.description?.slice(0, 160) || '',
+    "description": (property.description || '').slice(0, 160),
     "address": {
       "@type": "PostalAddress",
       "addressLocality": city,
@@ -2138,964 +2135,808 @@ async function generateLandingPage(property) {
   };
 
   const template = `
-<!DOCTYPE html>
-<html lang="${lang}">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="${(property.description || '').slice(0, 160)}">
-  <meta name="keywords" content="${keywords.join(', ')}">
-  <title>${property.propertyType} à ${city}, ${country}</title>
+  <!DOCTYPE html>
+  <html lang="${lang}">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="${(property.description || '').slice(0, 160)}">
+    <meta name="keywords" content="${keywords.join(', ')}">
+    <title>${property.propertyType} à ${city}, ${country}</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-  <script>
-    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-    })(window,document,'script','dataLayer','${GTM_ID}');
-  </script>
+    <script>
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','${GTM_ID}');
+    </script>
 
-  <script type="application/ld+json">
-${JSON.stringify(jsonLD)}
-  </script>
+    <script type="application/ld+json">
+  ${JSON.stringify(jsonLD)}
+    </script>
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: Arial, sans-serif;
-    }
-
-    body {
-      background-color: #ffffff;
-      color: #3c3c3c;
-      line-height: 1.5;
-    }
-
-    body.has-video {
-      background-color: #000;
-      color: #ffffff;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .video-hero {
-      position: relative;
-      z-index: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      padding: 60px 20px;
-      text-align: center;
-    }
-
-    .video-card {
-      background: rgba(0, 0, 0, 0.55);
-      padding: 50px 40px;
-      border-radius: 28px;
-      max-width: 960px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 24px;
-    }
-
-    .video-card h1 {
-      font-size: 2.8rem;
-      margin: 0;
-      color: #ffffff;
-    }
-
-    .video-card p {
-      margin: 0;
-      font-size: 1.1rem;
-      line-height: 1.6;
-      color: #f2f2f2;
-    }
-
-    .video-highlight {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-    }
-
-    .video-highlight .item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 1.1rem;
-    }
-
-    .video-actions {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: center;
-      gap: 20px;
-    }
-
-    .video-actions .price {
-      background-color: #c4b990;
-      color: #000000;
-      font-size: 1.5rem;
-      font-weight: 600;
-      padding: 14px 32px;
-      border-radius: 999px;
-    }
-
-    .video-actions .visit-btn {
-      background: none;
-      border: none;
-      border-radius: 999px;
-      color: #ffffff;
-      padding: 14px 32px;
-      cursor: pointer;
-      font-size: 1.4rem;
-      transition: opacity 0.2s ease;
-    }
-
-    .video-actions .visit-btn:hover {
-      opacity: 0.85;
-    }
-
-    .has-video .extra-info-desktop {
-      background: rgba(255,255,255,0.92);
-      color: #3c3c3c;
-      margin-top: 40px;
-      padding: 40px 20px;
-      border-radius: 28px 28px 0 0;
-    }
-
-    .has-video .extra-info-desktop h2,
-    .has-video .extra-info-desktop .info-label,
-    .has-video .extra-info-desktop .info-item {
-      color: #3c3c3c;
-    }
-
-    @media (max-width: 768px) {
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, sans-serif;
+      }
+      body {
+        background-color: #ffffff;
+        color: #3c3c3c;
+        line-height: 1.5;
+      }
+      body.has-video {
+        background-color: #000;
+        color: #ffffff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .video-hero {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 100vh;
+        padding: 60px 20px;
+        text-align: center;
+      }
       .video-card {
-        padding: 32px 24px;
+        background: rgba(0, 0, 0, 0.55);
+        padding: 50px 40px;
+        border-radius: 28px;
+        max-width: 960px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
       }
       .video-card h1 {
-        font-size: 2.1rem;
+        font-size: 2.8rem;
+        margin: 0;
+        color: #ffffff;
+      }
+      .video-card p {
+        margin: 0;
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: #f2f2f2;
+      }
+      .video-highlight {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+      }
+      .video-highlight .item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.1rem;
+      }
+      .video-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
       }
       .video-actions .price {
+        background-color: #c4b990;
+        color: #000000;
         font-size: 1.5rem;
+        font-weight: 600;
+        padding: 14px 32px;
+        border-radius: 999px;
       }
-    }
-
-    .container {
-      max-width: 1400px;
-      width: 100%;
-      display: flex;
-      flex-direction: row;
-      background-color: white;
-      border-radius: 0;
-      overflow: hidden;
-      margin: 0 auto;
-      height: auto;
-      padding: 40px 20px;
-      gap: 30px;
-      align-items: stretch;
-    }
-
-    .property-details.one-line {
-      display: flex;
-      flex-direction: row;
-      gap: 30px;
-      margin: 20px 0;
-    }
-
-    .slider {
-      flex: 2;
-      overflow: hidden;
-      position: relative;
-      height: auto;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .slides {
-      display: flex;
-      position: absolute;
-      width: 100%;
-      height: 100%;
-    }
-
-    .slides img {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      opacity: 0;
-      animation: slide 10s infinite;
-    }
-
-    .slides img:nth-child(1) { animation-delay: 0s; }
-    .slides img:nth-child(2) { animation-delay: 5s; }
-
-    @keyframes slide {
-      0%, 50% { opacity: 1; }
-      55%, 100% { opacity: 0; }
-    }
-
-    .property-info {
-      flex: 0.8;
-      padding: 0 40px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .property-lorem {
-      font-size: 1.2rem;
-      border-bottom: 1px solid #C4B990;
-      padding-bottom: 5px;
-    }
-
-    h1 {
-      font-size: 1.8rem;
-      font-weight: 400;
-      line-height: 1.15;
-      margin-bottom: 15px;
-    }
-
-    h2 {
-      font-size: 1.2rem;
-      font-weight: 300;
-    }
-
-    .property-details {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-
-    .detail {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 8px 0;
-    }
-
-    .detail i,
-    .detail p {
-      font-size: 14px;
-    }
-
-    .detail i {
-      color: #C4B990;
-    }
-
-    .construction-year {
-      font-size: 1.1rem;
-      margin: 20px 0;
-    }
-
-    .property-description {
-      background: #f7f7f7;
-      padding: 15px;
-      border: 1px solid #ddd;
-      margin: 20px 0;
-      font-size: 14px;
-      overflow-wrap: break-word;
-    }
-
-    .section-title {
-      font-size: 1.1rem;
-      margin-bottom: 10px;
-    }
-
-    .price-row {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .price {
-      background-color: #f7f7f7;
-      padding: 10px 20px;
-      font-size: 1.5rem;
-      font-weight: 500;
-      width: 100%;
-      text-transform: uppercase;
-      margin: 20px 0;
-      text-align: center;
-      flex: 1;
-    }
-
-    .extra-info-desktop {
-      display: none;
-      max-width: 1400px;
-      margin: 40px auto;
-      padding: 20px;
-      background: #ffffff;
-    }
-
-    .extra-columns {
-      display: flex;
-      flex-direction: row;
-      justify-content: space-between;
-      gap: 30px;
-      border: 1px solid #eee;
-      padding: 20px;
-      align-items: flex-start;
-    }
-
-    .extra-col {
-      flex: 1;
-      padding: 0 20px;
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-    }
-
-    .extra-col:not(:last-child)::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 1px;
-      height: 100%;
-      background-color: #ddd;
-    }
-
-    .other-info {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-
-    .other-info li {
-      margin-bottom: 10px;
-      font-size: 1rem;
-    }
-
-    .extra-info-desktop hr {
-      border: none;
-      border-top: 1px solid #ddd;
-      margin-bottom: 25px;
-    }
-
-    .extra-info-desktop h2 {
-      font-size: 1.6rem;
-      margin-bottom: 20px;
-      font-weight: 400;
-    }
-
-    .dpe-section {
-      margin-top: 10px;
-    }
-
-    .dpe-label {
-      font-weight: bold;
-      margin-bottom: 10px;
-      font-size: 1.1rem;
-    }
-
-    .dpe-bar {
-      display: flex;
-      flex-direction: column;
-      width: 220px;
-    }
-
-    .bar {
-      padding: 6px 12px;
-      color: white;
-      font-weight: bold;
-      font-size: 1rem;
-      margin: 2px 0;
-      border-radius: 4px;
-      opacity: 0.5;
-    }
-
-    .bar.A { background-color: #009966; width: 40%; }
-    .bar.B { background-color: #66CC00; width: 50%; }
-    .bar.C { background-color: #FFCC00; width: 60%; }
-    .bar.D { background-color: #FF9900; width: 70%; }
-    .bar.E { background-color: #FF6600; width: 80%; }
-    .bar.F { background-color: #FF3300; width: 90%; }
-    .bar.G { background-color: #CC0000; width: 100%; }
-
-    .bar.active {
-      opacity: 1;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
-    }
-
-    .bar.pending {
-      background-color: #ccc !important;
-      color: #333;
-      width: 100% !important;
-      opacity: 1 !important;
-      box-shadow: none !important;
-    }
-
-    .extra-col .info-label {
-      font-size: 1.35rem;
-      font-weight: 400;
-      font-family: Arial, sans-serif;
-      margin-bottom: 12px;
-    }
-
-    .info-item {
-      margin: 10px 0;
-      font-size: 1.1rem;
-      color: #3c3c3c;
-    }
-
-    .map-col {
-      flex: 1.5;
-    }
-
-    #map {
-      width: 100%;
-      height: 389px;
-      min-width: 400px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-    }
-
-    .visit-btn {
-      width: 100%;
-      margin: 20px 0;
-      flex: 1;
-      background: none;
-      border: none;
-      color: #000;
-      font-weight: 600;
-      padding: 12px 20px 16px;
-      cursor: pointer;
-      font-size: 1.2rem;
-      font-family: sans-serif;
-      position: relative;
-    }
-
-    .visit-btn::after {
-      content: '';
-      position: absolute;
-      bottom: 4px;
-      left: 12.5%;
-      width: 75%;
-      height: 2px;
-      background-color: currentColor;
-    }
-
-    .visit-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-
-    .visit-modal-content {
-      background: #c4b990;
-      color: #000;
-      padding: 30px;
-      border-radius: 8px;
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 15px;
-      min-width: 320px;
-      position: relative;
-    }
-
-    .visit-modal .close {
-      position: absolute;
-      top: 10px;
-      right: 20px;
-      cursor: pointer;
-      font-size: 24px;
-    }
-
-    .photo-carousel {
-      position: relative;
-      max-width: 1400px;
-      width: 100%;
-      margin: 20px auto;
-      padding: 0 20px;
-      overflow: hidden;
-    }
-
-    .photo-carousel .carousel-track {
-      display: flex;
-      width: 100%;
-      gap: 30px;
-      transition: transform 0.3s ease-in-out;
-    }
-
-    .photo-carousel img {
-      object-fit: contain;
-      width: 45%;
-      height: 150px;
-      cursor: pointer;
-    }
-
-    .photo-carousel .carousel-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      z-index: 1;
-    }
-
-    .photo-carousel .carousel-btn.prev { left: 0; }
-    .photo-carousel .carousel-btn.next { right: 0; }
-
-    .mini-carousel {
-      position: relative;
-      width: 100%;
-      margin: 10px auto;
-      overflow: hidden;
-    }
-
-    .mini-carousel .mini-track {
-      display: flex;
-      transition: transform 0.3s ease-in-out;
-      justify-content: center;
-    }
-
-    .mini-carousel img {
-      width: 20%;
-      height: 60px;
-      object-fit: contain;
-      flex: 0 0 auto;
-      cursor: pointer;
-    }
-
-    .mini-carousel .mini-btn {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      border: none;
-      padding: 5px 10px;
-      cursor: pointer;
-      z-index: 1;
-    }
-
-    .mini-carousel .mini-btn.prev { left: 0; }
-    .mini-carousel .mini-btn.next { right: 0; }
-
-    .fullscreen-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-    }
-
-    .fullscreen-overlay img {
-      max-width: 90%;
-      max-height: 90%;
-      object-fit: contain;
-    }
-
-    .fullscreen-overlay .close {
-      position: absolute;
-      top: 20px;
-      right: 30px;
-      color: #fff;
-      font-size: 30px;
-      cursor: pointer;
-    }
-
-    .video-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      z-index: -1;
-    }
-
-    .video-background iframe {
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-
-    .video-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      z-index: -1;
-    }
-
-    @media screen and (max-width: 768px) {
-      html, body {
-        overflow-x: hidden;
-        font-family: Arial, sans-serif;
+      .video-actions .visit-btn {
+        background: none;
+        border: none;
+        border-radius: 999px;
+        color: #ffffff;
+        padding: 14px 32px;
+        cursor: pointer;
+        font-size: 1.4rem;
+        transition: opacity 0.2s ease;
+      }
+      .video-actions .visit-btn:hover {
+        opacity: 0.85;
+      }
+      .has-video .extra-info-desktop {
+        background: rgba(255,255,255,0.92);
+        color: #3c3c3c;
+        margin-top: 40px;
+        padding: 40px 20px;
+        border-radius: 28px 28px 0 0;
+      }
+      .has-video .extra-info-desktop h2,
+      .has-video .extra-info-desktop .info-label,
+      .has-video .extra-info-desktop .info-item {
         color: #3c3c3c;
       }
-
+      @media (max-width: 768px) {
+        .video-card {
+          padding: 32px 24px;
+        }
+        .video-card h1 {
+          font-size: 2.1rem;
+        }
+        .video-actions .price {
+          font-size: 1.5rem;
+        }
+      }
       .container {
-        flex-direction: column;
-        padding: 0;
-        gap: 0;
-      }
-
-      h1 {
-        font-size: 1.8rem;
-        line-height: 1.3;
-        font-weight: 500;
-        margin-bottom: 15px;
-      }
-
-      .slider {
+        max-width: 1400px;
         width: 100%;
+        display: flex;
+        flex-direction: row;
+        background-color: white;
+        border-radius: 0;
         overflow: hidden;
-      }
-
-      .slider img {
-        width: 100%;
+        margin: 0 auto;
         height: auto;
-        object-fit: cover;
-        display: block;
+        padding: 40px 20px;
+        gap: 30px;
+        align-items: stretch;
       }
-
-      .slides,
-      .slides img {
-        position: relative;
-        height: auto;
-        opacity: 1;
-        animation: none;
-      }
-
-      .property-info {
-        width: 100%;
-        padding: 20px;
-        box-sizing: border-box;
-        font-family: Arial, sans-serif;
-        font-size: 1.1rem;
-      }
-
-      .property-lorem,
-      .construction-year,
-      .property-details,
-      .detail p {
-        font-size: 1.1rem;
-      }
-
-      .section-title {
-        font-size: 1.1rem;
-        font-weight: bold;
-        margin-bottom: 10px;
-      }
-
-      .property-description {
-        margin-top: 20px;
-        margin-bottom: 20px;
-        font-size: 14px;
-        line-height: 1.6;
-        overflow-wrap: break-word;
-      }
-
-      .construction-year {
+      .property-details.one-line {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
         margin: 20px 0;
       }
-
-      .price {
-        margin-top: 20px;
-        margin-bottom: 20px;
-        padding: 12px 15px;
-        font-size: 1.4rem;
-        font-weight: 600;
-        background-color: #f7f7f7;
-        text-transform: uppercase;
-        border-radius: 4px;
-        display: block;
-        text-align: center;
-        width: 100%;
-        box-sizing: border-box;
-      }
-
-      .extra-info-desktop {
-        display: block;
-        padding: 10px 20px;
-        font-family: Arial, sans-serif;
-        margin-top: 0;
-        text-align: left;
-      }
-
-      .extra-info-desktop h2 {
-        font-size: 1.4rem;
-        margin-bottom: 20px;
-        text-align: left;
-        font-weight: 500;
-      }
-
-      .extra-columns {
-        flex-direction: column;
-        gap: 20px;
-        padding: 0;
-        border: none;
-      }
-
-      .extra-col {
-        flex: 1;
-        padding: 10px 0;
-        border: none;
+      .slider {
+        flex: 2;
+        overflow: hidden;
         position: relative;
+        height: auto;
+        display: flex;
+        flex-direction: column;
       }
-
-      .extra-col:not(:last-child)::after {
-        content: none;
+      .slides {
+        display: flex;
+        position: absolute;
+        width: 100%;
+        height: 100%;
       }
-
-      .info-label {
+      .slides img {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        animation: slide 10s infinite;
+      }
+      .slides img:nth-child(1) { animation-delay: 0s; }
+      .slides img:nth-child(2) { animation-delay: 5s; }
+      @keyframes slide {
+        0%, 50% { opacity: 1; }
+        55%, 100% { opacity: 0; }
+      }
+      .property-info {
+        flex: 0.8;
+        padding: 0 40px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .property-lorem {
         font-size: 1.2rem;
-        font-weight: 600;
+        border-bottom: 1px solid #C4B990;
+        padding-bottom: 5px;
+      }
+      h1 {
+        font-size: 1.8rem;
+        font-weight: 400;
+        line-height: 1.15;
+        margin-bottom: 15px;
+      }
+      h2 {
+        font-size: 1.2rem;
+        font-weight: 300;
+      }
+      .property-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .detail {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 8px 0;
+      }
+      .detail i,
+      .detail p {
+        font-size: 14px;
+      }
+      .detail i {
+        color: #C4B990;
+      }
+      .construction-year {
+        font-size: 1.1rem;
+        margin: 20px 0;
+      }
+      .property-description {
+        background: #f7f7f7;
+        padding: 15px;
+        border: 1px solid #ddd;
+        margin: 20px 0;
+        font-size: 14px;
+        overflow-wrap: break-word;
+      }
+      .section-title {
+        font-size: 1.1rem;
         margin-bottom: 10px;
       }
-
-      .info-item {
-        font-size: 1.25rem;
-        margin: 10px 0;
+      .price-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
       }
-
-      .dpe-bar {
+      .price {
+        background-color: #f7f7f7;
+        padding: 10px 20px;
+        font-size: 1.5rem;
+        font-weight: 500;
         width: 100%;
-        max-width: 250px;
+        text-transform: uppercase;
+        margin: 20px 0;
+        text-align: center;
+        flex: 1;
       }
-
-      .extra-col.map-col {
-        padding: 10px 0;
+      .extra-info-desktop {
+        display: none;
+        max-width: 1400px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #ffffff;
       }
-
+      .extra-columns {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        gap: 30px;
+        border: 1px solid #eee;
+        padding: 20px;
+        align-items: flex-start;
+      }
+      .extra-col {
+        flex: 1;
+        padding: 0 20px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+      }
+      .extra-col:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 1px;
+        height: 100%;
+        background-color: #ddd;
+      }
+      .other-info {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+      .other-info li {
+        margin-bottom: 10px;
+        font-size: 1rem;
+      }
+      .extra-info-desktop hr {
+        border: none;
+        border-top: 1px solid #ddd;
+        margin-bottom: 25px;
+      }
+      .extra-info-desktop h2 {
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+        font-weight: 400;
+      }
+      .dpe-section {
+        margin-top: 10px;
+      }
+      .dpe-label {
+        font-weight: bold;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+      }
+      .dpe-bar {
+        display: flex;
+        flex-direction: column;
+        width: 220px;
+      }
+      .bar {
+        padding: 6px 12px;
+        color: white;
+        font-weight: bold;
+        font-size: 1rem;
+        margin: 2px 0;
+        border-radius: 4px;
+        opacity: 0.5;
+      }
+      .bar.A { background-color: #009966; width: 40%; }
+      .bar.B { background-color: #66CC00; width: 50%; }
+      .bar.C { background-color: #FFCC00; width: 60%; }
+      .bar.D { background-color: #FF9900; width: 70%; }
+      .bar.E { background-color: #FF6600; width: 80%; }
+      .bar.F { background-color: #FF3300; width: 90%; }
+      .bar.G { background-color: #CC0000; width: 100%; }
+      .bar.active {
+        opacity: 1;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
+      }
+      .bar.pending {
+        background-color: #ccc !important;
+        color: #333;
+        width: 100% !important;
+        opacity: 1 !important;
+        box-shadow: none !important;
+      }
+      .extra-col .info-label {
+        font-size: 1.35rem;
+        font-weight: 400;
+        font-family: Arial, sans-serif;
+        margin-bottom: 12px;
+      }
+      .info-item {
+        margin: 10px 0;
+        font-size: 1.1rem;
+        color: #3c3c3c;
+      }
+      .map-col {
+        flex: 1.5;
+      }
       #map {
         width: 100%;
-        height: 250px;
+        height: 389px;
+        min-width: 400px;
+        border: 1px solid #ddd;
         border-radius: 8px;
-        border: 1px solid #ccc;
+      }
+      .visit-btn {
+        width: 100%;
+        margin: 20px 0;
+        flex: 1;
+        background: none;
+        border: none;
+        color: #000;
+        font-weight: 600;
+        padding: 12px 20px 16px;
+        cursor: pointer;
+        font-size: 1.2rem;
+        font-family: sans-serif;
+        position: relative;
+      }
+      .visit-btn::after {
+        content: '';
+        position: absolute;
+        bottom: 4px;
+        left: 12.5%;
+        width: 75%;
+        height: 2px;
+        background-color: currentColor;
+      }
+      .visit-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+      .visit-modal-content {
+        background: #c4b990;
+        color: #000;
+        padding: 30px;
+        border-radius: 8px;
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+        min-width: 320px;
+        position: relative;
+      }
+      .visit-modal .close {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        cursor: pointer;
+        font-size: 24px;
+      }
+      .photo-carousel {
+        position: relative;
+        max-width: 1400px;
+        width: 100%;
+        margin: 20px auto;
+        padding: 0 20px;
+        overflow: hidden;
+      }
+      .photo-carousel .carousel-track {
+        display: flex;
+        width: 100%;
+        gap: 30px;
+        transition: transform 0.3s ease-in-out;
+      }
+      .photo-carousel img {
+        object-fit: contain;
+        width: 45%;
+        height: 150px;
+        cursor: pointer;
+      }
+      .photo-carousel .carousel-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.5);
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        z-index: 1;
+      }
+      .photo-carousel .carousel-btn.prev { left: 0; }
+      .photo-carousel .carousel-btn.next { right: 0; }
+      .mini-carousel {
+        position: relative;
+        width: 100%;
+        margin: 10px auto;
+        overflow: hidden;
+      }
+      .mini-carousel .mini-track {
+        display: flex;
+        transition: transform 0.3s ease-in-out;
+        justify-content: center;
+      }
+      .mini-carousel img {
+        width: 20%;
+        height: 60px;
+        object-fit: contain;
+        flex: 0 0 auto;
+        cursor: pointer;
+      }
+      .mini-carousel .mini-btn {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgba(0,0,0,0.5);
+        color: #fff;
+        border: none;
+        padding: 5px 10px;
+        cursor: pointer;
+        z-index: 1;
+      }
+      .mini-carousel .mini-btn.prev { left: 0; }
+      .mini-carousel .mini-btn.next { right: 0; }
+      .fullscreen-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.8);
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+      }
+      .fullscreen-overlay img {
+        max-width: 90%;
+        max-height: 90%;
+        object-fit: contain;
+      }
+      .fullscreen-overlay .close {
+        position: absolute;
+        top: 20px;
+        right: 30px;
+        color: #fff;
+        font-size: 30px;
+        cursor: pointer;
+      }
+      .video-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+      }
+      .video-background iframe {
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+      .video-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: -1;
       }
 
-      .photo-carousel img { width: 50%; }
-
-      .mini-carousel img { width: 33.33%; }
-
-      
-
-    /* ... (Collez ceci à la place de vos styles .discover-gallery existants) ... */
-
-    /* Styles pour la nouvelle galerie 'discover' */
-    .discover-gallery {
-      --discover-gap: 20px;
-      margin-top: 20px;
-      display: flex;
-      align-items: center;
-      gap: var(--discover-gap);
-      width: 100%;
-      border: 1px solid #eee;
-      border-radius: 18px;
-      padding: 20px;
-      box-sizing: border-box;
-      background: #ffffff;
-      /* On s'assure qu'il reste horizontal */
-      flex-direction: row; 
-    }
-    .discover-track-wrapper {
-      flex: 1;
-      overflow: hidden;
-    }
-    .discover-track {
-      display: flex;
-      gap: var(--discover-gap);
-      transition: transform 0.3s ease;
-    }
-    .discover-track img {
-      /* Desktop: Affiche 3 images */
-      flex: 0 0 calc((100% - (var(--discover-gap) * 2)) / 3);
-      max-width: calc((100% - (var(--discover-gap) * 2)) / 3);
-      height: 220px; /* Taille vignette desktop */
-      object-fit: cover;
-      border-radius: 18px;
-      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-      cursor: pointer;
-    }
-    .discover-btn {
-      background: #c4b990;
-      border: none;
-      color: #000;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      cursor: pointer;
-      transition: transform 0.2s ease, background 0.2s ease;
-      flex-shrink: 0; /* Empêche les boutons de rétrécir */
-    }
-    .discover-btn:hover {
-      transform: translateY(-2px);
-      background: #b3a579;
-    }
-    .has-video .discover-btn {
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-    }
-
-    /* Tablette: Affiche 2 images */
-    @media (max-width: 1024px) {
-      .discover-track img {
-        flex: 0 0 calc(50% - (var(--discover-gap) / 2));
-        max-width: calc(50% - (var(--discover-gap) / 2));
-        height: 180px; /* Taille vignette tablette */
-      }
-    }
-
-    /* Mobile: Affiche 2 images */
-    @media (max-width: 768px) {
+      /* Styles pour la nouvelle galerie 'discover' - PLACÉ ICI (AVANT media queries) */
       .discover-gallery {
-        --discover-gap: 12px;
-        /* flex-direction: column; <== SUPPRESSION de cette ligne */
+        --discover-gap: 20px;
+        margin-top: 20px;
+        display: flex;
+        align-items: center;
         gap: var(--discover-gap);
-        padding: 16px;
+        width: 100%;
+        border: 1px solid #eee;
+        border-radius: 18px;
+        padding: 20px;
+        box-sizing: border-box;
+        background: #ffffff;
+        flex-direction: row; 
+      }
+      .discover-track-wrapper {
+        flex: 1;
+        overflow: hidden;
       }
       .discover-track {
-        width: 100%;
+        display: flex;
+        gap: var(--discover-gap);
+        transition: transform 0.3s ease;
       }
       .discover-track img {
-        /* Affiche 2 images sur mobile */
-        flex: 0 0 calc(50% - (var(--discover-gap) / 2)); 
-        max-width: calc(50% - (var(--discover-gap) / 2));
-        height: 150px; /* Taille vignette mobile */
+        /* Desktop: Affiche 3 images */
+        flex: 0 0 calc((100% - (var(--discover-gap) * 2)) / 3);
+        max-width: calc((100% - (var(--discover-gap) * 2)) / 3);
+        height: 220px; /* Taille vignette desktop */
+        object-fit: cover;
+        border-radius: 18px;
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
       }
       .discover-btn {
-        width: 42px;
-        height: 42px;
+        background: #c4b990;
+        border: none;
+        color: #000;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.4rem;
+        cursor: pointer;
+        transition: transform 0.2s ease, background 0.2s ease;
+        flex-shrink: 0; /* Empêche les boutons de rétrécir */
       }
-    }
-
-    }
-
-    @media screen and (min-width: 769px) {
-      .extra-info-desktop {
-        display: block;
+      .discover-btn:hover {
+        transform: translateY(-2px);
+        background: #b3a579;
       }
-      .container {
-        height: 75vh;
+      .has-video .discover-btn {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
       }
-    }
-  </style>
-</head>
-<body class="${embedUrl ? 'has-video' : ''}">
-  ${embedUrl ? `
-  <div class="video-background">
-    <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-  </div>
-  <div class="video-overlay"></div>
-  ` : ''}
+      /* Fin des styles discover */
 
-  <noscript>
-    <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
-  </noscript>
 
-  ${embedUrl ? `
-  <section class="video-hero">
-    <div class="video-card">
-      <p class="property-lorem">${t.adLabel}</p>
-      <h1>${t.propertyHeading} ${property.city}, ${property.country}</h1>
-      <h2 style="font-weight:400; font-size:1.4rem; margin:0;">${t.propertyType}: ${property.propertyType}</h2>
-      ${property.description ? `<p>${property.description}</p>` : `<p>${t.noDescription}</p>`}
-      <div class="video-highlight">
-        <div class="item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
-        ${property.rooms ? `<div class="item"><i class="fal fa-home"></i> ${property.rooms}</div>` : ''}
-        ${property.bedrooms ? `<div class="item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>` : ''}
-        ${property.yearBuilt ? `<div class="item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt}</div>` : ''}
-      </div>
-      ${(property.pool || property.wateringSystem || property.carShelter || property.parking || property.caretakerHouse || property.electricShutters || property.outdoorLighting) ? `
-      <div class="video-highlight">
-        ${property.pool ? `<div class="item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
-        ${property.wateringSystem ? `<div class="item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
-        ${property.carShelter ? `<div class="item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
-        <div class="item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
-        ${property.caretakerHouse ? `<div class="item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
-        ${property.electricShutters ? `<div class="item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
-        ${property.outdoorLighting ? `<div class="item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
-      </div>` : ''}
-      <div class="video-actions">
-        <span class="price">${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</span>
-        <button class="visit-btn" id="visitBtn">${t.visit}</button>
-      </div>
-      <div id="visitModal" class="visit-modal">
-        <div class="visit-modal-content">
-          <span id="closeModal" class="close">&times;</span>
-          <p>${property.contactFirstName || ''} ${property.contactLastName || ''}</p>
-          <p>${property.contactPhone || ''}</p>
-        </div>
-      </div>
+      @media screen and (max-width: 768px) {
+        html, body {
+          overflow-x: hidden;
+          font-family: Arial, sans-serif;
+          color: #3c3c3c;
+        }
+        .container {
+          flex-direction: column;
+          padding: 0;
+          gap: 0;
+        }
+        h1 {
+          font-size: 1.8rem;
+          line-height: 1.3;
+          font-weight: 500;
+          margin-bottom: 15px;
+        }
+        .slider {
+          width: 100%;
+          overflow: hidden;
+        }
+        .slider img {
+          width: 100%;
+          height: auto;
+          object-fit: cover;
+          display: block;
+        }
+        .slides,
+        .slides img {
+          position: relative;
+          height: auto;
+          opacity: 1;
+          animation: none;
+        }
+        .property-info {
+          width: 100%;
+          padding: 20px;
+          box-sizing: border-box;
+          font-family: Arial, sans-serif;
+          font-size: 1.1rem;
+        }
+        .property-lorem,
+        .construction-year,
+        .property-details,
+        .detail p {
+          font-size: 1.1rem;
+        }
+        .section-title {
+          font-size: 1.1rem;
+          font-weight: bold;
+          margin-bottom: 10px;
+        }
+        .property-description {
+          margin-top: 20px;
+          margin-bottom: 20px;
+          font-size: 14px;
+          line-height: 1.6;
+          overflow-wrap: break-word;
+        }
+        .construction-year {
+          margin: 20px 0;
+        }
+        .price {
+          margin-top: 20px;
+          margin-bottom: 20px;
+          padding: 12px 15px;
+          font-size: 1.4rem;
+          font-weight: 600;
+          background-color: #f7f7f7;
+          text-transform: uppercase;
+          border-radius: 4px;
+          display: block;
+          text-align: center;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        .extra-info-desktop {
+          display: block;
+          padding: 10px 20px;
+          font-family: Arial, sans-serif;
+          margin-top: 0;
+          text-align: left;
+        }
+        .extra-info-desktop h2 {
+          font-size: 1.4rem;
+          margin-bottom: 20px;
+          text-align: left;
+          font-weight: 500;
+        }
+        .extra-columns {
+          flex-direction: column;
+          gap: 20px;
+          padding: 0;
+          border: none;
+        }
+        .extra-col {
+          flex: 1;
+          padding: 10px 0;
+          border: none;
+          position: relative;
+        }
+        .extra-col:not(:last-child)::after {
+          content: none;
+        }
+        .info-label {
+          font-size: 1.2rem;
+          font-weight: 600;
+          margin-bottom: 10px;
+        }
+        .info-item {
+          font-size: 1.25rem;
+          margin: 10px 0;
+        }
+        .dpe-bar {
+          width: 100%;
+          max-width: 250px;
+        }
+        .extra-col.map-col {
+          padding: 10px 0;
+        }
+        #map {
+          width: 100%;
+          height: 250px;
+          border-radius: 8px;
+          border: 1px solid #ccc;
+        }
+        .photo-carousel img { width: 50%; }
+        .mini-carousel img { width: 33.33%; }
+
+        /* Styles 'discover' pour mobile */
+        .discover-gallery {
+          --discover-gap: 12px;
+          gap: var(--discover-gap);
+          padding: 16px;
+        }
+        .discover-track img {
+          flex: 0 0 calc(50% - (var(--discover-gap) / 2)); 
+          max-width: calc(50% - (var(--discover-gap) / 2));
+          height: 150px; /* Taille vignette mobile */
+        }
+        .discover-btn {
+          width: 42px;
+          height: 42px;
+        }
+      }
+
+      /* Styles 'discover' pour tablette */
+      @media (min-width: 769px) and (max-width: 1024px) {
+        .discover-track img {
+          flex: 0 0 calc(50% - (var(--discover-gap) / 2));
+          max-width: calc(50% - (var(--discover-gap) / 2));
+          height: 180px; /* Taille vignette tablette */
+        }
+      }
+
+      @media screen and (min-width: 769px) {
+        .extra-info-desktop {
+          display: block;
+        }
+        .container {
+          height: 75vh;
+        }
+      }
+    </style>
+  </head>
+  <body class="${embedUrl ? 'has-video' : ''}">
+    ${embedUrl ? `
+    <div class="video-background">
+      <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
     </div>
-  </section>
-  ` : `
-  <div class="container">
-    <div class="slider">
-      <div class="slides">
-        <img src="/uploads/${mainPhoto1}" alt="Image 1" />
-        <img src="/uploads/${mainPhoto2}" alt="Image 2" />
-      </div>
-    </div>
-    <div class="property-info">
-      <p class="property-lorem">${t.adLabel}</p>
-      <h1>${t.propertyHeading}<br> ${property.city}, ${property.country}</h1>
-      <h2>${t.propertyType}: ${property.propertyType}</h2>
+    <div class="video-overlay"></div>
+    ` : ''}
 
-      <div class="property-details one-line">
-        <div class="detail">
-          <i class="fal fa-ruler-combined"></i>
-          <p>${property.surface} m²</p>
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
+    </noscript>
+
+    ${embedUrl ? `
+    <section class="video-hero">
+      <div class="video-card">
+        <p class="property-lorem">${t.adLabel}</p>
+        <h1>${t.propertyHeading} ${property.city}, ${property.country}</h1>
+        <h2 style="font-weight:400; font-size:1.4rem; margin:0;">${t.propertyType}: ${property.propertyType}</h2>
+        ${property.description ? `<p>${property.description}</p>` : `<p>${t.noDescription}</p>`}
+        <div class="video-highlight">
+          <div class="item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
+          ${property.rooms ? `<div class="item"><i class="fal fa-home"></i> ${property.rooms}</div>` : ''}
+          ${property.bedrooms ? `<div class="item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>` : ''}
+          ${property.yearBuilt ? `<div class="item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt}</div>` : ''}
         </div>
-        <div class="detail">
-          <i class="fal fa-bed"></i>
-          <p>${property.bedrooms || ''}</p>
+        ${(property.pool || property.wateringSystem || property.carShelter || property.parking || property.caretakerHouse || property.electricShutters || property.outdoorLighting) ? `
+        <div class="video-highlight">
+          ${property.pool ? `<div class="item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
+          ${property.wateringSystem ? `<div class="item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
+          ${property.carShelter ? `<div class="item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
+          <div class="item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
+          ${property.caretakerHouse ? `<div class="item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
+          ${property.electricShutters ? `<div class="item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
+          ${property.outdoorLighting ? `<div class="item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
+        </div>` : ''}
+        <div class="video-actions">
+          <span class="price">${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</span>
+          <button class="visit-btn" id="visitBtn">${t.visit}</button>
         </div>
-        <div class="detail">
-          <i class="fal fa-home"></i>
-          <p>${property.rooms || ''}</p>
-        </div>
-      </div>
-
-      <div class="construction-year">${t.yearBuilt}: ${property.yearBuilt || t.notProvided}</div>
-
-      <div class="property-description">
-        <div class="section-title">${t.guidedTour}</div>
-        ${property.description || t.noDescription}
-      </div>
-
-      <div class="price-row">
-        <div class="price">${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
-        <button class="visit-btn" id="visitBtn">${t.visit}</button>
         <div id="visitModal" class="visit-modal">
           <div class="visit-modal-content">
             <span id="closeModal" class="close">&times;</span>
@@ -3104,337 +2945,311 @@ ${JSON.stringify(jsonLD)}
           </div>
         </div>
       </div>
-    </div>
-  </div>
-  `}
-
-  ${!embedUrl && photos.slice(2).length > 0 ? `
-  <div class="photo-carousel">
-    <button class="carousel-btn prev">&#10094;</button>
-    <div class="carousel-track">
-      ${photos.slice(2, 10).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
-    </div>
-    <button class="carousel-btn next">&#10095;</button>
-  </div>
-  ` : ''}
-
-  ${!embedUrl && photos.slice(10).length > 0 ? `
-  <div class="mini-carousel">
-    <button class="mini-btn prev">&#10094;</button>
-    <div class="mini-track">
-      ${photos.slice(10, 13).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
-    </div>
-    <button class="mini-btn next">&#10095;</button>
-  </div>
-  ` : ''}
-
-  ${photos.length > 0 ? `
-  <div id="fullscreenOverlay" class="fullscreen-overlay">
-    <span class="close">&times;</span>
-    <img id="fullscreenImg" src="" alt="Photo en plein écran" />
-  </div>` : ''}
-
-  <div class="extra-info-desktop">
-    <hr />
-    <h2>${t.addInfo}</h2>
-    <div class="extra-columns">
-      <div class="extra-col">
-        <div class="info-label">
-          DPE :
-          ${
-            isDpePending
-              ? `<em>${t.inProgress}</em>`
-              : `<strong>${property.dpe || t.notProvided}</strong>`
-          }
+    </section>
+    ` : `
+    <div class="container">
+      <div class="slider">
+        <div class="slides">
+          <img src="/uploads/${mainPhoto1}" alt="Image 1" />
+          <img src="/uploads/${mainPhoto2}" alt="Image 2" />
         </div>
-        <div class="dpe-bar">
-          ${['A','B','C','D','E','F','G'].map(letter => `
-            <div class="bar ${letter} ${
-              (!isDpePending && dpeValue.toUpperCase() === letter) ? 'active' : ''
-            } ${isDpePending ? 'pending' : ''}">
-              ${letter}
+      </div>
+      <div class="property-info">
+        <p class="property-lorem">${t.adLabel}</p>
+        <h1>${t.propertyHeading}<br> ${property.city}, ${property.country}</h1>
+        <h2>${t.propertyType}: ${property.propertyType}</h2>
+
+        <div class="property-details one-line">
+          <div class="detail">
+            <i class="fal fa-ruler-combined"></i>
+            <p>${property.surface} m²</p>
+          </div>
+          <div class="detail">
+            <i class="fal fa-bed"></i>
+            <p>${property.bedrooms || ''}</p>
+          </div>
+          <div class="detail">
+            <i class="fal fa-home"></i>
+            <p>${property.rooms || ''}</p>
+          </div>
+        </div>
+
+        <div class="construction-year">${t.yearBuilt}: ${property.yearBuilt || t.notProvided}</div>
+
+        <div class="property-description">
+          <div class="section-title">${t.guidedTour}</div>
+          ${property.description || t.noDescription}
+        </div>
+
+        <div class="price-row">
+          <div class="price">${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
+          <button class="visit-btn" id="visitBtn">${t.visit}</button>
+          <div id="visitModal" class="visit-modal">
+            <div class="visit-modal-content">
+              <span id="closeModal" class="close">&times;</span>
+              <p>${property.contactFirstName || ''} ${property.contactLastName || ''}</p>
+              <p>${property.contactPhone || ''}</p>
             </div>
-          `).join('')}
+          </div>
         </div>
-      </div>
-
-      <div class="extra-col">
-        <div class="info-label">${t.keyInfo}</div>
-        <div class="info-item">${t.price} : ${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
-        <div class="info-item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
-        <div class="info-item"><i class="fal fa-home"></i> ${property.rooms || ''}</div>
-        <div class="info-item"><i class="fal fa-bed"></i> ${property.bedrooms || ''}</div>
-        <div class="info-item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt || t.notProvided}</div>
-        ${property.pool ? `<div class="info-item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
-        ${property.wateringSystem ? `<div class="info-item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
-        ${property.carShelter ? `<div class="info-item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
-        <div class="info-item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
-        ${property.caretakerHouse ? `<div class="info-item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
-        ${property.electricShutters ? `<div class="info-item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
-        ${property.outdoorLighting ? `<div class="info-item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
-      </div>
-
-      <div class="extra-col map-col">
-        <div class="info-label">${t.location}</div>
-        <div id="map"></div>
       </div>
     </div>
-  </div>
+    `}
 
-  <div class="extra-info-desktop">
-    <hr />
-    <h2>${t.discoverProperty}</h2>
-    ${embedUrl && photos.length > 0 ? `
-    <div class="discover-gallery">
-      <button class="discover-btn prev" type="button">&#10094;</button>
-      <div class="discover-track-wrapper">
-        <div class="discover-track">
-          ${photos.map(p => `<img src="/uploads/${p}" alt="Photo du bien" />`).join('')}
-        </div>
+    ${!embedUrl && photos.slice(2, 10).length > 0 ? `
+    <div class="photo-carousel">
+      <button class="carousel-btn prev">&#10094;</button>
+      <div class="carousel-track">
+        ${photos.slice(2, 10).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
       </div>
-      <button class="discover-btn next" type="button">&#10095;</button>
+      <button class="carousel-btn next">&#10095;</button>
     </div>
     ` : ''}
-  </div>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      const city = "${(property.city || '').replace(/"/g, '\\"')}";
-      const country = "${(property.country || '').replace(/"/g, '\\"')}";
-      const fullAddress = city + ", " + country;
+    ${!embedUrl && photos.slice(10, 13).length > 0 ? `
+    <div class="mini-carousel">
+      <button class="mini-btn prev">&#10094;</button>
+      <div class="mini-track">
+        ${photos.slice(10, 13).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
+      </div>
+      <button class="mini-btn next">&#10095;</button>
+    </div>
+    ` : ''}
 
-      if (document.getElementById('map')) {
-        fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(fullAddress))
-          .then(response => response.json())
-          .then(data => {
-            if (data && data.length > 0) {
-              const lat = data[0].lat;
-              const lon = data[0].lon;
+    ${photos.length > 0 ? `
+    <div id="fullscreenOverlay" class="fullscreen-overlay">
+      <span class="close">&times;</span>
+      <img id="fullscreenImg" src="" alt="Photo en plein écran" />
+    </div>` : ''}
 
-              const map = L.map('map').setView([lat, lon], 13);
-
-              L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-                subdomains: 'abcd',
-                maxZoom: 19
-              }).addTo(map);
-
-              L.marker([lat, lon]).addTo(map)
-                .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
-            } else {
-              document.getElementById('map').innerHTML = "${t.mapUnavailable}";
+    <div class="extra-info-desktop">
+      <hr />
+      <h2>${t.addInfo}</h2>
+      <div class="extra-columns">
+        <div class="extra-col">
+          <div class="info-label">
+            DPE :
+            ${
+              isDpePending
+                ? `<em>${t.inProgress}</em>`
+                : `<strong>${property.dpe || t.notProvided}</strong>`
             }
-          })
-          .catch(err => {
-            console.error(err);
-            document.getElementById('map').innerHTML = "${t.mapError}";
+          </div>
+          <div class="dpe-bar">
+            ${['A','B','C','D','E','F','G'].map(letter => `
+              <div class="bar ${letter} ${
+                (!isDpePending && dpeValue.toUpperCase() === letter) ? 'active' : ''
+              } ${isDpePending ? 'pending' : ''}">
+                ${letter}
+              </div>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="extra-col">
+          <div class="info-label">${t.keyInfo}</div>
+          <div class="info-item">${t.price} : ${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
+          <div class="info-item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
+          <div class="info-item"><i class="fal fa-home"></i> ${property.rooms || ''}</div>
+          <div class="info-item"><i class="fal fa-bed"></i> ${property.bedrooms || ''}</div>
+          <div class="info-item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt || t.notProvided}</div>
+          ${property.pool ? `<div class="info-item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
+          ${property.wateringSystem ? `<div class="info-item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
+          ${property.carShelter ? `<div class="info-item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
+          <div class="info-item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
+          ${property.caretakerHouse ? `<div class="info-item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
+          ${property.electricShutters ? `<div class="info-item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
+          ${property.outdoorLighting ? `<div class="info-item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
+        </div>
+
+        <div class="extra-col map-col">
+          <div class="info-label">${t.location}</div>
+          <div id="map"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="extra-info-desktop">
+      <hr />
+      <h2>${t.discoverProperty}</h2>
+      ${(embedUrl && photos.length > 0) ? `
+      <div class="discover-gallery">
+        <button class="discover-btn prev" type="button">&#10094;</button>
+        <div class="discover-track-wrapper">
+          <div class="discover-track">
+            ${photos.map(p => `<img src="/uploads/${p}" alt="Photo du bien" />`).join('')}
+          </div>
+        </div>
+        <button class="discover-btn next" type="button">&#10095;</button>
+      </div>
+      ` : ''}
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const city = "${(property.city || '').replace(/"/g, '\\"')}";
+        const country = "${(property.country || '').replace(/"/g, '\\"')}";
+        const fullAddress = city + ", " + country;
+
+        if (document.getElementById('map')) {
+          fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(fullAddress))
+            .then(response => response.json())
+            .then(data => {
+              if (data && data.length > 0) {
+                const lat = data[0].lat;
+                const lon = data[0].lon;
+                const map = L.map('map').setView([lat, lon], 13);
+                L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+                  subdomains: 'abcd',
+                  maxZoom: 19
+                }).addTo(map);
+                L.marker([lat, lon]).addTo(map)
+                  .bindPopup("<b>" + city + "</b><br>" + country).openPopup();
+              } else {
+                document.getElementById('map').innerHTML = "${t.mapUnavailable}";
+              }
+            })
+            .catch(err => {
+              console.error(err);
+              document.getElementById('map').innerHTML = "${t.mapError}";
+            });
+        }
+
+        const visitBtn = document.getElementById('visitBtn');
+        const visitModal = document.getElementById('visitModal');
+        const closeModal = document.getElementById('closeModal');
+
+        if (visitBtn && visitModal && closeModal) {
+          visitBtn.addEventListener('click', () => {
+            visitModal.style.display = 'flex';
           });
-      }
-
-      const visitBtn = document.getElementById('visitBtn');
-      const visitModal = document.getElementById('visitModal');
-      const closeModal = document.getElementById('closeModal');
-
-      if (visitBtn && visitModal && closeModal) {
-        visitBtn.addEventListener('click', () => {
-          visitModal.style.display = 'flex';
-        });
-        closeModal.addEventListener('click', () => {
-          visitModal.style.display = 'none';
-        });
-        visitModal.addEventListener('click', (e) => {
-          if (e.target === visitModal) {
+          closeModal.addEventListener('click', () => {
             visitModal.style.display = 'none';
-          }
-        });
-      }
+          });
+          visitModal.addEventListener('click', (e) => {
+            if (e.target === visitModal) {
+              visitModal.style.display = 'none';
+            }
+          });
+        }
 
-      const fullscreenOverlay = document.getElementById('fullscreenOverlay');
-      const fullscreenImg = document.getElementById('fullscreenImg');
-      const closeFs = fullscreenOverlay ? fullscreenOverlay.querySelector('.close') : null;
+        const fullscreenOverlay = document.getElementById('fullscreenOverlay');
+        const fullscreenImg = document.getElementById('fullscreenImg');
+        const closeFs = fullscreenOverlay ? fullscreenOverlay.querySelector('.close') : null;
 
-      if (fullscreenOverlay && closeFs) {
-        closeFs.addEventListener('click', () => {
-          fullscreenOverlay.style.display = 'none';
-        });
-
-        fullscreenOverlay.addEventListener('click', (e) => {
-          if (e.target === fullscreenOverlay) {
+        if (fullscreenOverlay && closeFs) {
+          closeFs.addEventListener('click', () => {
             fullscreenOverlay.style.display = 'none';
-          }
-        });
-      }
-
-      const track = document.querySelector('.carousel-track');
-      if (track) {
-        const prev = document.querySelector('.carousel-btn.prev');
-        const next = document.querySelector('.carousel-btn.next');
-        let index = 0;
-
-        function updateCarousel() {
-          const firstImg = track.querySelector('img');
-          if (!firstImg) return;
-          const imgWidth = firstImg.clientWidth;
-          track.style.transform = 'translateX(-' + (index * imgWidth) + 'px)';
-        }
-
-        next.addEventListener('click', () => {
-          const visible = window.innerWidth <= 768 ? 2 : 4;
-          if (index < track.children.length - visible) {
-            index += visible;
-            if (index > track.children.length - visible) {
-              index = track.children.length - visible;
+          });
+          fullscreenOverlay.addEventListener('click', (e) => {
+            if (e.target === fullscreenOverlay) {
+              fullscreenOverlay.style.display = 'none';
             }
-            updateCarousel();
-          }
-        });
+          });
+        }
+        
+        function setupCarousel(trackSelector, btnPrevSelector, btnNextSelector, visibleFn, imgSelector = 'img') {
+          const track = document.querySelector(trackSelector);
+          if (!track || !track.children.length) return; // S'arrête s'il n'y a pas de track ou pas d'images
+          
+          const prev = document.querySelector(btnPrevSelector);
+          const next = document.querySelector(btnNextSelector);
+          let index = 0;
 
-        prev.addEventListener('click', () => {
-          const visible = window.innerWidth <= 768 ? 2 : 4;
-          if (index > 0) {
-            index -= visible;
+          function updateControls() {
+            const visible = visibleFn();
+            const shouldShow = track.children.length > visible;
+            if (prev) prev.style.display = shouldShow ? 'flex' : 'none';
+            if (next) next.style.display = shouldShow ? 'flex' : 'none';
+          }
+          
+          function updateTransform() {
+            const firstImg = track.querySelector(imgSelector);
+            if (!firstImg) {
+              updateControls();
+              return;
+            }
+            
+            const trackStyles = window.getComputedStyle(track);
+            const gapValue = parseFloat(trackStyles.columnGap || trackStyles.gap || '0');
+            const imgWidth = firstImg.getBoundingClientRect().width;
+            const visible = visibleFn();
+            const maxIndex = Math.max(0, track.children.length - visible);
+
+            if (index > maxIndex) index = maxIndex;
             if (index < 0) index = 0;
-            updateCarousel();
+
+            track.style.transform = 'translateX(-' + (index * (imgWidth + gapValue)) + 'px)';
+            updateControls();
           }
-        });
 
-        window.addEventListener('resize', updateCarousel);
-
-        if (fullscreenOverlay && fullscreenImg) {
-          track.querySelectorAll('img').forEach(img => {
-            img.addEventListener('click', () => {
-              fullscreenImg.src = img.src;
-              fullscreenOverlay.style.display = 'flex';
+          if (next) {
+            next.addEventListener('click', () => {
+              const visible = visibleFn();
+              const maxIndex = Math.max(0, track.children.length - visible);
+              if (index < maxIndex) {
+                index = Math.min(maxIndex, index + 1); // Défile 1 par 1
+                updateTransform();
+              }
             });
-          });
-        }
-      }
-
-      const miniTrack = document.querySelector('.mini-track');
-      if (miniTrack) {
-        const prevMini = document.querySelector('.mini-btn.prev');
-        const nextMini = document.querySelector('.mini-btn.next');
-        let miniIndex = 0;
-
-        function updateMini() {
-          const firstImg = miniTrack.querySelector('img');
-          if (!firstImg) return;
-          const imgWidth = firstImg.clientWidth;
-          miniTrack.style.transform = 'translateX(-' + (miniIndex * imgWidth) + 'px)';
-        }
-
-        nextMini.addEventListener('click', () => {
-          const visibleMini = window.innerWidth <= 768 ? 1 : 3;
-          if (miniIndex < miniTrack.children.length - visibleMini) {
-            miniIndex += visibleMini;
-            if (miniIndex > miniTrack.children.length - visibleMini) {
-              miniIndex = miniTrack.children.length - visibleMini;
-            }
-            updateMini();
-          }
-        });
-
-        prevMini.addEventListener('click', () => {
-          const visibleMini = window.innerWidth <= 768 ? 1 : 3;
-          if (miniIndex > 0) {
-            miniIndex -= visibleMini;
-            if (miniIndex < 0) miniIndex = 0;
-            updateMini();
-          }
-        });
-
-        window.addEventListener('resize', updateMini);
-      }
-
-      const discoverTrack = document.querySelector('.discover-track');
-      if (discoverTrack) {
-        const prevDiscover = document.querySelector('.discover-btn.prev');
-        const nextDiscover = document.querySelector('.discover-btn.next');
-        let discoverIndex = 0;
-
-       function visibleDiscover() {
-          if (window.innerWidth <= 768) return 2; 
-          if (window.innerWidth <= 1024) return 2;
-          return 3;
-        }
-
-        function clampDiscoverIndex() {
-          const visible = visibleDiscover();
-          const maxIndex = Math.max(0, discoverTrack.children.length - visible);
-          if (discoverIndex > maxIndex) {
-            discoverIndex = maxIndex;
-          }
-          if (discoverIndex < 0) {
-            discoverIndex = 0;
-          }
-          return maxIndex;
-        }
-
-        function updateDiscoverControls() {
-          const visible = visibleDiscover();
-          const shouldShow = discoverTrack.children.length > visible;
-          if (prevDiscover) {
-            prevDiscover.style.display = shouldShow ? 'flex' : 'none';
-          }
-          if (nextDiscover) {
-            nextDiscover.style.display = shouldShow ? 'flex' : 'none';
-          }
-        }
-
-        function updateDiscover() {
-          const firstImg = discoverTrack.querySelector('img');
-          if (!firstImg) {
-            updateDiscoverControls();
-            return;
           }
 
-          const trackStyles = window.getComputedStyle(discoverTrack);
-          const gapValue = parseFloat(trackStyles.columnGap || trackStyles.gap || '0');
-          const imgWidth = firstImg.getBoundingClientRect().width;
-          clampDiscoverIndex();
-
-          discoverTrack.style.transform = 'translateX(-' + (discoverIndex * (imgWidth + gapValue)) + 'px)';
-
-          updateDiscoverControls();
-        }
-
-        if (nextDiscover) {
-          nextDiscover.addEventListener('click', () => {
-            const visible = visibleDiscover();
-            const maxIndex = Math.max(0, discoverTrack.children.length - visible);
-            if (discoverIndex < maxIndex) {
-              discoverIndex = Math.min(maxIndex, discoverIndex + visible);
-              updateDiscover();
-            }
-          });
-        }
-
-        if (prevDiscover) {
-          prevDiscover.addEventListener('click', () => {
-            const visible = visibleDiscover();
-            if (discoverIndex > 0) {
-              discoverIndex = Math.max(0, discoverIndex - visible);
-              updateDiscover();
-            }
-          });
-        }
-
-        window.addEventListener('resize', updateDiscover);
-        updateDiscover();
-
-        if (fullscreenOverlay && fullscreenImg) {
-          discoverTrack.querySelectorAll('img').forEach(img => {
-            img.addEventListener('click', () => {
-              fullscreenImg.src = img.src;
-              fullscreenOverlay.style.display = 'flex';
+          if (prev) {
+            prev.addEventListener('click', () => {
+              if (index > 0) {
+                index = Math.max(0, index - 1); // Défile 1 par 1
+                updateTransform();
+              }
             });
-          });
+          }
+
+          window.addEventListener('resize', updateTransform);
+          // Léger délai pour s'assurer que les images sont chargées et ont une taille
+          setTimeout(updateTransform, 100); 
+
+          if (fullscreenOverlay && fullscreenImg) {
+            track.querySelectorAll(imgSelector).forEach(img => {
+              img.addEventListener('click', () => {
+                fullscreenImg.src = img.src;
+                fullscreenOverlay.style.display = 'flex';
+              });
+            });
+          }
         }
-      }
-    });
-  </script>
-</body>
-</html>
+
+        // Carrousel principal (version non-vidéo)
+        setupCarousel(
+          '.carousel-track', 
+          '.carousel-btn.prev', 
+          '.carousel-btn.next',
+          () => window.innerWidth <= 768 ? 2 : 4
+        );
+        
+        // Mini carrousel (version non-vidéo)
+        setupCarousel(
+          '.mini-track', 
+          '.mini-btn.prev', 
+          '.mini-btn.next',
+          () => window.innerWidth <= 768 ? 3 : 5
+        );
+        
+        // Nouvelle galerie (version vidéo)
+        setupCarousel(
+          '.discover-track', 
+          '.discover-btn.prev', 
+          '.discover-btn.next',
+          () => {
+            if (window.innerWidth <= 768) return 2;  // 2 vignettes sur mobile
+            if (window.innerWidth <= 1024) return 2; // 2 vignettes sur tablette
+            return 3; // 3 vignettes sur desktop
+          }
+        );
+
+      });
+    </script>
+  </body>
+  </html>
   `;
 
   fs.writeFileSync(filePath, template);
