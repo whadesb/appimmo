@@ -637,15 +637,12 @@ app.post('/reset-password/:token', async (req, res) => {
   return res.redirect(`/${locale}/reset-password/${req.params.token}`);
 });
 
+// REMPLACEZ l'ancienne fonction app.post('/:lang/reset-password/:token', ...) par celle-ci
+
 app.post('/:lang/reset-password/:token', async (req, res) => {
   const { password, confirmPassword, code } = req.body;
   const locale = req.params.lang;
-
- if (password !== confirmPassword) {
-    req.flash('error', 'Les mots de passe ne correspondent pas.');
-    // CORRIGÉ : Redirige vers la page actuelle
-    return res.redirect(`/${locale}/reset-password/${req.params.token}`);
-  }
+  const resetUrl = `/${locale}/reset-password/${req.params.token}`; // URL de la page actuelle
 
   try {
     const user = await User.findOne({
@@ -658,16 +655,25 @@ app.post('/:lang/reset-password/:token', async (req, res) => {
       return res.redirect(`/${locale}/forgot-password`);
     }
 
-   if (user.resetPasswordCode !== code) {
-      req.flash('error', locale === 'fr' ? 'Code de vérification incorrect.' : 'Invalid verification code.');
-      // CORRIGÉ : Redirige vers la page actuelle
-      return res.redirect(`/${locale}/reset-password/${req.params.token}`);
-    }
+    // --- LOGIQUE CORRIGÉE ---
+    
+    // 1. VÉRIFIER LE CODE D'ABORD
+    if (user.resetPasswordCode !== code) {
+      req.flash('error', locale === 'fr' ? 'Code de vérification incorrect.' : 'Invalid verification code.');
+      return res.redirect(resetUrl); // Redirige vers la page actuelle
+    }
 
+    // 2. VÉRIFIER LES MOTS DE PASSE ENSUITE
+    if (password !== confirmPassword) {
+      req.flash('error', 'Les mots de passe ne correspondent pas.');
+      return res.redirect(resetUrl); // Redirige vers la page actuelle
+    }
+
+    // 3. SI TOUT EST BON, METTRE À JOUR
     user.setPassword(password, async (err) => {
       if (err) {
         req.flash('error', 'Erreur lors de la réinitialisation du mot de passe.');
-        return res.redirect('back');
+        return res.redirect(resetUrl); // Redirige vers la page actuelle
       }
 
       user.resetPasswordToken = undefined;
@@ -678,13 +684,13 @@ app.post('/:lang/reset-password/:token', async (req, res) => {
       req.flash('success', 'Votre mot de passe a été mis à jour avec succès.');
       res.redirect(`/${locale}/login`);
     });
+
   } catch (error) {
     console.error('Erreur lors de la mise à jour du mot de passe :', error);
     req.flash('error', 'Une erreur est survenue lors de la mise à jour du mot de passe.');
     res.redirect(`/${locale}/forgot-password`);
   }
 });
-
 app.get('/api/stats/:id', async (req, res) => {
   try {
     const { id } = req.params;
