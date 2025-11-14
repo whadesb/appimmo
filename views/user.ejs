@@ -2022,25 +2022,69 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
   });
 </script>
 <script>
-  document.getElementById('add-property-form').addEventListener('submit', function(event) {
-      let missingFields = [];
-      const requiredFields = ['price', 'surface', 'country', 'city', 'postalCode', 'propertyType', 'description'];
-      
-      requiredFields.forEach(field => {
-          const input = document.getElementById(field);
-          if (!input.value.trim()) {
-              missingFields.push(field);
-              input.style.border = "2px solid red";  // Mets en rouge les champs vides
-          } else {
-              input.style.border = "";  // Remets la bordure normale si rempli
-          }
-      });
+document.getElementById('add-property-form').addEventListener('submit', async function(event) {
+    event.preventDefault();
+    
+    const formData = new FormData(this);
+    const generatedLinkContainer = document.getElementById('generatedLink');
+    const submitButton = this.querySelector('button[type="submit"]');
 
-      if (missingFields.length > 0) {
-          event.preventDefault(); // Empêche l'envoi du formulaire
-          alert("Veuillez remplir tous les champs obligatoires avant de soumettre le formulaire.");
-      }
-  });
+    // Désactiver le bouton et montrer un spinner
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = `<i class="fa fa-spinner fa-spin me-2"></i> <%= i18n.creating_ad || "Création en cours..." %>`;
+    }
+    
+    try {
+        const response = await fetch('/add-property', {
+            method: 'POST',
+            body: formData
+        });
+
+        const result = await response.text(); // 'result' est le message HTML de succès
+
+        if (!response.ok) {
+            // Gérer les erreurs serveur (400, 500 etc.)
+            generatedLinkContainer.innerHTML = `<div class="alert alert-danger">${result || '<%= i18n.error_creating_ad || "Une erreur est survenue." %>'}</div>`;
+            if (submitButton) {
+                submitButton.disabled = false;
+                submitButton.innerHTML = `<i class="fa fa-check-circle me-2"></i><%= i18n.create_ad %>`;
+            }
+            return; // Arrêter ici
+        }
+
+        // Succès ! Afficher le message du serveur (avec l'URL)
+        generatedLinkContainer.innerHTML = result;
+        
+        // Créer et ajouter le message de redirection
+        const redirectMessage = document.createElement('div');
+        redirectMessage.className = 'alert alert-info mt-2';
+        redirectMessage.innerHTML = '🎉 <%= i18n.redirect_message || "Redirection vers vos pages..." %>';
+        generatedLinkContainer.appendChild(redirectMessage);
+
+        this.reset(); // Vider le formulaire
+        
+        // Scroller jusqu'au message
+        generatedLinkContainer.scrollIntoView({ behavior: 'smooth' });
+
+        // Sauvegarder l'onglet cible dans le localStorage
+        localStorage.setItem('defaultSection', 'created-pages');
+
+        // Recharger la page après 3 secondes
+        setTimeout(() => {
+            location.reload();
+        }, 3000); // Délai de 3 secondes
+
+    } catch (error) {
+        console.error('Erreur lors de l\'ajout de la propriété :', error);
+        generatedLinkContainer.innerHTML = `<div class="alert alert-danger"><%= i18n.error_creating_ad || "Une erreur est survenue." %></div>`;
+        // Réactiver le bouton en cas d'erreur
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = `<i class="fa fa-check-circle me-2"></i><%= i18n.create_ad %>`;
+        }
+    }
+});
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
@@ -2690,23 +2734,20 @@ async function loadStats() {
 </script>
 
 <script>
-  // Lancer une première fois au chargement
-  document.addEventListener('DOMContentLoaded', () => {
-    loadStats();
-
-    const statsForm = document.getElementById('statsFilter');
-    if (statsForm) {
-      statsForm.addEventListener('submit', (e) => {
-        e.preventDefault(); // Ne pas recharger la page
-        loadStats();        // Relancer la fonction avec les nouvelles dates
-      });
+  document.addEventListener('DOMContentLoaded', function () {
+    // Regarde si on a sauvegardé un onglet cible (après la création d'une page)
+    const savedSection = localStorage.getItem('defaultSection');
+    
+    if (savedSection) {
+      showSection(savedSection); // Affiche l'onglet 'created-pages'
+      localStorage.removeItem('defaultSection'); // Nettoie le localStorage
     } else {
-      console.warn('⚠️ Formulaire #statsFilter introuvable.');
+      // Comportement normal
+      const defaultSection = '<%= activeSection || 'account' %>';
+      showSection(defaultSection);
     }
   });
 </script>
-
-
 
 <script>
   document.getElementById('disable2FABtn')?.addEventListener('click', async () => {
