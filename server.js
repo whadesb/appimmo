@@ -641,10 +641,11 @@ app.post('/:lang/reset-password/:token', async (req, res) => {
   const { password, confirmPassword, code } = req.body;
   const locale = req.params.lang;
 
-  if (password !== confirmPassword) {
-    req.flash('error', 'Les mots de passe ne correspondent pas.');
-    return res.redirect('back');
-  }
+ if (password !== confirmPassword) {
+    req.flash('error', 'Les mots de passe ne correspondent pas.');
+    // CORRIGÉ : Redirige vers la page actuelle
+    return res.redirect(`/${locale}/reset-password/${req.params.token}`);
+  }
 
   try {
     const user = await User.findOne({
@@ -657,10 +658,11 @@ app.post('/:lang/reset-password/:token', async (req, res) => {
       return res.redirect(`/${locale}/forgot-password`);
     }
 
-    if (user.resetPasswordCode !== code) {
-      req.flash('error', locale === 'fr' ? 'Code de vérification incorrect.' : 'Invalid verification code.');
-      return res.redirect('back');
-    }
+   if (user.resetPasswordCode !== code) {
+      req.flash('error', locale === 'fr' ? 'Code de vérification incorrect.' : 'Invalid verification code.');
+      // CORRIGÉ : Redirige vers la page actuelle
+      return res.redirect(`/${locale}/reset-password/${req.params.token}`);
+    }
 
     user.setPassword(password, async (err) => {
       if (err) {
