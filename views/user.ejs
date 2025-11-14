@@ -2059,7 +2059,7 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
         // Créer et ajouter le message de redirection
         const redirectMessage = document.createElement('div');
         redirectMessage.className = 'alert alert-info mt-2';
-        redirectMessage.innerHTML = '🎉 <%= i18n.redirect_message || "Redirection vers vos pages..." %>';
+        redirectMessage.innerHTML = '🎉 <%= i18n.redirect_message || "Redirection vers votre espace..." %>';
         generatedLinkContainer.appendChild(redirectMessage);
 
         this.reset(); // Vider le formulaire
