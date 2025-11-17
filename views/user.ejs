@@ -1661,8 +1661,8 @@ progress {
             <th><%= i18n.created_mini_photos %></th>
             <th><%= i18n.created_video_url %></th>
             <th><%= i18n.created_contact %></th>
-            <th><%= i18n.created_phone %></th>
-         <th><%= i18n.created_description %></th>
+<th><%= i18n.created_phone %></th>
+<th><%= i18n.created_description %></th>
 <th class="text-nowrap"><%= i18n.created_actions %></th>
 </tr>
 </thead>
@@ -1936,11 +1936,10 @@ async function loadLandingPages() {
                     </div>
                     `
                 ];
-
-                row.innerHTML = cells.map(cell => `<td class="text-nowrap">${cell}</td>`).join('');
-                landingPagesList.appendChild(row);
-            });
-        }
+row.innerHTML = cells.map(cell => `<td class="text-nowrap">${cell}</td>`).join('');
+landingPagesList.appendChild(row);
+});
+}
         } else {
             const propertiesList = document.getElementById('properties-list');
             propertiesList.innerHTML = '<tr><td colspan="30" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
