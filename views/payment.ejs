@@ -308,7 +308,7 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
         <div class="ticket-style">
  <p><strong><%= i18n.duration %>:</strong> 90 days</p>
 <p><strong>ID :</strong> <%= propertyId %></p>
-<p><strong><%= i18n.total %> :</strong> <%= (price || 500).toFixed ? price.toFixed(2) : '500.00' %>€</p>
+<p><strong><%= i18n.total %> :</strong> <%= Number(500).toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>€</p>
 <p><strong><%= i18n.payment_method %> :</strong> <span id="payment-method">PayPal</span></p>
 </div>
 
