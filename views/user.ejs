@@ -1915,66 +1915,79 @@ async function loadLandingPages() {
                     ? `<button class="btn btn-sm btn-success edit-btn" data-id="${safeIdAttr}" title="${EDIT_TITLE}"><i class="bi bi-pencil-square"></i></button>`
                     : `<button class="btn btn-sm btn-secondary disabled" type="button" title="${EDIT_DISABLED_TITLE}"><i class="bi bi-pencil-square"></i></button>`;
 const cells = [
-    // 1. ID Page
-    property._id ? `<a href="${normalizedUrl}" target="_blank" rel="noopener">${escapeHtml(property._id)}</a>` : 'X',
-    
-    // 2. ID User <--- 🎯 CETTE LIGNE MANQUAIT DANS VOTRE PRÉCÉDENTE LISTE
-    property.userId ? escapeHtml(property.userId) : 'X', 
-    
-    // 3. Type
-    escapeHtml(property.propertyType),
-    
-    // 4. Pièces
-    formatNumber(property.rooms),
-    
-    // 5. Chambres
-    formatNumber(property.bedrooms),
-    
-    // 6. Surface
-    formatNumber(property.surface),
-    
-    // 7. Prix
-    formatPrice(property.price),
-    
-    // 8. Pays
-    escapeHtml(property.country),
-    
-    // 9. Ville
-    escapeHtml(property.city),
-    
-    // 10. Code Postal
-    escapeHtml(property.postalCode),
-    
-    // 11. Année
-    formatNumber(property.yearBuilt),
-    
-    // 12. DPE
-    escapeHtml(property.dpe || 'X'),
-    
-    // 13. Langue
-    escapeHtml((property.language || '').toUpperCase()),
-    
-    // ... (Le reste des colonnes d'équipements et d'actions suit dans le bon ordre) ...
-    
-    boolIcon(property.pool),
-    boolIcon(property.doubleGlazing),
-    boolIcon(property.wateringSystem),
-    boolIcon(property.barbecue),
-    boolIcon(property.carShelter),
-    boolIcon(property.parking),
-    boolIcon(property.caretakerHouse),
-    boolIcon(property.electricShutters),
-    boolIcon(property.outdoorLighting),
-    (mainPhotos[0] ? '✓' : 'X'),
-    (mainPhotos[1] ? '✓' : 'X'),
-    (extraPhotos.length > 0 ? extraPhotos.length : 'X'),
-    (miniPhotos.length > 0 ? miniPhotos.length : 'X'),
-    property.videoUrl ? `<a href="${property.videoUrl}" target="_blank" rel="noopener">URL</a>` : 'X',
-    escapeHtml([property.contactFirstName, property.contactLastName].filter(Boolean).join(' ')),
-    escapeHtml(property.contactPhone),
-    rawDescription ? `<span title="${escapeHtml(rawDescription)}">${truncatedDescription}</span>` : 'X',
-    // Le dernier élément (Actions) est construit après, ce qui est correct.
-];
+                    // 1. ID Page (Contient le lien vers la LP)
+                    property._id ? `<a href="${normalizedUrl}" target="_blank" rel="noopener">${escapeHtml(property._id)}</a>` : 'X',
+                    
+                    // 2. ID User (CORRIGÉ: Ajout de cette colonne)
+                    property.userId ? escapeHtml(property.userId) : 'X', 
+                    
+                    // 3. Type
+                    escapeHtml(property.propertyType),
+                    
+                    // 4. Pièces
+                    formatNumber(property.rooms),
+                    
+                    // 5. Chambres
+                    formatNumber(property.bedrooms),
+                    
+                    // 6. Surface
+                    formatNumber(property.surface),
+                    
+                    // 7. Prix
+                    formatPrice(property.price),
+                    
+                    // 8. Pays
+                    escapeHtml(property.country),
+                    
+                    // 9. Ville
+                    escapeHtml(property.city),
+                    
+                    // 10. Code Postal
+                    escapeHtml(property.postalCode),
+                    
+                    // 11. Année
+                    formatNumber(property.yearBuilt),
+                    
+                    // 12. DPE
+                    escapeHtml(property.dpe || 'X'),
+                    
+                    // 13. Langue
+                    escapeHtml((property.language || '').toUpperCase()),
+                    
+                    // --- Équipements Booléens (14 à 23) ---
+                    boolIcon(property.pool), // Piscine
+                    boolIcon(property.doubleGlazing), // Double Vitrage
+                    boolIcon(property.wateringSystem), // Arrosage auto
+                    boolIcon(property.barbecue), // Barbecue
+                    boolIcon(property.carShelter), // Abri voiture
+                    boolIcon(property.parking), // Parking
+                    boolIcon(property.caretakerHouse), // Maison gardien
+                    boolIcon(property.electricShutters), // Stores électriques
+                    boolIcon(property.outdoorLighting), // Éclairage extérieur
+                    
+                    // --- Photos / Médias (24 à 27) ---
+                    (mainPhotos[0] ? '✓' : 'X'), // Photo principale
+                    (mainPhotos[1] ? '✓' : 'X'), // Photo secondaire
+                    (extraPhotos.length > 0 ? extraPhotos.length : 'X'), // Photos extra
+                    (miniPhotos.length > 0 ? miniPhotos.length : 'X'), // Mini photos
+                    property.videoUrl ? `<a href="${property.videoUrl}" target="_blank" rel="noopener">URL</a>` : 'X', // URL vidéo
+                    
+                    // --- Contact / Description (28 à 30) ---
+                    escapeHtml([property.contactFirstName, property.contactLastName].filter(Boolean).join(' ')), // Contact
+                    escapeHtml(property.contactPhone), // Téléphone
+                    rawDescription ? `<span title="${escapeHtml(rawDescription)}">${truncatedDescription}</span>` : 'X', // Description
+
+                    // 31. Actions (Dernière colonne)
+                    `
+                    <div class="table-action-buttons d-flex flex-nowrap gap-1">
+                        ${showUrlButtonHtml}
+                        ${copyButtonHtml}
+                        <button class="btn btn-sm btn-info show-details-btn" data-details='${detailsData}' title="${i18n.details}"><i class="bi bi-info-circle"></i></button>
+                        <button class="btn btn-sm btn-dark broadcast-btn" data-id="${safeIdAttr}" title="${i18n.broadcast}"><i class="bi bi-megaphone"></i></button>
+                        ${editButtonHtml}
+                    </div>
+                    `
+                ];
 
                 row.innerHTML = cells.map(cell => `<td class="text-nowrap">${cell}</td>`).join('');
                 landingPagesList.appendChild(row);
