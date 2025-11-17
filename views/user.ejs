@@ -1829,114 +1829,118 @@ function showSection(sectionId) {
 }
 
 
-
-    async function loadProperties() {
+async function loadLandingPages() {
     try {
-        const response = await fetch('/user/properties');
-        if (response.ok) {
-            const properties = await response.json();
-            const propertiesList = document.getElementById('properties-list');
-            propertiesList.innerHTML = '';
+        const response = await fetch('/user/landing-pages');
+        if (!response.ok) throw new Error("Erreur lors du chargement des données");
 
-            const noPropertiesMessage = document.getElementById('no-properties-message');
-            if (properties.length === 0) {
-                noPropertiesMessage.style.display = 'block';
-            } else {
-                noPropertiesMessage.style.display = 'none';
+        const landingPages = await response.json();
+        const landingPagesList = document.getElementById('properties-list');
+        landingPagesList.innerHTML = '';
 
-                const entityMap = {
-                  '&': '&amp;',
-                  '<': '&lt;',
-                  '>': '&gt;',
-                  '"': '&quot;',
-                  "'": '&#39;'
-                };
-                const escapeHtml = (value) => {
-                    if (value === null || value === undefined) return '—';
-                    return String(value).replace(/[&<>"']/g, char => entityMap[char]);
-                };
-                const escapeJsString = (value) => {
-                    if (value === null || value === undefined) return '';
-                    return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-                };
-                const formatNumber = (value) => (value === 0 || value) ? escapeHtml(value) : '—';
-                const formatPrice = (value) => {
-                    if (typeof value === 'number' && !Number.isNaN(value)) {
-                        return `${value.toLocaleString(<%- JSON.stringify(locale === 'en' ? 'en-US' : 'fr-FR') %>)} €`;
-                    }
-                    if (value) {
-                        return `${escapeHtml(value)} €`;
-                    }
-                    return '—';
-                };
-                const boolLabel = (value) => value ? <%- JSON.stringify(i18n.yes) %> : <%- JSON.stringify(i18n.no) %>;
+        const noPropertiesMessage = document.getElementById('no-properties-message');
+        if (landingPages.length === 0) {
+            noPropertiesMessage.style.display = 'block';
+        } else {
+            noPropertiesMessage.style.display = 'none';
 
-                properties.forEach(property => {
-                    const row = document.createElement('tr');
-                    const photos = Array.isArray(property.photos) ? property.photos : [];
-                    const mainPhotos = photos.slice(0, 2);
-                    const extraPhotos = photos.slice(2, 10).filter(Boolean);
-                    const miniPhotos = photos.slice(10, 13).filter(Boolean);
-                    const normalizedUrl = property.url ? (property.url.startsWith('http') ? property.url : `https://uap.immo${property.url}`) : '';
-                    const idCell = property._id ? (normalizedUrl ? `<a href="${normalizedUrl}" target="_blank" rel="noopener">${escapeHtml(property._id)}</a>` : escapeHtml(property._id)) : '—';
-                    const videoCell = property.videoUrl ? `<a href="${property.videoUrl}" target="_blank" rel="noopener">${escapeHtml(property.videoUrl)}</a>` : '—';
-                    const contactName = escapeHtml([property.contactFirstName, property.contactLastName].filter(Boolean).join(' ')) || '—';
-                    const contactPhone = escapeHtml(property.contactPhone) || '—';
-                    const rawDescription = property.description || '';
-                    const hasDescription = Boolean(rawDescription);
-                    const truncatedDescription = hasDescription
-                        ? (rawDescription.length > 8 ? `${rawDescription.slice(0, 8)}...` : rawDescription)
-                        : '';
-                    const descriptionCell = hasDescription
-                        ? `<span title="${escapeHtml(rawDescription)}">${escapeHtml(truncatedDescription)}</span>`
-                        : '—';
-                    const safeUrlForJs = escapeJsString(property.url || '');
-                    const safeIdForJs = escapeJsString(property._id || '');
+            const locale = document.documentElement.lang || 'fr';
+            
+            // --- FONCTIONS DE FORMATAGE (Simplifiées pour retourner "X" ou la valeur formatée) ---
+            const entityMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+            const escapeHtml = (value) => { 
+                if (value === null || value === undefined) return 'X'; 
+                return String(value).trim() || 'X'; // Retourne X si la chaîne est vide
+            };
+            const escapeJsString = (value) => { 
+                if (value === null || value === undefined) return ''; 
+                return String(value).replace(/\\/g, '\\\\').replace(/'/g, "\\'"); 
+            };
+            const formatNumber = (value) => (value === 0 || value) ? escapeHtml(value) : 'X';
+            const formatPrice = (value) => {
+                if (typeof value === 'number' && !Number.isNaN(value)) {
+                    return `${value.toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR')} €`;
+                }
+                return 'X';
+            };
+            // Règle: Si Vrai -> '✓', si Faux/Null -> 'X'
+            const boolIcon = (value) => (value === true) ? '<span style="color: green;">✓</span>' : 'X'; 
+            // --- FIN FONCTIONS DE FORMATAGE ---
+            
+            landingPages.forEach(property => {
+                const row = document.createElement('tr');
+                const photos = Array.isArray(property.photos) ? property.photos : [];
+                const mainPhotos = photos.slice(0, 2);
+                const extraPhotos = photos.slice(2, 10).filter(Boolean);
+                const miniPhotos = photos.slice(10, 13).filter(Boolean);
+                const rawDescription = property.description || '';
+                const hasDescription = Boolean(rawDescription);
+                const truncatedDescription = hasDescription ? (rawDescription.length > 8 ? `${rawDescription.slice(0, 8)}...` : rawDescription) : 'X';
+                
+                const normalizedUrl = property.url ? (property.url.startsWith('http') ? property.url : `https://uap.immo${property.url}`) : '';
+                const safeUrlForJs = escapeJsString(property.url || '');
+                const safeIdForJs = escapeJsString(property._id || '');
+                const detailsData = JSON.stringify(property).replace(/'/g, "&apos;");
+                const disabledByOrder = Boolean(property.hasActiveOrder);
 
-                    const actionsHtml = `
-                        <div class="action-icons">
-                          ${property.url ? `<i class="bi bi-clipboard" title="${<%- JSON.stringify(i18n.copy_url) %>}" style="color: #333;" onclick="copyURL('${safeUrlForJs}')"></i>` : ''}
-                          <i class="fa fa-shopping-cart" style="color: #333;" onclick="testURL('${safeIdForJs}')"></i>
-                          <i class="fa fa-pencil-alt" style="color: #333;" onclick="editProperty('${safeIdForJs}')"></i>
-                        </div>`;
+                // Construction des boutons d'action (Reste sur une ligne grâce à flex-nowrap dans le CSS)
+                const copyButtonHtml = normalizedUrl
+                    ? `<button class="btn btn-sm btn-outline-dark copy-btn" data-url="${safeUrlForJs}" title="${i18n.copy_url}"><i class="bi bi-clipboard"></i></button>`
+                    : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${i18n.url_unavailable}"><i class="bi bi-clipboard"></i></button>`;
 
-                    const cells = [
-                        idCell,
-                        escapeHtml(property.propertyType || '—'),
-                        formatNumber(property.rooms),
-                        formatNumber(property.bedrooms),
-                        formatNumber(property.surface),
-                        formatPrice(property.price),
-                        escapeHtml(property.country || '—'),
-                        escapeHtml(property.city || '—'),
-                        escapeHtml(property.postalCode || '—'),
-                        formatNumber(property.yearBuilt),
-                        escapeHtml(property.dpe || '—'),
-                        escapeHtml((property.language || '').toUpperCase() || '—'),
-                        boolLabel(property.pool),
-                        boolLabel(property.doubleGlazing),
-                        boolLabel(property.wateringSystem),
-                        boolLabel(property.barbecue),
-                        boolLabel(property.carShelter),
-                        boolLabel(property.parking),
-                        boolLabel(property.caretakerHouse),
-                        boolLabel(property.electricShutters),
-                        boolLabel(property.outdoorLighting),
-                        boolLabel(Boolean(mainPhotos[0])),
-                        boolLabel(Boolean(mainPhotos[1])),
-                        escapeHtml(extraPhotos.length),
-                        escapeHtml(miniPhotos.length),
-                        videoCell,
-                        contactName,
-                        contactPhone,
-                        descriptionCell,
-                        actionsHtml
-                    ];
+                const showUrlButtonHtml = normalizedUrl
+                    ? `<button class="btn btn-sm btn-outline-dark show-url-btn" data-url="${safeUrlForJs}" title="${i18n.show_url}"><i class="bi bi-link-45deg"></i></button>`
+                    : ``; // Afficher le bouton Ouvrir la page seulement si l'URL existe
 
-                    row.innerHTML = cells.map(cell => `<td>${cell}</td>`).join('');
-                    propertiesList.appendChild(row);
-                });
-            }
+                const editButtonHtml = (!disabledByOrder)
+                    ? `<button class="btn btn-sm btn-success edit-btn" data-id="${safeIdForJs}" title="${i18n.edit}"><i class="bi bi-pencil-square"></i></button>`
+                    : `<button class="btn btn-sm btn-secondary disabled" type="button" title="${i18n.edit_temporarily_unavailable}"><i class="bi bi-pencil-square"></i></button>`;
+
+                const cells = [
+                    property._id ? `<a href="${normalizedUrl}" target="_blank" rel="noopener">${escapeHtml(property._id)}</a>` : 'X',
+                    escapeHtml(property.propertyType),
+                    formatNumber(property.rooms),
+                    formatNumber(property.bedrooms),
+                    formatNumber(property.surface),
+                    formatPrice(property.price),
+                    escapeHtml(property.country),
+                    escapeHtml(property.city),
+                    escapeHtml(property.postalCode),
+                    formatNumber(property.yearBuilt),
+                    escapeHtml(property.dpe || 'X'),
+                    escapeHtml((property.language || '').toUpperCase()),
+                    boolIcon(property.pool),
+                    boolIcon(property.doubleGlazing),
+                    boolIcon(property.wateringSystem),
+                    boolIcon(property.barbecue),
+                    boolIcon(property.carShelter),
+                    boolIcon(property.parking),
+                    boolIcon(property.caretakerHouse),
+                    boolIcon(property.electricShutters),
+                    boolIcon(property.outdoorLighting),
+                    (mainPhotos[0] ? '✓' : 'X'),
+                    (mainPhotos[1] ? '✓' : 'X'),
+                    (extraPhotos.length > 0 ? extraPhotos.length : 'X'),
+                    (miniPhotos.length > 0 ? miniPhotos.length : 'X'),
+                    property.videoUrl ? `<a href="${property.videoUrl}" target="_blank" rel="noopener">URL</a>` : 'X',
+                    escapeHtml([property.contactFirstName, property.contactLastName].filter(Boolean).join(' ')),
+                    escapeHtml(property.contactPhone),
+                    rawDescription ? `<span title="${escapeHtml(rawDescription)}">${truncatedDescription}</span>` : 'X',
+                    `
+                    <div class="table-action-buttons d-flex flex-nowrap gap-1">
+                        ${showUrlButtonHtml}
+                        ${copyButtonHtml}
+                        <button class="btn btn-sm btn-info show-details-btn" data-details='${detailsData}' title="${i18n.details}"><i class="bi bi-info-circle"></i></button>
+                        <button class="btn btn-sm btn-dark broadcast-btn" data-id="${safeIdAttr}" title="${i18n.broadcast}"><i class="bi bi-megaphone"></i></button>
+                        ${editButtonHtml}
+                    </div>
+                    `
+                ];
+
+                row.innerHTML = cells.map(cell => `<td class="text-nowrap">${cell}</td>`).join('');
+                landingPagesList.appendChild(row);
+            });
+        }
         } else {
             const propertiesList = document.getElementById('properties-list');
             propertiesList.innerHTML = '<tr><td colspan="30" class="text-center">Erreur lors du chargement des propriétés.</td></tr>';
