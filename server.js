@@ -1037,6 +1037,101 @@ app.get('/admin/download-photos/:propertyId', isAuthenticated, isAdmin, async (r
     }
 });
 
+
+// Route GET pour télécharger toutes les photos d'une propriété en ZIP
+app.get('/admin/download-photos/:propertyId', isAuthenticated, isAdmin, async (req, res) => {
+    const { propertyId } = req.params;
+    let tempDir;
+    let zipPath;
+
+    try {
+        // 1. Récupérer les informations de la propriété (inclut le tableau 'photos')
+        const property = await Property.findById(propertyId).lean();
+
+        if (!property || !Array.isArray(property.photos) || property.photos.length === 0) {
+            return res.status(404).send('Aucune photo trouvée pour cette propriété.');
+        }
+
+        // 2. Construire la liste des chemins de fichiers réels
+        // Votre code d'upload utilise 'public/uploads'
+        const uploadsDir = path.join(__dirname, 'public/uploads'); 
+        
+        const filesToArchive = property.photos.reduce((acc, filename) => {
+            const filePath = path.join(uploadsDir, filename);
+            if (fs.existsSync(filePath)) {
+                acc.push(filePath);
+            } else {
+                console.warn(`Fichier photo manquant: ${filePath}`);
+            }
+            return acc;
+        }, []);
+
+        if (filesToArchive.length === 0) {
+            return res.status(404).send('Aucune photo disponible pour cette propriété.');
+        }
+
+        // 3. Créer un répertoire temporaire et le chemin du fichier ZIP
+        const zipName = `photos-propriete-${propertyId}.zip`;
+        // Utilisez fs.promises.mkdtemp qui est asynchrone
+        tempDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'appimmo-'));
+        zipPath = path.join(tempDir, zipName);
+
+        // 4. Exécuter la commande 'zip' pour créer l'archive
+        const zipArgs = ['-j', '-q', zipPath, '--', ...filesToArchive];
+
+        await new Promise((resolve, reject) => {
+            // Utiliser 'spawn' pour exécuter la commande zip
+            const zipProcess = spawn('zip', zipArgs);
+            
+            // Log les erreurs de la commande zip
+            zipProcess.stderr.on('data', (data) => {
+                console.error('zip stderr:', data.toString());
+            });
+            
+            zipProcess.on('close', (code) => {
+                if (code === 0) {
+                    resolve();
+                } else {
+                    reject(new Error(`zip process exited with code ${code}`));
+                }
+            });
+            zipProcess.on('error', reject);
+        });
+
+        // 5. Envoyer le fichier ZIP en téléchargement
+        return res.download(zipPath, zipName, async (err) => {
+            // Nettoyage après envoi (important!)
+            try {
+                if (zipPath) await fs.promises.unlink(zipPath);
+                if (tempDir) await fs.promises.rm(tempDir, { recursive: true, force: true });
+            } catch (cleanupError) {
+                if (cleanupError.code !== 'ENOENT') {
+                    console.warn('Erreur lors du nettoyage du ZIP temporaire :', cleanupError);
+                }
+            }
+
+            if (err) {
+                console.error('Erreur lors de l\'envoi du ZIP :', err);
+                if (!res.headersSent) {
+                    res.status(500).send('Erreur lors de l\'envoi du fichier.');
+                }
+            }
+        });
+
+    } catch (error) {
+        console.error('Erreur lors de la création du ZIP de photos pour admin :', error);
+        
+        // Tentative de nettoyage si l'erreur se produit avant l'envoi
+        try {
+            if (zipPath) await fs.promises.unlink(zipPath);
+            if (tempDir) await fs.promises.rm(tempDir, { recursive: true, force: true });
+        } catch (cleanupError) {
+             // Ignorer les erreurs de nettoyage
+        }
+
+        return res.status(500).send('Erreur interne du serveur lors du téléchargement des photos.');
+    }
+});
 const renderAdminOrders = async (req, res, next) => {
     const { userId } = req.params;
     const localeParam = req.params.locale;
