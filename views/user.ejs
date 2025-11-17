@@ -1501,23 +1501,23 @@ progress {
                 <td><%= [property.contactFirstName, property.contactLastName].filter(Boolean).join(' ') || 'NC' %></td>
                 <td><%= property.contactPhone || 'NC' %></td>
                 <td <% if (descriptionText) { %>title="<%= descriptionText %>"<% } %>><%= descriptionText ? truncatedDescription : 'NC' %></td>
-                <td>
-                  <div class="d-flex flex-wrap gap-2">
-                    <% if (property.url) { %>
-                      <a href="<%= property.url %>" target="_blank" class="btn btn-sm btn-outline-dark" title="Ouvrir la page">
-                        <i class="bi bi-box-arrow-up-right"></i>
-                      </a>
-                    <% } %>
-                    <% if (property.photos && property.photos.length > 0) { %>
-                      <a href="/admin/download-photos/<%= property._id %>" class="btn btn-sm btn-primary" title="Télécharger toutes les photos (ZIP)">
-                        <i class="bi bi-file-earmark-zip"></i>
-                      </a>
-                    <% } %>
-                    <a href="/property/edit/<%= property._id %>" class="btn btn-sm btn-outline-dark" title="Modifier">
-                      <i class="bi bi-pencil-square"></i>
-                    </a>
-                  </div>
-                </td>
+               <td class="text-nowrap">
+                  <div class="d-flex flex-nowrap gap-2"> 
+                    <% if (property.url) { %>
+                      <a href="<%= property.url %>" target="_blank" class="btn btn-sm btn-outline-dark" title="Ouvrir la page">
+                        <i class="bi bi-box-arrow-up-right"></i>
+                      </a>
+                    <% } %>
+                    <% if (property.photos && property.photos.length > 0) { %>
+                      <a href="/admin/download-photos/<%= property._id %>" class="btn btn-sm btn-primary" title="Télécharger toutes les photos (ZIP)">
+                        <i class="bi bi-file-earmark-zip"></i>
+                      </a>
+                    <% } %>
+                    <a href="/property/edit/<%= property._id %>" class="btn btn-sm btn-success" title="Modifier">
+                      <i class="bi bi-pencil-square"></i>
+                    </a>
+                  </div>
+                </td>
               </tr>
             <% }); %>
           <% } else { %>
