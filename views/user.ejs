@@ -2067,18 +2067,18 @@ async function loadLandingPages() {
           : 'X',
 
         // 30. Actions
-        `
-        <div class="table-action-buttons d-flex flex-nowrap gap-1">
-          ${showUrlButtonHtml}
-          ${copyButtonHtml}
-          ${qrButtonHtml}
-          <button class="btn btn-sm btn-info show-details-btn" data-details='${detailsData}' title="${escapeHtml(DETAILS_LABEL)}">
-            <i class="bi bi-info-circle"></i>
-          </button>
-          ${broadcastButtonHtml}
-          ${editButtonHtml}
-        </div>
-        `
+           (
+          '<div class="table-action-buttons d-flex flex-nowrap gap-1">' +
+            showUrlButtonHtml +
+            copyButtonHtml +
+            qrButtonHtml +
+            '<button class="btn btn-sm btn-info show-details-btn" data-details=\'' + detailsData + '\' title="' + escapeHtml(DETAILS_LABEL) + '">' +
+              '<i class="bi bi-info-circle"></i>' +
+            '</button>' +
+            broadcastButtonHtml +
+            editButtonHtml +
+          '</div>'
+        )
       ];
 
       row.innerHTML = cells.map(c => `<td class="text-nowrap">${c}</td>`).join('');
