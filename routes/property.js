@@ -20,6 +20,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
+
 function cleanupUploadedFiles(files) {
   if (!files) return;
   Object.values(files).forEach(fileArray => {
@@ -1665,8 +1666,8 @@ router.post('/add-property', authMiddleware, upload.fields([
     }
 });
 
-
-router.post('/update/:id', authMiddleware, upload.fields([
+// Route pour mettre à jour une propriété existante
+router.post('/update-property/:id', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 },
     { name: 'extraPhotos', maxCount: 8 },
@@ -1858,45 +1859,7 @@ router.get('/user/landing-pages', async (req, res) => {
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
 });
-router.get('/edit/:id', authMiddleware, async (req, res) => {
-    const propertyId = req.params.id;
-    // Récupère la locale depuis l'URL ou la session/cookie (basé sur votre index.js)
-    const locale = req.params.locale || req.locale || 'fr'; 
 
-    try {
-        const property = await PropertyModel.findById(propertyId);
-
-        // 1. Vérification de l'existence et de l'autorisation
-        if (!property || !property.userId.equals(req.user._id)) {
-            // L'utilisateur n'est pas le propriétaire ou la propriété n'existe pas
-            return res.status(403).send('Propriété non trouvée ou accès refusé.');
-        }
-
-        // 2. Chargement des traductions (doit correspondre à la structure dans user.js)
-        let userTranslations = {};
-        try {
-            // Ajustez le chemin si nécessaire, ici on suppose un chemin relatif vers /locales/
-            const translationsPath = path.join(__dirname, '..', 'locales', locale, 'user.json'); 
-            userTranslations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-        } catch (error) {
-            console.warn(`Erreur lors du chargement des traductions 'user.json' pour la locale ${locale}:`, error);
-        }
-
-        // 3. Rendu de la vue 'edit-property'
-        res.render('edit-property', {
-            property: property.toObject(), // Passe l'objet de la propriété
-            locale,
-            i18n: userTranslations,
-            currentPath: req.originalUrl,
-            isAuthenticated: req.isAuthenticated(),
-            successMessage: req.flash('success') 
-        });
-
-    } catch (error) {
-        console.error("❌ Erreur lors de l'affichage du formulaire d'édition:", error);
-        res.status(500).send("Erreur serveur lors du chargement de la page d'édition.");
-    }
-});
 
 module.exports = router;
 
