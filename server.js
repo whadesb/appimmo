@@ -3779,93 +3779,115 @@ app.post('/paypal/webhook', async (req, res) => {
   }
 });
 app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
-  try {
-    const { orderID, propertyId, amount, currency, captureId } = req.body;
+  try {
+    const { orderID, propertyId, amount, currency, captureId } = req.body;
 
-    if (!orderID || !propertyId) {
-      return res.status(400).json({
-        success: false,
-        message: 'Paramètres manquants (orderID, propertyId).'
-      });
-    }
+    if (!orderID || !propertyId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Paramètres manquants (orderID, propertyId).'
+      });
+    }
 
-    // ✅ Si le captureId n'est pas fourni par le front, on tente de le récupérer chez PayPal
-    let effectiveCaptureId = captureId || null;
-    if (!effectiveCaptureId) {
-      try {
-        effectiveCaptureId = await resolveCaptureIdFromOrder(orderID);
-      } catch (e) {
-        console.warn('⚠️ Impossible de résoudre captureId via PayPal :', e?.message || e);
-      }
-    }
+    // --- DÉFINITION DES DONNÉES DE LA FACTURE POUR L'ENVOI D'EMAIL ---
+    // Ces constantes sont définies ici pour être utilisées par le bloc asynchrone ci-dessous
+    const fullName = [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
+    const clientDetails = {
+      userId: req.user._id.toString(),
+      firstName: req.user.firstName,
+      lastName: req.user.lastName,
+    };
+    const companyDetails = {
+        name: 'UAP Immo',
+        address: ['123 Rue de la Liberté', '75000 Paris'], // 👈 VOS VRAIES ADRESSES
+        siret: '123 456 789 00012', // 👈 VOTRE VRAI SIRET
+        tva: 'FR12345678901', // 👈 VOTRE VRAI NUMÉRO (ou N/A)
+    };
+    const serviceDetails = {
+      product: 'Pack de diffusion publicitaire',
+      duration: '90 jours',
+    };
+    // -----------------------------------------------------------------
 
-    // 🔎 Upsert commande
-    let order = await Order.findOne({
-      userId: req.user._id,
-      propertyId,
-      paypalOrderId: orderID
-    });
+    // ✅ Si le captureId n'est pas fourni par le front, on tente de le récupérer chez PayPal
+    let effectiveCaptureId = captureId || null;
+    if (!effectiveCaptureId) {
+      // Assurez-vous que resolveCaptureIdFromOrder est défini et fonctionne
+      try {
+        effectiveCaptureId = await resolveCaptureIdFromOrder(orderID);
+      } catch (e) {
+        console.warn('⚠️ Impossible de résoudre captureId via PayPal :', e?.message || e);
+      }
+    }
 
-    const paidAmount = parseFloat(amount || order?.amount || '500.00');
+    // 🔎 Upsert commande
+    let order = await Order.findOne({
+      userId: req.user._id,
+      propertyId,
+      paypalOrderId: orderID
+    });
 
-    if (!order) {
-      order = new Order({
-        userId: req.user._id,
-        propertyId,
-        amount: paidAmount,
-        status: 'paid',
-        paypalOrderId: orderID,              // ex: 8RN80188...
-        paypalCaptureId: effectiveCaptureId, // ex: 5F4899...
-        currency: currency || 'EUR',
-        paidAt: new Date(),
-        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
-      });
-      await order.save();
-    } else {
-      order.status = 'paid';
-      order.paidAt = new Date();
-      order.amount = paidAmount;
-      order.currency = currency || order.currency || 'EUR';
-      order.paypalCaptureId = effectiveCaptureId || order.paypalCaptureId;
-      order.expiryDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
-      await order.save();
-    }
+    const paidAmount = parseFloat(amount || order?.amount || '500.00');
 
-    // ⚡️ Réponse immédiate
-    const responseLocale =
-      (req.cookies && req.cookies.locale) ||
-      (req.params && req.params.locale) ||
-      'fr';
+    if (!order) {
+      order = new Order({
+        userId: req.user._id,
+        propertyId,
+        amount: paidAmount,
+        status: 'paid',
+        paypalOrderId: orderID,
+        paypalCaptureId: effectiveCaptureId,
+        currency: currency || 'EUR',
+        paidAt: new Date(),
+        expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000)
+      });
+      await order.save();
+    } else {
+      order.status = 'paid';
+      order.paidAt = new Date();
+      order.amount = paidAmount;
+      order.currency = currency || order.currency || 'EUR';
+      order.paypalCaptureId = effectiveCaptureId || order.paypalCaptureId;
+      order.expiryDate = new Date(Date.now() + 90 * 24 * 60 * 60 * 1000);
+      await order.save();
+    }
 
-    res.json({ success: true, redirectUrl: `/${responseLocale}/user` });
+    // ⚡️ Réponse immédiate
+    const responseLocale =
+      (req.cookies && req.cookies.locale) ||
+      (req.params && req.params.locale) ||
+      'fr';
 
-    // 📧 Email asynchrone
-    const fullName =
-      [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
+    res.json({ success: true, redirectUrl: `/${responseLocale}/user` });
 
-    (async () => {
-      try {
-        await sendInvoiceByEmail(
-          req.user.email,                 // to
-          fullName,                       // fullName
-          order.orderId,                  // Réf UAP (ORD-...)
-          order.paypalOrderId,            // PayPal Order ID
-          order.paypalCaptureId || '-',   // PayPal Capture ID (si connu)
-          String(order.amount),           // montant
-          order.currency || 'EUR'         // devise
-        );
-        console.log('📧 Facture envoyée (async) avec succès pour', req.user.email);
-      } catch (e) {
-        console.warn('📧 Envoi facture KO (async) :', e?.message || e);
-      }
-    })(); // ← on ferme bien l’IIFE ici
+    // 📧 Email asynchrone (le bloc qui plantait)
+    // On utilise l'objet 'order' mis à jour par l'upsert
+    (async () => {
+      try {
+        await sendInvoiceByEmail(
+          req.user.email,
+          fullName,
+          order.orderId,
+          order.paypalOrderId,
+          order.paypalCaptureId || '-',
+          String(order.amount),
+          order.currency || 'EUR',
+          // Passage des 3 objets de données définis juste au-dessus
+          clientDetails, 
+          companyDetails, 
+          serviceDetails
+        );
+        console.log('📧 Facture envoyée (async) avec succès pour', req.user.email);
+      } catch (e) {
+        console.warn('📧 Envoi facture KO (async) :', e?.message || e);
+      }
+    })();
 
-  } catch (err) {               // ← puis le catch du try principal
-    console.error('❌ /paypal/mark-paid :', err);
-    return res.status(500).json({ success: false, message: 'Erreur serveur' });
-  }
+  } catch (err) {
+    console.error('❌ /paypal/mark-paid :', err);
+    return res.status(500).json({ success: false, message: 'Erreur serveur' });
+  }
 });
-
 
 app.post('/btcpay/webhook', express.json(), async (req, res) => {
   try {
