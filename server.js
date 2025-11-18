@@ -1824,6 +1824,25 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
 
   try {
     const { orderID, propertyId, amount } = req.body;
+    // --- DÉFINITION DES DONNÉES DE LA FACTURE ---
+
+const fullName = `${req.user.firstName} ${req.user.lastName}`;
+const clientDetails = {
+    userId: req.user._id.toString(),
+    firstName: req.user.firstName,
+    lastName: req.user.lastName,
+};
+const companyDetails = {
+    name: 'UAP Immo',
+    address: ['123 Rue de la Liberté', '75000 Paris'], // 👈 REMPLACER PAR VOS VRAIES ADRESSES
+    siret: '123 456 789 00012', // 👈 REMPLACER PAR VOTRE VRAI SIRET
+    tva: 'FR12345678901', // 👈 REMPLACER PAR VOTRE VRAI NUMÉRO (ou N/A)
+};
+const serviceDetails = {
+    product: 'Pack de diffusion publicitaire',
+    duration: '90 jours',
+};
+// --- FIN DÉFINITION DES DONNÉES DE LA FACTURE ---
 
     // 1) Vérifier pas de commande active
     const existingActiveOrder = await Order.findOne({
@@ -1898,18 +1917,26 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
         captureId
       });
 
-      // 6) Email / facture
-      try {
+     // ... dans le bloc if (captureRes.status === 201 || captureRes.status === 200)
+
+    // 6) Email / facture
+    try {
         await sendInvoiceByEmail(
-          req.user.email,
-          captureId || orderID,
-          String(amount),
-          'EUR'
+            req.user.email,                    // to
+            fullName,                          // fullName (Nouveau)
+            newOrder.orderId,                  // orderIdUap (Nouveau: Réf interne de la BDD)
+            orderID,                           // paypalOrderId
+            captureId,                         // paypalCaptureId
+            String(amount),                    // amount
+            'EUR',                             // currency
+            // --- Données complètes pour generateInvoicePDF (Transmises par sendInvoiceByEmail) ---
+            clientDetails,
+            companyDetails,
+            serviceDetails
         );
         console.log('📧 Email de facture envoyé à', req.user.email);
-      } catch (e) {
-        console.warn('📧 Envoi facture KO :', e?.message || e);
-      }
+    } catch (e) {
+
 
       const locale = req.cookies.locale || 'fr';
       return res.json({ success: true, redirectUrl: `/${locale}/user` });
@@ -1928,17 +1955,27 @@ app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
         { upsert: true, new: true }
       );
 
-      try {
+      // ... dans le bloc if (captureRes.status === 422)
+
+    // ... (Logique de mise à jour de la commande 'updated')
+
+    try {
         await sendInvoiceByEmail(
-          req.user.email,
-          orderID,
-          String(amount),
-          'EUR'
+            req.user.email,                    // to
+            fullName,                          // fullName (Nouveau)
+            updated.orderId,                   // orderIdUap (Nouveau)
+            orderID,                           // paypalOrderId
+            updated.paypalCaptureId,           // paypalCaptureId (Provient du modèle mis à jour)
+            String(amount),                    // amount
+            'EUR',                             // currency
+            // --- Données complètes pour generateInvoicePDF ---
+            clientDetails,
+            companyDetails,
+            serviceDetails
         );
         console.log('📧 Email de facture envoyé (422) à', req.user.email);
-      } catch (e) {
-        console.warn('📧 Envoi facture KO (422) :', e?.message || e);
-      }
+    } catch (e) {
+
 
       const locale = req.cookies.locale || 'fr';
       return res.json({ success: true, redirectUrl: `/${locale}/user` });
