@@ -2909,7 +2909,33 @@ function editProperty(propertyId) {
     window.location.href = `/${locale}/property/edit/${propertyId}`;
 }
 </script>
-
+<script>
+/**
+ * Redirige l'utilisateur vers la page de paiement pour commander
+ * un pack de diffusion pour la propriété spécifiée.
+ * @param {string} propertyId L'ID de la propriété à diffuser.
+ */
+function redirectToPayment(propertyId) {
+    // 1. Récupère la locale actuelle (passée via EJS)
+    const locale = '<%= locale %>';
+    
+    // 2. Construit l'URL de redirection
+    // Note : Le point de terminaison de paiement attend un query param 'propertyId'
+    const redirectUrl = `/${locale}/payment?propertyId=${propertyId}`;
+    
+    // 3. Effectue la redirection
+    window.location.href = redirectUrl;
+    
+    // Optionnel : Afficher un toast de confirmation juste avant la redirection
+    const toast = document.getElementById('toast-confirm');
+    if (toast) {
+        toast.style.display = 'block';
+        setTimeout(() => {
+            toast.style.display = 'none';
+        }, 3000);
+    }
+}
+</script>
 </body>
 </html>
 
