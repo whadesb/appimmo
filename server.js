@@ -402,14 +402,14 @@ app.get('/:locale', (req, res, next) => {
     const locale = req.params.locale;
 
     // Liste des routes qui ne doivent PAS être interprétées comme des locales
-  const excludedPaths = [
+ const excludedPaths = [
         'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
         'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py',
-        // AJOUT DES FICHIERS CAUSANT LES AVERTISSEMENTS :
         'crossdomain.xml', 'clientaccesspolicy.xml', 'security.txt',
+        // AJOUT DE robots.txt POUR ÉVITER LES AVERTISSEMENTS
+        'robots.txt', 
         'login', 'register', 'user', 'forgot-password', 'reset-password', 'contact', 'politique-confidentialite'
     ];
-
     // Si la route est exclue, on passe au middleware suivant
     if (excludedPaths.includes(locale)) {
         return next();
