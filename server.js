@@ -109,10 +109,19 @@ app.use(session({
 }));
 
 app.use('/', qrRoutes);
-supportedLocales.forEach(locale => {
-    // Si l'URL est /fr/property/X, le routeur Property.js verra /X
-    app.use(`/${locale}/property`, require('./routes/property')); 
+// server.js (Ajoutez ceci avant la boucle 'supportedLocales.forEach...')
+
+app.use('/property', (req, res, next) => {
+    if (req.locale) {
+        return res.redirect(`/${req.locale}${req.originalUrl}`);
+    }
+    next(); // Poursuit au cas où d'autres middlewares ou routes génériques existent.
 });
+
+supportedLocales.forEach(locale => {
+    app.use(`/${locale}/property`, require('./routes/property'));
+});
+
 
 app.use(passport.initialize());
 app.use(passport.session());
