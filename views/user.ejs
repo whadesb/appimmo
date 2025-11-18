@@ -1842,6 +1842,22 @@ const formatNumber = (value) => (value === 0 || value) ? escapeHtml(value) : 'X'
 const boolIcon = (value) => (value === true) ? '<span style="color: green;">✓</span>' : 'X'; 
 
 <script>
+// Helpers (si déjà définis ailleurs, ne duplique pas)
+const entityMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+
+function escapeHtml(value) {
+  if (value === null || value === undefined) return 'X';
+  return String(value)
+    .replace(/[&<>"']/g, char => entityMap[char] || char)
+    .trim() || 'X';
+}
+function formatNumber(value) {
+  return (value === 0 || value) ? escapeHtml(value) : 'X';
+}
+function boolIcon(value) {
+  return value === true ? '<span style="color: green;">✓</span>' : 'X';
+}
+<script>
 async function loadLandingPages() {
   try {
     const response = await fetch('/user/landing-pages');
@@ -1853,17 +1869,20 @@ async function loadLandingPages() {
 
     landingPagesList.innerHTML = '';
 
-    const numberLocale = <%- JSON.stringify(locale === 'en' ? 'en-GB' : 'fr-FR') %>;
-    const currencySymbol = <%- JSON.stringify(i18n.currency_symbol || '€') %>;
-    const COPY_TITLE = <%- JSON.stringify(i18n.copy_url || "Copier l'URL") %>;
-    const SHOW_URL_TITLE = <%- JSON.stringify(i18n.show_url || "Afficher l'URL") %>;
-    const QR_CODE_TITLE = <%- JSON.stringify(i18n.qr_code || "QR Code") %>;
-    const BROADCAST_TITLE = <%- JSON.stringify(i18n.broadcast || "Diffuser") %>;
-    const EDIT_TITLE = <%- JSON.stringify(i18n.edit || "Modifier") %>;
-    const ACTIVE_ORDER_TITLE = <%- JSON.stringify(i18n.active_order_in_progress || "Commande active en cours") %>;
-    const EDIT_DISABLED_TITLE = <%- JSON.stringify(i18n.edit_temporarily_unavailable || "Modification temporairement désactivée") %>;
-    const URL_UNAVAILABLE_TITLE = <%- JSON.stringify(i18n.url_unavailable || "URL indisponible") %>;
-    const DETAILS_LABEL = <%- JSON.stringify(i18n.details || "Détails") %>;
+    // ✅ Plus de EJS ici : on récupère la locale via le <html lang="fr">
+    const htmlLocale = document.documentElement.lang || 'fr';
+    const numberLocale = htmlLocale === 'en' ? 'en-GB' : 'fr-FR';
+    const currencySymbol = '€'; // adapte si besoin
+
+    const COPY_TITLE = "Copier l'URL";
+    const SHOW_URL_TITLE = "Afficher l'URL";
+    const QR_CODE_TITLE = "QR Code";
+    const BROADCAST_TITLE = "Diffuser";
+    const EDIT_TITLE = "Modifier";
+    const ACTIVE_ORDER_TITLE = "Commande active en cours";
+    const EDIT_DISABLED_TITLE = "Modification temporairement désactivée";
+    const URL_UNAVAILABLE_TITLE = "URL indisponible";
+    const DETAILS_LABEL = "Détails";
 
     const formatPrice = (value) => {
       if (typeof value === 'number' && !Number.isNaN(value)) {
@@ -1903,7 +1922,6 @@ async function loadLandingPages() {
       if (noPropertiesMessage) noPropertiesMessage.style.display = 'block';
       return;
     }
-
     if (noPropertiesMessage) noPropertiesMessage.style.display = 'none';
 
     landingPages.forEach(property => {
@@ -2067,7 +2085,7 @@ async function loadLandingPages() {
       landingPagesList.appendChild(row);
     });
 
-    // Actions JS sur les boutons (copie, affichage URL, QR, paiement, édition)
+    // ✅ Actions JS sur les boutons
     document.querySelectorAll('.copy-btn').forEach(button => {
       button.addEventListener('click', function () {
         const urlPath = this.dataset.url;
@@ -2127,6 +2145,7 @@ async function loadLandingPages() {
   }
 }
 </script>
+
 <script>
   const descriptionInput = document.getElementById('description');
   const charCount = document.getElementById('charCount');
