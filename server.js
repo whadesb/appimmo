@@ -238,11 +238,17 @@ app.post('/logout', isAuthenticated, (req, res) => {
 });
 
 
-// Middleware d'authentification
 function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
-  const locale = req.params.locale || req.locale || req.cookies.locale || 'fr';
-  return res.redirect(`/${locale}/login`);
+    // 🔑 CORRECTION : Appeler req.isAuthenticated()
+    if (req.isAuthenticated && req.isAuthenticated()) { 
+        return next();
+    }
+    
+    // Assurez-vous d'avoir accès à la locale pour la redirection
+    const locale = req.params.locale || req.locale || req.cookies.locale || 'fr';
+    
+    // Redirection vers la page de connexion
+    return res.redirect(`/${locale}/login`);
 }
 
 
