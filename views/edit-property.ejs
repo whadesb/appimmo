@@ -750,11 +750,23 @@
     <script src="/js/click-scroll.js"></script>
     <script src="/js/custom.js"></script>
 <% if (typeof successMessage !== 'undefined') { %>
-<script>
-  setTimeout(() => {
-    window.location.href = "/<%= locale %>/user";
-  }, 3000);
-</script>
+<% 
+// Définir successMessage comme une chaîne vide si ce n'est pas déjà une chaîne
+const successMsg = Array.isArray(successMessage) ? successMessage[0] : (successMessage || '');
+%>
+
+<% if (typeof successMsg === 'string' && successMsg.length > 0) { %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= successMsg %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fermer"></button>
+    </div>
+    
+    <script>
+        setTimeout(() => {
+            window.location.href = "/<%= locale %>/user";
+        }, 3000);
+    </script>
+<% } %>
 <% } %>
 
 </body>
