@@ -37,7 +37,8 @@ async function generateInvoicePDF(data) {
   const tvaRate = 0; // Taux de TVA (Franchise en base de TVA en France)
   const amountHT = amountTTC;
   const amountTVA = 0;
-  const invoiceNumber = `F-${new Date().getFullYear()}-${orderIdUap.slice(-6)}`;
+  // Utilise orderIdUap directement pour le suffixe
+  const invoiceNumber = `F-${new Date().getFullYear()}-${orderIdUap.replace('ORD-', '').slice(-6)}`;
   
   const now = new Date();
   const paymentDate = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -117,7 +118,8 @@ async function generateInvoicePDF(data) {
   doc.text(`Payé le : ${paymentDate} à ${paymentTime} CET`, 300, doc.y - 12)
     .text(`Mode : PayPal`, 300, doc.y);
 
-  doc.text(`Réf. commande UAP : ORD-${orderIdUap || '-'}`, 300, doc.y + 12)
+  // Affiche la commande sans le préfixe "ORD-"
+  doc.text(`Réf. commande UAP : ${orderIdUap || '-'}`, 300, doc.y + 12)
     .text(`Réf. PayPal/Txn ID : ${paypalCaptureId || paypalOrderId || '-'}`, 300, doc.y + 24)
     .moveDown(4);
 
@@ -212,7 +214,7 @@ async function sendInvoiceByEmail(
   amount,
   currency = 'EUR',
   clientDetails, 
-  companyDetails,
+  companyInfo,
   serviceDetails
 ) {
   // Génère le PDF
@@ -223,7 +225,7 @@ async function sendInvoiceByEmail(
     amount,
     currency,
     client: clientDetails,
-    companyInfo: companyDetails,
+    companyInfo: companyInfo,
     serviceDetails: serviceDetails,
   });
 
