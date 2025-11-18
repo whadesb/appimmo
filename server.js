@@ -1936,7 +1936,8 @@ const serviceDetails = {
         );
         console.log('📧 Email de facture envoyé à', req.user.email);
     } catch (e) {
-
+console.warn('📧 Envoi facture KO :', e?.message || e);
+         }
 
       const locale = req.cookies.locale || 'fr';
       return res.json({ success: true, redirectUrl: `/${locale}/user` });
@@ -1975,7 +1976,8 @@ const serviceDetails = {
         );
         console.log('📧 Email de facture envoyé (422) à', req.user.email);
     } catch (e) {
-
+console.warn('📧 Envoi facture KO :', e?.message || e);
+         }
 
       const locale = req.cookies.locale || 'fr';
       return res.json({ success: true, redirectUrl: `/${locale}/user` });
