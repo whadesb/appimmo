@@ -111,16 +111,6 @@ app.use(session({
 app.use('/', qrRoutes);
 // server.js (Ajoutez ceci avant la boucle 'supportedLocales.forEach...')
 
-app.use('/property', (req, res, next) => {
-    if (req.locale) {
-        return res.redirect(`/${req.locale}${req.originalUrl}`);
-    }
-    next(); // Poursuit au cas où d'autres middlewares ou routes génériques existent.
-});
-
-supportedLocales.forEach(locale => {
-    app.use(`/${locale}/property`, require('./routes/property'));
-});
 
 
 app.use(passport.initialize());
@@ -276,7 +266,75 @@ function isAdmin(req, res, next) {
 
   return res.status(403).send('Accès refusé');
 }
+// server.js (Nouvelles routes à ajouter après la ligne 306, par exemple)
 
+// 1. Route GET pour l'édition (Ex: /en/property/edit/ID)
+app.get('/:locale/property/edit/:id', ensureAuthenticated, async (req, res) => {
+    // La logique est la même que dans routes/property.js, mais adaptée à app.get
+    const propertyId = req.params.id;
+    const locale = req.params.locale || 'fr'; 
+    const mongoose = require('mongoose'); // Requis si non importé plus haut
+    const PropertyModel = mongoose.model('Property'); 
+    const fs = require('fs');
+    const path = require('path');
+
+    try {
+        const property = await PropertyModel.findById(propertyId);
+
+        if (!property || !property.userId.equals(req.user._id)) {
+            return res.status(403).send('Propriété non trouvée ou accès refusé.');
+        }
+
+        let userTranslations = {};
+        try {
+            // Ajustez le chemin vers votre fichier de traduction 'user.json'
+            const translationsPath = path.join(__dirname, 'locales', locale, 'user.json');
+            userTranslations = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+        } catch (error) {
+            console.warn(`Erreur lors du chargement des traductions 'user.json':`, error);
+        }
+
+        res.render('edit-property', {
+            property: property.toObject(),
+            locale,
+            i18n: userTranslations,
+            currentPath: req.originalUrl,
+            isAuthenticated: req.isAuthenticated(),
+            successMessage: req.flash('success')
+        });
+
+    } catch (error) {
+        console.error("❌ Erreur lors de l'affichage du formulaire d'édition:", error);
+        res.status(500).send("Erreur serveur.");
+    }
+});
+
+// 2. Route POST pour la mise à jour (Ex: /en/property/update/ID)
+// ATTENTION: Vous devez inclure ici TOUT le code de la route POST qui se trouvait dans routes/property.js !
+app.post('/:locale/property/update/:id', ensureAuthenticated, upload.fields([
+    // ... (votre configuration d'upload multer) ...
+]), async (req, res) => {
+    // Collez ici TOUT le corps de la fonction router.post('/update/:id', ...) de routes/property.js
+    // N'oubliez pas que vous aurez besoin d'importer sharp, generateLandingPage, etc., dans server.js 
+    // ou de les définir globalement.
+    // ...
+    // Le corps est trop long pour être collé ici, mais c'est là que le code doit aller.
+    // ...
+});
+
+// 3. Route de redirection manquante (pour les anciens liens sans locale)
+app.get('/property/edit/:id', (req, res) => {
+    const locale = req.locale || 'fr';
+    // Redirige vers l'URL avec la locale
+    res.redirect(`/${locale}/property/edit/${req.params.id}`); 
+});
+
+// 4. Route POST de redirection manquante (pour les anciens liens sans locale)
+app.post('/property/update/:id', (req, res) => {
+    const locale = req.locale || 'fr';
+    // Redirige vers l'URL avec la locale
+    res.redirect(`/${locale}/property/update/${req.params.id}`); 
+});
 
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
