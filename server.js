@@ -1262,35 +1262,37 @@ app.get('/faq', (req, res) => {
 });
 
 app.get('/:lang/contact', (req, res) => {
-    // Récupérer la langue depuis l'URL
-    const locale = req.params.lang || 'en'; // 'en' par défaut si aucune langue n'est spécifiée
-    const messageEnvoye = req.query.messageEnvoye === 'true';
+    // Récupérer la langue depuis l'URL
+    const locale = req.params.lang || 'en'; // 'en' par défaut si aucune langue n'est spécifiée
+    const messageEnvoye = req.query.messageEnvoye === 'true';
 
-    // Charger les traductions globales et spécifiques à la page
-    const globalTranslationsPath = `./locales/${locale}/global.json`;
-    const contactTranslationsPath = `./locales/${locale}/contact.json`;
+    // Charger les traductions globales et spécifiques à la page
+    const globalTranslationsPath = `./locales/${locale}/global.json`;
+    const contactTranslationsPath = `./locales/${locale}/contact.json`;
 
-    let globalTranslations = {};
-    let contactTranslations = {};
+    let globalTranslations = {};
+    let contactTranslations = {};
 
-    try {
-        globalTranslations = JSON.parse(fs.readFileSync(globalTranslationsPath, 'utf8'));
-        contactTranslations = JSON.parse(fs.readFileSync(contactTranslationsPath, 'utf8'));
-    } catch (error) {
-        console.error(`Erreur lors du chargement des traductions : ${error}`);
-        return res.status(500).send('Erreur lors du chargement des traductions.');
-    }
+    try {
+        globalTranslations = JSON.parse(fs.readFileSync(globalTranslationsPath, 'utf8'));
+        contactTranslations = JSON.parse(fs.readFileSync(contactTranslationsPath, 'utf8'));
+    } catch (error) {
+        console.error(`Erreur lors du chargement des traductions : ${error}`);
+        return res.status(500).send('Erreur lors du chargement des traductions.');
+    }
 
-    // Fusionner les traductions globales et spécifiques
-    const i18n = { ...globalTranslations, ...contactTranslations };
+    // Fusionner les traductions globales et spécifiques
+    const i18n = { ...globalTranslations, ...contactTranslations };
 
-    // Rendre la page contact avec les traductions
-   res.render('contact', {
-    title: contactTranslations.title,
-    i18n: i18n,
-    locale: locale, 
-    messageEnvoye: messageEnvoye,
-    currentPath: req.originalUrl
+    // Rendre la page contact avec les traductions
+   res.render('contact', {
+    title: contactTranslations.title,
+    i18n: i18n,
+    locale: locale, 
+    messageEnvoye: messageEnvoye,
+    currentPath: req.originalUrl,
+    // 🔑 AJOUT DE LA CLÉ PUBLIQUE ICI POUR LE WIDGET
+    RECAPTCHA_SITE_KEY: process.env.RECAPTCHA_SITE_KEY
 });
 });
 
