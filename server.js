@@ -402,11 +402,13 @@ app.get('/:locale', (req, res, next) => {
     const locale = req.params.locale;
 
     // Liste des routes qui ne doivent PAS être interprétées comme des locales
-    const excludedPaths = [
-        'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
-        'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py',
-        'login', 'register', 'user', 'forgot-password', 'reset-password', 'contact', 'politique-confidentialite'
-    ];
+  const excludedPaths = [
+        'favicon.ico', 'wp-admin.php', 'update-core.php', 'bs1.php',
+        'config', '.env', 'server_info.php', 'wp-config.php', 'index.js', 'settings.py',
+        // AJOUT DES FICHIERS CAUSANT LES AVERTISSEMENTS :
+        'crossdomain.xml', 'clientaccesspolicy.xml', 'security.txt',
+        'login', 'register', 'user', 'forgot-password', 'reset-password', 'contact', 'politique-confidentialite'
+    ];
 
     // Si la route est exclue, on passe au middleware suivant
     if (excludedPaths.includes(locale)) {
