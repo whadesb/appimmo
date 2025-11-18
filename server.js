@@ -322,19 +322,7 @@ app.post('/:locale/property/update/:id', ensureAuthenticated, upload.fields([
     // ...
 });
 
-// 3. Route de redirection manquante (pour les anciens liens sans locale)
-app.get('/property/edit/:id', (req, res) => {
-    const locale = req.locale || 'fr';
-    // Redirige vers l'URL avec la locale
-    res.redirect(`/${locale}/property/edit/${req.params.id}`); 
-});
 
-// 4. Route POST de redirection manquante (pour les anciens liens sans locale)
-app.post('/property/update/:id', (req, res) => {
-    const locale = req.locale || 'fr';
-    // Redirige vers l'URL avec la locale
-    res.redirect(`/${locale}/property/update/${req.params.id}`); 
-});
 
 // Configuration de multer pour la gestion des fichiers uploadés
 const storage = multer.diskStorage({
@@ -377,7 +365,19 @@ function cleanupUploadedFiles(files) {
   });
 }
 
+// 3. Route de redirection manquante (pour les anciens liens sans locale)
+app.get('/property/edit/:id', (req, res) => {
+    const locale = req.locale || 'fr';
+    // Redirige vers l'URL avec la locale
+    res.redirect(`/${locale}/property/edit/${req.params.id}`); 
+});
 
+// 4. Route POST de redirection manquante (pour les anciens liens sans locale)
+app.post('/property/update/:id', (req, res) => {
+    const locale = req.locale || 'fr';
+    // Redirige vers l'URL avec la locale
+    res.redirect(`/${locale}/property/update/${req.params.id}`); 
+});
 
 app.get('/', (req, res) => {
     const acceptedLanguages = req.acceptsLanguages(); // Langues acceptées par le navigateur
