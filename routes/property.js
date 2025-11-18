@@ -1862,4 +1862,3 @@ router.get('/user/landing-pages', async (req, res) => {
 
 
 module.exports = router;
-
