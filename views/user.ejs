@@ -1841,238 +1841,291 @@ const escapeJsString = (value) => {
 const formatNumber = (value) => (value === 0 || value) ? escapeHtml(value) : 'X';
 const boolIcon = (value) => (value === true) ? '<span style="color: green;">✓</span>' : 'X'; 
 
-// --- FONCTION loadLandingPages (Corrigée) ---
+<script>
 async function loadLandingPages() {
-    try {
-        const response = await fetch('/user/landing-pages');
-        if (!response.ok) throw new Error("Erreur lors du chargement des données");
-
-        const landingPages = await response.json();
-        const landingPagesList = document.getElementById('properties-list');
-        landingPagesList.innerHTML = '';
-
-        const noPropertiesMessage = document.getElementById('no-properties-message');
-        if (landingPages.length === 0) {
-            noPropertiesMessage.style.display = 'block';
-        } else {
-            noPropertiesMessage.style.display = 'none';
-
-            const locale = document.documentElement.lang || 'fr';
-            
-            const numberLocale = locale === 'en' ? 'en-GB' : 'fr-FR';
-            const currencySymbol = '€'; 
-            
-            const formatPrice = (value) => {
-                if (typeof value === 'number' && !Number.isNaN(value)) {
-                    return `${value.toLocaleString(numberLocale)} ${currencySymbol}`;
-                }
-                return 'X';
-            };
-
-            const COPY_TITLE = '<%= i18n.copy_url || "Copier l\'URL" %>';
-            const SHOW_URL_TITLE = '<%= i18n.show_url || "Afficher l\'URL" %>';
-            const QR_CODE_TITLE = '<%= i18n.qr_code || "QR Code" %>';
-            const BROADCAST_TITLE = '<%= i18n.broadcast || "Diffuser" %>';
-            const EDIT_TITLE = '<%= i18n.edit || "Modifier" %>';
-            const DETAILS_LABEL = '<%= i18n.details || "Détails" %>';
-            const URL_UNAVAILABLE_TITLE = '<%= i18n.url_unavailable || "URL indisponible" %>';
-            const EDIT_DISABLED_TITLE = '<%= i18n.edit_temporarily_unavailable || "Modification temporairement désactivée" %>';
-
-
-            landingPages.forEach(property => {
-                const row = document.createElement('tr');
-                const photos = Array.isArray(property.photos) ? property.photos : [];
-                const mainPhotos = photos.slice(0, 2);
-                const extraPhotos = photos.slice(2, 10).filter(Boolean);
-                const miniPhotos = photos.slice(10, 13).filter(Boolean);
-                const rawDescription = property.description || '';
-                const hasDescription = Boolean(rawDescription);
-                const truncatedDescription = hasDescription ? (rawDescription.length > 8 ? `${rawDescription.slice(0, 8)}...` : rawDescription) : 'X';
-                
-                const normalizedUrl = property.url ? (property.url.startsWith('http') ? property.url : `https://uap.immo${property.url}`) : '';
-                const safeUrlForJs = escapeJsString(property.url || '');
-                const safeIdForJs = escapeJsString(property._id || '');
-                const detailsData = JSON.stringify(property).replace(/'/g, "&apos;");
-                const disabledByOrder = Boolean(property.hasActiveOrder);
-
-                const copyButtonHtml = normalizedUrl
-                    ? `<button class="btn btn-sm btn-outline-dark copy-btn" data-url="${safeUrlForJs}" title="${COPY_TITLE}"><i class="bi bi-clipboard"></i></button>`
-                    : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${URL_UNAVAILABLE_TITLE}"><i class="bi bi-clipboard"></i></button>`;
-
-                const showUrlButtonHtml = normalizedUrl
-                    ? `<button class="btn btn-sm btn-outline-dark show-url-btn" data-url="${safeUrlForJs}" title="${SHOW_URL_TITLE}"><i class="bi bi-link-45deg"></i></button>`
-                    : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${URL_UNAVAILABLE_TITLE}"><i class="bi bi-link-45deg"></i></button>`;
-
-                const qrButtonHtml = normalizedUrl && property._id
-                    ? `<button class="btn btn-sm btn-qr qr-code-btn" data-id="${safeIdAttr}" data-url="${normalizedPathAttr}" title="${QR_CODE_TITLE}"><i class="bi bi-qr-code"></i></button>`
-                    : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${URL_UNAVAILABLE_TITLE}"><i class="bi bi-qr-code"></i></button>`;
-
-                const broadcastButtonHtml = (property._id && !disabledByOrder)
-                    ? `<button class="btn btn-sm btn-dark broadcast-btn" data-id="${safeIdAttr}" title="${BROADCAST_TITLE}"><i class="bi bi-megaphone"></i></button>`
-                    : `<button class="btn btn-sm ${disabledByOrder ? 'btn-warning' : 'btn-outline-secondary'} disabled" type="button" title="${disabledByOrder ? ACTIVE_ORDER_TITLE : BROADCAST_TITLE}"><i class="bi bi-megaphone"></i></button>`;
-
-                const editButtonHtml = (property._id && !disabledByOrder)
-                    ? `<button class="btn btn-sm btn-success edit-btn" data-id="${safeIdAttr}" title="${EDIT_TITLE}"><i class="bi bi-pencil-square"></i></button>`
-                    : `<button class="btn btn-sm btn-secondary disabled" type="button" title="${EDIT_DISABLED_TITLE}"><i class="bi bi-pencil-square"></i></button>`;
-const cells = [
-                    // 1. ID Page (Contient le lien vers la LP)
-                    property._id ? `<a href="${normalizedUrl}" target="_blank" rel="noopener">${escapeHtml(property._id)}</a>` : 'X',
-                    
-                    // 2. ID User (CORRIGÉ: Ajout de cette colonne)
-                    property.userId ? escapeHtml(property.userId) : 'X', 
-                    
-                    // 3. Type
-                    escapeHtml(property.propertyType),
-                    
-                    // 4. Pièces
-                    formatNumber(property.rooms),
-                    
-                    // 5. Chambres
-                    formatNumber(property.bedrooms),
-                    
-                    // 6. Surface
-                    formatNumber(property.surface),
-                    
-                    // 7. Prix
-                    formatPrice(property.price),
-                    
-                    // 8. Pays
-                    escapeHtml(property.country),
-                    
-                    // 9. Ville
-                    escapeHtml(property.city),
-                    
-                    // 10. Code Postal
-                    escapeHtml(property.postalCode),
-                    
-                    // 11. Année
-                    formatNumber(property.yearBuilt),
-                    
-                    // 12. DPE
-                    escapeHtml(property.dpe || 'X'),
-                    
-                    // 13. Langue
-                    escapeHtml((property.language || '').toUpperCase()),
-                    
-                    // --- Équipements Booléens (14 à 23) ---
-                    boolIcon(property.pool), // Piscine
-                    boolIcon(property.doubleGlazing), // Double Vitrage
-                    boolIcon(property.wateringSystem), // Arrosage auto
-                    boolIcon(property.barbecue), // Barbecue
-                    boolIcon(property.carShelter), // Abri voiture
-                    boolIcon(property.parking), // Parking
-                    boolIcon(property.caretakerHouse), // Maison gardien
-                    boolIcon(property.electricShutters), // Stores électriques
-                    boolIcon(property.outdoorLighting), // Éclairage extérieur
-                    
-                    // --- Photos / Médias (24 à 27) ---
-                    (mainPhotos[0] ? '✓' : 'X'), // Photo principale
-                    (mainPhotos[1] ? '✓' : 'X'), // Photo secondaire
-                    (extraPhotos.length > 0 ? extraPhotos.length : 'X'), // Photos extra
-                    (miniPhotos.length > 0 ? miniPhotos.length : 'X'), // Mini photos
-                    property.videoUrl ? `<a href="${property.videoUrl}" target="_blank" rel="noopener">URL</a>` : 'X', // URL vidéo
-                    
-                    // --- Contact / Description (28 à 30) ---
-                    escapeHtml([property.contactFirstName, property.contactLastName].filter(Boolean).join(' ')), // Contact
-                    escapeHtml(property.contactPhone), // Téléphone
-                    rawDescription ? `<span title="${escapeHtml(rawDescription)}">${truncatedDescription}</span>` : 'X', // Description
-
-                    // 31. Actions (Dernière colonne)
-                    `
-                    <div class="table-action-buttons d-flex flex-nowrap gap-1">
-                        ${showUrlButtonHtml}
-                        ${copyButtonHtml}
-                        <button class="btn btn-sm btn-info show-details-btn" data-details='${detailsData}' title="${i18n.details}"><i class="bi bi-info-circle"></i></button>
-                        <button class="btn btn-sm btn-dark broadcast-btn" data-id="${safeIdAttr}" title="${i18n.broadcast}"><i class="bi bi-megaphone"></i></button>
-                        ${editButtonHtml}
-                    </div>
-                    `
-                ];
-
-                row.innerHTML = cells.map(cell => `<td class="text-nowrap">${cell}</td>`).join('');
-                landingPagesList.appendChild(row);
-            });
-        }
-        
-        // --- Réinitialisation des tooltips et événements (à ajouter ici ou dans DOMContentLoaded) ---
-        document.querySelectorAll('.show-details-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                showPageDetails(JSON.parse(this.dataset.details.replace(/&apos;/g, "'")));
-            });
-        });
-
-    } catch (error) {
-        const propertiesList = document.getElementById('properties-list');
-        propertiesList.innerHTML = '<tr><td colspan="30" class="text-center">Une erreur est survenue lors du chargement des propriétés.</td></tr>';
-        console.error("Erreur loadLandingPages:", error);
-    }
-}
-
-
-    function copyURL(url) {
-        const fullUrl = url && url.startsWith('http') ? url : `https://uap.immo${url}`;
-        navigator.clipboard.writeText(fullUrl)
-            .then(() => {
-                showCopyMessage();
-            })
-            .catch(err => {
-                console.error('Impossible de copier l\'URL : ', err);
-            });
-    }
-
-    function showCopyMessage() {
-        const copyMessage = document.getElementById('copyMessage');
-        copyMessage.style.display = 'block';
-        setTimeout(() => {
-            copyMessage.style.display = 'none';
-        }, 2000);
-    }
-
-function testURL(propertyId) {
-    console.log("🔍 ID de la propriété cliqué :", propertyId);
-
-    // Récupération de la langue à partir de l'URL actuelle
-    const currentLang = window.location.pathname.split('/')[1]; // 'en' ou 'fr'
-
-    // Vérifier que currentLang est bien 'en' ou 'fr', sinon rediriger sans préfixe de langue
-    if (currentLang === 'en' || currentLang === 'fr') {
-        window.location.href = `/${currentLang}/payment?propertyId=${propertyId}`;
-    } else {
-        window.location.href = `/payment?propertyId=${propertyId}`;
-    }
-}
-
-    function editProperty(propertyId) {
-        window.location.href = `/property/edit/${propertyId}`;
-    }
-document.getElementById('add-property-form').addEventListener('submit', async function(event) {
-  event.preventDefault();
-  const formData = new FormData(this);
-
   try {
-    const response = await fetch('/add-property', {
-      method: 'POST',
-      body: formData
+    const response = await fetch('/user/landing-pages');
+    if (!response.ok) throw new Error("Erreur lors du chargement des données");
+
+    const landingPages = await response.json();
+    const landingPagesList = document.getElementById('properties-list');
+    const noPropertiesMessage = document.getElementById('no-properties-message');
+
+    landingPagesList.innerHTML = '';
+
+    const numberLocale = <%- JSON.stringify(locale === 'en' ? 'en-GB' : 'fr-FR') %>;
+    const currencySymbol = <%- JSON.stringify(i18n.currency_symbol || '€') %>;
+    const COPY_TITLE = <%- JSON.stringify(i18n.copy_url || "Copier l'URL") %>;
+    const SHOW_URL_TITLE = <%- JSON.stringify(i18n.show_url || "Afficher l'URL") %>;
+    const QR_CODE_TITLE = <%- JSON.stringify(i18n.qr_code || "QR Code") %>;
+    const BROADCAST_TITLE = <%- JSON.stringify(i18n.broadcast || "Diffuser") %>;
+    const EDIT_TITLE = <%- JSON.stringify(i18n.edit || "Modifier") %>;
+    const ACTIVE_ORDER_TITLE = <%- JSON.stringify(i18n.active_order_in_progress || "Commande active en cours") %>;
+    const EDIT_DISABLED_TITLE = <%- JSON.stringify(i18n.edit_temporarily_unavailable || "Modification temporairement désactivée") %>;
+    const URL_UNAVAILABLE_TITLE = <%- JSON.stringify(i18n.url_unavailable || "URL indisponible") %>;
+    const DETAILS_LABEL = <%- JSON.stringify(i18n.details || "Détails") %>;
+
+    const formatPrice = (value) => {
+      if (typeof value === 'number' && !Number.isNaN(value)) {
+        return `${value.toLocaleString(numberLocale)} ${currencySymbol}`;
+      }
+      if (typeof value === 'string') {
+        const trimmed = value.trim();
+        if (!trimmed) return 'X';
+        return trimmed.includes(currencySymbol)
+          ? escapeHtml(trimmed)
+          : `${escapeHtml(trimmed)} ${currencySymbol}`;
+      }
+      return 'X';
+    };
+
+    const normalizeUrlPath = (value) => {
+      if (!value && value !== 0) return '';
+      const raw = String(value).trim();
+      if (!raw) return '';
+      try {
+        const parsed = raw.startsWith('http') ? new URL(raw) : new URL(raw, 'https://uap.immo');
+        const path = `${parsed.pathname || ''}${parsed.search || ''}${parsed.hash || ''}`;
+        return path && path !== 'null'
+          ? (path.startsWith('/') ? path : `/${path}`)
+          : '';
+      } catch {
+        return raw.startsWith('/') ? raw : `/${raw}`;
+      }
+    };
+
+    const buildFullUrl = (path) => {
+      if (!path) return '';
+      return path.startsWith('http') ? path : `https://uap.immo${path}`;
+    };
+
+    if (!landingPages || landingPages.length === 0) {
+      if (noPropertiesMessage) noPropertiesMessage.style.display = 'block';
+      return;
+    }
+
+    if (noPropertiesMessage) noPropertiesMessage.style.display = 'none';
+
+    landingPages.forEach(property => {
+      const row = document.createElement('tr');
+
+      const photos = Array.isArray(property.photos) ? property.photos : [];
+      const mainPhotos = photos.slice(0, 2);
+      const extraPhotos = photos.slice(2, 10).filter(Boolean);
+      const miniPhotos = photos.slice(10, 13).filter(Boolean);
+
+      const rawDescription = property.description || '';
+      const truncatedDescription =
+        rawDescription.length > 80 ? `${rawDescription.slice(0, 80)}…` : rawDescription;
+
+      const normalizedPath = normalizeUrlPath(property.url);
+      const hasUrl = Boolean(normalizedPath);
+      const fullUrl = hasUrl ? buildFullUrl(normalizedPath) : '';
+      const normalizedPathAttr = hasUrl ? escapeHtml(normalizedPath) : '';
+
+      const hasId = Boolean(property && property._id);
+      const safeIdAttr = hasId ? escapeHtml(String(property._id)) : '';
+
+      const detailsData = JSON.stringify(property).replace(/'/g, "&apos;");
+      const disabledByOrder = Boolean(property.hasActiveOrder);
+
+      // Boutons d'action
+      const copyButtonHtml = hasUrl
+        ? `<button class="btn btn-sm btn-outline-dark copy-btn" data-url="${normalizedPathAttr}" title="${escapeHtml(COPY_TITLE)}">
+             <i class="bi bi-clipboard"></i>
+           </button>`
+        : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${escapeHtml(URL_UNAVAILABLE_TITLE)}">
+             <i class="bi bi-clipboard"></i>
+           </button>`;
+
+      const showUrlButtonHtml = hasUrl
+        ? `<button class="btn btn-sm btn-outline-dark show-url-btn" data-url="${normalizedPathAttr}" title="${escapeHtml(SHOW_URL_TITLE)}">
+             <i class="bi bi-link-45deg"></i>
+           </button>`
+        : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${escapeHtml(URL_UNAVAILABLE_TITLE)}">
+             <i class="bi bi-link-45deg"></i>
+           </button>`;
+
+      const qrButtonHtml = hasUrl && hasId
+        ? `<button class="btn btn-sm btn-qr qr-code-btn" data-id="${safeIdAttr}" data-url="${normalizedPathAttr}" title="${escapeHtml(QR_CODE_TITLE)}">
+             <i class="bi bi-qr-code"></i>
+           </button>`
+        : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${escapeHtml(URL_UNAVAILABLE_TITLE)}">
+             <i class="bi bi-qr-code"></i>
+           </button>`;
+
+      const broadcastButtonHtml = (hasId && !disabledByOrder)
+        ? `<button class="btn btn-sm btn-dark broadcast-btn" data-id="${safeIdAttr}" title="${escapeHtml(BROADCAST_TITLE)}">
+             <i class="bi bi-megaphone"></i>
+           </button>`
+        : `<button class="btn btn-sm ${disabledByOrder ? 'btn-warning' : 'btn-outline-secondary'} disabled" type="button"
+                   title="${escapeHtml(disabledByOrder ? ACTIVE_ORDER_TITLE : URL_UNAVAILABLE_TITLE)}">
+             <i class="bi bi-megaphone"></i>
+           </button>`;
+
+      const editButtonHtml = (hasId && !disabledByOrder)
+        ? `<button class="btn btn-sm btn-success edit-btn" data-id="${safeIdAttr}" title="${escapeHtml(EDIT_TITLE)}">
+             <i class="bi bi-pencil-square"></i>
+           </button>`
+        : `<button class="btn btn-sm ${disabledByOrder ? 'btn-secondary' : 'btn-outline-secondary'} disabled" type="button"
+                   title="${escapeHtml(EDIT_DISABLED_TITLE)}">
+             <i class="bi bi-pencil-square"></i>
+           </button>`;
+
+      const cells = [
+        // 1. ID
+        hasId
+          ? (hasUrl
+              ? `<a href="${escapeHtml(fullUrl)}" target="_blank" rel="noopener">${escapeHtml(property._id)}</a>`
+              : escapeHtml(property._id))
+          : 'X',
+
+        // 2. Type
+        escapeHtml(property.propertyType || 'X'),
+
+        // 3. Rooms
+        formatNumber(property.rooms),
+
+        // 4. Bedrooms
+        formatNumber(property.bedrooms),
+
+        // 5. Surface
+        formatNumber(property.surface),
+
+        // 6. Price
+        formatPrice(property.price),
+
+        // 7. Country
+        escapeHtml(property.country || 'X'),
+
+        // 8. City
+        escapeHtml(property.city || 'X'),
+
+        // 9. Postal code
+        escapeHtml(property.postalCode || 'X'),
+
+        // 10. Year
+        formatNumber(property.yearBuilt),
+
+        // 11. DPE
+        escapeHtml(property.dpe || 'X'),
+
+        // 12. Language
+        escapeHtml((property.language || 'X').toUpperCase()),
+
+        // 13–21 Équipements
+        boolIcon(property.pool),
+        boolIcon(property.doubleGlazing),
+        boolIcon(property.wateringSystem),
+        boolIcon(property.barbecue),
+        boolIcon(property.carShelter),
+        boolIcon(property.parking),
+        boolIcon(property.caretakerHouse),
+        boolIcon(property.electricShutters),
+        boolIcon(property.outdoorLighting),
+
+        // 22–25 Photos
+        mainPhotos[0] ? '✓' : 'X',
+        mainPhotos[1] ? '✓' : 'X',
+        extraPhotos.length ? extraPhotos.length : 'X',
+        miniPhotos.length ? miniPhotos.length : 'X',
+
+        // 26. Vidéo
+        property.videoUrl
+          ? `<a href="${escapeHtml(property.videoUrl)}" target="_blank" rel="noopener">URL</a>`
+          : 'X',
+
+        // 27. Contact
+        escapeHtml(
+          [property.contactFirstName, property.contactLastName].filter(Boolean).join(' ') || 'X'
+        ),
+
+        // 28. Téléphone
+        escapeHtml(property.contactPhone || 'X'),
+
+        // 29. Description
+        rawDescription
+          ? `<span title="${escapeHtml(rawDescription)}">${escapeHtml(truncatedDescription)}</span>`
+          : 'X',
+
+        // 30. Actions
+        `
+        <div class="table-action-buttons d-flex flex-nowrap gap-1">
+          ${showUrlButtonHtml}
+          ${copyButtonHtml}
+          ${qrButtonHtml}
+          <button class="btn btn-sm btn-info show-details-btn" data-details='${detailsData}' title="${escapeHtml(DETAILS_LABEL)}">
+            <i class="bi bi-info-circle"></i>
+          </button>
+          ${broadcastButtonHtml}
+          ${editButtonHtml}
+        </div>
+        `
+      ];
+
+      row.innerHTML = cells.map(c => `<td class="text-nowrap">${c}</td>`).join('');
+      landingPagesList.appendChild(row);
     });
 
-    const result = await response.text();
-    console.log('Réponse du serveur :', result); // DEBUG
+    // Actions JS sur les boutons (copie, affichage URL, QR, paiement, édition)
+    document.querySelectorAll('.copy-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const urlPath = this.dataset.url;
+        if (!urlPath) return;
+        const full = buildFullUrl(urlPath);
+        navigator.clipboard.writeText(full).then(() => {
+          const icon = this.querySelector('i');
+          icon.classList.remove('bi-clipboard');
+          icon.classList.add('bi-check-circle-fill', 'text-success');
+          setTimeout(() => {
+            icon.classList.remove('bi-check-circle-fill', 'text-success');
+            icon.classList.add('bi-clipboard');
+          }, 1500);
+        });
+      });
+    });
 
-    document.getElementById('generatedLink').innerHTML = result;
-    this.reset();
+    document.querySelectorAll('.show-url-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const urlPath = this.dataset.url;
+        if (!urlPath) return;
+        const full = buildFullUrl(urlPath);
+        document.getElementById('urlModalText').textContent = full;
+        new bootstrap.Modal(document.getElementById('urlModal')).show();
+      });
+    });
 
-    setTimeout(() => {
-      document.getElementById('generatedLink')?.scrollIntoView({ behavior: 'smooth' });
-    }, 100);
+    document.querySelectorAll('.qr-code-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const id = this.dataset.id;
+        const urlPath = this.dataset.url;
+        if (!id || !urlPath) return;
+        showQRCode(id, urlPath);
+      });
+    });
+
+    document.querySelectorAll('.broadcast-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const id = this.dataset.id;
+        if (!id) return;
+        redirectToPayment(id);
+      });
+    });
+
+    document.querySelectorAll('.edit-btn').forEach(button => {
+      button.addEventListener('click', function () {
+        const id = this.dataset.id;
+        if (!id) return;
+        editProperty(id);
+      });
+    });
 
   } catch (error) {
-    console.error('Erreur lors de l\'ajout de la propriété :', error);
+    console.error("❌ Erreur lors du chargement des landing pages :", error);
+    document.getElementById('properties-list').innerHTML =
+      '<tr><td colspan="30" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
   }
-});
-
-
-
-
+}
 </script>
 <script>
   const descriptionInput = document.getElementById('description');
@@ -2418,250 +2471,6 @@ function showSection(sectionId) {
 </script>
 
 
-<script>
-async function loadLandingPages() {
-  try {
-    const response = await fetch('/user/landing-pages');
-    if (!response.ok) throw new Error("Erreur lors du chargement des données");
-
-    const landingPages = await response.json();
-    const landingPagesList = document.getElementById('properties-list');
-    landingPagesList.innerHTML = '';
-
-    const numberLocale = <%- JSON.stringify(locale === 'en' ? 'en-GB' : 'fr-FR') %>;
-    const currencySymbol = <%- JSON.stringify(i18n.currency_symbol || '€') %>;
-    const COPY_TITLE = <%- JSON.stringify(i18n.copy_url || "Copier l'URL") %>;
-    const SHOW_URL_TITLE = <%- JSON.stringify(i18n.show_url || "Afficher l'URL") %>;
-    const QR_CODE_TITLE = <%- JSON.stringify(i18n.qr_code || 'QR Code') %>;
-    const BROADCAST_TITLE = <%- JSON.stringify(i18n.broadcast || 'Diffuser') %>;
-    const EDIT_TITLE = <%- JSON.stringify(i18n.edit || 'Modifier') %>;
-    const ACTIVE_ORDER_TITLE = <%- JSON.stringify(i18n.active_order_in_progress || 'Commande active en cours') %>;
-    const EDIT_DISABLED_TITLE = <%- JSON.stringify(i18n.edit_temporarily_unavailable || 'Modification temporairement désactivée') %>;
-    const URL_UNAVAILABLE_TITLE = <%- JSON.stringify(i18n.url_unavailable || 'URL indisponible') %>;
-    const DETAILS_LABEL = <%- JSON.stringify(i18n.details || 'Détails') %>;
-
-    const entityMap = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#39;'
-    };
-
-    const escapeHtml = (value) => {
-      return String(value).replace(/[&<>"']/g, char => entityMap[char] || char);
-    };
-
-    const formatText = (value) => {
-      if (value === null || value === undefined) {
-        return 'nc';
-      }
-      const stringValue = typeof value === 'string' ? value.trim() : String(value);
-      return stringValue ? escapeHtml(stringValue) : 'nc';
-    };
-
-    const formatPrice = (value) => {
-      if (typeof value === 'number' && !Number.isNaN(value)) {
-        return `${value.toLocaleString(numberLocale)} ${currencySymbol}`;
-      }
-      if (typeof value === 'string') {
-        const trimmed = value.trim();
-        if (!trimmed) {
-          return 'nc';
-        }
-        if (trimmed.toLowerCase() === 'nc') {
-          return 'nc';
-        }
-        return trimmed.includes(currencySymbol)
-          ? escapeHtml(trimmed)
-          : `${escapeHtml(trimmed)} ${currencySymbol}`;
-      }
-      return 'nc';
-    };
-
-    const normalizeUrlPath = (value) => {
-      if (!value && value !== 0) {
-        return '';
-      }
-      const raw = String(value).trim();
-      if (!raw) {
-        return '';
-      }
-      try {
-        const parsed = raw.startsWith('http') ? new URL(raw) : new URL(raw, 'https://uap.immo');
-        const path = `${parsed.pathname || ''}${parsed.search || ''}${parsed.hash || ''}`;
-        if (path && path !== 'null') {
-          return path.startsWith('/') ? path : `/${path}`;
-        }
-        return '';
-      } catch (error) {
-        return raw.startsWith('/') ? raw : `/${raw}`;
-      }
-    };
-
-    const noPropertiesMessage = document.getElementById('no-properties-message');
-    if (landingPages.length === 0) {
-      noPropertiesMessage.style.display = 'block';
-    } else {
-      noPropertiesMessage.style.display = 'none';
-      landingPages.forEach(page => {
-        const row = document.createElement('tr');
-        const displayId = formatText(page._id);
-        const displayType = formatText(page.propertyType);
-        const displayCountry = formatText(page.country);
-        const displayCity = formatText(page.city);
-        const displayPrice = formatPrice(page.price);
-        const detailsData = JSON.stringify(page).replace(/'/g, "&apos;");
-        const normalizedPath = normalizeUrlPath(page.url);
-        const hasUrl = Boolean(normalizedPath);
-        const normalizedPathAttr = hasUrl ? escapeHtml(normalizedPath) : '';
-        const hasId = Boolean(page && page._id);
-        const safeIdAttr = hasId ? escapeHtml(String(page._id)) : '';
-        const copyTitleAttr = escapeHtml(COPY_TITLE);
-        const showUrlTitleAttr = escapeHtml(SHOW_URL_TITLE);
-        const qrCodeTitleAttr = escapeHtml(QR_CODE_TITLE);
-        const broadcastTitleAttr = escapeHtml(BROADCAST_TITLE);
-        const editTitleAttr = escapeHtml(EDIT_TITLE);
-        const activeOrderTitleAttr = escapeHtml(ACTIVE_ORDER_TITLE);
-        const editDisabledTitleAttr = escapeHtml(EDIT_DISABLED_TITLE);
-        const urlUnavailableTitleAttr = escapeHtml(URL_UNAVAILABLE_TITLE);
-        const detailsLabelHtml = escapeHtml(DETAILS_LABEL);
-        const disabledByOrder = Boolean(page.hasActiveOrder);
-
-        const copyButtonHtml = hasUrl
-          ? `<button class="btn btn-sm btn-outline-dark copy-btn" data-url="${normalizedPathAttr}" title="${copyTitleAttr}"><i class="bi bi-clipboard"></i></button>`
-          : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${urlUnavailableTitleAttr}"><i class="bi bi-clipboard"></i></button>`;
-
-        const showUrlButtonHtml = hasUrl
-          ? `<button class="btn btn-sm btn-outline-dark show-url-btn" data-url="${normalizedPathAttr}" title="${showUrlTitleAttr}"><i class="bi bi-link-45deg"></i></button>`
-          : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${urlUnavailableTitleAttr}"><i class="bi bi-link-45deg"></i></button>`;
-
-        const qrButtonHtml = hasUrl && hasId
-          ? `<button class="btn btn-sm btn-qr qr-code-btn" data-id="${safeIdAttr}" data-url="${normalizedPathAttr}" title="${qrCodeTitleAttr}"><i class="bi bi-qr-code"></i></button>`
-          : `<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="${urlUnavailableTitleAttr}"><i class="bi bi-qr-code"></i></button>`;
-
-        const broadcastButtonHtml = (hasId && !disabledByOrder)
-          ? `<button class="btn btn-sm btn-dark broadcast-btn" data-id="${safeIdAttr}" title="${broadcastTitleAttr}"><i class="bi bi-megaphone"></i></button>`
-          : `<button class="btn btn-sm ${disabledByOrder ? 'btn-warning' : 'btn-outline-secondary'} disabled" type="button" title="${disabledByOrder ? activeOrderTitleAttr : urlUnavailableTitleAttr}"><i class="bi bi-megaphone"></i></button>`;
-
-        const editButtonHtml = (hasId && !disabledByOrder)
-          ? `<button class="btn btn-sm btn-dark edit-btn" data-id="${safeIdAttr}" title="${editTitleAttr}"><i class="bi bi-pencil-square"></i></button>`
-          : `<button class="btn btn-sm ${disabledByOrder ? 'btn-secondary' : 'btn-outline-secondary'} disabled" type="button" title="${editDisabledTitleAttr}"><i class="bi bi-pencil-square"></i></button>`;
-
-        row.innerHTML = `
-          <td>${displayId}</td>
-          <td>${displayType}</td>
-          <td>${displayCountry}</td>
-          <td>${displayCity}</td>
-          <td>${displayPrice}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-dark hover-grey show-details-btn d-inline-flex align-items-center gap-2"
-                    data-details='${detailsData}'>
-              <i class="bi bi-info-circle"></i>
-              <span>${detailsLabelHtml}</span>
-            </button>
-          </td>
-          <td>
-            <div class="table-action-buttons">
-              ${copyButtonHtml}
-              ${showUrlButtonHtml}
-              ${qrButtonHtml}
-              ${broadcastButtonHtml}
-              ${editButtonHtml}
-            </div>
-          </td>
-        `;
-        landingPagesList.appendChild(row);
-      });
-    }
-
-    const buildFullUrl = (value) => {
-      if (!value) {
-        return '';
-      }
-      return value.startsWith('http') ? value : `https://uap.immo${value}`;
-    };
-
-    document.querySelectorAll('.copy-btn').forEach(button => {
-      button.addEventListener('click', function () {
-        const urlPath = this.dataset.url;
-        if (!urlPath) {
-          return;
-        }
-        const url = buildFullUrl(urlPath);
-        navigator.clipboard.writeText(url).then(() => {
-          const icon = this.querySelector('i');
-          icon.classList.remove('bi-clipboard');
-          icon.classList.add('bi-check-circle-fill', 'text-success');
-          setTimeout(() => {
-            icon.classList.remove('bi-check-circle-fill', 'text-success');
-            icon.classList.add('bi-clipboard');
-          }, 1500);
-        });
-      });
-    });
-    document.querySelectorAll('.show-url-btn').forEach(button => {
-      button.addEventListener('click', function () {
-        const urlPath = this.dataset.url;
-        if (!urlPath) {
-          return;
-        }
-        const url = buildFullUrl(urlPath);
-        if (!url) {
-          return;
-        }
-        document.getElementById('urlModalText').textContent = url;
-        const modal = new bootstrap.Modal(document.getElementById('urlModal'));
-        modal.show();
-      });
-    });
-    document.querySelectorAll('.qr-code-btn').forEach(button => {
-      button.addEventListener('click', function () {
-        const id = this.dataset.id;
-        const urlPath = this.dataset.url;
-        if (!id || !urlPath) {
-          return;
-        }
-        showQRCode(id, urlPath);
-      });
-    });
-    document.querySelectorAll('.broadcast-btn').forEach(button => {
-      button.addEventListener('click', function () {
-        const id = this.dataset.id;
-        if (!id) {
-          return;
-        }
-        redirectToPayment(id);
-      });
-    });
-    document.querySelectorAll('.edit-btn').forEach(button => {
-      button.addEventListener('click', function () {
-        const id = this.dataset.id;
-        if (!id) {
-          return;
-        }
-        editProperty(id);
-      });
-    });
-  } catch (error) {
-    console.error("❌ Erreur lors du chargement des landing pages :", error);
-    document.getElementById('properties-list').innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
-  }
-}
-
-function redirectToPayment(propertyId) {
-  const locale = document.documentElement.lang || 'fr';
-  window.location.href = `/${locale}/payment?propertyId=${encodeURIComponent(propertyId)}`;
-}
-
-function showToast() {
-  const toast = document.getElementById('toast-confirm');
-  toast.style.display = 'block';
-  setTimeout(() => {
-    toast.style.display = 'none';
-  }, 3000);
-}
-</script>
 <script>
 document.addEventListener('click', function (event) {
   if (event.target.closest('.show-details-btn')) {
