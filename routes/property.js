@@ -1859,42 +1859,6 @@ router.get('/user/landing-pages', async (req, res) => {
         res.status(500).json({ error: "Erreur interne du serveur" });
     }
 });
-router.get('/edit/:id', authMiddleware, async (req, res) => {
-    try {
-        const property = await Property.findById(req.params.id);
 
-        // 1. Vérification de l'existence et de l'autorisation (l'utilisateur doit être le propriétaire)
-        if (!property || !property.userId.equals(req.user._id)) {
-            // Log de sécurité recommandé en cas de tentative d'accès non autorisé
-            console.warn(`Tentative d'accès non autorisé à la propriété ${req.params.id} par l'utilisateur ${req.user._id}`);
-            return res.status(403).send('Accès non autorisé à cette propriété.');
-        }
-
-        // Récupération de la locale et i18n minimal (similaire à la logique utilisée dans server.js)
-        const locale = req.locale || 'fr'; 
-        const i18n = {
-            menu: {
-                home: locale === 'fr' ? 'Accueil' : 'Home',
-                contact: locale === 'fr' ? 'Contact' : 'Contact',
-            }
-        };
-
-        // 2. Rendre la vue EJS avec les données
-        res.render('edit-property', {
-            property,
-            locale,
-            i18n,
-            currentPath: req.originalUrl,
-            isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
-            // Optionnel : si vous utilisez flash messages pour le succès/erreur
-            successMessage: req.flash('success') 
-        });
-
-    } catch (error) {
-        console.error('Erreur lors de la récupération de la propriété pour édition :', error);
-        // En cas d'erreur serveur (ex: ID MongoDB invalide), retourner 500
-        res.status(500).send('Erreur interne du serveur lors de la récupération de la propriété.');
-    }
-});
 
 module.exports = router;
