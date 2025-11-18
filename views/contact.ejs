@@ -22,6 +22,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <link href="/css/bootstrap-icons.css" rel="stylesheet">
     <link rel="preload" href="/css/styles-main.css" as="style">
     <link rel="stylesheet" href="/css/styles-main.css">
+<script src="https://www.google.com/recaptcha/api/js/api.js" async defer></script>
      <style>
 .lang-flag {
       width: 24px;
@@ -277,6 +278,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
                                         <option value="professionnel"><%= i18n.professionnel %></option>
                                     </select>
                                 </div>
+                                
+                                <!-- WIDGET RECAPTCHA V2 AJOUTÉ ICI -->
+                                <div class="form-group mb-4">
+                                    <div class="g-recaptcha" 
+                                         data-sitekey="<%= RECAPTCHA_SITE_KEY %>">
+                                    </div>
+                                </div>
+                                
                                 <button type="submit" class="btn btn-primary w-100"><%= i18n.submit_button %></button>
                             </form>
                         </div>
@@ -322,12 +331,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         </div>
       </div>
     </div>
-    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %>
-</p>
+    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %></p>
   </div>
 </footer>
     <script src="/js/jquery.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>
-<%- include('partials/cookie_banner') %>
+    
+    <!-- Vous devez inclure le partial du cookie ici aussi -->
+    <%- include('partials/cookie_banner') %> 
+
 </body>
 </html>
