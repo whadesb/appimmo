@@ -109,7 +109,7 @@ app.use(session({
 }));
 
 app.use('/', qrRoutes);
-
+app.use('/property', require('./routes/property'));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -1775,52 +1775,7 @@ app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
     res.status(500).json({ error: "Une erreur est survenue lors de la récupération des landing pages." });
   }
 });
-// Ajoutez cette route vers la ligne 500 (là où vous définissez toutes vos routes GET)
-// Elle doit être placée APRÈS le middleware de locale.
 
-// --- NOUVELLE ROUTE CRITIQUE À AJOUTER DANS server.js ---
-app.get('/:locale/property/edit/:id', isAuthenticated, (req, res, next) => {
-    // Si vous utilisez un contrôleur, appelez-le ici
-    // Exemple : propertyController.getEditPage(req, res, next);
-    // Sinon, déportez cette logique dans un contrôleur
-
-    // Pour l'instant, assurez-vous que la route est capturée :
-    console.log(`✅ Route capturée : GET /${req.params.locale}/property/edit/${req.params.id}`);
-    
-    // Si la route est absente dans property.js, vous devez y ajouter: 
-    // router.get('/edit/:id', propertyController.getEditPage);
-    
-    // Vu que vous avez déjà un 'require('./routes/property')' plus haut,
-    // on va supposer que vous devez juste le remonter après le middleware de locale.
-    
-    // Solution A : Mettre la route directement ici si property.js est trop générique:
-    const propertyController = require('./controllers/propertyController'); // Assurez-vous d'avoir ce contrôleur
-    propertyController.getEditPropertyPage(req, res, next); // Nom de votre fonction de rendu
-});
-
-// Solution B : Si vous ne voulez pas déporter, mais seulement fixer:
-app.get('/:locale/property/edit/:id', isAuthenticated, async (req, res) => {
-    try {
-        const propertyId = req.params.id;
-        const property = await Property.findById(propertyId);
-        if (!property) return res.status(404).send('Propriété non trouvée');
-
-        // Logic to render the EJS file (e.g., edit-property.ejs)
-        res.render('edit-property', {
-            property,
-            locale: req.params.locale,
-            i18n: req.i18n, // Assurez-vous d'avoir accès aux traductions
-            currentPath: req.originalUrl
-        });
-    } catch (e) {
-        res.status(500).send('Erreur serveur');
-    }
-});
-
-// N'oubliez pas d'ajouter la route /property/update/:id pour le POST aussi :
-app.post('/:locale/property/update/:id', isAuthenticated, upload.fields([...]), async (req, res) => {
-    // ... votre code de mise à jour de la propriété ici ...
-});
 
 app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
   const axios = require('axios');
