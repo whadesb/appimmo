@@ -2083,39 +2083,61 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
     }
 });
 
-
 app.get('/user/orders/:orderId/invoice', isAuthenticated, async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const query = { _id: orderId };
+  try {
+    const { orderId } = req.params;
+    const query = { _id: orderId };
 
-    if (!req.user || req.user.role !== 'admin') {
-      query.userId = req.user._id;
-    }
+    if (!req.user || req.user.role !== 'admin') {
+      query.userId = req.user._id;
+    }
 
-    const order = await Order.findOne(query);
+    const order = await Order.findOne(query);
 
-    if (!order) {
-      return res.status(404).json({ error: 'Commande introuvable' });
-    }
+    if (!order) {
+      return res.status(404).json({ error: 'Commande introuvable' });
+    }
 
-    if (order.status !== 'paid') {
-      return res.status(400).json({ error: 'La facture est disponible après confirmation du paiement.' });
-    }
+    if (order.status !== 'paid') {
+      return res.status(400).json({ error: 'La facture est disponible après confirmation du paiement.' });
+    }
+    
+    // --- DÉFINITION DES CONSTANTES POUR LE PDF (Doivent être locales à cette fonction) ---
+    const clientDetails = {
+        // Utilise req.user car le paiement est lié à l'utilisateur connecté
+        userId: req.user._id.toString(),
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+    };
+    const companyDetails = {
+        name: 'UAP Immo',
+        address: ['123 Rue de la Liberté', '75000 Paris'], // 👈 VOS VRAIES ADRESSES
+        siret: '123 456 789 00012', // 👈 VOTRE VRAI SIRET
+        tva: 'FR12345678901', // 👈 VOTRE VRAI NUMÉRO (ou N/A)
+    };
+    const serviceDetails = {
+        product: 'Pack de diffusion publicitaire',
+        duration: '90 jours',
+    };
+    // ----------------------------------------------------------------------------------
 
-    const { invoicePath, fileBase } = await generateInvoicePDF({
-      orderIdUap: order.orderId,
-      paypalOrderId: order.paypalOrderId || order.btcPayInvoiceId,
-      paypalCaptureId: order.paypalCaptureId,
-      amount: order.amount,
-      currency: order.currency || 'EUR',
-    });
+    const { invoicePath, fileBase } = await generateInvoicePDF({
+      orderIdUap: order.orderId,
+      paypalOrderId: order.paypalOrderId,
+      paypalCaptureId: order.paypalCaptureId,
+      amount: order.amount,
+      currency: order.currency || 'EUR',
+      // PASSAGE DES NOUVELLES DONNÉES :
+      client: clientDetails,
+      companyInfo: companyDetails,
+      serviceDetails: serviceDetails
+    });
 
-    return res.download(invoicePath, `facture-${fileBase}.pdf`);
-  } catch (error) {
-    console.error('Erreur lors de la génération de la facture :', error);
-    return res.status(500).json({ error: 'Impossible de générer la facture.' });
-  }
+    return res.download(invoicePath, `facture-${fileBase}.pdf`);
+  } catch (error) {
+    console.error('Erreur lors de la génération de la facture :', error);
+    return res.status(500).json({ error: 'Impossible de générer la facture.' });
+  }
 });
 
 
