@@ -1737,7 +1737,47 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     res.status(500).send("Erreur interne du serveur.");
   }
 });
+// server.js (Ajouter ce bloc)
 
+app.get('/:locale/property/edit/:id', ensureAuthenticated, async (req, res) => {
+    try {
+        const property = await Property.findById(req.params.id);
+
+        if (!property) {
+             return res.status(404).send('Propriété introuvable.');
+        }
+
+        // Vérification de l'autorisation: permet l'accès si c'est le propriétaire ou un admin
+        if (!property.userId.equals(req.user._id) && req.user.role !== 'admin') {
+            return res.status(403).send('Accès non autorisé à cette propriété.');
+        }
+
+        // Assurez-vous que req.locale est défini (utilisé dans la navbar/footer)
+        const locale = req.params.locale || 'fr'; 
+        
+        // Traductions minimales nécessaires pour edit-property.ejs
+        const i18n = { 
+            menu: {
+                home: locale === 'fr' ? 'Accueil' : 'Home',
+                contact: locale === 'fr' ? 'Contact' : 'Contact',
+            }
+        };
+
+        // Rendre la vue EJS
+        res.render('edit-property', {
+            property,
+            locale,
+            i18n,
+            currentPath: req.originalUrl,
+            isAuthenticated: req.isAuthenticated ? req.isAuthenticated() : false,
+            successMessage: req.flash('success') 
+        });
+
+    } catch (error) {
+        console.error('Erreur (EDIT PROPERTY) :', error);
+        res.status(500).send('Erreur interne du serveur lors de la récupération de la propriété.');
+    }
+});
 app.get('/user/properties', isAuthenticated, async (req, res) => {
   try {
     const properties = await Property.find({ userId: req.user._id });
