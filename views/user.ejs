@@ -1841,398 +1841,365 @@ const escapeJsString = (value) => {
 const formatNumber = (value) => (value === 0 || value) ? escapeHtml(value) : 'X';
 const boolIcon = (value) => (value === true) ? '<span style="color: green;">✓</span>' : 'X'; 
 
-<script>
-// Helpers (si déjà définis ailleurs, ne duplique pas)
-const entityMap = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-
-function escapeHtml(value) {
-  if (value === null || value === undefined) return 'X';
-  return String(value)
-    .replace(/[&<>"']/g, char => entityMap[char] || char)
-    .trim() || 'X';
-}
-function formatNumber(value) {
-  return (value === 0 || value) ? escapeHtml(value) : 'X';
-}
-function boolIcon(value) {
-  return value === true ? '<span style="color: green;">✓</span>' : 'X';
-}
-<script>
-// Helpers si pas déjà définis plus haut
-var entityMap = entityMap || { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-
-function escapeHtml(value) {
-  if (value === null || value === undefined) return 'X';
-  return String(value)
-    .replace(/[&<>"']/g, function (char) { return entityMap[char] || char; })
-    .trim() || 'X';
-}
-function formatNumber(value) {
-  return (value === 0 || value) ? escapeHtml(value) : 'X';
-}
-function boolIcon(value) {
-  return value === true ? '<span style="color: green;">✓</span>' : 'X';
-}
-
 function loadLandingPages() {
-  try {
-    fetch('/user/landing-pages')
-      .then(function (response) {
-        if (!response.ok) throw new Error('Erreur lors du chargement des données');
-        return response.json();
-      })
-      .then(function (landingPages) {
-        var landingPagesList = document.getElementById('properties-list');
-        var noPropertiesMessage = document.getElementById('no-properties-message');
+    try {
+        fetch('/user/landing-pages')
+            .then(function (response) {
+                if (!response.ok) throw new Error('Erreur lors du chargement des données');
+                return response.json();
+            })
+            .then(function (landingPages) {
+                var landingPagesList = document.getElementById('properties-list');
+                var noPropertiesMessage = document.getElementById('no-properties-message');
 
-        if (!landingPagesList) return;
+                if (!landingPagesList) return;
 
-        landingPagesList.innerHTML = '';
+                landingPagesList.innerHTML = '';
 
-        var htmlLocale = document.documentElement.lang || 'fr';
-        var numberLocale = htmlLocale === 'en' ? 'en-GB' : 'fr-FR';
-        var currencySymbol = '€';
+                var htmlLocale = document.documentElement.lang || 'fr';
+                var numberLocale = htmlLocale === 'en' ? 'en-GB' : 'fr-FR';
+                var currencySymbol = '€';
 
-        var COPY_TITLE = "Copier l'URL";
-        var SHOW_URL_TITLE = "Afficher l'URL";
-        var QR_CODE_TITLE = "QR Code";
-        var BROADCAST_TITLE = "Diffuser";
-        var EDIT_TITLE = "Modifier";
-        var ACTIVE_ORDER_TITLE = "Commande active en cours";
-        var EDIT_DISABLED_TITLE = "Modification temporairement désactivée";
-        var URL_UNAVAILABLE_TITLE = "URL indisponible";
-        var DETAILS_LABEL = "Détails";
+                var COPY_TITLE = "Copier l'URL";
+                var SHOW_URL_TITLE = "Afficher l'URL";
+                var QR_CODE_TITLE = "QR Code";
+                var BROADCAST_TITLE = "Diffuser";
+                var EDIT_TITLE = "Modifier";
+                var ACTIVE_ORDER_TITLE = "Commande active en cours";
+                var EDIT_DISABLED_TITLE = "Modification temporairement désactivée";
+                var URL_UNAVAILABLE_TITLE = "URL indisponible";
+                var DETAILS_LABEL = "Détails";
 
-        function formatPrice(value) {
-          if (typeof value === 'number' && !isNaN(value)) {
-            return value.toLocaleString(numberLocale) + ' ' + currencySymbol;
-          }
-          if (typeof value === 'string') {
-            var trimmed = value.trim();
-            if (!trimmed) return 'X';
-            if (trimmed.indexOf(currencySymbol) !== -1) {
-              return escapeHtml(trimmed);
-            }
-            return escapeHtml(trimmed) + ' ' + currencySymbol;
-          }
-          return 'X';
-        }
+                function formatPrice(value) {
+                    if (typeof value === 'number' && !isNaN(value)) {
+                        return value.toLocaleString(numberLocale) + ' ' + currencySymbol;
+                    }
+                    if (typeof value === 'string') {
+                        var trimmed = value.trim();
+                        if (!trimmed) return 'X';
+                        if (trimmed.indexOf(currencySymbol) !== -1) {
+                            return escapeHtml(trimmed);
+                        }
+                        return escapeHtml(trimmed) + ' ' + currencySymbol;
+                    }
+                    return 'X';
+                }
 
-        function normalizeUrlPath(value) {
-          if (!value && value !== 0) return '';
-          var raw = String(value).trim();
-          if (!raw) return '';
-          try {
-            var parsed = raw.indexOf('http') === 0 ? new URL(raw) : new URL(raw, 'https://uap.immo');
-            var path = (parsed.pathname || '') + (parsed.search || '') + (parsed.hash || '');
-            if (path && path !== 'null') {
-              return path.charAt(0) === '/' ? path : '/' + path;
-            }
-            return '';
-          } catch (e) {
-            return raw.charAt(0) === '/' ? raw : '/' + raw;
-          }
-        }
+                function normalizeUrlPath(value) {
+                    if (!value && value !== 0) return '';
+                    var raw = String(value).trim();
+                    if (!raw) return '';
+                    try {
+                        var parsed = raw.indexOf('http') === 0 ? new URL(raw) : new URL(raw, 'https://uap.immo');
+                        var path = (parsed.pathname || '') + (parsed.search || '') + (parsed.hash || '');
+                        if (path && path !== 'null') {
+                            return path.charAt(0) === '/' ? path : '/' + path;
+                        }
+                        return '';
+                    } catch (e) {
+                        return raw.charAt(0) === '/' ? raw : '/' + raw;
+                    }
+                }
 
-        function buildFullUrl(path) {
-          if (!path) return '';
-          return path.indexOf('http') === 0 ? path : 'https://uap.immo' + path;
-        }
+                function buildFullUrl(path) {
+                    if (!path) return '';
+                    return path.indexOf('http') === 0 ? path : 'https://uap.immo' + path;
+                }
 
-        if (!landingPages || !landingPages.length) {
-          if (noPropertiesMessage) noPropertiesMessage.style.display = 'block';
-          return;
-        }
-        if (noPropertiesMessage) noPropertiesMessage.style.display = 'none';
+                if (!landingPages || !landingPages.length) {
+                    if (noPropertiesMessage) noPropertiesMessage.style.display = 'block';
+                    return;
+                }
+                if (noPropertiesMessage) noPropertiesMessage.style.display = 'none';
 
-        landingPages.forEach(function (property) {
-          var row = document.createElement('tr');
+                landingPages.forEach(function (property) {
+                    var row = document.createElement('tr');
 
-          var photos = Array.isArray(property.photos) ? property.photos : [];
-          var mainPhotos = photos.slice(0, 2);
-          var extraPhotos = photos.slice(2, 10).filter(Boolean);
-          var miniPhotos = photos.slice(10, 13).filter(Boolean);
+                    var photos = Array.isArray(property.photos) ? property.photos : [];
+                    var mainPhotos = photos.slice(0, 2);
+                    var extraPhotos = photos.slice(2, 10).filter(Boolean);
+                    var miniPhotos = photos.slice(10, 13).filter(Boolean);
 
-          var rawDescription = property.description || '';
-          var truncatedDescription = rawDescription.length > 80
-            ? rawDescription.slice(0, 80) + '…'
-            : rawDescription;
+                    var rawDescription = property.description || '';
+                    var truncatedDescription = rawDescription.length > 80
+                        ? rawDescription.slice(0, 80) + '…'
+                        : rawDescription;
 
-          var normalizedPath = normalizeUrlPath(property.url);
-          var hasUrl = !!normalizedPath;
-          var fullUrl = hasUrl ? buildFullUrl(normalizedPath) : '';
-          var normalizedPathAttr = hasUrl ? escapeHtml(normalizedPath) : '';
+                    var normalizedPath = normalizeUrlPath(property.url);
+                    var hasUrl = !!normalizedPath;
+                    var fullUrl = hasUrl ? buildFullUrl(normalizedPath) : '';
+                    var normalizedPathAttr = hasUrl ? escapeHtml(normalizedPath) : '';
 
-          var hasId = property && property._id;
-          var safeIdAttr = hasId ? escapeHtml(String(property._id)) : '';
+                    var hasId = property && property._id;
+                    var safeIdAttr = hasId ? escapeHtml(String(property._id)) : '';
 
-          var detailsData = JSON.stringify(property).replace(/'/g, "&apos;");
-          var disabledByOrder = !!property.hasActiveOrder;
+                    var detailsData = JSON.stringify(property).replace(/'/g, "&apos;");
+                    var disabledByOrder = !!property.hasActiveOrder;
 
-          // Boutons actions
-          var copyButtonHtml;
-          if (hasUrl) {
-            copyButtonHtml =
-              '<button class="btn btn-sm btn-outline-dark copy-btn" data-url="' + normalizedPathAttr +
-              '" title="' + escapeHtml(COPY_TITLE) + '">' +
-                '<i class="bi bi-clipboard"></i>' +
-              '</button>';
-          } else {
-            copyButtonHtml =
-              '<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="' + escapeHtml(URL_UNAVAILABLE_TITLE) + '">' +
-                '<i class="bi bi-clipboard"></i>' +
-              '</button>';
-          }
+                    // Boutons actions
+                    var copyButtonHtml;
+                    if (hasUrl) {
+                        copyButtonHtml =
+                            '<button class="btn btn-sm btn-outline-dark copy-btn" data-url="' + normalizedPathAttr +
+                            '" title="' + escapeHtml(COPY_TITLE) + '">' +
+                            '<i class="bi bi-clipboard"></i>' +
+                            '</button>';
+                    } else {
+                        copyButtonHtml =
+                            '<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="' + escapeHtml(URL_UNAVAILABLE_TITLE) + '">' +
+                            '<i class="bi bi-clipboard"></i>' +
+                            '</button>';
+                    }
 
-          var showUrlButtonHtml;
-          if (hasUrl) {
-            showUrlButtonHtml =
-              '<button class="btn btn-sm btn-outline-dark show-url-btn" data-url="' + normalizedPathAttr +
-              '" title="' + escapeHtml(SHOW_URL_TITLE) + '">' +
-                '<i class="bi bi-link-45deg"></i>' +
-              '</button>';
-          } else {
-            showUrlButtonHtml =
-              '<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="' + escapeHtml(URL_UNAVAILABLE_TITLE) + '">' +
-                '<i class="bi bi-link-45deg"></i>' +
-              '</button>';
-          }
+                    var showUrlButtonHtml;
+                    if (hasUrl) {
+                        showUrlButtonHtml =
+                            '<button class="btn btn-sm btn-outline-dark show-url-btn" data-url="' + normalizedPathAttr +
+                            '" title="' + escapeHtml(SHOW_URL_TITLE) + '">' +
+                            '<i class="bi bi-link-45deg"></i>' +
+                            '</button>';
+                    } else {
+                        showUrlButtonHtml =
+                            '<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="' + escapeHtml(URL_UNAVAILABLE_TITLE) + '">' +
+                            '<i class="bi bi-link-45deg"></i>' +
+                            '</button>';
+                    }
 
-          var qrButtonHtml;
-          if (hasUrl && hasId) {
-            qrButtonHtml =
-              '<button class="btn btn-sm btn-qr qr-code-btn" data-id="' + safeIdAttr +
-              '" data-url="' + normalizedPathAttr + '" title="' + escapeHtml(QR_CODE_TITLE) + '">' +
-                '<i class="bi bi-qr-code"></i>' +
-              '</button>';
-          } else {
-            qrButtonHtml =
-              '<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="' + escapeHtml(URL_UNAVAILABLE_TITLE) + '">' +
-                '<i class="bi bi-qr-code"></i>' +
-              '</button>';
-          }
+                    var qrButtonHtml;
+                    if (hasUrl && hasId) {
+                        qrButtonHtml =
+                            '<button class="btn btn-sm btn-qr qr-code-btn" data-id="' + safeIdAttr +
+                            '" data-url="' + normalizedPathAttr + '" title="' + escapeHtml(QR_CODE_TITLE) + '">' +
+                            '<i class="bi bi-qr-code"></i>' +
+                            '</button>';
+                    } else {
+                        qrButtonHtml =
+                            '<button class="btn btn-sm btn-outline-secondary disabled" type="button" title="' + escapeHtml(URL_UNAVAILABLE_TITLE) + '">' +
+                            '<i class="bi bi-qr-code"></i>' +
+                            '</button>';
+                    }
 
-          var broadcastButtonHtml;
-          if (hasId && !disabledByOrder) {
-            broadcastButtonHtml =
-              '<button class="btn btn-sm btn-dark broadcast-btn" data-id="' + safeIdAttr +
-              '" title="' + escapeHtml(BROADCAST_TITLE) + '">' +
-                '<i class="bi bi-megaphone"></i>' +
-              '</button>';
-          } else {
-            broadcastButtonHtml =
-              '<button class="btn btn-sm ' + (disabledByOrder ? 'btn-warning' : 'btn-outline-secondary') +
-              ' disabled" type="button" title="' + escapeHtml(disabledByOrder ? ACTIVE_ORDER_TITLE : URL_UNAVAILABLE_TITLE) + '">' +
-                '<i class="bi bi-megaphone"></i>' +
-              '</button>';
-          }
+                    var broadcastButtonHtml;
+                    if (hasId && !disabledByOrder) {
+                        broadcastButtonHtml =
+                            '<button class="btn btn-sm btn-dark broadcast-btn" data-id="' + safeIdAttr +
+                            '" title="' + escapeHtml(BROADCAST_TITLE) + '">' +
+                            '<i class="bi bi-megaphone"></i>' +
+                            '</button>';
+                    } else {
+                        broadcastButtonHtml =
+                            '<button class="btn btn-sm ' + (disabledByOrder ? 'btn-warning' : 'btn-outline-secondary') +
+                            ' disabled" type="button" title="' + escapeHtml(disabledByOrder ? ACTIVE_ORDER_TITLE : URL_UNAVAILABLE_TITLE) + '">' +
+                            '<i class="bi bi-megaphone"></i>' +
+                            '</button>';
+                    }
 
-          var editButtonHtml;
-          if (hasId && !disabledByOrder) {
-            editButtonHtml =
-              '<button class="btn btn-sm btn-success edit-btn" data-id="' + safeIdAttr +
-              '" title="' + escapeHtml(EDIT_TITLE) + '">' +
-                '<i class="bi bi-pencil-square"></i>' +
-              '</button>';
-          } else {
-            editButtonHtml =
-              '<button class="btn btn-sm ' + (disabledByOrder ? 'btn-secondary' : 'btn-outline-secondary') +
-              ' disabled" type="button" title="' + escapeHtml(EDIT_DISABLED_TITLE) + '">' +
-                '<i class="bi bi-pencil-square"></i>' +
-              '</button>';
-          }
+                    var editButtonHtml;
+                    if (hasId && !disabledByOrder) {
+                        editButtonHtml =
+                            '<button class="btn btn-sm btn-success edit-btn" data-id="' + safeIdAttr +
+                            '" title="' + escapeHtml(EDIT_TITLE) + '">' +
+                            '<i class="bi bi-pencil-square"></i>' +
+                            '</button>';
+                    } else {
+                        editButtonHtml =
+                            '<button class="btn btn-sm ' + (disabledByOrder ? 'btn-secondary' : 'btn-outline-secondary') +
+                            ' disabled" type="button" title="' + escapeHtml(EDIT_DISABLED_TITLE) + '">' +
+                            '<i class="bi bi-pencil-square"></i>' +
+                            '</button>';
+                    }
 
-          // Construction des cellules dans le même ordre que le <thead>
-          var cells = [];
+                    // Construction des cellules dans le même ordre que le <thead>
+                    var cells = [];
 
-          // 1. ID
-          if (hasId) {
-            if (hasUrl) {
-              cells.push(
-                '<a href="' + escapeHtml(fullUrl) + '" target="_blank" rel="noopener">' +
-                  escapeHtml(property._id) +
-                '</a>'
-              );
-            } else {
-              cells.push(escapeHtml(property._id));
-            }
-          } else {
-            cells.push('X');
-          }
+                    // 1. ID
+                    if (hasId) {
+                        if (hasUrl) {
+                            cells.push(
+                                '<a href="' + escapeHtml(fullUrl) + '" target="_blank" rel="noopener">' +
+                                escapeHtml(property._id) +
+                                '</a>'
+                            );
+                        } else {
+                            cells.push(escapeHtml(property._id));
+                        }
+                    } else {
+                        cells.push('X');
+                    }
 
-          // 2. Type
-          cells.push(escapeHtml(property.propertyType || 'X'));
+                    // 2. Type
+                    cells.push(escapeHtml(property.propertyType || 'X'));
 
-          // 3–5 Rooms / Bedrooms / Surface
-          cells.push(formatNumber(property.rooms));
-          cells.push(formatNumber(property.bedrooms));
-          cells.push(formatNumber(property.surface));
+                    // 3–5 Rooms / Bedrooms / Surface
+                    cells.push(formatNumber(property.rooms));
+                    cells.push(formatNumber(property.bedrooms));
+                    cells.push(formatNumber(property.surface));
 
-          // 6. Price
-          cells.push(formatPrice(property.price));
+                    // 6. Price
+                    cells.push(formatPrice(property.price));
 
-          // 7–9 Country / City / Postal code
-          cells.push(escapeHtml(property.country || 'X'));
-          cells.push(escapeHtml(property.city || 'X'));
-          cells.push(escapeHtml(property.postalCode || 'X'));
+                    // 7–9 Country / City / Postal code
+                    cells.push(escapeHtml(property.country || 'X'));
+                    cells.push(escapeHtml(property.city || 'X'));
+                    cells.push(escapeHtml(property.postalCode || 'X'));
 
-          // 10. Year
-          cells.push(formatNumber(property.yearBuilt));
+                    // 10. Year
+                    cells.push(formatNumber(property.yearBuilt));
 
-          // 11. DPE
-          cells.push(escapeHtml(property.dpe || 'X'));
+                    // 11. DPE
+                    cells.push(escapeHtml(property.dpe || 'X'));
 
-          // 12. Language
-          cells.push(escapeHtml((property.language || 'X').toUpperCase()));
+                    // 12. Language
+                    cells.push(escapeHtml((property.language || 'X').toUpperCase()));
 
-          // 13–21 Équipements
-          cells.push(boolIcon(property.pool));
-          cells.push(boolIcon(property.doubleGlazing));
-          cells.push(boolIcon(property.wateringSystem));
-          cells.push(boolIcon(property.barbecue));
-          cells.push(boolIcon(property.carShelter));
-          cells.push(boolIcon(property.parking));
-          cells.push(boolIcon(property.caretakerHouse));
-          cells.push(boolIcon(property.electricShutters));
-          cells.push(boolIcon(property.outdoorLighting));
+                    // 13–21 Équipements
+                    cells.push(boolIcon(property.pool));
+                    cells.push(boolIcon(property.doubleGlazing));
+                    cells.push(boolIcon(property.wateringSystem));
+                    cells.push(boolIcon(property.barbecue));
+                    cells.push(boolIcon(property.carShelter));
+                    cells.push(boolIcon(property.parking));
+                    cells.push(boolIcon(property.caretakerHouse));
+                    cells.push(boolIcon(property.electricShutters));
+                    cells.push(boolIcon(property.outdoorLighting));
 
-          // 22–25 Photos
-          cells.push(mainPhotos[0] ? '✓' : 'X');
-          cells.push(mainPhotos[1] ? '✓' : 'X');
-          cells.push(extraPhotos.length ? String(extraPhotos.length) : 'X');
-          cells.push(miniPhotos.length ? String(miniPhotos.length) : 'X');
+                    // 22–25 Photos
+                    cells.push(mainPhotos[0] ? '✓' : 'X');
+                    cells.push(mainPhotos[1] ? '✓' : 'X');
+                    cells.push(extraPhotos.length ? String(extraPhotos.length) : 'X');
+                    cells.push(miniPhotos.length ? String(miniPhotos.length) : 'X');
 
-          // 26. Vidéo
-          if (property.videoUrl) {
-            cells.push(
-              '<a href="' + escapeHtml(property.videoUrl) + '" target="_blank" rel="noopener">URL</a>'
-            );
-          } else {
-            cells.push('X');
-          }
+                    // 26. Vidéo
+                    if (property.videoUrl) {
+                        cells.push(
+                            '<a href="' + escapeHtml(property.videoUrl) + '" target="_blank" rel="noopener">URL</a>'
+                        );
+                    } else {
+                        cells.push('X');
+                    }
 
-          // 27. Contact
-          var contactName = [property.contactFirstName, property.contactLastName].filter(Boolean).join(' ');
-          cells.push(escapeHtml(contactName || 'X'));
+                    // 27. Contact
+                    var contactName = [property.contactFirstName, property.contactLastName].filter(Boolean).join(' ');
+                    cells.push(escapeHtml(contactName || 'X'));
 
-          // 28. Téléphone
-          cells.push(escapeHtml(property.contactPhone || 'X'));
+                    // 28. Téléphone
+                    cells.push(escapeHtml(property.contactPhone || 'X'));
 
-          // 29. Description
-          if (rawDescription) {
-            cells.push(
-              '<span title="' + escapeHtml(rawDescription) + '">' +
-                escapeHtml(truncatedDescription) +
-              '</span>'
-            );
-          } else {
-            cells.push('X');
-          }
+                    // 29. Description
+                    if (rawDescription) {
+                        cells.push(
+                            '<span title="' + escapeHtml(rawDescription) + '">' +
+                            escapeHtml(truncatedDescription) +
+                            '</span>'
+                        );
+                    } else {
+                        cells.push('X');
+                    }
 
-          // 30. Actions
-          cells.push(
-            '<div class="table-action-buttons d-flex flex-nowrap gap-1">' +
-              showUrlButtonHtml +
-              copyButtonHtml +
-              qrButtonHtml +
-              '<button class="btn btn-sm btn-info show-details-btn" data-details=\'' + detailsData +
-                '\' title="' + escapeHtml(DETAILS_LABEL) + '">' +
-                '<i class="bi bi-info-circle"></i>' +
-              '</button>' +
-              broadcastButtonHtml +
-              editButtonHtml +
-            '</div>'
-          );
+                    // 30. Actions
+                    cells.push(
+                        '<div class="table-action-buttons d-flex flex-nowrap gap-1">' +
+                        showUrlButtonHtml +
+                        copyButtonHtml +
+                        qrButtonHtml +
+                        '<button class="btn btn-sm btn-info show-details-btn" data-details=\'' + detailsData +
+                        '\' title="' + escapeHtml(DETAILS_LABEL) + '">' +
+                        '<i class="bi bi-info-circle"></i>' +
+                        '</button>' +
+                        broadcastButtonHtml +
+                        editButtonHtml +
+                        '</div>'
+                    );
 
-          // Injection dans le <tr>
-          row.innerHTML = cells.map(function (c) {
-            return '<td class="text-nowrap">' + c + '</td>';
-          }).join('');
+                    // Injection dans le <tr>
+                    row.innerHTML = cells.map(function (c) {
+                        return '<td class="text-nowrap">' + c + '</td>';
+                    }).join('');
 
-          landingPagesList.appendChild(row);
-        });
+                    landingPagesList.appendChild(row);
+                });
 
-        // Actions JS sur les boutons
-        var copyButtons = document.querySelectorAll('.copy-btn');
-        Array.prototype.forEach.call(copyButtons, function (button) {
-          button.addEventListener('click', function () {
-            var urlPath = this.getAttribute('data-url');
-            if (!urlPath) return;
-            var full = buildFullUrl(urlPath);
-            navigator.clipboard.writeText(full).then(function () {
-              var icon = button.querySelector('i');
-              if (!icon) return;
-              icon.classList.remove('bi-clipboard');
-              icon.classList.add('bi-check-circle-fill', 'text-success');
-              setTimeout(function () {
-                icon.classList.remove('bi-check-circle-fill', 'text-success');
-                icon.classList.add('bi-clipboard');
-              }, 1500);
+                // Actions JS sur les boutons
+                var copyButtons = document.querySelectorAll('.copy-btn');
+                Array.prototype.forEach.call(copyButtons, function (button) {
+                    button.addEventListener('click', function () {
+                        var urlPath = this.getAttribute('data-url');
+                        if (!urlPath) return;
+                        var full = buildFullUrl(urlPath);
+                        navigator.clipboard.writeText(full).then(function () {
+                            var icon = button.querySelector('i');
+                            if (!icon) return;
+                            icon.classList.remove('bi-clipboard');
+                            icon.classList.add('bi-check-circle-fill', 'text-success');
+                            setTimeout(function () {
+                                icon.classList.remove('bi-check-circle-fill', 'text-success');
+                                icon.classList.add('bi-clipboard');
+                            }, 1500);
+                        });
+                    });
+                });
+
+                var showUrlButtons = document.querySelectorAll('.show-url-btn');
+                Array.prototype.forEach.call(showUrlButtons, function (button) {
+                    button.addEventListener('click', function () {
+                        var urlPath = button.getAttribute('data-url');
+                        if (!urlPath) return;
+                        var full = buildFullUrl(urlPath);
+                        var el = document.getElementById('urlModalText');
+                        if (el) el.textContent = full;
+                        if (window.bootstrap && bootstrap.Modal) {
+                            var modal = new bootstrap.Modal(document.getElementById('urlModal'));
+                            modal.show();
+                        }
+                    });
+                });
+
+                var qrButtons = document.querySelectorAll('.qr-code-btn');
+                Array.prototype.forEach.call(qrButtons, function (button) {
+                    button.addEventListener('click', function () {
+                        var id = button.getAttribute('data-id');
+                        var urlPath = button.getAttribute('data-url');
+                        if (!id || !urlPath) return;
+                        if (typeof showQRCode === 'function') {
+                            showQRCode(id, urlPath);
+                        }
+                    });
+                });
+
+                var broadcastButtons = document.querySelectorAll('.broadcast-btn');
+                Array.prototype.forEach.call(broadcastButtons, function (button) {
+                    button.addEventListener('click', function () {
+                        var id = button.getAttribute('data-id');
+                        if (!id) return;
+                        if (typeof redirectToPayment === 'function') {
+                            redirectToPayment(id);
+                        }
+                    });
+                });
+
+                var editButtons = document.querySelectorAll('.edit-btn');
+                Array.prototype.forEach.call(editButtons, function (button) {
+                    button.addEventListener('click', function () {
+                        var id = button.getAttribute('data-id');
+                        if (!id) return;
+                        if (typeof editProperty === 'function') {
+                            editProperty(id);
+                        }
+                    });
+                });
+
+            })
+            .catch(function (error) {
+                console.error('❌ Erreur lors du chargement des landing pages :', error);
+                var landingPagesList = document.getElementById('properties-list');
+                if (landingPagesList) {
+                    landingPagesList.innerHTML =
+                        '<tr><td colspan="30" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
+                }
             });
-          });
-        });
-
-        var showUrlButtons = document.querySelectorAll('.show-url-btn');
-        Array.prototype.forEach.call(showUrlButtons, function (button) {
-          button.addEventListener('click', function () {
-            var urlPath = button.getAttribute('data-url');
-            if (!urlPath) return;
-            var full = buildFullUrl(urlPath);
-            var el = document.getElementById('urlModalText');
-            if (el) el.textContent = full;
-            if (window.bootstrap && bootstrap.Modal) {
-              var modal = new bootstrap.Modal(document.getElementById('urlModal'));
-              modal.show();
-            }
-          });
-        });
-
-        var qrButtons = document.querySelectorAll('.qr-code-btn');
-        Array.prototype.forEach.call(qrButtons, function (button) {
-          button.addEventListener('click', function () {
-            var id = button.getAttribute('data-id');
-            var urlPath = button.getAttribute('data-url');
-            if (!id || !urlPath) return;
-            if (typeof showQRCode === 'function') {
-              showQRCode(id, urlPath);
-            }
-          });
-        });
-
-        var broadcastButtons = document.querySelectorAll('.broadcast-btn');
-        Array.prototype.forEach.call(broadcastButtons, function (button) {
-          button.addEventListener('click', function () {
-            var id = button.getAttribute('data-id');
-            if (!id) return;
-            if (typeof redirectToPayment === 'function') {
-              redirectToPayment(id);
-            }
-          });
-        });
-
-        var editButtons = document.querySelectorAll('.edit-btn');
-        Array.prototype.forEach.call(editButtons, function (button) {
-          button.addEventListener('click', function () {
-            var id = button.getAttribute('data-id');
-            if (!id) return;
-            if (typeof editProperty === 'function') {
-              editProperty(id);
-            }
-          });
-        });
-
-      })
-      .catch(function (error) {
-        console.error('❌ Erreur lors du chargement des landing pages :', error);
-        var landingPagesList = document.getElementById('properties-list');
-        if (landingPagesList) {
-          landingPagesList.innerHTML =
-            '<tr><td colspan="30" class="text-center">Erreur lors du chargement des landing pages.</td></tr>';
-        }
-      });
-  } catch (e) {
-    console.error('❌ Exception loadLandingPages :', e);
-  }
+    } catch (e) {
+        console.error('❌ Exception loadLandingPages :', e);
+    }
 }
 </script>
 
