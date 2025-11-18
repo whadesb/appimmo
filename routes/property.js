@@ -18,7 +18,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-const PropertyModel = mongoose.model('Property');
 
 
 function cleanupUploadedFiles(files) {
@@ -1666,8 +1665,8 @@ router.post('/add-property', authMiddleware, upload.fields([
     }
 });
 
-// Route pour mettre à jour une propriété existante
-router.post('/update-property/:id', authMiddleware, upload.fields([
+
+router.post('/update/:id', authMiddleware, upload.fields([
     { name: 'photo1', maxCount: 1 },
     { name: 'photo2', maxCount: 1 },
     { name: 'extraPhotos', maxCount: 8 },
