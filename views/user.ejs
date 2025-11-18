@@ -2899,14 +2899,13 @@ function showPageDetails(page) {
 <script>
 /**
  * Redirige vers la page de modification de la propriété en incluant la locale.
- * C'est cette fonction qui était manquante pour le clic sur le bouton.
  * @param {string} propertyId L'ID de la propriété à modifier.
  */
 function editProperty(propertyId) {
     // Utilise la variable EJS 'locale' passée à la vue.
     const locale = '<%= locale %>'; 
     
-    // Redirection vers la route qui inclut la locale au début
+    // Redirection vers la route Express (qui est gérée par le routeur property)
     window.location.href = `/${locale}/property/edit/${propertyId}`;
 }
 </script>
