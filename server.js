@@ -1295,29 +1295,58 @@ app.get('/:lang/contact', (req, res) => {
 });
 
 app.post('/send-contact', async (req, res) => {
-    const { firstName, lastName, email, message, type } = req.body;
+    const { firstName, lastName, email, message, type, 'g-recaptcha-response': captcha } = req.body;
+    const locale = req.cookies.locale || 'fr';
+    const contactUrl = `/${locale}/contact`;
 
-    // Configurer les options d'email
-    const mailOptions = {
-        from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-        to: process.env.CONTACT_EMAIL,
-        subject: 'Nouveau message de contact',
-        html: `
-            <p><b>Nom :</b> ${firstName} ${lastName}</p>
-            <p><b>Email :</b> ${email}</p>
-            <p><b>Type :</b> ${type}</p>
-            <p><b>Message :</b><br>${message}</p>
-        `
-    };
+    // 1. VÉRIFICATION DU CAPTCHA
+    if (!captcha) {
+        console.warn("Tentative de soumission sans CAPTCHA.");
+        // Gérer le cas où le captcha est manquant (rediriger avec un message si possible)
+        return res.redirect(`${contactUrl}?error=captcha_missing`);
+    }
 
     try {
-        // Envoyer l'email avec le transporteur
+        const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+        const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
+
+        const response = await axios.post(verificationURL, null, {
+            params: {
+                secret: secretKey,
+                response: captcha,
+            },
+        });
+
+        if (!response.data.success) {
+            console.warn("CAPTCHA échoué pour l'email:", email);
+            // Redirection vers la page de contact avec un indicateur d'échec
+            return res.redirect(`${contactUrl}?error=captcha_failed`);
+        }
+        
+        // --- 2. TRAITEMENT DE L'EMAIL (Uniquement si CAPTCHA SUCCESS) ---
+
+        // Configurer les options d'email
+        const mailOptions = {
+            from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
+            to: process.env.CONTACT_EMAIL,
+            subject: `Nouveau message de contact - Type: ${type}`,
+            html: `
+                <p><b>Nom :</b> ${firstName} ${lastName}</p>
+                <p><b>Email :</b> ${email}</p>
+                <p><b>Type :</b> ${type}</p>
+                <p><b>Message :</b><br>${message}</p>
+            `
+        };
+
+        // Envoyer l'email
         await sendEmail(mailOptions);
-        const locale = req.cookies.locale || 'fr';
-res.redirect(`/${locale}/contact?messageEnvoye=true`);
+        
+        // Redirection en cas de succès
+        res.redirect(`${contactUrl}?messageEnvoye=true`);
     } catch (error) {
-        console.error('Erreur lors de l\'envoi de l\'email :', error);
-        res.status(500).send('Erreur lors de l\'envoi de l\'email.');
+        console.error('Erreur lors de la vérification CAPTCHA ou de l\'envoi de l\'email :', error.message || error);
+        // Redirection générique en cas d'erreur interne
+        res.redirect(`${contactUrl}?error=internal_error`);
     }
 });
 app.get('/:locale/register', (req, res) => {
