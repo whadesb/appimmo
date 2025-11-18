@@ -1513,7 +1513,7 @@ progress {
 <i class="bi bi-file-earmark-zip"></i>
 </a>
 <% } %>
-<a href="/property/edit/<%= property._id %>" class="btn btn-sm btn-success" title="Modifier">
+<a href="/<%= locale %>/property/edit/<%= property._id %>" class="btn btn-sm btn-success" title="Modifier">
 <i class="bi bi-pencil-square"></i>
 </a>
 </div>
@@ -2895,16 +2895,15 @@ function showPageDetails(page) {
     showSection(defaultSection);
   });
 </script>
-
 <script>
 /**
  * Redirige vers la page de modification de la propriété en incluant la locale.
  * @param {string} propertyId L'ID de la propriété à modifier.
  */
 function editProperty(propertyId) {
-    // CORRECTION: Nous supprimons le préfixe de locale '<%= locale %>'
-    // pour aligner la requête sur la route Express non-localisée qui fonctionne.
-    window.location.href = `/property/edit/${propertyId}`;
+    // La locale est maintenant incluse explicitement : /en/property/edit/ID
+    const locale = '<%= locale %>';
+    window.location.href = `/${locale}/property/edit/${propertyId}`;
 }
 </script>
 
