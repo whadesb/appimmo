@@ -2902,11 +2902,9 @@ function showPageDetails(page) {
  * @param {string} propertyId L'ID de la propriété à modifier.
  */
 function editProperty(propertyId) {
-    // Utilise la variable EJS 'locale' passée à la vue.
-    const locale = '<%= locale %>'; 
-    
-    // Redirection vers la route Express (qui est gérée par le routeur property)
-    window.location.href = `/${locale}/property/edit/${propertyId}`;
+    // CORRECTION: Nous supprimons le préfixe de locale '<%= locale %>'
+    // pour aligner la requête sur la route Express non-localisée qui fonctionne.
+    window.location.href = `/property/edit/${propertyId}`;
 }
 </script>
 
