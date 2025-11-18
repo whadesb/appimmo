@@ -212,7 +212,7 @@ async function sendInvoiceByEmail(
   amount,
   currency = 'EUR',
   clientDetails, 
-  companyInfo,
+  companyDetails,
   serviceDetails
 ) {
   // Génère le PDF
@@ -223,7 +223,7 @@ async function sendInvoiceByEmail(
     amount,
     currency,
     client: clientDetails,
-    companyInfo: companyInfo,
+    companyInfo: companyDetails,
     serviceDetails: serviceDetails,
   });
 
