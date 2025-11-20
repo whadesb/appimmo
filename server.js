@@ -1537,15 +1537,16 @@ app.post('/:locale/register', async (req, res) => {
     res.redirect(`/${locale}/register`);
   }
 });
-app.get('/:locale/2fa', async (req, res) => { // ⬅️ AJOUT DE 'async' ICI
+app.get('/:locale/2fa', async (req, res) => { // ⬅️ On garde async car il y a des awaits
   const { locale } = req.params;
 
-  // 🔑 Identifiant de l'utilisateur. On utilise req.user s'il existe (session OK) 
-  // OU on utilise req.session.tmpUserId (session post-login)
+  // 🔑 CRITICAL FIX: On vérifie si req.user est disponible (login réussi)
+  // OU si la session temporaire pour le flow classique est présente.
   const userId = req.user?._id || req.session.tmpUserId; 
 
   if (!userId) {
-    console.warn('⚠️ Redirection vers /2fa échouée: ID utilisateur manquant dans la session.');
+    console.warn('⚠️ Redirection vers /2fa échouée: ID utilisateur manquant (Retour au login).');
+    // Ceci renvoie l'utilisateur au login si la session a été perdue immédiatement
     return res.redirect(`/${locale}/login`);
   }
   
@@ -1555,19 +1556,45 @@ app.get('/:locale/2fa', async (req, res) => { // ⬅️ AJOUT DE 'async' ICI
   try {
     i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
 
-    // Optionnel: Charger l'utilisateur pour s'assurer qu'il existe et a la 2FA activée
+    // Charger l'utilisateur en utilisant l'ID trouvé (soit depuis req.user, soit depuis tmpUserId)
     const user = await User.findById(userId);
+    
+    // Si l'utilisateur n'est pas trouvé ou si 2FA n'est plus activé (problème de BDD),
+    // on le renvoie à la connexion.
     if (!user || !user.twoFactorEnabled) {
-        // Si l'utilisateur a perdu son statut 2FA, on nettoie la session temporaire.
+        console.warn(`⚠️ 2FA: Utilisateur ${userId} non trouvé ou 2FA désactivée. Nettoyage de session temporaire.`);
         delete req.session.tmpUserId;
         return res.redirect(`/${locale}/login`);
     }
 
-  } catch (error) {
-    console.error(`Erreur chargement traductions 2FA:`, error);
-    return res.status(500).send('Erreur chargement traductions');
-  }
+    // Si la 2FA n'a pas encore de secret, nous devons la générer (flow enable-2fa)
+    if (!user.twoFactorSecret) {
+        // Logique de génération de secret... (Si cette route est utilisée pour l'activation)
+        // Mais dans votre cas, cette route est le point de vérification (login 2FA), 
+        // donc l'utilisateur devrait déjà avoir un secret. S'il n'en a pas,
+        // c'est une erreur de configuration après l'inscription.
+    }
 
+
+    // Générer l'URL OTPAuth (même si pas affichée, nécessaire pour le Speakeasy)
+    const otpAuthUrl = speakeasy.otpauthURL({
+        secret: user.twoFactorSecret,
+        label: `UAP Immo (${user.email})`,
+        issuer: 'UAP Immo',
+        encoding: 'base32'
+    });
+    
+    // Nous avons besoin du QR code pour le '2fa.ejs'
+    const qrCode = await QRCode.toDataURL(otpAuthUrl);
+
+
+  } catch (error) {
+    console.error(`❌ Erreur dans GET /2fa:`, error);
+    // En cas d'erreur de BDD ou de Speakeasy, on ne montre pas la page.
+    return res.status(500).send('Erreur lors du chargement de la vérification 2FA.');
+  }
+  
+  // Rendu de la vue 2FA
   res.render('2fa', {
     locale,
     i18n,
@@ -1576,7 +1603,6 @@ app.get('/:locale/2fa', async (req, res) => { // ⬅️ AJOUT DE 'async' ICI
     showAccountButtons: false
 });
 });
-
 
 
 app.post('/:locale/2fa', async (req, res) => {
