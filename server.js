@@ -1607,68 +1607,42 @@ app.post('/:locale/2fa', async (req, res) => {
   const { locale } = req.params;
   const { code } = req.body;
 
-  // 🔑 UTILISER L'ID TEMPORAIRE DU COOKIE OU LA SESSION EXISTANTE
-  const userId = req.user?._id || req.cookies['2fa_pending_id']; 
+  const userId = req.session.tmpUserId; // 🔑 L'ID doit venir de la session
 
   if (!userId) {
-    console.warn('2FA POST: ID utilisateur manquant dans la requête. Retour au login.');
+    console.warn('2FA POST: ID utilisateur manquant dans la session. Redirection immédiate.');
     return res.redirect(`/${locale}/login`);
   }
 
   try {
-    // Tenter d'effacer le cookie temporaire immédiatement pour des raisons de sécurité après récupération
-    res.clearCookie('2fa_pending_id', {
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Lax',
-        // domain: 'uap.immo' <--- SUPPRIMÉ
-    });
-    
     const user = await User.findById(userId);
-    
-    if (!user || !user.twoFactorSecret) {
-        req.flash('error', 'Erreur de validation 2FA: Utilisateur ou secret manquant.');
-        return res.redirect(`/${locale}/login`);
-    }
+    if (!user || !user.twoFactorSecret) {
+      req.flash('error', 'Erreur de validation 2FA: Utilisateur ou secret manquant.');
+      return res.redirect(`/${locale}/login`);
+    }
 
-    const verified = speakeasy.totp.verify({
-      secret: user.twoFactorSecret,
-      encoding: 'base32',
-      token: code,
-      window: 1
-    });
+    const verified = speakeasy.totp.verify({ /* ... */ });
 
     if (!verified) {
       req.flash('error', 'Code 2FA invalide.');
-      // Si l'échec est ici, on redéfinit le cookie temporaire pour qu'il puisse réessayer.
-      // Cela évite de renvoyer l'utilisateur à /login
-      res.cookie('2fa_pending_id', user._id.toString(), {
-            maxAge: 300000, 
-            httpOnly: false, 
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'Lax',
-            // domain: 'uap.immo' <--- SUPPRIMÉ
-        });
       return res.redirect(`/${locale}/2fa`);
     }
 
-    // Connexion réussie: FORCER LA NOUVELLE SESSION
-    req.login(user, (err) => {
+    // Connexion réussie
+    delete req.session.tmpUserId; // Nettoyer l'ID temporaire
+    // Passport va maintenant sérialiser l'utilisateur et le garder connecté.
+    req.login(user, (err) => { 
       if (err) {
         console.error('❌ ÉCHEC FINAL DE REQ.LOGIN APRÈS 2FA:', err);
         req.flash('error', 'Échec de la session. Veuillez vous reconnecter.');
         return res.redirect(`/${locale}/login`);
       }
       
-      // ✅ SUCCÈS: Redirection vers le tableau de bord
       console.log(`✅ 2FA validée. Connexion finalisée pour ${user.email}.`);
       return res.redirect(`/${locale}/user`);
     });
 
-  } catch (err) {
-    console.error('Erreur 2FA:', err);
-    req.flash('error', 'Une erreur est survenue.');
-    res.redirect(`/${locale}/login`);
-  }
+  } catch (err) { /* ... */ }
 });
 // REMPLACEZ app.post('/add-property', ...) PAR CECI :
 app.post('/add-property', isAuthenticated, upload.fields([
