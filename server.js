@@ -2420,7 +2420,7 @@ ${JSON.stringify(jsonLD)}
         overflow: hidden;
         background: #fff;
         box-shadow: 0 24px 50px rgba(0, 0, 0, 0.08);
-        min-height: 420px;
+        min-height: 620px;
       }
 
       /* SLIDER PRINCIPAL ---------------------------------------------------- */
@@ -2464,6 +2464,7 @@ ${JSON.stringify(jsonLD)}
       /* INFO PROPRIÉTÉ (SANS VIDÉO) ---------------------------------------- */
       .property-info {
         flex: 1.1;
+        font-weight: 400;
         padding: 28px 32px 28px 24px;
         display: flex;
         flex-direction: column;
@@ -2472,7 +2473,6 @@ ${JSON.stringify(jsonLD)}
 
       .property-lorem {
         font-size: 0.9rem;
-        text-transform: uppercase;
         letter-spacing: 0.16em;
         border-bottom: 1px solid #C4B990;
         padding-bottom: 4px;
@@ -2549,8 +2549,8 @@ ${JSON.stringify(jsonLD)}
 
       .price {
         flex: 1;
-        background: #111;
-        color: #fff;
+        background: #C4B990;
+        color: #000;
         text-align: center;
         padding: 12px 18px;
         border-radius: 999px;
