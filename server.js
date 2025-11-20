@@ -777,32 +777,49 @@ app.get('/api/stats/:id', async (req, res) => {
   }
 });
 
-
-
 app.post('/:locale/login', (req, res, next) => {
-    const locale = req.params.locale || 'fr';
+    const locale = req.params.locale || 'fr';
 
-    passport.authenticate('local', (err, user, info) => {
-        if (err) return next(err);
-        if (!user) {
-            req.flash('error', 'Identifiants incorrects.');
-            return res.redirect(`/${locale}/login`);
+    passport.authenticate('local', (err, user, info) => {
+        // 1. ERREUR SERVEUR / BASE DE DONNÉES
+        if (err) {
+            console.error('❌ ERREUR AUTHENTICATION PASSPORT:', err);
+            return next(err);
         }
 
-        req.logIn(user, (err) => {
-            if (err) return next(err);
+        // 2. UTILISATEUR NON TROUVÉ (Mauvais identifiants)
+        if (!user) {
+            console.warn('⚠️ CONNEXION ÉCHOUÉE: Utilisateur non trouvé ou mot de passe incorrect.', info);
+            req.flash('error', 'Identifiants incorrects.');
+            return res.redirect(`/${locale}/login`);
+        }
+        
+        // 3. UTILISATEUR TROUVÉ, TENTATIVE DE CONNEXION (req.logIn)
+        console.log(`✅ AUTHENTIFICATION RÉUSSIE pour: ${user.email}. Tentative de création de session...`);
 
-            if (user.twoFactorEnabled) {
-                req.session.tmpUserId = user._id;
-                return res.redirect(`/${locale}/2fa`);
+
+        req.logIn(user, (err) => {
+            // 4. ÉCHEC DE CRÉATION DE SESSION (logIn)
+            if (err) {
+                console.error('❌ ERREUR REQ.LOGIN (Session):', err);
+                return next(err);
             }
+            
+            // 5. SUCCESS LOGIC (Redirection)
+            
+            // Logique de Double Authentification (2FA)
+            if (user.twoFactorEnabled) {
+                console.log('➡️ Redirection 2FA nécessaire.');
+                req.session.tmpUserId = user._id;
+                return res.redirect(`/${locale}/2fa`);
+            }
 
-            // Si la 2FA n’est pas activée, on va directement sur /user
-            return res.redirect(`/${locale}/user`);
-        });
-    })(req, res, next);
+            // Redirection finale réussie
+            console.log('✅ CONNEXION TERMINÉE. Redirection vers /user.');
+            return res.redirect(`/${locale}/user`);
+        });
+    })(req, res, next);
 });
-
 
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
