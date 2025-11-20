@@ -801,17 +801,28 @@ app.post('/:locale/login', (req, res, next) => {
             
             // Logique de Double Authentification (2FA)
             if (user.twoFactorEnabled) {
-                
-                // 🔑 DÉFINITION DE L'ID TEMPORAIRE DANS LA SESSION
-                req.session.tmpUserId = user._id; 
-                
-                console.log('➡️ Redirection 2FA nécessaire.');
-                return res.redirect(`/${locale}/2fa`);
+                
+                // 🔑 DÉFINITION DE L'ID TEMPORAIRE DANS LA SESSION
+                req.session.tmpUserId = user._id; 
+                
+                // CORRECTION: Forcer la sauvegarde de la session pour garantir l'ID pour la redirection GET /2fa
+                req.session.save(function(saveErr) {
+                    if (saveErr) return next(saveErr);
+                    
+                    console.log('➡️ Redirection 2FA nécessaire. Session forcée.');
+                    return res.redirect(`/${locale}/2fa`);
+                });
+                return; // S'assurer de ne pas exécuter le code de redirection suivant
             }
 
-            // Redirection finale réussie
-            console.log('✅ CONNEXION TERMINÉE. Redirection vers /user.');
-            return res.redirect(`/${locale}/user`);
+            // Redirection finale réussie (pas de 2FA ou après 2FA)
+            
+            // CORRECTION: Si req.logIn réussit, forcer la sauvegarde AVANT la redirection
+            req.session.save(function(saveErr) {
+                if (saveErr) return next(saveErr);
+                console.log('✅ CONNEXION TERMINÉE. Redirection vers /user. Session forcée.');
+                return res.redirect(`/${locale}/user`);
+            });
         });
     })(req, res, next);
 });
@@ -1533,52 +1544,56 @@ app.post('/:locale/register', async (req, res) => {
 });
 // DANS server.js
 app.get('/:locale/2fa', async (req, res) => {
-    const locale = req.params.locale || 'fr';
-    const translationsPath = `./locales/${locale}/2fa.json`;
-    let i18n = {};
+  const { locale } = req.params;
+  
+    // 🔑 CONTRÔLE DE SÉCURITÉ CRITIQUE : Vérifier l'état de la session Passport.
+    // L'utilisateur DOIT être authentifié à ce stade (grâce à req.logIn dans /login).
+    if (!req.isAuthenticated() || !req.user) {
+       console.warn('⚠️ 2FA GET: Accès refusé (non authentifié). Retour au login.');
+       return res.redirect(`/${locale}/login`);
+    }
 
-    // 🔑 L'ID doit venir de la session temporaire. Si le login n'a pas été fait, il sera manquant.
-    const userId = req.session.tmpUserId; 
+    // Récupérer l'ID à partir de l'objet utilisateur sérialisé
+    const userId = req.user._id; 
+    const translationsPath = `./locales/${locale}/2fa.json`;
+    let i18n = {};
 
-    if (!userId) {
-        console.warn('⚠️ 2FA GET: ID utilisateur manquant dans la session. Retour au login.');
-        return res.redirect(`/${locale}/login`);
-    }
+    try {
+       i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
 
-    try {
-        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-
-        // On charge l'utilisateur pour vérifier le secret
-        const user = await User.findById(userId);
+        // Charger l'utilisateur complet pour le secret 2FA
+       const user = await User.findById(userId);
 
         if (!user || !user.twoFactorEnabled) {
-            delete req.session.tmpUserId;
-            return res.redirect(`/${locale}/login`);
+            // Si 2FA n'est plus activé pour une raison quelconque, déconnecter l'utilisateur.
+            req.logout(() => {
+                 res.redirect(`/${locale}/login`);
+            });
+            return;
         }
 
-        // Générer l'OTPAuth URL
-        const otpAuthUrl = speakeasy.otpauthURL({
-          secret: user.twoFactorSecret,
-          label: `UAP Immo (${user.email})`,
-          issuer: 'UAP Immo',
-          encoding: 'base32'
-        });
+       const otpAuthUrl = speakeasy.otpauthURL({
+         secret: user.twoFactorSecret,
+         label: `UAP Immo (${user.email})`,
+         issuer: 'UAP Immo',
+         encoding: 'base32'
+       });
 
-        const qrCode = await QRCode.toDataURL(otpAuthUrl);
+       const qrCode = await QRCode.toDataURL(otpAuthUrl);
 
-        res.render('2fa', {
-            locale,
-            i18n,
-            messages: req.flash(),
-            currentPath: req.originalUrl,
-            showAccountButtons: false
-        });
-    } catch (error) {
-        console.error("Erreur dans GET /2fa :", error);
-        return res.status(500).send('Erreur lors du chargement de la vérification 2FA.');
-    }
+       res.render('2fa', {
+         locale,
+         i18n,
+         messages: req.flash(),
+         currentPath: req.originalUrl,
+         showAccountButtons: false
+       });
+
+    } catch (error) {
+       console.error("Erreur dans GET /2fa :", error);
+       return res.status(500).send('Erreur lors du chargement de la vérification 2FA.');
+    }
 });
-
 app.post('/:locale/2fa', async (req, res) => {
   const { locale } = req.params;
   const { code } = req.body;
