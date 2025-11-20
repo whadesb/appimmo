@@ -36,6 +36,7 @@ const crypto = require('crypto');
 const { getPageStats } = require('./getStats');
 const Page = require('./models/Page');
 const nodemailer = require('nodemailer');
+const mongoSanitize = require('express-mongo-sanitize');
 const { getMultiplePageStats } = require('./getStats');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
 const invalidLocales = [
@@ -95,6 +96,10 @@ app.use(cookieParser());
 app.use('/paypal/webhook', express.raw({ type: 'application/json' }));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(mongoSanitize({
+  // Optionnel: Empêche l'injection de $ dans les query params
+  allowDots: true, 
+}));
 app.use(flash());
 app.use(i18n.init);
 
