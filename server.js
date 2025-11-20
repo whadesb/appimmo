@@ -2376,7 +2376,7 @@ async function generateLandingPage(property) {
     </script>
 
     <script type="application/ld+json">
-  ${JSON.stringify(jsonLD)}
+${JSON.stringify(jsonLD)}
     </script>
 
     <style>
@@ -3114,6 +3114,127 @@ async function generateLandingPage(property) {
           height: 75vh;
         }
       }
+
+      /* --- OVERRIDES MOBILE "PRO" POUR LA VERSION VIDÉO UNIQUEMENT --- */
+      @media (max-width: 768px) {
+        body.has-video .video-hero {
+          min-height: 100vh;
+          padding: 32px 16px;
+          align-items: center;
+        }
+        body.has-video .video-card {
+          padding: 24px 20px;
+          border-radius: 24px;
+          max-width: 620px;
+          width: 100%;
+          gap: 18px;
+          box-shadow: 0 18px 40px rgba(0,0,0,0.4);
+        }
+        body.has-video .property-lorem {
+          font-size: 0.9rem;
+          letter-spacing: 0.12em;
+          padding-bottom: 6px;
+          text-transform: uppercase;
+        }
+        body.has-video .video-card h1 {
+          font-size: 1.9rem;
+          line-height: 1.25;
+        }
+        body.has-video .video-card h2 {
+          font-size: 1.1rem;
+          margin-top: 4px;
+        }
+        body.has-video .video-card p {
+          font-size: 0.98rem;
+          text-align: left;
+        }
+        body.has-video .video-highlight {
+          justify-content: flex-start;
+          row-gap: 10px;
+        }
+        body.has-video .video-highlight .item {
+          font-size: 0.98rem;
+        }
+        body.has-video .video-actions {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        body.has-video .video-actions .price {
+          width: 100%;
+          font-size: 1.3rem;
+          padding: 12px 20px;
+        }
+        body.has-video .video-actions .visit-btn {
+          width: 100%;
+          font-size: 1.15rem;
+          padding: 12px 20px;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+        }
+        body.has-video .video-actions .visit-btn::after {
+          left: 20%;
+          width: 60%;
+        }
+        body.has-video .extra-info-desktop {
+          max-width: 100%;
+          width: 100%;
+          margin: 0;
+          margin-top: 16px;
+          border-radius: 24px 24px 0 0;
+          padding: 24px 18px 28px;
+          background: rgba(255,255,255,0.96);
+        }
+        body.has-video .extra-info-desktop + .extra-info-desktop {
+          border-radius: 0;
+        }
+        body.has-video .extra-info-desktop h2 {
+          font-size: 1.35rem;
+          margin-bottom: 16px;
+        }
+        body.has-video .extra-columns {
+          flex-direction: column;
+          gap: 20px;
+          border: none;
+          padding: 0;
+        }
+        body.has-video .extra-col {
+          padding: 12px 0;
+        }
+        body.has-video .extra-col:not(:last-child)::after {
+          content: none;
+        }
+        body.has-video .extra-info-desktop .info-label {
+          font-size: 1.15rem;
+          font-weight: 600;
+        }
+        body.has-video .info-item {
+          font-size: 1rem;
+        }
+        body.has-video .dpe-bar {
+          width: 100%;
+          max-width: 260px;
+        }
+        body.has-video .discover-gallery {
+          --discover-gap: 12px;
+          gap: var(--discover-gap);
+          padding: 18px 12px;
+          border-radius: 18px;
+        }
+        body.has-video .discover-track img {
+          flex: 0 0 calc(50% - (var(--discover-gap) / 2));
+          max-width: calc(50% - (var(--discover-gap) / 2));
+          height: 150px;
+        }
+        body.has-video .discover-btn {
+          width: 42px;
+          height: 42px;
+        }
+        body.has-video .visit-modal-content {
+          width: 90%;
+          max-width: 360px;
+          padding: 24px 18px;
+        }
+      }
     </style>
   </head>
   <body class="${embedUrl ? 'has-video' : ''}">
@@ -3477,6 +3598,7 @@ async function generateLandingPage(property) {
 
   return `/landing-pages/${filename}`;
 }
+
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.ionos.fr',
