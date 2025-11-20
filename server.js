@@ -2309,7 +2309,7 @@ async function generateLandingPage(property) {
   const fullUrl = `https://uap.immo/landing-pages/${filename}`;
 
   const GTM_ID = 'GTM-TF7HSC3N';
-  const GA_MEASUREMENT_ID = 'G-0LN60RQ12K';
+  const GA_MEASUREMENT_ID = 'G-0LN60RQ12K'; // Non utilisé mais laissé au cas où
 
   const keywordsList = (seoKeywords[lang] && seoKeywords[lang][country]) || [];
   const keywords = keywordsList.sort(() => 0.5 - Math.random()).slice(0, 3);
@@ -2324,7 +2324,7 @@ async function generateLandingPage(property) {
   };
 
   const embedUrl = getEmbedUrl(property.videoUrl);
-  
+
   const photos = Array.isArray(property.photos) ? property.photos : [];
   const mainPhoto1 = photos[0] || 'default.jpg';
   const mainPhoto2 = photos[1] || mainPhoto1;
@@ -2363,8 +2363,8 @@ async function generateLandingPage(property) {
     <meta name="keywords" content="${keywords.join(', ')}">
     <title>${property.propertyType} à ${city}, ${country}</title>
 
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link href="https://pro.fontawesome.com/releases/v5.10.0/css/all.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
     <script>
@@ -2380,6 +2380,7 @@ ${JSON.stringify(jsonLD)}
     </script>
 
     <style>
+      /* RESET & BASE -------------------------------------------------------- */
       * {
         margin: 0;
         padding: 0;
@@ -2398,6 +2399,456 @@ ${JSON.stringify(jsonLD)}
         display: flex;
         flex-direction: column;
       }
+      h1, h2 {
+        font-weight: 400;
+      }
+
+      /* PAGE WRAPPER -------------------------------------------------------- */
+      .page-wrapper {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 32px 20px 40px;
+      }
+
+      /* VERSION SANS VIDÉO : LAYOUT PRINCIPAL ------------------------------ */
+      .container {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        align-items: stretch;
+        border-radius: 24px;
+        overflow: hidden;
+        background: #fff;
+        box-shadow: 0 24px 50px rgba(0, 0, 0, 0.08);
+        min-height: 420px;
+      }
+
+      /* SLIDER PRINCIPAL ---------------------------------------------------- */
+      .slider {
+        flex: 1.7;
+        position: relative;
+        overflow: hidden;
+        min-height: 320px;
+        background: #000;
+      }
+
+      .slides {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+
+      .slides img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        opacity: 0;
+        animation: slideFade 10s infinite;
+      }
+
+      .slides img:nth-child(1) {
+        animation-delay: 0s;
+      }
+
+      .slides img:nth-child(2) {
+        animation-delay: 5s;
+      }
+
+      @keyframes slideFade {
+        0%, 45% { opacity: 1; }
+        55%, 100% { opacity: 0; }
+      }
+
+      /* INFO PROPRIÉTÉ (SANS VIDÉO) ---------------------------------------- */
+      .property-info {
+        flex: 1.1;
+        padding: 28px 32px 28px 24px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .property-lorem {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        border-bottom: 1px solid #C4B990;
+        padding-bottom: 4px;
+        margin-bottom: 16px;
+        color: #7a7a7a;
+      }
+
+      .property-title {
+        margin-bottom: 12px;
+      }
+
+      .property-title h1 {
+        font-size: 1.9rem;
+        line-height: 1.2;
+        margin-bottom: 8px;
+      }
+
+      .property-title h2 {
+        font-size: 1.1rem;
+        color: #666;
+      }
+
+      .property-details {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px 24px;
+        margin: 20px 0;
+      }
+
+      .detail {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.98rem;
+        color: #555;
+      }
+
+      .detail i {
+        color: #C4B990;
+        font-size: 1rem;
+      }
+
+      .construction-year {
+        font-size: 1rem;
+        color: #555;
+        margin: 8px 0 18px;
+      }
+
+      .property-description {
+        background: #f7f7f7;
+        border-radius: 12px;
+        padding: 14px 14px 16px;
+        border: 1px solid #e2e2e2;
+        font-size: 0.96rem;
+        color: #444;
+        max-height: 180px;
+        overflow-y: auto;
+      }
+
+      .property-description .section-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+      }
+
+      /* PRIX + CTA ---------------------------------------------------------- */
+      .price-row {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-top: 22px;
+      }
+
+      .price {
+        flex: 1;
+        background: #111;
+        color: #fff;
+        text-align: center;
+        padding: 12px 18px;
+        border-radius: 999px;
+        font-size: 1.3rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+      }
+
+      .visit-btn {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: #111;
+        font-weight: 600;
+        padding: 12px 16px 16px;
+        cursor: pointer;
+        font-size: 1.05rem;
+        position: relative;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+
+      .visit-btn::after {
+        content: "";
+        position: absolute;
+        left: 10%;
+        bottom: 4px;
+        width: 80%;
+        height: 2px;
+        background: currentColor;
+      }
+
+      .visit-btn:hover {
+        opacity: 0.8;
+      }
+
+      /* MODALE VISITE ------------------------------------------------------- */
+      .visit-modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+      }
+
+      .visit-modal-content {
+        background: #c4b990;
+        color: #000;
+        padding: 26px 24px 24px;
+        border-radius: 14px;
+        min-width: 280px;
+        max-width: 360px;
+        text-align: center;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .visit-modal .close {
+        position: absolute;
+        top: 8px;
+        right: 14px;
+        cursor: pointer;
+        font-size: 22px;
+      }
+
+      .visit-modal-content p:first-of-type {
+        font-weight: 600;
+        font-size: 1.05rem;
+      }
+
+      /* EXTRA INFO (DPE / INFOS / MAP / GALERIE) ---------------------------- */
+      .extra-block {
+        margin-top: 32px;
+        border-radius: 24px;
+        background: #fff;
+        box-shadow: 0 20px 45px rgba(0,0,0,0.06);
+        padding: 24px 22px 26px;
+      }
+
+      .extra-block hr {
+        border: none;
+        border-top: 1px solid #e2e2e2;
+        margin-bottom: 20px;
+      }
+
+      .extra-block h2 {
+        font-size: 1.5rem;
+        margin-bottom: 18px;
+        color: #3c3c3c;
+      }
+
+      .extra-columns {
+        display: flex;
+        flex-direction: row;
+        gap: 26px;
+        align-items: flex-start;
+      }
+
+      .extra-col {
+        flex: 1;
+        position: relative;
+        padding-right: 20px;
+      }
+
+      .extra-col:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        right: 10px;
+        width: 1px;
+        height: 100%;
+        background: #e0e0e0;
+      }
+
+      .info-label {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+
+      .info-item {
+        font-size: 0.98rem;
+        margin: 8px 0;
+        color: #444;
+      }
+
+      .info-item i {
+        margin-right: 6px;
+        color: #C4B990;
+      }
+
+      /* DPE barres ---------------------------------------------------------- */
+      .dpe-bar {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+        max-width: 220px;
+        margin-top: 4px;
+      }
+
+      .bar {
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #fff;
+        opacity: 0.5;
+      }
+
+      .bar.A { background: #009966; width: 40%; }
+      .bar.B { background: #66CC00; width: 50%; }
+      .bar.C { background: #FFCC00; width: 60%; }
+      .bar.D { background: #FF9900; width: 70%; }
+      .bar.E { background: #FF6600; width: 80%; }
+      .bar.F { background: #FF3300; width: 90%; }
+      .bar.G { background: #CC0000; width: 100%; }
+
+      .bar.active {
+        opacity: 1;
+        box-shadow: 0 0 5px rgba(0,0,0,0.25);
+      }
+
+      .bar.pending {
+        background: #ccc !important;
+        color: #333;
+        width: 100% !important;
+        opacity: 1 !important;
+        box-shadow: none !important;
+      }
+
+      /* CARTE --------------------------------------------------------------- */
+      #map {
+        width: 100%;
+        height: 260px;
+        border-radius: 12px;
+        border: 1px solid #ddd;
+      }
+
+      /* GALERIE "DÉCOUVRIR LE BIEN" ---------------------------------------- */
+      .gallery-wrapper {
+        margin-top: 24px;
+      }
+
+      .discover-gallery {
+        --discover-gap: 18px;
+        margin-top: 14px;
+        display: flex;
+        align-items: center;
+        gap: var(--discover-gap);
+        border: 1px solid #eee;
+        border-radius: 18px;
+        padding: 18px 18px;
+        box-sizing: border-box;
+      }
+
+      .discover-track-wrapper {
+        flex: 1;
+        overflow: hidden;
+      }
+
+      .discover-track {
+        display: flex;
+        gap: var(--discover-gap);
+        transition: transform 0.3s ease;
+      }
+
+      .discover-track img {
+        flex: 0 0 calc((100% - (var(--discover-gap) * 2)) / 3);
+        max-width: calc((100% - (var(--discover-gap) * 2)) / 3);
+        height: 200px;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: 0 14px 30px rgba(0,0,0,0.18);
+        cursor: pointer;
+      }
+
+      .discover-btn {
+        background: #c4b990;
+        border: none;
+        color: #000;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: transform 0.2s ease, background 0.2s ease;
+      }
+
+      .discover-btn:hover {
+        transform: translateY(-2px);
+        background: #b3a579;
+      }
+
+      /* FULLSCREEN PHOTO ---------------------------------------------------- */
+      .fullscreen-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.85);
+        justify-content: center;
+        align-items: center;
+        z-index: 1100;
+      }
+
+      .fullscreen-overlay img {
+        max-width: 92%;
+        max-height: 92%;
+        object-fit: contain;
+      }
+
+      .fullscreen-overlay .close {
+        position: absolute;
+        top: 16px;
+        right: 24px;
+        color: #fff;
+        font-size: 28px;
+        cursor: pointer;
+      }
+
+      /* FOND VIDÉO (VERSION AVEC VIDÉO) ------------------------------------ */
+      .video-background {
+        position: fixed;
+        inset: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        z-index: -2;
+      }
+
+      .video-background iframe {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 177.78vh;
+        height: 100vh;
+        min-width: 100vw;
+        min-height: 100vh;
+        pointer-events: none;
+      }
+
+      .video-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.5);
+        z-index: -1;
+      }
+
+      /* HERO VIDÉO ---------------------------------------------------------- */
       .video-hero {
         position: relative;
         z-index: 1;
@@ -2408,6 +2859,7 @@ ${JSON.stringify(jsonLD)}
         padding: 60px 20px;
         text-align: center;
       }
+
       .video-card {
         background: rgba(0, 0, 0, 0.55);
         padding: 50px 40px;
@@ -2418,29 +2870,44 @@ ${JSON.stringify(jsonLD)}
         flex-direction: column;
         gap: 24px;
       }
+
       .video-card h1 {
         font-size: 2.8rem;
         margin: 0;
         color: #ffffff;
       }
+
+      .video-card h2 {
+        font-weight: 400;
+        font-size: 1.4rem;
+        margin: 0;
+      }
+
       .video-card p {
         margin: 0;
         font-size: 1.1rem;
         line-height: 1.6;
         color: #f2f2f2;
       }
+
       .video-highlight {
         display: flex;
         flex-wrap: wrap;
         gap: 20px;
         justify-content: center;
       }
+
       .video-highlight .item {
         display: flex;
         align-items: center;
         gap: 10px;
         font-size: 1.1rem;
       }
+
+      .video-highlight .item i {
+        color: #C4B990;
+      }
+
       .video-actions {
         display: flex;
         flex-wrap: wrap;
@@ -2448,6 +2915,7 @@ ${JSON.stringify(jsonLD)}
         justify-content: center;
         gap: 20px;
       }
+
       .video-actions .price {
         background-color: #c4b990;
         color: #000000;
@@ -2456,6 +2924,7 @@ ${JSON.stringify(jsonLD)}
         padding: 14px 32px;
         border-radius: 999px;
       }
+
       .video-actions .visit-btn {
         background: none;
         border: none;
@@ -2466,657 +2935,165 @@ ${JSON.stringify(jsonLD)}
         font-size: 1.4rem;
         transition: opacity 0.2s ease;
       }
+
+      .video-actions .visit-btn::after {
+        left: 18%;
+        width: 64%;
+        background-color: currentColor;
+      }
+
       .video-actions .visit-btn:hover {
         opacity: 0.85;
       }
-      .has-video .extra-info-desktop {
-        background: rgba(255,255,255,0.92);
-        color: #3c3c3c;
-        margin-top: 40px;
-        padding: 40px 20px;
-        border-radius: 28px;
-      }
-      .has-video .extra-info-desktop h2,
-      .has-video .extra-info-desktop .info-label,
-      .has-video .extra-info-desktop .info-item {
-        color: #3c3c3c;
-      }
+
+      /* ---------------------- MOBILE OPTI ---------------------------------- */
       @media (max-width: 768px) {
-        .video-card {
-          padding: 32px 24px;
+        .page-wrapper {
+          padding: 16px 0 32px;
         }
-        .video-card h1 {
-          font-size: 2.1rem;
-        }
-        .video-actions .price {
-          font-size: 1.5rem;
-        }
-      }
-      .container {
-        max-width: 1400px;
-        width: 100%;
-        display: flex;
-        flex-direction: row;
-        background-color: white;
-        border-radius: 0;
-        overflow: hidden;
-        margin: 0 auto;
-        height: auto;
-        padding: 40px 20px;
-        gap: 30px;
-        align-items: stretch;
-      }
-      .property-details.one-line {
-        display: flex;
-        flex-direction: row;
-        gap: 30px;
-        margin: 20px 0;
-      }
-      .slider {
-        flex: 2;
-        overflow: hidden;
-        position: relative;
-        height: auto;
-        display: flex;
-        flex-direction: column;
-      }
-      .slides {
-        display: flex;
-        position: absolute;
-        width: 100%;
-        height: 100%;
-      }
-      .slides img {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        opacity: 0;
-        animation: slide 10s infinite;
-      }
-      .slides img:nth-child(1) { animation-delay: 0s; }
-      .slides img:nth-child(2) { animation-delay: 5s; }
-      @keyframes slide {
-        0%, 50% { opacity: 1; }
-        55%, 100% { opacity: 0; }
-      }
-      .property-info {
-        flex: 0.8;
-        padding: 0 40px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-      }
-      .property-lorem {
-        font-size: 1.2rem;
-        border-bottom: 1px solid #C4B990;
-        padding-bottom: 5px;
-      }
-      h1 {
-        font-size: 1.8rem;
-        font-weight: 400;
-        line-height: 1.15;
-        margin-bottom: 15px;
-      }
-      h2 {
-        font-size: 1.2rem;
-        font-weight: 300;
-      }
-      .property-details {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-      .detail {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin: 8px 0;
-      }
-      .detail i,
-      .detail p {
-        font-size: 14px;
-      }
-      .detail i {
-        color: #C4B990;
-      }
-      .construction-year {
-        font-size: 1.1rem;
-        margin: 20px 0;
-      }
-      .property-description {
-        background: #f7f7f7;
-        padding: 15px;
-        border: 1px solid #ddd;
-        margin: 20px 0;
-        font-size: 14px;
-        overflow-wrap: break-word;
-      }
-      .section-title {
-        font-size: 1.1rem;
-        margin-bottom: 10px;
-      }
-      .price-row {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-      }
-      .price {
-        background-color: #f7f7f7;
-        padding: 10px 20px;
-        font-size: 1.5rem;
-        font-weight: 500;
-        width: 100%;
-        text-transform: uppercase;
-        margin: 20px 0;
-        text-align: center;
-        flex: 1;
-      }
-      .extra-info-desktop {
-        display: none;
-        max-width: 1400px;
-        margin: 40px auto;
-        padding: 20px;
-        background: #ffffff;
-      }
-      .extra-columns {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        gap: 30px;
-        border: 1px solid #eee;
-        padding: 20px;
-        align-items: flex-start;
-      }
-      .extra-col {
-        flex: 1;
-        padding: 0 20px;
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-      }
-      .extra-col:not(:last-child)::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        right: 0;
-        width: 1px;
-        height: 100%;
-        background-color: #ddd;
-      }
-      .other-info {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-      }
-      .other-info li {
-        margin-bottom: 10px;
-        font-size: 1rem;
-      }
-      .extra-info-desktop hr {
-        border: none;
-        border-top: 1px solid #ddd;
-        margin-bottom: 25px;
-      }
-      .extra-info-desktop h2 {
-        font-size: 1.6rem;
-        margin-bottom: 20px;
-        font-weight: 400;
-      }
-      .dpe-section {
-        margin-top: 10px;
-      }
-      .dpe-label {
-        font-weight: bold;
-        margin-bottom: 10px;
-        font-size: 1.1rem;
-      }
-      .dpe-bar {
-        display: flex;
-        flex-direction: column;
-        width: 220px;
-      }
-      .bar {
-        padding: 6px 12px;
-        color: white;
-        font-weight: bold;
-        font-size: 1rem;
-        margin: 2px 0;
-        border-radius: 4px;
-        opacity: 0.5;
-      }
-      .bar.A { background-color: #009966; width: 40%; }
-      .bar.B { background-color: #66CC00; width: 50%; }
-      .bar.C { background-color: #FFCC00; width: 60%; }
-      .bar.D { background-color: #FF9900; width: 70%; }
-      .bar.E { background-color: #FF6600; width: 80%; }
-      .bar.F { background-color: #FF3300; width: 90%; }
-      .bar.G { background-color: #CC0000; width: 100%; }
-      .bar.active {
-        opacity: 1;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.4);
-      }
-      .bar.pending {
-        background-color: #ccc !important;
-        color: #333;
-        width: 100% !important;
-        opacity: 1 !important;
-        box-shadow: none !important;
-      }
-      .extra-col .info-label {
-        font-size: 1.35rem;
-        font-weight: 400;
-        font-family: Arial, sans-serif;
-        margin-bottom: 12px;
-      }
-      .info-item {
-        margin: 10px 0;
-        font-size: 1.1rem;
-        color: #3c3c3c;
-      }
-      .map-col {
-        flex: 1.5;
-      }
-      #map {
-        width: 100%;
-        height: 389px;
-        min-width: 400px;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-      }
-      .visit-btn {
-        width: 100%;
-        margin: 20px 0;
-        flex: 1;
-        background: none;
-        border: none;
-        color: #000;
-        font-weight: 600;
-        padding: 12px 20px 16px;
-        cursor: pointer;
-        font-size: 1.2rem;
-        font-family: sans-serif;
-        position: relative;
-      }
-      .visit-btn::after {
-        content: '';
-        position: absolute;
-        bottom: 4px;
-        left: 12.5%;
-        width: 75%;
-        height: 2px;
-        background-color: currentColor;
-      }
-      .visit-modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        align-items: center;
-        justify-content: center;
-        z-index: 1000;
-      }
-      .visit-modal-content {
-        background: #c4b990;
-        color: #000;
-        padding: 30px;
-        border-radius: 8px;
-        text-align: center;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-        min-width: 320px;
-        position: relative;
-      }
-      .visit-modal .close {
-        position: absolute;
-        top: 10px;
-        right: 20px;
-        cursor: pointer;
-        font-size: 24px;
-      }
-      .photo-carousel {
-        position: relative;
-        max-width: 1400px;
-        width: 100%;
-        margin: 20px auto;
-        padding: 0 20px;
-        overflow: hidden;
-      }
-      .photo-carousel .carousel-track {
-        display: flex;
-        width: 100%;
-        gap: 30px;
-        transition: transform 0.3s ease-in-out;
-      }
-      .photo-carousel img {
-        object-fit: contain;
-        width: 45%;
-        height: 150px;
-        cursor: pointer;
-      }
-      .photo-carousel .carousel-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(0,0,0,0.5);
-        color: #fff;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        z-index: 1;
-      }
-      .photo-carousel .carousel-btn.prev { left: 0; }
-      .photo-carousel .carousel-btn.next { right: 0; }
-      .mini-carousel {
-        position: relative;
-        width: 100%;
-        margin: 10px auto;
-        overflow: hidden;
-      }
-      .mini-carousel .mini-track {
-        display: flex;
-        transition: transform 0.3s ease-in-out;
-        justify-content: center;
-      }
-      .mini-carousel img {
-        width: 20%;
-        height: 60px;
-        object-fit: contain;
-        flex: 0 0 auto;
-        cursor: pointer;
-      }
-      .mini-carousel .mini-btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        background: rgba(0,0,0,0.5);
-        color: #fff;
-        border: none;
-        padding: 5px 10px;
-        cursor: pointer;
-        z-index: 1;
-      }
-      .mini-carousel .mini-btn.prev { left: 0; }
-      .mini-carousel .mini-btn.next { right: 0; }
-      .fullscreen-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.8);
-        justify-content: center;
-        align-items: center;
-        z-index: 1000;
-      }
-      .fullscreen-overlay img {
-        max-width: 90%;
-        max-height: 90%;
-        object-fit: contain;
-      }
-      .fullscreen-overlay .close {
-        position: absolute;
-        top: 20px;
-        right: 30px;
-        color: #fff;
-        font-size: 30px;
-        cursor: pointer;
-      }
-      .video-background {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        z-index: -1;
-      }
-      .video-background iframe {
-        width: 100%;
-        height: 100%;
-        pointer-events: none;
-      }
-      .video-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0,0,0,0.5);
-        z-index: -1;
-      }
 
-      /* Styles pour la nouvelle galerie 'discover' - PLACÉ ICI (AVANT media queries) */
-      .discover-gallery {
-        --discover-gap: 20px;
-        margin-top: 20px;
-        display: flex;
-        align-items: center;
-        gap: var(--discover-gap);
-        width: 100%;
-        border: 1px solid #eee;
-        border-radius: 18px;
-        padding: 20px;
-        box-sizing: border-box;
-        flex-direction: row; 
-      }
-      .discover-track-wrapper {
-        flex: 1;
-        overflow: hidden;
-      }
-      .discover-track {
-        display: flex;
-        gap: var(--discover-gap);
-        transition: transform 0.3s ease;
-      }
-      .discover-track img {
-        /* Desktop: Affiche 3 images */
-        flex: 0 0 calc((100% - (var(--discover-gap) * 2)) / 3);
-        max-width: calc((100% - (var(--discover-gap) * 2)) / 3);
-        height: 220px; /* Taille vignette desktop */
-        object-fit: cover;
-        border-radius: 18px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        cursor: pointer;
-      }
-      .discover-btn {
-        background: #c4b990;
-        border: none;
-        color: #000;
-        width: 48px;
-        height: 48px;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.4rem;
-        cursor: pointer;
-        transition: transform 0.2s ease, background 0.2s ease;
-        flex-shrink: 0; /* Empêche les boutons de rétrécir */
-      }
-      .discover-btn:hover {
-        transform: translateY(-2px);
-        background: #b3a579;
-      }
-      .has-video .discover-btn {
-        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-      }
-      /* Fin des styles discover */
-
-
-      @media screen and (max-width: 768px) {
-        html, body {
-          overflow-x: hidden;
-          font-family: Arial, sans-serif;
-          color: #3c3c3c;
-        }
-        .container {
+        /* SANS VIDÉO */
+        body:not(.has-video) .container {
           flex-direction: column;
-          padding: 0;
+          border-radius: 0;
+          box-shadow: none;
           gap: 0;
         }
-        h1 {
-          font-size: 1.8rem;
-          line-height: 1.3;
-          font-weight: 500;
-          margin-bottom: 15px;
-        }
-        .slider {
-          width: 100%;
-          overflow: hidden;
-        }
-        .slider img {
-          width: 100%;
+
+        body:not(.has-video) .slider {
+          min-height: 230px;
           height: auto;
-          object-fit: cover;
-          display: block;
         }
-        .slides,
-        .slides img {
+
+        body:not(.has-video) .slides,
+        body:not(.has-video) .slides img {
           position: relative;
-          height: auto;
-          opacity: 1;
           animation: none;
+          opacity: 1;
         }
-        .property-info {
+
+        body:not(.has-video) .slides img:nth-child(2) {
+          display: none;
+        }
+
+        body:not(.has-video) .property-info {
+          padding: 20px 18px 18px;
+        }
+
+        body:not(.has-video) .property-lorem {
+          padding-bottom: 6px;
+          margin-bottom: 12px;
+          font-size: 0.8rem;
+        }
+
+        body:not(.has-video) .property-title h1 {
+          font-size: 1.6rem;
+        }
+
+        body:not(.has-video) .property-title h2 {
+          font-size: 1rem;
+        }
+
+        body:not(.has-video) .property-details {
+          margin-top: 16px;
+          margin-bottom: 14px;
+        }
+
+        body:not(.has-video) .detail {
+          font-size: 0.95rem;
+        }
+
+        body:not(.has-video) .construction-year {
+          font-size: 0.95rem;
+          margin-bottom: 12px;
+        }
+
+        body:not(.has-video) .property-description {
+          max-height: none;
+          font-size: 0.95rem;
+          margin-bottom: 12px;
+        }
+
+        body:not(.has-video) .price-row {
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 16px;
+        }
+
+        body:not(.has-video) .price {
           width: 100%;
-          padding: 20px;
-          box-sizing: border-box;
-          font-family: Arial, sans-serif;
-          font-size: 1.1rem;
+          font-size: 1.2rem;
+          padding: 11px 14px;
         }
-        .property-lorem,
-        .construction-year,
-        .property-details,
-        .detail p {
-          font-size: 1.1rem;
-        }
-        .section-title {
-          font-size: 1.1rem;
-          font-weight: bold;
-          margin-bottom: 10px;
-        }
-        .property-description {
-          margin-top: 20px;
-          margin-bottom: 20px;
-          font-size: 14px;
-          line-height: 1.6;
-          overflow-wrap: break-word;
-        }
-        .construction-year {
-          margin: 20px 0;
-        }
-        .price {
-          margin-top: 20px;
-          margin-bottom: 20px;
-          padding: 12px 15px;
-          font-size: 1.4rem;
-          font-weight: 600;
-          background-color: #f7f7f7;
-          text-transform: uppercase;
-          border-radius: 4px;
-          display: block;
+
+        body:not(.has-video) .visit-btn {
+          width: 100%;
           text-align: center;
-          width: 100%;
-          box-sizing: border-box;
+          font-size: 0.95rem;
+          padding: 11px 14px 13px;
         }
-        .extra-info-desktop {
-          display: block;
-          padding: 10px 20px;
-          font-family: Arial, sans-serif;
-          margin-top: 0;
-          text-align: left;
+
+        body:not(.has-video) .visit-btn::after {
+          left: 20%;
+          width: 60%;
         }
-        .extra-info-desktop h2 {
-          font-size: 1.4rem;
-          margin-bottom: 20px;
-          text-align: left;
-          font-weight: 500;
+
+        .extra-block {
+          margin-top: 16px;
+          border-radius: 18px;
+          box-shadow: 0 16px 35px rgba(0,0,0,0.06);
+          padding: 20px 16px 22px;
         }
+
+        .extra-block h2 {
+          font-size: 1.3rem;
+          margin-bottom: 14px;
+        }
+
         .extra-columns {
           flex-direction: column;
-          gap: 20px;
-          padding: 0;
-          border: none;
+          gap: 18px;
         }
+
         .extra-col {
-          flex: 1;
-          padding: 10px 0;
-          border: none;
-          position: relative;
+          padding-right: 0;
         }
+
         .extra-col:not(:last-child)::after {
           content: none;
         }
-        .info-label {
-          font-size: 1.2rem;
-          font-weight: 600;
-          margin-bottom: 10px;
-        }
-        .info-item {
-          font-size: 1.25rem;
-          margin: 10px 0;
-        }
-        .dpe-bar {
-          width: 100%;
-          max-width: 250px;
-        }
-        .extra-col.map-col {
-          padding: 10px 0;
-        }
+
         #map {
-          width: 100%;
-          height: 250px;
-          border-radius: 8px;
-          border: 1px solid #ccc;
+          height: 220px;
         }
-        .photo-carousel img { width: 50%; }
-        .mini-carousel img { width: 33.33%; }
 
-        /* Styles 'discover' pour mobile */
+        .gallery-wrapper {
+          margin-top: 18px;
+        }
+
         .discover-gallery {
-          --discover-gap: 12px;
-          gap: var(--discover-gap);
-          padding: 16px;
+          --discover-gap: 10px;
+          padding: 14px 10px;
         }
-        .discover-track img {
-          flex: 0 0 calc(50% - (var(--discover-gap) / 2)); 
-          max-width: calc(50% - (var(--discover-gap) / 2));
-          height: 150px; /* Taille vignette mobile */
-        }
-        .discover-btn {
-          width: 42px;
-          height: 42px;
-        }
-      }
 
-      /* Styles 'discover' pour tablette */
-      @media (min-width: 769px) and (max-width: 1024px) {
         .discover-track img {
           flex: 0 0 calc(50% - (var(--discover-gap) / 2));
           max-width: calc(50% - (var(--discover-gap) / 2));
-          height: 180px; /* Taille vignette tablette */
+          height: 150px;
         }
-      }
 
-      @media screen and (min-width: 769px) {
-        .extra-info-desktop {
-          display: block;
+        .discover-btn {
+          width: 40px;
+          height: 40px;
+          font-size: 1.2rem;
         }
-        .container {
-          height: 75vh;
-        }
-      }
 
-      /* --- OVERRIDES MOBILE "PRO" POUR LA VERSION VIDÉO UNIQUEMENT --- */
-      @media (max-width: 768px) {
+        .visit-modal-content {
+          width: 90%;
+          max-width: 340px;
+        }
+
+        /* AVEC VIDÉO : hero + blocs sous le scroll */
         body.has-video .video-hero {
           min-height: 100vh;
           padding: 32px 16px;
@@ -3135,6 +3112,9 @@ ${JSON.stringify(jsonLD)}
           letter-spacing: 0.12em;
           padding-bottom: 6px;
           text-transform: uppercase;
+          border-bottom: 1px solid #C4B990;
+          margin-bottom: 10px;
+          color: #f2f2f2;
         }
         body.has-video .video-card h1 {
           font-size: 1.9rem;
@@ -3175,7 +3155,7 @@ ${JSON.stringify(jsonLD)}
           left: 20%;
           width: 60%;
         }
-        body.has-video .extra-info-desktop {
+        body.has-video .extra-block {
           max-width: 100%;
           width: 100%;
           margin: 0;
@@ -3184,145 +3164,83 @@ ${JSON.stringify(jsonLD)}
           padding: 24px 18px 28px;
           background: rgba(255,255,255,0.96);
         }
-        body.has-video .extra-info-desktop + .extra-info-desktop {
+        body.has-video .extra-block.gallery-wrapper {
           border-radius: 0;
         }
-        body.has-video .extra-info-desktop h2 {
-          font-size: 1.35rem;
-          margin-bottom: 16px;
-        }
-        body.has-video .extra-columns {
+      }
+
+      /* TABLETTE ------------------------------------------------------------ */
+      @media (min-width: 769px) and (max-width: 1024px) {
+        body:not(.has-video) .container {
           flex-direction: column;
-          gap: 20px;
-          border: none;
-          padding: 0;
         }
-        body.has-video .extra-col {
-          padding: 12px 0;
+        .slider {
+          min-height: 320px;
         }
-        body.has-video .extra-col:not(:last-child)::after {
-          content: none;
+        .property-info {
+          padding: 24px 22px;
         }
-        body.has-video .extra-info-desktop .info-label {
-          font-size: 1.15rem;
-          font-weight: 600;
+        .extra-block {
+          border-radius: 22px;
         }
-        body.has-video .info-item {
-          font-size: 1rem;
-        }
-        body.has-video .dpe-bar {
-          width: 100%;
-          max-width: 260px;
-        }
-        body.has-video .discover-gallery {
-          --discover-gap: 12px;
-          gap: var(--discover-gap);
-          padding: 18px 12px;
-          border-radius: 18px;
-        }
-        body.has-video .discover-track img {
+        .discover-track img {
           flex: 0 0 calc(50% - (var(--discover-gap) / 2));
           max-width: calc(50% - (var(--discover-gap) / 2));
-          height: 150px;
+          height: 180px;
         }
-        body.has-video .discover-btn {
-          width: 42px;
-          height: 42px;
+        body.has-video .video-card {
+          max-width: 800px;
+          padding: 40px 30px;
         }
-        body.has-video .visit-modal-content {
-          width: 90%;
-          max-width: 360px;
-          padding: 24px 18px;
+        body.has-video .video-card h1 {
+          font-size: 2.3rem;
         }
       }
     </style>
   </head>
   <body class="${embedUrl ? 'has-video' : ''}">
-    ${embedUrl ? `
-    <div class="video-background">
-      <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
-    </div>
-    <div class="video-overlay"></div>
-    ` : ''}
-
     <noscript>
       <iframe src="https://www.googletagmanager.com/ns.html?id=${GTM_ID}" height="0" width="0" style="display:none;visibility:hidden"></iframe>
     </noscript>
 
     ${embedUrl ? `
-    <section class="video-hero">
-      <div class="video-card">
-        <p class="property-lorem">${t.adLabel}</p>
-        <h1>${t.propertyHeading} ${property.city}, ${property.country}</h1>
-        <h2 style="font-weight:400; font-size:1.4rem; margin:0;">${t.propertyType}: ${property.propertyType}</h2>
-        ${property.description ? `<p>${property.description}</p>` : `<p>${t.noDescription}</p>`}
-        <div class="video-highlight">
-          <div class="item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
-          ${property.rooms ? `<div class="item"><i class="fal fa-home"></i> ${property.rooms}</div>` : ''}
-          ${property.bedrooms ? `<div class="item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>` : ''}
-          ${property.yearBuilt ? `<div class="item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt}</div>` : ''}
-        </div>
-        ${(property.pool || property.wateringSystem || property.carShelter || property.parking || property.caretakerHouse || property.electricShutters || property.outdoorLighting) ? `
-        <div class="video-highlight">
-          ${property.pool ? `<div class="item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
-          ${property.wateringSystem ? `<div class="item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
-          ${property.carShelter ? `<div class="item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
-          <div class="item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
-          ${property.caretakerHouse ? `<div class="item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
-          ${property.electricShutters ? `<div class="item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
-          ${property.outdoorLighting ? `<div class="item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
-        </div>` : ''}
-        <div class="video-actions">
-          <span class="price">${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</span>
-          <button class="visit-btn" id="visitBtn">${t.visit}</button>
-        </div>
-        <div id="visitModal" class="visit-modal">
-          <div class="visit-modal-content">
-            <span id="closeModal" class="close">&times;</span>
-            <p>${property.contactFirstName || ''} ${property.contactLastName || ''}</p>
-            <p>${property.contactPhone || ''}</p>
-          </div>
-        </div>
-      </div>
-    </section>
-    ` : `
-    <div class="container">
-      <div class="slider">
-        <div class="slides">
-          <img src="/uploads/${mainPhoto1}" alt="Image 1" />
-          <img src="/uploads/${mainPhoto2}" alt="Image 2" />
-        </div>
-      </div>
-      <div class="property-info">
-        <p class="property-lorem">${t.adLabel}</p>
-        <h1>${t.propertyHeading}<br> ${property.city}, ${property.country}</h1>
-        <h2>${t.propertyType}: ${property.propertyType}</h2>
+    <!-- FOND VIDÉO + HERO --------------------------------------------------- -->
+    <div class="video-background">
+      <iframe src="${embedUrl}" frameborder="0" allow="autoplay; fullscreen" allowfullscreen></iframe>
+    </div>
+    <div class="video-overlay"></div>
 
-        <div class="property-details one-line">
-          <div class="detail">
-            <i class="fal fa-ruler-combined"></i>
-            <p>${property.surface} m²</p>
-          </div>
-          <div class="detail">
-            <i class="fal fa-bed"></i>
-            <p>${property.bedrooms || ''}</p>
-          </div>
-          <div class="detail">
-            <i class="fal fa-home"></i>
-            <p>${property.rooms || ''}</p>
-          </div>
-        </div>
+    <div class="page-wrapper">
+      <section class="video-hero">
+        <div class="video-card">
+          <p class="property-lorem">${t.adLabel}</p>
+          <h1>${t.propertyHeading} ${property.city}, ${property.country}</h1>
+          <h2>${t.propertyType}: ${property.propertyType}</h2>
+          ${property.description ? `<p>${property.description}</p>` : `<p>${t.noDescription}</p>`}
 
-        <div class="construction-year">${t.yearBuilt}: ${property.yearBuilt || t.notProvided}</div>
+          <div class="video-highlight">
+            <div class="item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
+            ${property.rooms ? `<div class="item"><i class="fal fa-home"></i> ${property.rooms}</div>` : ''}
+            ${property.bedrooms ? `<div class="item"><i class="fal fa-bed"></i> ${property.bedrooms}</div>` : ''}
+            ${property.yearBuilt ? `<div class="item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt}</div>` : ''}
+          </div>
 
-        <div class="property-description">
-          <div class="section-title">${t.guidedTour}</div>
-          ${property.description || t.noDescription}
-        </div>
+          ${(property.pool || property.wateringSystem || property.carShelter || property.parking || property.caretakerHouse || property.electricShutters || property.outdoorLighting) ? `
+          <div class="video-highlight">
+            ${property.pool ? `<div class="item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
+            ${property.wateringSystem ? `<div class="item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
+            ${property.carShelter ? `<div class="item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
+            <div class="item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
+            ${property.caretakerHouse ? `<div class="item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
+            ${property.electricShutters ? `<div class="item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
+            ${property.outdoorLighting ? `<div class="item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
+          </div>` : ''}
 
-        <div class="price-row">
-          <div class="price">${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
-          <button class="visit-btn" id="visitBtn">${t.visit}</button>
+          <div class="video-actions">
+            <span class="price">${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</span>
+            <button class="visit-btn" id="visitBtn">${t.visit}</button>
+          </div>
+
           <div id="visitModal" class="visit-modal">
             <div class="visit-modal-content">
               <span id="closeModal" class="close">&times;</span>
@@ -3331,106 +3249,148 @@ ${JSON.stringify(jsonLD)}
             </div>
           </div>
         </div>
+      </section>
+    ` : `
+    <!-- VERSION SANS VIDÉO -------------------------------------------------- -->
+    <div class="page-wrapper">
+      <div class="container">
+        <div class="slider">
+          <div class="slides">
+            <img src="/uploads/${mainPhoto1}" alt="Photo principale 1" />
+            <img src="/uploads/${mainPhoto2}" alt="Photo principale 2" />
+          </div>
+        </div>
+
+        <div class="property-info">
+          <div>
+            <p class="property-lorem">${t.adLabel}</p>
+
+            <div class="property-title">
+              <h1>${t.propertyHeading} ${property.city}, ${property.country}</h1>
+              <h2>${t.propertyType}: ${property.propertyType}</h2>
+            </div>
+
+            <div class="property-details">
+              <div class="detail">
+                <i class="fal fa-ruler-combined"></i><span>${property.surface} m²</span>
+              </div>
+              ${property.bedrooms ? `
+              <div class="detail">
+                <i class="fal fa-bed"></i><span>${property.bedrooms}</span>
+              </div>` : ''}
+              ${property.rooms ? `
+              <div class="detail">
+                <i class="fal fa-home"></i><span>${property.rooms}</span>
+              </div>` : ''}
+            </div>
+
+            <div class="construction-year">${t.yearBuilt}: ${property.yearBuilt || t.notProvided}</div>
+
+            <div class="property-description">
+              <div class="section-title">${t.guidedTour}</div>
+              ${property.description || t.noDescription}
+            </div>
+          </div>
+
+          <div class="price-row">
+            <div class="price">${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
+            <button class="visit-btn" id="visitBtn">${t.visit}</button>
+          </div>
+        </div>
       </div>
-    </div>
+
+      <div id="visitModal" class="visit-modal">
+        <div class="visit-modal-content">
+          <span id="closeModal" class="close">&times;</span>
+          <p>${property.contactFirstName || ''} ${property.contactLastName || ''}</p>
+          <p>${property.contactPhone || ''}</p>
+        </div>
+      </div>
     `}
 
-    ${!embedUrl && photos.slice(2, 10).length > 0 ? `
-    <div class="photo-carousel">
-      <button class="carousel-btn prev">&#10094;</button>
-      <div class="carousel-track">
-        ${photos.slice(2, 10).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
-      </div>
-      <button class="carousel-btn next">&#10095;</button>
-    </div>
-    ` : ''}
-
-    ${!embedUrl && photos.slice(10, 13).length > 0 ? `
-    <div class="mini-carousel">
-      <button class="mini-btn prev">&#10094;</button>
-      <div class="mini-track">
-        ${photos.slice(10, 13).map(p => `<img src="/uploads/${p}" alt="Photo" />`).join('')}
-      </div>
-      <button class="mini-btn next">&#10095;</button>
-    </div>
-    ` : ''}
-
-    ${photos.length > 0 ? `
-    <div id="fullscreenOverlay" class="fullscreen-overlay">
-      <span class="close">&times;</span>
-      <img id="fullscreenImg" src="" alt="Photo en plein écran" />
-    </div>` : ''}
-
-    <div class="extra-info-desktop">
-      <hr />
-      <h2>${t.addInfo}</h2>
-      <div class="extra-columns">
-        <div class="extra-col">
-          <div class="info-label">
-            DPE :
-            ${
-              isDpePending
-                ? `<em>${t.inProgress}</em>`
-                : `<strong>${property.dpe || t.notProvided}</strong>`
-            }
+      <!-- EXTRA INFO 1 : DPE + INFOS CLÉS + MAP ---------------------------- -->
+      <section class="extra-block">
+        <hr />
+        <h2>${t.addInfo}</h2>
+        <div class="extra-columns">
+          <div class="extra-col">
+            <div class="info-label">
+              DPE :
+              ${
+                isDpePending
+                  ? `<em>${t.inProgress}</em>`
+                  : `<strong>${property.dpe || t.notProvided}</strong>`
+              }
+            </div>
+            <div class="dpe-bar">
+              ${['A','B','C','D','E','F','G'].map(letter => `
+                <div class="bar ${letter} ${
+                  (!isDpePending && dpeValue.toUpperCase() === letter) ? 'active' : ''
+                } ${isDpePending ? 'pending' : ''}">
+                  ${letter}
+                </div>
+              `).join('')}
+            </div>
           </div>
-          <div class="dpe-bar">
-            ${['A','B','C','D','E','F','G'].map(letter => `
-              <div class="bar ${letter} ${
-                (!isDpePending && dpeValue.toUpperCase() === letter) ? 'active' : ''
-              } ${isDpePending ? 'pending' : ''}">
-                ${letter}
-              </div>
-            `).join('')}
+
+          <div class="extra-col">
+            <div class="info-label">${t.keyInfo}</div>
+            <div class="info-item">${t.price} : ${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
+            <div class="info-item"><i class="fal fa-ruler-combined"></i>${property.surface} m²</div>
+            ${property.rooms ? `<div class="info-item"><i class="fal fa-home"></i>${property.rooms}</div>` : ''}
+            ${property.bedrooms ? `<div class="info-item"><i class="fal fa-bed"></i>${property.bedrooms}</div>` : ''}
+            <div class="info-item"><i class="fal fa-calendar-alt"></i>${property.yearBuilt || t.notProvided}</div>
+            ${property.pool ? `<div class="info-item"><i class="fas fa-swimming-pool"></i>${t.pool}</div>` : ''}
+            ${property.wateringSystem ? `<div class="info-item"><i class="fas fa-water"></i>${t.wateringSystem}</div>` : ''}
+            ${property.carShelter ? `<div class="info-item"><i class="fas fa-car"></i>${t.carShelter}</div>` : ''}
+            <div class="info-item"><i class="fas fa-parking"></i>${t.parking}: ${property.parking ? t.yes : t.no}</div>
+            ${property.caretakerHouse ? `<div class="info-item"><i class="fas fa-house-user"></i>${t.caretakerHouse}</div>` : ''}
+            ${property.electricShutters ? `<div class="info-item"><i class="fas fa-window-maximize"></i>${t.electricShutters}</div>` : ''}
+            ${property.outdoorLighting ? `<div class="info-item"><i class="fas fa-lightbulb"></i>${t.outdoorLighting}</div>` : ''}
+          </div>
+
+          <div class="extra-col">
+            <div class="info-label">${t.location}</div>
+            <div class="info-item">${property.city || ''}${property.city && property.country ? ', ' : ''}${property.country || ''}</div>
+            <div id="map" style="margin-top: 10px;"></div>
           </div>
         </div>
+      </section>
 
-        <div class="extra-col">
-          <div class="info-label">${t.keyInfo}</div>
-          <div class="info-item">${t.price} : ${Number(property.price || 0).toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} €</div>
-          <div class="info-item"><i class="fal fa-ruler-combined"></i> ${property.surface} m²</div>
-          <div class="info-item"><i class="fal fa-home"></i> ${property.rooms || ''}</div>
-          <div class="info-item"><i class="fal fa-bed"></i> ${property.bedrooms || ''}</div>
-          <div class="info-item"><i class="fal fa-calendar-alt"></i> ${property.yearBuilt || t.notProvided}</div>
-          ${property.pool ? `<div class="info-item"><i class="fas fa-swimming-pool"></i> ${t.pool}</div>` : ''}
-          ${property.wateringSystem ? `<div class="info-item"><i class="fas fa-water"></i> ${t.wateringSystem}</div>` : ''}
-          ${property.carShelter ? `<div class="info-item"><i class="fas fa-car"></i> ${t.carShelter}</div>` : ''}
-          <div class="info-item"><i class="fas fa-parking"></i> ${t.parking}: ${property.parking ? t.yes : t.no}</div>
-          ${property.caretakerHouse ? `<div class="info-item"><i class="fas fa-house-user"></i> ${t.caretakerHouse}</div>` : ''}
-          ${property.electricShutters ? `<div class="info-item"><i class="fas fa-window-maximize"></i> ${t.electricShutters}</div>` : ''}
-          ${property.outdoorLighting ? `<div class="info-item"><i class="fas fa-lightbulb"></i> ${t.outdoorLighting}</div>` : ''}
-        </div>
+      <!-- EXTRA INFO 2 : GALERIE "DÉCOUVREZ LE BIEN" ----------------------- -->
+      <section class="extra-block gallery-wrapper">
+        <hr />
+        <h2>${t.discoverProperty}</h2>
 
-        <div class="extra-col map-col">
-          <div class="info-label">${t.location}</div>
-          <div id="map"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="extra-info-desktop">
-      <hr />
-      <h2>${t.discoverProperty}</h2>
-      ${(embedUrl && photos.length > 0) ? `
-      <div class="discover-gallery">
-        <button class="discover-btn prev" type="button">&#10094;</button>
-        <div class="discover-track-wrapper">
-          <div class="discover-track">
-            ${photos.map(p => `<img src="/uploads/${p}" alt="Photo du bien" />`).join('')}
+        ${photos.length > 0 ? `
+        <div class="discover-gallery">
+          <button class="discover-btn prev" type="button">&#10094;</button>
+          <div class="discover-track-wrapper">
+            <div class="discover-track">
+              ${photos.map(p => `<img src="/uploads/${p}" alt="Photo du bien" />`).join('')}
+            </div>
           </div>
+          <button class="discover-btn next" type="button">&#10095;</button>
         </div>
-        <button class="discover-btn next" type="button">&#10095;</button>
-      </div>
-      ` : ''}
-    </div>
+        ` : `<p>${t.noDescription}</p>`}
+      </section>
+
+      ${photos.length > 0 ? `
+      <div id="fullscreenOverlay" class="fullscreen-overlay">
+        <span class="close">&times;</span>
+        <img id="fullscreenImg" src="" alt="Photo en plein écran" />
+      </div>` : ''}
+
+    </div> <!-- /.page-wrapper -->
 
     <script>
       document.addEventListener("DOMContentLoaded", function () {
         const city = "${(property.city || '').replace(/"/g, '\\"')}";
         const country = "${(property.country || '').replace(/"/g, '\\"')}";
-        const fullAddress = city + ", " + country;
+        const fullAddress = city + (country ? ", " + country : "");
 
-        if (document.getElementById('map')) {
+        // Carte Leaflet avec géocodage
+        if (document.getElementById('map') && fullAddress.trim() !== "") {
           fetch("https://nominatim.openstreetmap.org/search?format=json&q=" + encodeURIComponent(fullAddress))
             .then(response => response.json())
             .then(data => {
@@ -3439,7 +3399,7 @@ ${JSON.stringify(jsonLD)}
                 const lon = data[0].lon;
                 const map = L.map('map').setView([lat, lon], 13);
                 L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-                  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+                  attribution: '&copy; OpenStreetMap &copy; CARTO',
                   subdomains: 'abcd',
                   maxZoom: 19
                 }).addTo(map);
@@ -3453,8 +3413,11 @@ ${JSON.stringify(jsonLD)}
               console.error(err);
               document.getElementById('map').innerHTML = "${t.mapError}";
             });
+        } else if (document.getElementById('map')) {
+          document.getElementById('map').innerHTML = "${t.mapUnavailable}";
         }
 
+        // Modale visite
         const visitBtn = document.getElementById('visitBtn');
         const visitModal = document.getElementById('visitModal');
         const closeModal = document.getElementById('closeModal');
@@ -3473,62 +3436,70 @@ ${JSON.stringify(jsonLD)}
           });
         }
 
+        // Plein écran photo
         const fullscreenOverlay = document.getElementById('fullscreenOverlay');
         const fullscreenImg = document.getElementById('fullscreenImg');
-        const closeFs = fullscreenOverlay ? fullscreenOverlay.querySelector('.close') : null;
+        const fullscreenClose = fullscreenOverlay ? fullscreenOverlay.querySelector('.close') : null;
 
-        if (fullscreenOverlay && closeFs) {
-          closeFs.addEventListener('click', () => {
+        function openFullscreen(src) {
+          if (!fullscreenOverlay || !fullscreenImg) return;
+          fullscreenImg.src = src;
+          fullscreenOverlay.style.display = 'flex';
+        }
+
+        if (fullscreenOverlay && fullscreenClose) {
+          fullscreenClose.addEventListener('click', () => {
             fullscreenOverlay.style.display = 'none';
           });
+
           fullscreenOverlay.addEventListener('click', (e) => {
             if (e.target === fullscreenOverlay) {
               fullscreenOverlay.style.display = 'none';
             }
           });
         }
-        
-        function setupCarousel(trackSelector, btnPrevSelector, btnNextSelector, visibleFn, imgSelector = 'img') {
-          const track = document.querySelector(trackSelector);
-          if (!track || !track.children.length) return; // S'arrête s'il n'y a pas de track ou pas d'images
-          
-          const prev = document.querySelector(btnPrevSelector);
-          const next = document.querySelector(btnNextSelector);
+
+        // Carrousel "discover"
+        (function setupDiscoverCarousel() {
+          const track = document.querySelector('.discover-track');
+          const prev = document.querySelector('.discover-btn.prev');
+          const next = document.querySelector('.discover-btn.next');
+          if (!track) return;
+
           let index = 0;
 
-          function updateControls() {
-            const visible = visibleFn();
-            const shouldShow = track.children.length > visible;
-            if (prev) prev.style.display = shouldShow ? 'flex' : 'none';
-            if (next) next.style.display = shouldShow ? 'flex' : 'none';
+          function visibleCount() {
+            if (window.innerWidth <= 1024) return 2;
+            return 3;
           }
-          
+
           function updateTransform() {
-            const firstImg = track.querySelector(imgSelector);
-            if (!firstImg) {
-              updateControls();
-              return;
-            }
-            
-            const trackStyles = window.getComputedStyle(track);
-            const gapValue = parseFloat(trackStyles.columnGap || trackStyles.gap || '0');
+            const firstImg = track.querySelector('img');
+            if (!firstImg) return;
+
+            const styles = window.getComputedStyle(track);
+            const gap = parseFloat(styles.columnGap || styles.gap || '0');
             const imgWidth = firstImg.getBoundingClientRect().width;
-            const visible = visibleFn();
+            const visible = visibleCount();
             const maxIndex = Math.max(0, track.children.length - visible);
 
             if (index > maxIndex) index = maxIndex;
             if (index < 0) index = 0;
 
-            track.style.transform = 'translateX(-' + (index * (imgWidth + gapValue)) + 'px)';
-            updateControls();
+            track.style.transform =
+              'translateX(-' + (index * (imgWidth + gap)) + 'px)';
+
+            const shouldShow = track.children.length > visible;
+            if (prev) prev.style.display = shouldShow ? 'flex' : 'none';
+            if (next) next.style.display = shouldShow ? 'flex' : 'none';
           }
 
           if (next) {
             next.addEventListener('click', () => {
-              const visible = visibleFn();
+              const visible = visibleCount();
               const maxIndex = Math.max(0, track.children.length - visible);
               if (index < maxIndex) {
-                index = Math.min(maxIndex, index + 1); // Défile 1 par 1
+                index = Math.min(maxIndex, index + 1);
                 updateTransform();
               }
             });
@@ -3537,54 +3508,19 @@ ${JSON.stringify(jsonLD)}
           if (prev) {
             prev.addEventListener('click', () => {
               if (index > 0) {
-                index = Math.max(0, index - 1); // Défile 1 par 1
+                index = Math.max(0, index - 1);
                 updateTransform();
               }
             });
           }
 
+          track.querySelectorAll('img').forEach(img => {
+            img.addEventListener('click', () => openFullscreen(img.src));
+          });
+
           window.addEventListener('resize', updateTransform);
-          // Léger délai pour s'assurer que les images sont chargées et ont une taille
-          setTimeout(updateTransform, 100); 
-
-          if (fullscreenOverlay && fullscreenImg) {
-            track.querySelectorAll(imgSelector).forEach(img => {
-              img.addEventListener('click', () => {
-                fullscreenImg.src = img.src;
-                fullscreenOverlay.style.display = 'flex';
-              });
-            });
-          }
-        }
-
-        // Carrousel principal (version non-vidéo)
-        setupCarousel(
-          '.carousel-track', 
-          '.carousel-btn.prev', 
-          '.carousel-btn.next',
-          () => window.innerWidth <= 768 ? 2 : 4
-        );
-        
-        // Mini carrousel (version non-vidéo)
-        setupCarousel(
-          '.mini-track', 
-          '.mini-btn.prev', 
-          '.mini-btn.next',
-          () => window.innerWidth <= 768 ? 3 : 5
-        );
-        
-        // Nouvelle galerie (version vidéo)
-        setupCarousel(
-          '.discover-track', 
-          '.discover-btn.prev', 
-          '.discover-btn.next',
-          () => {
-            if (window.innerWidth <= 768) return 2;  // 2 vignettes sur mobile
-            if (window.innerWidth <= 1024) return 2; // 2 vignettes sur tablette
-            return 3; // 3 vignettes sur desktop
-          }
-        );
-
+          setTimeout(updateTransform, 100);
+        })();
       });
     </script>
   </body>
@@ -3598,7 +3534,6 @@ ${JSON.stringify(jsonLD)}
 
   return `/landing-pages/${filename}`;
 }
-
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.ionos.fr',
