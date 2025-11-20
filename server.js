@@ -50,7 +50,7 @@ const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const { sendInvoiceByEmail, sendMailPending, generateInvoicePDF } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
 const { addToSitemap, pingSearchEngines } = require('./utils/seo');
-
+app.set('trust proxy', 1);
 
 const app = express();
 function getPaypalConfig() {
@@ -105,7 +105,11 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { maxAge: 1000 * 60 * 60 * 2 } // 2 heures
+  cookie: { 
+  maxAge: 1000 * 60 * 60 * 2,
+  secure: process.env.NODE_ENV === 'production', 
+    sameSite: 'Lax'
+  }
 }));
 
 app.use('/', qrRoutes);
