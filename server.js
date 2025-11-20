@@ -2407,7 +2407,7 @@ ${JSON.stringify(jsonLD)}
       .page-wrapper {
         max-width: 1400px;
         margin: 0 auto;
-        padding: 32px 20px 40px;
+        padding: 82px 20px 82px;
       }
 
       /* VERSION SANS VIDÉO : LAYOUT PRINCIPAL ------------------------------ */
@@ -2527,6 +2527,7 @@ ${JSON.stringify(jsonLD)}
         padding: 14px 14px 16px;
         border: 1px solid #e2e2e2;
         font-size: 0.96rem;
+        margin-top: 50px:
         color: #444;
         max-height: 180px;
         overflow-y: auto;
@@ -3039,7 +3040,7 @@ ${JSON.stringify(jsonLD)}
         }
 
         .extra-block {
-          margin-top: 16px;
+          margin-top: 80px;
           border-radius: 18px;
           box-shadow: 0 16px 35px rgba(0,0,0,0.06);
           padding: 20px 16px 22px;
