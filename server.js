@@ -2746,7 +2746,7 @@ ${JSON.stringify(jsonLD)}
         display: flex;
         align-items: center;
         gap: var(--discover-gap);
-        border: 1px solid #eee;
+        border: 1px solid;
         border-radius: 18px;
         padding: 18px 18px;
         box-sizing: border-box;
