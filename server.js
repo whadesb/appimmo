@@ -1460,16 +1460,35 @@ app.post('/:locale/register', async (req, res) => {
     return res.redirect(`/${locale}/register`);
   }
 
-  // 🔍 Vérification reCAPTCHA
-  try {
-    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-    const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
+ try {
+    // 🔑 FIX : Force le rôle 'user' lors de la création du nouveau document User.
+    const newUser = await User.register(new User({ 
+            email, 
+            firstName, 
+            lastName, 
+            role: 'user' // Rôle fixé pour l'inscription publique
+        }), password);
+        
+        await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
 
-const response = await axios.post(verificationURL, null, {
-  params: {
-    secret: secretKey,
-    response: captcha,
-  },
+    console.log(`[REGISTER DEBUG] Compte créé pour ${newUser.email}. Tentative de login...`);
+
+    req.logIn(newUser, (err) => {
+      if (err) {
+            console.error('❌ ERREUR REQ.LOGIN APRÈS INSCRIPTION:', err);
+        req.flash('error', 'Erreur de connexion automatique.');
+        return res.redirect(`/${locale}/login`);
+      }
+
+      console.log('✅ REQ.LOGIN RÉUSSI. Tentative de redirection vers 2FA.');
+      res.redirect(`/${locale}/enable-2fa`);
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription :', error.message);
+    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
+    res.redirect(`/${locale}/register`);
+  }
 });
 
 
