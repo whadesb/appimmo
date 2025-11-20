@@ -160,26 +160,26 @@ app.use(mongoSanitize({
 }));
 app.use(flash());
 app.use(i18n.init);
-
-
-
-
 app.use(session({
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { 
-        maxAge: 1000 * 60 * 60 * 2, // 2 heures
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
+  cookie: { 
+        maxAge: 1000 * 60 * 60 * 2, // 2 heures
+        
+        // 🔑 CORRECTION 1: DOIT ÊTRE TRUE EN PROD (HTTPS)
+        secure: process.env.NODE_ENV === 'production', 
+        
+        // CORRECTION 2: Ajout de SameSite pour la sécurité et la compatibilité
+        sameSite: 'Lax',
         
-        // 🔑 CORRECTION 1: DOIT ÊTRE TRUE EN PROD (HTTPS)
-        secure: process.env.NODE_ENV === 'production', 
-        
-        // 🔑 CORRECTION 2: Ajout de SameSite pour la sécurité et la compatibilité
-        sameSite: 'Lax' // 'Lax' ou 'Strict' sont recommandés en production
-    }
+        // 🔑 CORRECTION 3: DÉFINIR LE DOMAINE EN PRODUCTION
+        // Ceci garantit que le cookie est lu correctement sur tous les sous-domaines (si vous en utilisez)
+        // REMPLACEZ 'uap.immo' par votre domaine racine de production.
+        domain: process.env.NODE_ENV === 'production' ? 'uap.immo' : undefined
+    }
 }));
-
 app.use('/', qrRoutes);
 app.use('/property', require('./routes/property'));
 
