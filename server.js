@@ -1452,15 +1452,53 @@ app.post('/:locale/register', async (req, res) => {
   const { email, firstName, lastName, password, confirmPassword, 'g-recaptcha-response': captcha } = req.body;
   const locale = req.params.locale;
 
-  // ⚠️ Attention : Le champ 'role' n'est plus extrait car sa valeur est forcée ci-dessous.
-
-  // ⚠️ Si captcha vide
+  // 1. VÉRIFICATION CAPTCHA
   if (!captcha) {
     req.flash('error', 'Veuillez valider le CAPTCHA.');
     return res.redirect(`/${locale}/register`);
   }
 
- try {
+  // 2. VÉRIFICATION DE L'API CAPTCHA
+  try {
+    const secretKey = process.env.RECAPTCHA_SECRET_KEY;
+    const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
+
+    const response = await axios.post(verificationURL, null, {
+        params: {
+            secret: secretKey,
+            response: captcha,
+        },
+    });
+
+    if (!response.data.success) {
+      req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
+      return res.redirect(`/${locale}/register`);
+    }
+  } catch (err) {
+    console.error("Erreur reCAPTCHA :", err);
+    req.flash('error', 'Erreur de vérification CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // 3. VALIDATION EMAIL ET MOT DE PASSE (Déplacé ici, après le CAPTCHA)
+  if (!validator.isEmail(email)) {
+    req.flash('error', 'L\'adresse email n\'est pas valide.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  if (password !== confirmPassword) {
+    req.flash('error', 'Les mots de passe ne correspondent pas.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRequirements.test(password)) {
+    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // 4. CRÉATION DU COMPTE ET CONNEXION (Logique existante)
+  try {
     // 🔑 FIX : Force le rôle 'user' lors de la création du nouveau document User.
     const newUser = await User.register(new User({ 
             email, 
