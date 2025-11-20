@@ -316,43 +316,39 @@ app.get('/', (req, res) => {
 });
 
 app.get('/api/stats/:pageId', async (req, res) => {
-  try {
-    const { pageId } = req.params;
-    const startDate = req.query.startDate || '2024-03-01';
-    const endDate = req.query.endDate || '2025-03-21';
+  try {
+    const { pageId } = req.params;
+    const startDate = req.query.startDate || '2024-03-01';
+    const endDate = req.query.endDate || '2025-03-21';
 
-    console.log('🔍 Récupération des stats pour', pageId);
-    console.log("👤 Utilisateur connecté :", req.user);
+    const matchingProperty = await Property.findOne({ _id: pageId, userId: req.user._id });
 
+    if (!matchingProperty) {
+      return res.status(404).json({ error: 'Propriété non trouvée' });
+    }
 
-    const matchingProperty = await Property.findOne({ _id: pageId, userId: req.user._id });
+    if (!matchingProperty.url) {
+      return res.status(500).json({ error: 'Champ "url" manquant' });
+    }
 
-    if (!matchingProperty) {
-      return res.status(404).json({ error: 'Propriété non trouvée' });
-    }
+    const pagePath = matchingProperty.url.startsWith('/landing-pages/')
+      ? matchingProperty.url
+      : `/landing-pages/${matchingProperty.url}`;
 
-    if (!matchingProperty.url) {
-      return res.status(500).json({ error: 'Champ "url" manquant' });
-    }
+    const stats = await getPageStats(pagePath, startDate, endDate);
 
-    const pagePath = matchingProperty.url.startsWith('/landing-pages/')
-      ? matchingProperty.url
-      : `/landing-pages/${matchingProperty.url}`;
+    if (!stats || typeof stats !== 'object') {
+      console.error('❌ Statistiques non valides pour :', pagePath, stats);
+      return res.status(500).json({ error: 'Statistiques non valides' });
+    }
 
-    const stats = await getPageStats(pagePath, startDate, endDate);
+    // Supprimé : console.log('✅ Stats récupérées :', stats);
+    return res.json(stats);
 
-    if (!stats || typeof stats !== 'object') {
-      console.error('❌ Statistiques non valides pour :', pagePath, stats);
-      return res.status(500).json({ error: 'Statistiques non valides' });
-    }
-
-    console.log('✅ Stats récupérées :', stats);
-    return res.json(stats);
-
-  } catch (err) {
-    console.error('❌ Erreur API /api/stats/:pageId =>', err.message || err);
-    res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
-  }
+  } catch (err) {
+    console.error('❌ Erreur API /api/stats/:pageId =>', err.message || err);
+    res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
+  }
 });
 
 app.get('/:locale/payment', isAuthenticated, async (req, res) => {
