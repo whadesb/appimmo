@@ -783,39 +783,50 @@ app.post('/:locale/login', (req, res, next) => {
     passport.authenticate('local', (err, user, info) => {
         // 1. ERREUR SERVEUR / BASE DE DONNÉES
         if (err) {
-            console.error('❌ ERREUR AUTHENTICATION PASSPORT:', err);
-            return next(err);
-        }
+            console.error('❌ ERREUR AUTHENTICATION PASSPORT:', err);
+            return next(err);
+        }
 
         // 2. UTILISATEUR NON TROUVÉ (Mauvais identifiants)
         if (!user) {
-            console.warn('⚠️ CONNEXION ÉCHOUÉE: Utilisateur non trouvé ou mot de passe incorrect.', info);
+            console.warn('⚠️ CONNEXION ÉCHOUÉE: Utilisateur non trouvé ou mot de passe incorrect.', info);
             req.flash('error', 'Identifiants incorrects.');
             return res.redirect(`/${locale}/login`);
         }
-        
-        // 3. UTILISATEUR TROUVÉ, TENTATIVE DE CONNEXION (req.logIn)
-        console.log(`✅ AUTHENTIFICATION RÉUSSIE pour: ${user.email}. Tentative de création de session...`);
+        
+        // 3. UTILISATEUR TROUVÉ, TENTATIVE DE CONNEXION (req.logIn)
+        console.log(`✅ AUTHENTIFICATION RÉUSSIE pour: ${user.email}. Tentative de création de session...`);
 
 
         req.logIn(user, (err) => {
             // 4. ÉCHEC DE CRÉATION DE SESSION (logIn)
             if (err) {
-                console.error('❌ ERREUR REQ.LOGIN (Session):', err);
-                return next(err);
-            }
-            
-            // 5. SUCCESS LOGIC (Redirection)
-            
-            // Logique de Double Authentification (2FA)
+                console.error('❌ ERREUR REQ.LOGIN (Session):', err);
+                return next(err);
+            }
+            
+            // 5. SUCCESS LOGIC (Redirection)
+            
+            // Logique de Double Authentification (2FA)
             if (user.twoFactorEnabled) {
-                console.log('➡️ Redirection 2FA nécessaire.');
-                req.session.tmpUserId = user._id;
+                
+                // 🔑 CORRECTION MAJEURE: Définir un cookie temporaire non-HTTP-only pour 2FA
+                // Ceci force le navigateur à transporter l'ID à la page suivante
+                res.cookie('2fa_pending_id', user._id.toString(), {
+                    maxAge: 300000, // 5 minutes
+                    httpOnly: false, // Accessible par le script client
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'Lax',
+                    domain: process.env.NODE_ENV === 'production' ? 'uap.immo' : undefined
+                });
+                
+                console.log('➡️ Redirection 2FA nécessaire.');
+                // Redirection vers la page 2FA
                 return res.redirect(`/${locale}/2fa`);
             }
 
-            // Redirection finale réussie
-            console.log('✅ CONNEXION TERMINÉE. Redirection vers /user.');
+            // Redirection finale réussie (si 2FA non nécessaire)
+            console.log('✅ CONNEXION TERMINÉE. Redirection vers /user.');
             return res.redirect(`/${locale}/user`);
         });
     })(req, res, next);
@@ -1537,16 +1548,14 @@ app.post('/:locale/register', async (req, res) => {
     res.redirect(`/${locale}/register`);
   }
 });
-app.get('/:locale/2fa', async (req, res) => { // ⬅️ On garde async car il y a des awaits
+app.get('/:locale/2fa', async (req, res) => {
   const { locale } = req.params;
 
-  // 🔑 CRITICAL FIX: On vérifie si req.user est disponible (login réussi)
-  // OU si la session temporaire pour le flow classique est présente.
-  const userId = req.user?._id || req.session.tmpUserId; 
+  // 🔑 CRITICAL FIX: Récupérer l'ID de l'utilisateur soit via la session (req.user), soit via le cookie temporaire
+  const userId = req.user?._id || req.cookies['2fa_pending_id']; 
 
   if (!userId) {
     console.warn('⚠️ Redirection vers /2fa échouée: ID utilisateur manquant (Retour au login).');
-    // Ceci renvoie l'utilisateur au login si la session a été perdue immédiatement
     return res.redirect(`/${locale}/login`);
   }
   
@@ -1556,27 +1565,22 @@ app.get('/:locale/2fa', async (req, res) => { // ⬅️ On garde async car il y 
   try {
     i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
 
-    // Charger l'utilisateur en utilisant l'ID trouvé (soit depuis req.user, soit depuis tmpUserId)
+    // Charger l'utilisateur en utilisant l'ID trouvé
     const user = await User.findById(userId);
     
-    // Si l'utilisateur n'est pas trouvé ou si 2FA n'est plus activé (problème de BDD),
-    // on le renvoie à la connexion.
-    if (!user || !user.twoFactorEnabled) {
-        console.warn(`⚠️ 2FA: Utilisateur ${userId} non trouvé ou 2FA désactivée. Nettoyage de session temporaire.`);
-        delete req.session.tmpUserId;
+    if (!user || !user.twoFactorSecret || !user.twoFactorEnabled) {
+        console.warn(`⚠️ 2FA: Utilisateur ${userId} non valide ou secret manquant. Nettoyage du cookie.`);
+        res.clearCookie('2fa_pending_id'); // Effacer le cookie si l'ID est invalide
         return res.redirect(`/${locale}/login`);
     }
 
-    // Si la 2FA n'a pas encore de secret, nous devons la générer (flow enable-2fa)
-    if (!user.twoFactorSecret) {
-        // Logique de génération de secret... (Si cette route est utilisée pour l'activation)
-        // Mais dans votre cas, cette route est le point de vérification (login 2FA), 
-        // donc l'utilisateur devrait déjà avoir un secret. S'il n'en a pas,
-        // c'est une erreur de configuration après l'inscription.
-    }
-
-
-    // Générer l'URL OTPAuth (même si pas affichée, nécessaire pour le Speakeasy)
+    // Effacer le cookie temporaire pour des raisons de sécurité après validation de l'ID.
+    res.clearCookie('2fa_pending_id'); 
+    
+    // Pour l'affichage dans la vue, nous devons définir temporairement l'utilisateur 
+    // sur l'objet de rendu, mais le vrai login se fera après la soumission du code.
+    
+    // Générer l'URL OTPAuth (pour l'affichage du QR code si l'utilisateur ne l'a pas)
     const otpAuthUrl = speakeasy.otpauthURL({
         secret: user.twoFactorSecret,
         label: `UAP Immo (${user.email})`,
@@ -1584,13 +1588,10 @@ app.get('/:locale/2fa', async (req, res) => { // ⬅️ On garde async car il y 
         encoding: 'base32'
     });
     
-    // Nous avons besoin du QR code pour le '2fa.ejs'
     const qrCode = await QRCode.toDataURL(otpAuthUrl);
-
 
   } catch (error) {
     console.error(`❌ Erreur dans GET /2fa:`, error);
-    // En cas d'erreur de BDD ou de Speakeasy, on ne montre pas la page.
     return res.status(500).send('Erreur lors du chargement de la vérification 2FA.');
   }
   
