@@ -3041,7 +3041,8 @@ ${JSON.stringify(jsonLD)}
         }
 
         .extra-block {
-          margin-top: 80px;
+          margin-top: 20vh;
+          margin-bottom: 20vh;
           border-radius: 18px;
           box-shadow: 0 16px 35px rgba(0,0,0,0.06);
           padding: 20px 16px 22px;
