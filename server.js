@@ -50,9 +50,10 @@ const secretKey = process.env.RECAPTCHA_SECRET_KEY;
 const { sendInvoiceByEmail, sendMailPending, generateInvoicePDF } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
 const { addToSitemap, pingSearchEngines } = require('./utils/seo');
-app.set('trust proxy', 1);
+
 
 const app = express();
+app.set('trust proxy', 1);
 function getPaypalConfig() {
   const isLive = process.env.PAYPAL_ENV === 'live';
   return {
