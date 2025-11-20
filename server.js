@@ -1242,25 +1242,27 @@ const renderAdminOrders = async (req, res, next) => {
 
 app.get('/admin/orders/:userId', isAuthenticated, isAdmin, renderAdminOrders);
 app.get('/:locale/admin/orders/:userId', isAuthenticated, isAdmin, renderAdminOrders);
-app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
-  const locale = req.params.locale || 'fr';
+app.get('/:locale/enable-2fa', async (req, res) => {
+    // ... (Logique locale et traduction) ...
 
-  try {
-    const user = await User.findById(req.user._id);
+    // REMPLACER cette vérification si elle existe déjà dans votre code:
+    // if (!req.session.tmpUserId) { return res.redirect... }
 
-    // Si l'utilisateur a déjà un secret, on ne le régénère pas
-    if (!user.twoFactorSecret) {
-      const secret = speakeasy.generateSecret({ name: `UAP Immo (${user.email})` });
-      user.twoFactorSecret = secret.base32;
-      await user.save();
+    // On s'assure que l'utilisateur est connecté pour la session d'inscription
+    if (!req.isAuthenticated()) {
+        return res.redirect(`/${locale}/login`);
     }
 
-    const otpAuthUrl = speakeasy.otpauthURL({
-      secret: user.twoFactorSecret,
-      label: `UAP Immo (${user.email})`,
-      issuer: 'UAP Immo',
-      encoding: 'base32'
-    });
+    try {
+        // L'ID est maintenant accessible via req.user (car req.logIn a réussi)
+        const user = await User.findById(req.user._id);
+
+        // ... (le reste de la logique de génération du QR code) ...
+
+    } catch (error) {
+        // ... (gestion des erreurs) ...
+    }
+});
 
     const qrCode = await QRCode.toDataURL(otpAuthUrl);
 
@@ -1469,6 +1471,65 @@ app.post('/:locale/register', async (req, res) => {
             response: captcha,
         },
     });
+
+    if (!response.data.success) {
+      req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
+      return res.redirect(`/${locale}/register`);
+    }
+  } catch (err) {
+    console.error("Erreur reCAPTCHA :", err);
+    req.flash('error', 'Erreur de vérification CAPTCHA.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // 3. VALIDATION EMAIL ET MOT DE PASSE (Exécuté uniquement si le CAPTCHA est bon)
+  if (!validator.isEmail(email)) {
+    req.flash('error', 'L\'adresse email n\'est pas valide.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  if (password !== confirmPassword) {
+    req.flash('error', 'Les mots de passe ne correspondent pas.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  const passwordRequirements = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  if (!passwordRequirements.test(password)) {
+    req.flash('error', 'Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule, un chiffre et un symbole spécial.');
+    return res.redirect(`/${locale}/register`);
+  }
+
+  // 4. CRÉATION DU COMPTE ET CONNEXION (Logique de création/login)
+  try {
+    // 🔑 FIX : Force le rôle 'user' lors de la création du nouveau document User.
+    const newUser = await User.register(new User({ 
+            email, 
+            firstName, 
+            lastName, 
+            role: 'user' // Rôle fixé pour l'inscription publique
+        }), password);
+        
+        await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
+
+    console.log(`[REGISTER DEBUG] Compte créé pour ${newUser.email}. Tentative de login...`);
+
+    req.logIn(newUser, (err) => {
+      if (err) {
+            console.error('❌ ERREUR REQ.LOGIN APRÈS INSCRIPTION:', err);
+        req.flash('error', 'Erreur de connexion automatique.');
+        return res.redirect(`/${locale}/login`);
+      }
+
+      console.log('✅ REQ.LOGIN RÉUSSI. Tentative de redirection vers 2FA.');
+      res.redirect(`/${locale}/enable-2fa`);
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de l\'inscription :', error.message);
+    req.flash('error', `Une erreur est survenue lors de l'inscription : ${error.message}`);
+    res.redirect(`/${locale}/register`);
+  }
+});
 
     if (!response.data.success) {
       req.flash('error', 'CAPTCHA invalide. Veuillez réessayer.');
