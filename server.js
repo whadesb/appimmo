@@ -58,16 +58,30 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(helmet.contentSecurityPolicy({
     directives: {
-        // Politique de Sécurité du Contenu (CSP)
-        // Vous utilisez GTM, GA et Paypal, vous devez donc autoriser les domaines tiers :
+        // Source par défaut: Autorise uniquement les ressources de la même origine ('self')
         defaultSrc: ["'self'"],
+        
+        // Scripts: Autorise self, GTM, Google/Gstatic, PayPal, CDN (cdnjs)
+        // **IMPORTANT:** AJOUT DE 'unsafe-inline' POUR LES FONCTIONS onclick et les scripts dans le HTML
         scriptSrc: ["'self'", "https://www.googletagmanager.com", "https://www.google.com", "https://www.gstatic.com", "https://www.paypalobjects.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'", "'unsafe-eval'"],
+        
+        // Styles: Autorise self, FontAwesome, unpkg/cdn.jsdelivr, Google Fonts
+        // **IMPORTANT:** AJOUT DE 'unsafe-inline' POUR VOS BALISES <style> et styles inline (comme dans cookie_banner.ejs)
         styleSrc: ["'self'", "https://pro.fontawesome.com", "https://unpkg.com", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com", "'unsafe-inline'"],
+        
+        // Images: Autorise self, data: (pour les QR codes), FlagCDN, Analytics, PayPal
         imgSrc: ["'self'", "data:", "https://flagcdn.com", "https://www.google-analytics.com", "https://www.paypalobjects.com"],
+        
+        // Connexions/Fetch (fetch/XHR/WebSockets): Analytics, OSM (cartes), Google
         connectSrc: ["'self'", "https://www.google-analytics.com", "https://nominatim.openstreetmap.org", "https://www.google.com"],
+        
+        // Iframes: YouTube, Google, reCAPTCHA
         frameSrc: ["'self'", "https://www.youtube.com", "https://www.google.com", "https://www.recaptcha.net"],
+        
+        // Polices: FontAwesome, Google Fonts
         fontSrc: ["'self'", "https://pro.fontawesome.com", "https://fonts.gstatic.com"],
-        // Autoriser PayPal pour les iframes et webhooks
+        
+        // Formulaires: Autorise la soumission des formulaires vers self et PayPal
         formAction: ["'self'", "https://www.paypal.com"] 
     }
 }));
