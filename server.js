@@ -2630,7 +2630,7 @@ ${JSON.stringify(jsonLD)}
       /* EXTRA INFO (DPE / INFOS / MAP / GALERIE) ---------------------------- */
       .extra-block {
         margin-top: 20vh;
-        margin-bottom: 20vh;
+        margin-bottom: 10vh;
         border-radius: 24px;
         background: #fff;
         box-shadow: 0 20px 45px rgba(0,0,0,0.06);
@@ -2747,7 +2747,6 @@ ${JSON.stringify(jsonLD)}
         display: flex;
         align-items: center;
         gap: var(--discover-gap);
-        border: 1px solid;
         border-radius: 18px;
         padding: 18px 18px;
         box-sizing: border-box;
@@ -3042,7 +3041,7 @@ ${JSON.stringify(jsonLD)}
 
         .extra-block {
           margin-top: 20vh;
-          margin-bottom: 20vh;
+          margin-bottom: 10vh;
           border-radius: 18px;
           box-shadow: 0 16px 35px rgba(0,0,0,0.06);
           padding: 20px 16px 22px;
