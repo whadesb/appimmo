@@ -697,9 +697,18 @@ progress {
         <li class="nav-item sidebar-mobile-links sidebar-links">
           <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
         </li>
-        <li class="nav-item sidebar-mobile-links sidebar-links">
-          <a class="nav-link click-scroll" href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i> <%= i18n.created_pages %></a>
-        </li>
+        <% /* NOUVEAU LIEN MOBILE REDONDANT - AVEC PASTILLE */ %>
+<li class="nav-item sidebar-mobile-links sidebar-links">
+  <a class="nav-link click-scroll position-relative d-inline-flex align-items-center" href="#" onclick="showSection('created-pages')">
+    <i class="fa fa-file-alt me-2"></i> 
+    <%= i18n.created_pages %>
+    <% if (userLandingPages && userLandingPages.length > 0) { %>
+      <span class="badge rounded-pill bg-danger notif-badge ms-1">
+        <%= userLandingPages.length %>
+      </span>
+    <% } %>
+  </a>
+</li>
         <li class="nav-item sidebar-mobile-links sidebar-links">
           <a class="nav-link click-scroll" href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i> <%= i18n.my_orders %></a>
         </li>
@@ -718,11 +727,13 @@ progress {
         <!-- Connexion / Compte - version MOBILE -->
         <% if (isAuthenticated) { %>
           <li class="nav-item d-lg-none">
-            <a class="nav-link d-flex align-items-center gap-2 position-relative" href="/<%= locale %>/user">
-              <i class="bi bi-person-circle"></i>
-              <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
-              <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-badge"><%= userLandingPages ? userLandingPages.length : 0 %></span>
-            </a>
+          <% /* NOUVEAU CODE MOBILE - PASTILLE RETIRÉE */ %>
+<li class="nav-item d-lg-none">
+  <a class="nav-link d-flex align-items-center gap-2" href="/<%= locale %>/user">
+    <i class="bi bi-person-circle"></i>
+    <%= locale === 'fr' ? 'Mon compte' : 'My Account' %>
+  </a>
+</li>
           </li>
           <li class="nav-item d-lg-none">
             <form action="/logout" method="POST" class="w-100">
@@ -745,11 +756,10 @@ progress {
       <!-- Connexion / Compte - version DESKTOP -->
       <% if (isAuthenticated) { %>
         <div class="d-none d-lg-flex align-items-center ms-auto">
-          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2 position-relative">
-            <i class="bi bi-person-circle"></i>
-            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
-            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-badge"><%= userLandingPages ? userLandingPages.length : 0 %></span>
-          </a>
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+  <i class="bi bi-person-circle"></i>
+  <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+</a>
           <form action="/logout" method="POST" class="d-inline">
             <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
               <i class="bi bi-box-arrow-right"></i>
@@ -803,7 +813,17 @@ progress {
   <a href="#" onclick="showSection('account')"><i class="fa fa-user"></i></a>
   <a href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i></a>
   <a href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
-  <a href="#" onclick="showSection('created-pages')"><i class="fa fa-file-alt"></i></a>
+  <% /* NOUVEAU LIEN SIDEBAR - AVEC PASTILLE */ %>
+<a href="#" onclick="showSection('created-pages')" class="position-relative">
+  <i class="fa fa-file-alt"></i>
+  <% if (userLandingPages && userLandingPages.length > 0) { %>
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-badge" 
+          style="font-size: 0.6rem; padding: 0.3em 0.5em; right: -5px; top: 0px;">
+      <%= userLandingPages.length %>
+      <span class="visually-hidden">nouvelles pages</span>
+    </span>
+  <% } %>
+</a>
   <a href="#" onclick="showSection('orders')"><i class="fa fa-shopping-cart"></i></a>
   <% if (isAdminUser) { %>
   <a class="admin-sidebar-link" href="#" onclick="showSection('admin-users')" title="<%= i18n.admin_user_management %>"><i class="fa fa-users"></i></a>
