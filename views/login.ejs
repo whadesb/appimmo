@@ -386,35 +386,23 @@ footer .copyright-text {
   </div>
 </footer>
 
-
-        <!-- JAVASCRIPT FILES -->
+       <!-- JAVASCRIPT FILES -->
         <script src="/js/jquery.min.js"></script>
         <script src="/js/bootstrap.bundle.min.js"></script>
-        <!-- Remove or comment out the following scripts if they control the sticky navbar behavior -->
+        
+        <!-- Scripts commentés pour éviter les conflits de soumission -->
         <!-- <script src="/js/jquery.sticky.js"></script> -->
         <!-- <script src="/js/click-scroll.js"></script> -->
-        <script src="/js/custom.js"></script>
+        <!-- <script src="/js/custom.js"></script> -->
+        
         <script>
-            document.getElementById('togglePassword').addEventListener('click', function (e) {
-                const passwordInput = document.getElementById('password');
-                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-                passwordInput.setAttribute('type', type);
-                this.classList.toggle('bi-eye-fill');
-                this.classList.toggle('bi-eye-slash-fill');
-            });
+            // ... (Votre script de basculement de mot de passe) ...
         </script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.has("error")) {
-        const errorMessage = document.getElementById("error-message");
-        if (errorMessage) {
-            errorMessage.classList.remove("d-none"); // Afficher le message d'erreur
-        }
-    }
-});
-</script>
-<%- include('partials/cookie_banner') %>
+        <script>
+            // ... (Votre script de gestion des messages d'erreur) ...
+        </script>
 
+<%- include('partials/cookie_banner') %>
+    </body>
     </body>
 </html>
