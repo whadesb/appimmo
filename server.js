@@ -1607,49 +1607,64 @@ app.get('/:locale/2fa', async (req, res) => {
 
 
 app.post('/:locale/2fa', async (req, res) => {
-  const { locale } = req.params;
-  const { code } = req.body;
+  const { locale } = req.params;
+  const { code } = req.body;
 
-  const tmpUserId = req.session.tmpUserId;
+  // 🔑 UTILISER L'ID TEMPORAIRE DU COOKIE OU LA SESSION EXISTANTE
+  const userId = req.user?._id || req.cookies['2fa_pending_id']; 
 
-  if (!tmpUserId) {
-    return res.redirect(`/${locale}/login`);
-  }
+  if (!userId) {
+    console.warn('2FA POST: ID utilisateur manquant dans la requête. Retour au login.');
+    return res.redirect(`/${locale}/login`);
+  }
 
-  try {
-    const user = await User.findById(tmpUserId);
+  try {
+    // Tenter d'effacer le cookie temporaire immédiatement pour des raisons de sécurité.
+    // L'ajout du domaine garantit l'effacement.
+    res.clearCookie('2fa_pending_id', {
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Lax',
+        domain: process.env.NODE_ENV === 'production' ? 'uap.immo' : undefined
+    });
+    
+    const user = await User.findById(userId);
+    
     if (!user || !user.twoFactorSecret) {
-      req.flash('error', 'Erreur de validation 2FA.');
-      return res.redirect(`/${locale}/login`);
-    }
-
-    const verified = speakeasy.totp.verify({
-      secret: user.twoFactorSecret,
-      encoding: 'base32',
-      token: code,
-      window: 1
-    });
-
-    if (!verified) {
-      req.flash('error', 'Code 2FA invalide.');
-      return res.redirect(`/${locale}/2fa`);
-    }
-
-    // Connexion réussie
-    delete req.session.tmpUserId;
-    req.login(user, (err) => {
-      if (err) {
-        req.flash('error', 'Erreur de connexion.');
+        req.flash('error', 'Erreur de validation 2FA: Utilisateur ou secret manquant.');
         return res.redirect(`/${locale}/login`);
-      }
-      return res.redirect(`/${locale}/user`);
-    });
+    }
 
-  } catch (err) {
-    console.error('Erreur 2FA:', err);
-    req.flash('error', 'Une erreur est survenue.');
-    res.redirect(`/${locale}/login`);
-  }
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code,
+      window: 1
+    });
+
+    if (!verified) {
+      req.flash('error', 'Code 2FA invalide.');
+      return res.redirect(`/${locale}/2fa`);
+    }
+
+    // Connexion réussie: FORCER LA NOUVELLE SESSION
+    // C'est ici que le problème se produit: on doit s'assurer que l'objet 'user' est sérialisable.
+    req.login(user, (err) => {
+      if (err) {
+        console.error('❌ ÉCHEC FINAL DE REQ.LOGIN APRÈS 2FA:', err);
+        req.flash('error', 'Échec de la session. Veuillez vous reconnecter.');
+        return res.redirect(`/${locale}/login`);
+      }
+      
+      // ✅ SUCCÈS: Redirection vers le tableau de bord
+      console.log(`✅ 2FA validée. Connexion finalisée pour ${user.email}.`);
+      return res.redirect(`/${locale}/user`);
+    });
+
+  } catch (err) {
+    console.error('Erreur 2FA:', err);
+    req.flash('error', 'Une erreur est survenue.');
+    res.redirect(`/${locale}/login`);
+  }
 });
 
 // REMPLACEZ app.post('/add-property', ...) PAR CECI :
