@@ -11,6 +11,7 @@ process.on('unhandledRejection', function (err, promise) {
 
 const express = require('express');
 const path = require('path');
+const helmet = require('helmet'); 
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
@@ -55,6 +56,21 @@ const { addToSitemap, pingSearchEngines } = require('./utils/seo');
 
 const app = express();
 app.set('trust proxy', 1);
+app.use(helmet.contentSecurityPolicy({
+    directives: {
+        // Politique de Sécurité du Contenu (CSP)
+        // Vous utilisez GTM, GA et Paypal, vous devez donc autoriser les domaines tiers :
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "https://www.googletagmanager.com", "https://www.google.com", "https://www.gstatic.com", "https://www.paypalobjects.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'", "'unsafe-eval'"],
+        styleSrc: ["'self'", "https://pro.fontawesome.com", "https://unpkg.com", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https://flagcdn.com", "https://www.google-analytics.com", "https://www.paypalobjects.com"],
+        connectSrc: ["'self'", "https://www.google-analytics.com", "https://nominatim.openstreetmap.org", "https://www.google.com"],
+        frameSrc: ["'self'", "https://www.youtube.com", "https://www.google.com", "https://www.recaptcha.net"],
+        fontSrc: ["'self'", "https://pro.fontawesome.com", "https://fonts.gstatic.com"],
+        // Autoriser PayPal pour les iframes et webhooks
+        formAction: ["'self'", "https://www.paypal.com"] 
+    }
+}));
 function getPaypalConfig() {
   const isLive = process.env.PAYPAL_ENV === 'live';
   return {
