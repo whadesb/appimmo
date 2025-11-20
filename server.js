@@ -160,6 +160,7 @@ app.use(mongoSanitize({
 }));
 app.use(flash());
 app.use(i18n.init);
+
 app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -168,16 +169,14 @@ app.use(session({
   cookie: { 
         maxAge: 1000 * 60 * 60 * 2, // 2 heures
         
-        // 🔑 CORRECTION 1: DOIT ÊTRE TRUE EN PROD (HTTPS)
+        // Conserve secure: true car vous êtes en HTTPS
         secure: process.env.NODE_ENV === 'production', 
         
-        // CORRECTION 2: Ajout de SameSite pour la sécurité et la compatibilité
+        // Conserve SameSite
         sameSite: 'Lax',
         
-        // 🔑 CORRECTION 3: DÉFINIR LE DOMAINE EN PRODUCTION
-        // Ceci garantit que le cookie est lu correctement sur tous les sous-domaines (si vous en utilisez)
-        // REMPLACEZ 'uap.immo' par votre domaine racine de production.
-        domain: process.env.NODE_ENV === 'production' ? 'uap.immo' : undefined
+        // ❌ SUPPRESSION DE LA DIRECTIVE DOMAIN QUI CRÉE LE CONFLIT
+        // domain: process.env.NODE_ENV === 'production' ? 'uap.immo' : undefined 
     }
 }));
 app.use('/', qrRoutes);
@@ -810,14 +809,13 @@ app.post('/:locale/login', (req, res, next) => {
             // Logique de Double Authentification (2FA)
             if (user.twoFactorEnabled) {
                 
-                // 🔑 CORRECTION MAJEURE: Définir un cookie temporaire non-HTTP-only pour 2FA
-                // Ceci force le navigateur à transporter l'ID à la page suivante
+                // 🔑 CORRECTION COOKIE: Définir un cookie temporaire SANS directive domain
                 res.cookie('2fa_pending_id', user._id.toString(), {
                     maxAge: 300000, // 5 minutes
-                    httpOnly: false, // Accessible par le script client
+                    httpOnly: false, 
                     secure: process.env.NODE_ENV === 'production',
                     sameSite: 'Lax',
-                    domain: process.env.NODE_ENV === 'production' ? 'uap.immo' : undefined
+                    // domain: 'uap.immo' <--- SUPPRIMÉ
                 });
                 
                 console.log('➡️ Redirection 2FA nécessaire.');
@@ -1605,7 +1603,6 @@ app.get('/:locale/2fa', async (req, res) => {
 });
 });
 
-
 app.post('/:locale/2fa', async (req, res) => {
   const { locale } = req.params;
   const { code } = req.body;
@@ -1619,12 +1616,11 @@ app.post('/:locale/2fa', async (req, res) => {
   }
 
   try {
-    // Tenter d'effacer le cookie temporaire immédiatement pour des raisons de sécurité.
-    // L'ajout du domaine garantit l'effacement.
+    // Tenter d'effacer le cookie temporaire immédiatement pour des raisons de sécurité après récupération
     res.clearCookie('2fa_pending_id', {
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'Lax',
-        domain: process.env.NODE_ENV === 'production' ? 'uap.immo' : undefined
+        // domain: 'uap.immo' <--- SUPPRIMÉ
     });
     
     const user = await User.findById(userId);
@@ -1643,11 +1639,19 @@ app.post('/:locale/2fa', async (req, res) => {
 
     if (!verified) {
       req.flash('error', 'Code 2FA invalide.');
+      // Si l'échec est ici, on redéfinit le cookie temporaire pour qu'il puisse réessayer.
+      // Cela évite de renvoyer l'utilisateur à /login
+      res.cookie('2fa_pending_id', user._id.toString(), {
+            maxAge: 300000, 
+            httpOnly: false, 
+            secure: process.env.NODE_ENV === 'production',
+            sameSite: 'Lax',
+            // domain: 'uap.immo' <--- SUPPRIMÉ
+        });
       return res.redirect(`/${locale}/2fa`);
     }
 
     // Connexion réussie: FORCER LA NOUVELLE SESSION
-    // C'est ici que le problème se produit: on doit s'assurer que l'objet 'user' est sérialisable.
     req.login(user, (err) => {
       if (err) {
         console.error('❌ ÉCHEC FINAL DE REQ.LOGIN APRÈS 2FA:', err);
@@ -1666,7 +1670,6 @@ app.post('/:locale/2fa', async (req, res) => {
     res.redirect(`/${locale}/login`);
   }
 });
-
 // REMPLACEZ app.post('/add-property', ...) PAR CECI :
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
