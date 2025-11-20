@@ -60,7 +60,6 @@ app.use(helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
         
-        // Scripts: Ajout de 'cdn.jsdelivr.net' et des sous-domaines GA
         scriptSrc: [
             "'self'", 
             "https://www.googletagmanager.com", 
@@ -69,40 +68,48 @@ app.use(helmet.contentSecurityPolicy({
             "https://www.gstatic.com", 
             "https://www.paypalobjects.com", 
             "https://cdnjs.cloudflare.com",
-            "https://cdn.jsdelivr.net", // <== AJOUTÉ POUR BOOTSTRAP JS
+            "https://cdn.jsdelivr.net",
             "'unsafe-inline'", 
             "'unsafe-eval'"
         ],
         
-        // Styles: Ajout de 'cdnjs.cloudflare.com'
         styleSrc: [
             "'self'", 
             "https://pro.fontawesome.com", 
             "https://unpkg.com", 
             "https://cdn.jsdelivr.net", 
             "https://fonts.googleapis.com", 
-            "https://cdnjs.cloudflare.com", // <== AJOUTÉ POUR FONT AWESOME
+            "https://cdnjs.cloudflare.com", 
             "'unsafe-inline'"
         ],
         
-        // Images:
         imgSrc: ["'self'", "data:", "https://flagcdn.com", "https://www.google-analytics.com", "https://www.paypalobjects.com"],
         
-        // Connexions/Fetch: Ajout de 'region1' pour Google Analytics
+        // Connexions/Fetch: AJOUT DE *.map POUR LES SOURCE MAPS DE CDN
         connectSrc: [
             "'self'", 
             "https://www.google-analytics.com",
-            "https://region1.google-analytics.com", // <== AJOUTÉ POUR ANALYTICS
+            "https://region1.google-analytics.com", 
             "https://nominatim.openstreetmap.org", 
-            "https://www.google.com"
+            "https://www.google.com",
+            "https://cdn.jsdelivr.net" // <== AJOUTÉ POUR LES CONNEXIONS/MAPS
         ],
         
-        // Iframes:
         frameSrc: ["'self'", "https://www.youtube.com", "https://www.google.com", "https://www.recaptcha.net"],
         
-        // Polices:
-        fontSrc: ["'self'", "https://pro.fontawesome.com", "https://fonts.gstatic.com"],
+        // Polices: AJOUT DE CLOUDFLARE POUR LES FONTS
+        fontSrc: [
+            "'self'", 
+            "https://pro.fontawesome.com", 
+            "https://fonts.gstatic.com",
+            "https://cdnjs.cloudflare.com" // <== AJOUTÉ POUR LES POLICES
+        ],
         
+        // NOUVELLE DIRECTIVE CRUCIALE POUR LES ONCLICK INLINE
+        // Note: La directive script-src-attr est implicite et prend 'none' par défaut.
+        // Nous allons l'autoriser ici pour vos onclick.
+        scriptSrcAttr: ["'unsafe-inline'"], 
+
         formAction: ["'self'", "https://www.paypal.com"] 
     }
 }));
