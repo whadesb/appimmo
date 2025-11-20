@@ -1242,48 +1242,54 @@ const renderAdminOrders = async (req, res, next) => {
 
 app.get('/admin/orders/:userId', isAuthenticated, isAdmin, renderAdminOrders);
 app.get('/:locale/admin/orders/:userId', isAuthenticated, isAdmin, renderAdminOrders);
-app.get('/:locale/enable-2fa', async (req, res) => {
-    // ... (Logique locale et traduction) ...
+app.get('/:locale/enable-2fa', isAuthenticated, async (req, res) => { // ⬅️ AJOUT DE 'async' ICI
+  const locale = req.params.locale || 'fr';
 
-    // REMPLACER cette vérification si elle existe déjà dans votre code:
-    // if (!req.session.tmpUserId) { return res.redirect... }
-
-    // On s'assure que l'utilisateur est connecté pour la session d'inscription
+  try {
+    // L'ID est maintenant accessible via req.user (car req.logIn a réussi)
+    // Nous vérifions si l'utilisateur est bien connecté via isAuthenticated
     if (!req.isAuthenticated()) {
         return res.redirect(`/${locale}/login`);
     }
 
-    try {
-        // L'ID est maintenant accessible via req.user (car req.logIn a réussi)
-        const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id);
 
-        // ... (le reste de la logique de génération du QR code) ...
+    // Si l'utilisateur a déjà un secret, on ne le régénère pas
+    if (!user.twoFactorSecret) {
+      const secret = speakeasy.generateSecret({ name: `UAP Immo (${user.email})` });
+      user.twoFactorSecret = secret.base32;
+      await user.save();
+    }
 
-    } catch (error) {
-        // ... (gestion des erreurs) ...
-    }
-});
+    const otpAuthUrl = speakeasy.otpauthURL({
+      secret: user.twoFactorSecret,
+      label: `UAP Immo (${user.email})`,
+      issuer: 'UAP Immo',
+      encoding: 'base32'
+    });
 
-    const qrCode = await QRCode.toDataURL(otpAuthUrl);
+    const qrCode = await QRCode.toDataURL(otpAuthUrl); // L'await est maintenant valide
 
-    const translationsPath = `./locales/${locale}/enable-2fa.json`;
-    const i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    const translationsPath = `./locales/${locale}/enable-2fa.json`;
+    const i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
 
 res.render('enable-2fa', {
-  locale,
-  i18n,
-  user,
-  qrCode,
-  messages: req.flash(),
-  currentPath: req.originalUrl,
-  showAccountButtons: false // 🔐 cache Mon compte / Déconnexion
+  locale,
+  i18n,
+  user,
+  qrCode,
+  messages: req.flash(),
+  currentPath: req.originalUrl,
+  showAccountButtons: false // 🔐 cache Mon compte / Déconnexion
 });
-  } catch (error) {
-    console.error("Erreur dans GET /enable-2fa :", error);
-    req.flash('error', 'Erreur lors de la génération du code QR.');
-    res.redirect(`/${locale}/user`);
-  }
+  } catch (error) {
+    console.error("Erreur dans GET /enable-2fa :", error);
+    req.flash('error', 'Erreur lors de la génération du code QR.');
+    res.redirect(`/${locale}/user`);
+  }
 });
+
+  
 
 
 app.post('/:locale/enable-2fa', isAuthenticated, async (req, res) => {
