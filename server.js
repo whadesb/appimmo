@@ -58,30 +58,51 @@ const app = express();
 app.set('trust proxy', 1);
 app.use(helmet.contentSecurityPolicy({
     directives: {
-        // Source par défaut: Autorise uniquement les ressources de la même origine ('self')
         defaultSrc: ["'self'"],
         
-        // Scripts: Autorise self, GTM, Google/Gstatic, PayPal, CDN (cdnjs)
-        // **IMPORTANT:** AJOUT DE 'unsafe-inline' POUR LES FONCTIONS onclick et les scripts dans le HTML
-        scriptSrc: ["'self'", "https://www.googletagmanager.com", "https://www.google.com", "https://www.gstatic.com", "https://www.paypalobjects.com", "https://cdnjs.cloudflare.com", "'unsafe-inline'", "'unsafe-eval'"],
+        // Scripts: Ajout de 'cdn.jsdelivr.net' et des sous-domaines GA
+        scriptSrc: [
+            "'self'", 
+            "https://www.googletagmanager.com", 
+            "https://www.google-analytics.com", 
+            "https://www.google.com", 
+            "https://www.gstatic.com", 
+            "https://www.paypalobjects.com", 
+            "https://cdnjs.cloudflare.com",
+            "https://cdn.jsdelivr.net", // <== AJOUTÉ POUR BOOTSTRAP JS
+            "'unsafe-inline'", 
+            "'unsafe-eval'"
+        ],
         
-        // Styles: Autorise self, FontAwesome, unpkg/cdn.jsdelivr, Google Fonts
-        // **IMPORTANT:** AJOUT DE 'unsafe-inline' POUR VOS BALISES <style> et styles inline (comme dans cookie_banner.ejs)
-        styleSrc: ["'self'", "https://pro.fontawesome.com", "https://unpkg.com", "https://cdn.jsdelivr.net", "https://fonts.googleapis.com", "'unsafe-inline'"],
+        // Styles: Ajout de 'cdnjs.cloudflare.com'
+        styleSrc: [
+            "'self'", 
+            "https://pro.fontawesome.com", 
+            "https://unpkg.com", 
+            "https://cdn.jsdelivr.net", 
+            "https://fonts.googleapis.com", 
+            "https://cdnjs.cloudflare.com", // <== AJOUTÉ POUR FONT AWESOME
+            "'unsafe-inline'"
+        ],
         
-        // Images: Autorise self, data: (pour les QR codes), FlagCDN, Analytics, PayPal
+        // Images:
         imgSrc: ["'self'", "data:", "https://flagcdn.com", "https://www.google-analytics.com", "https://www.paypalobjects.com"],
         
-        // Connexions/Fetch (fetch/XHR/WebSockets): Analytics, OSM (cartes), Google
-        connectSrc: ["'self'", "https://www.google-analytics.com", "https://nominatim.openstreetmap.org", "https://www.google.com"],
+        // Connexions/Fetch: Ajout de 'region1' pour Google Analytics
+        connectSrc: [
+            "'self'", 
+            "https://www.google-analytics.com",
+            "https://region1.google-analytics.com", // <== AJOUTÉ POUR ANALYTICS
+            "https://nominatim.openstreetmap.org", 
+            "https://www.google.com"
+        ],
         
-        // Iframes: YouTube, Google, reCAPTCHA
+        // Iframes:
         frameSrc: ["'self'", "https://www.youtube.com", "https://www.google.com", "https://www.recaptcha.net"],
         
-        // Polices: FontAwesome, Google Fonts
+        // Polices:
         fontSrc: ["'self'", "https://pro.fontawesome.com", "https://fonts.gstatic.com"],
         
-        // Formulaires: Autorise la soumission des formulaires vers self et PayPal
         formAction: ["'self'", "https://www.paypal.com"] 
     }
 }));
