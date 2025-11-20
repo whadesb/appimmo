@@ -124,16 +124,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 mongoose.connect(process.env.MONGODB_URI).then(() => {
   console.log('✅ Connected to MongoDB');
 
-    // 🚨 TEST DÉMARRAGE : VÉRIFICATION DE LA COLLECTION 'users'
-    // Ce test doit s'afficher dans votre console Node.js au lancement du serveur
-    User.countDocuments({})
-        .then(count => {
-            console.log(`[TEST DÉMARRAGE] Nombre total de documents dans la collection 'users': ${count}`);
-        })
-        .catch(err => {
-            console.error('[TEST DÉMARRAGE] Erreur lors du comptage:', err);
-        });
-    // FIN DU TEST
 
 }).catch((err) => {
   console.error('❌ Error connecting to MongoDB', err);
@@ -812,19 +802,19 @@ app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
       try {
           // 1. RÉCUPÉRATION DES UTILISATEURS
           adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); 
-          
+          
           // 2. RÉCUPÉRATION DES PROPRIÉTÉS (LE FIX)
-          adminProperties = await PropertyModel.find({}) 
+          adminProperties = await PropertyModel.find({}) 
               .sort({ createdAt: -1 })
               .lean();
-          console.log(`[ROUTE USER] Propriétés Admin chargées : ${adminProperties.length}`);
+          // Supprimé : console.log(`[ROUTE USER] Propriétés Admin chargées : ${adminProperties.length}`);
 
           // 3. RÉCUPÉRATION DES COMMANDES
           adminOrders = await Order.find({})
               .sort({ paidAt: -1, createdAt: -1 })
               .populate('userId', 'firstName lastName email')
               .lean();
-          
+          
       } catch (e) {
           console.error("Erreur Mongoose dans la route /user lors de la récup. admin:", e);
       }
