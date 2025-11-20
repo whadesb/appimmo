@@ -2629,7 +2629,8 @@ ${JSON.stringify(jsonLD)}
 
       /* EXTRA INFO (DPE / INFOS / MAP / GALERIE) ---------------------------- */
       .extra-block {
-        margin-top: 32px;
+        margin-top: 20vh;
+        margin-bottom: 20vh;
         border-radius: 24px;
         background: #fff;
         box-shadow: 0 20px 45px rgba(0,0,0,0.06);
