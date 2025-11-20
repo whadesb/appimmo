@@ -697,13 +697,18 @@ progress {
         <li class="nav-item sidebar-mobile-links sidebar-links">
           <a class="nav-link click-scroll" href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i> <%= i18n.stats %></a>
         </li>
-        <% /* NOUVEAU LIEN MOBILE REDONDANT - AVEC PASTILLE */ %>
+<% /* LIEN MOBILE REDONDANT - AVEC PASTILLE VERTE */ %>
 <li class="nav-item sidebar-mobile-links sidebar-links">
   <a class="nav-link click-scroll position-relative d-inline-flex align-items-center" href="#" onclick="showSection('created-pages')">
     <i class="fa fa-file-alt me-2"></i> 
     <%= i18n.created_pages %>
     <% if (userLandingPages && userLandingPages.length > 0) { %>
-      <span class="badge rounded-pill bg-danger notif-badge ms-1">
+      <span class="badge rounded-pill bg-success ms-1"
+            style="
+              padding: 0.25em 0.6em;
+              line-height: 1;
+              font-size: 0.75rem;
+            ">
         <%= userLandingPages.length %>
       </span>
     <% } %>
@@ -814,11 +819,18 @@ progress {
   <a href="#" onclick="showSection('landing')"><i class="fa fa-pencil-alt"></i></a>
   <a href="#" onclick="showSection('donnees')"><i class="fa-solid fa-chart-line"></i></a>
   <% /* NOUVEAU LIEN SIDEBAR - AVEC PASTILLE */ %>
+<% /* SIDEBAR DESKTOP - AVEC PASTILLE VERTE */ %>
 <a href="#" onclick="showSection('created-pages')" class="position-relative">
   <i class="fa fa-file-alt"></i>
   <% if (userLandingPages && userLandingPages.length > 0) { %>
-    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger notif-badge" 
-          style="font-size: 0.6rem; padding: 0.3em 0.5em; right: -5px; top: 0px;">
+    <span class="position-absolute translate-middle badge rounded-pill bg-success" 
+          style="
+            font-size: 0.6rem; 
+            padding: 0.3em 0.5em; 
+            line-height: 1;
+            right: 0px;
+            top: 2px;
+          ">
       <%= userLandingPages.length %>
       <span class="visually-hidden">nouvelles pages</span>
     </span>
