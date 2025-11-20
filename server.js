@@ -864,60 +864,55 @@ app.get('/:locale/user', ensureAuthenticated, async (req, res) => {
 });
 
 app.get('/admin/users', isAuthenticated, isAdmin, async (req, res, next) => {
-    const locale = req.user?.locale || req.locale || 'fr';
-    const user = req.user;
-    const isAdminUser = true;
+    const locale = req.user?.locale || req.locale || 'fr';
+    const user = req.user;
+    const isAdminUser = true;
 
-    // 1. Définir les variables comme vides avant le bloc try
-    let userLandingPages = [];
-    let statsArray = [];
-    let userTranslations = {};
-    let adminUsers = []; // Initialisation pour le try/catch
-    let adminOrders = [];
-    let adminProperties = [];
+    // 1. Définir les variables comme vides avant le bloc try
+    let userLandingPages = [];
+    let statsArray = [];
+    let userTranslations = {};
+    let adminUsers = []; // Initialisation pour le try/catch
+    let adminOrders = [];
+    let adminProperties = [];
 
-    try {
-        // 2. Récupération des traductions (la logique est OK)
-        const userTranslationsPath = `./locales/${locale}/user.json`;
-        try {
-            userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
-        } catch (error) {
-            console.error(`Erreur lors du chargement des traductions : ${error}`);
-        }
+    try {
+        // 2. Récupération des traductions (la logique est OK)
+        const userTranslationsPath = `./locales/${locale}/user.json`;
+        try {
+            userTranslations = JSON.parse(fs.readFileSync(userTranslationsPath, 'utf8'));
+        } catch (error) {
+            console.error(`Erreur lors du chargement des traductions : ${error}`);
+        }
 
-        // 3. Récupération de TOUS les utilisateurs (la requête critique)
-        const UserModel = mongoose.model('User');
-        adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); // On utilise lean() pour la robustesse
+        // 3. Récupération de TOUS les utilisateurs (la requête critique)
+        const UserModel = mongoose.model('User');
+        adminUsers = await UserModel.find({}).sort({ createdAt: -1 }).lean(); // On utilise lean() pour la robustesse
 
-        adminOrders = await Order.find({})
-            .sort({ paidAt: -1, createdAt: -1 })
-            .populate('userId', 'firstName lastName email')
-            .lean();
+        adminOrders = await Order.find({})
+            .sort({ paidAt: -1, createdAt: -1 })
+            .populate('userId', 'firstName lastName email')
+            .lean();
 
-        console.log(`[ROUTE ADMIN] Nombre d'utilisateurs trouvés : ${adminUsers.length}`);
 
-        // Note: userLandingPages et statsArray sont laissés vides car ils sont spécifiques
-        // à l'utilisateur, mais nécessaires pour le rendu général de 'user.ejs'.
-
-        // 4. Rendu de la vue 'user' avec toutes les variables attendues
-        res.render('user', {
-            locale,
-            user,
-            i18n: userTranslations, // Doit être passé après chargement
-            currentPath: req.originalUrl,
-            userLandingPages,       // Tableau vide si non calculé
-            stats: statsArray,       // Tableau vide
-            currentUser: user,
-            adminUsers,             // Le tableau rempli (taille 6)
-            adminOrders,
-            adminProperties,
-            activeSection: 'admin-users',
-            isAdminUser: isAdminUser
-        });
-    } catch (error) {
-        console.error('Erreur lors de la récupération des utilisateurs admin :', error);
-        next(error);
-    }
+        res.render('user', {
+            locale,
+            user,
+            i18n: userTranslations, // Doit être passé après chargement
+            currentPath: req.originalUrl,
+            userLandingPages,       // Tableau vide si non calculé
+            stats: statsArray,       // Tableau vide
+            currentUser: user,
+            adminUsers,             // Le tableau rempli (taille 6)
+            adminOrders,
+            adminProperties,
+            activeSection: 'admin-users',
+            isAdminUser: isAdminUser
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des utilisateurs admin :', error);
+        next(error);
+    }
 });
 
 
