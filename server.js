@@ -169,11 +169,15 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
-  cookie: { 
-  maxAge: 1000 * 60 * 60 * 2,
-  secure: process.env.NODE_ENV === 'production', 
-    sameSite: 'Lax'
-  }
+  cookie: { 
+        maxAge: 1000 * 60 * 60 * 2, // 2 heures
+        
+        // 🔑 CORRECTION 1: DOIT ÊTRE TRUE EN PROD (HTTPS)
+        secure: process.env.NODE_ENV === 'production', 
+        
+        // 🔑 CORRECTION 2: Ajout de SameSite pour la sécurité et la compatibilité
+        sameSite: 'Lax' // 'Lax' ou 'Strict' sont recommandés en production
+    }
 }));
 
 app.use('/', qrRoutes);
