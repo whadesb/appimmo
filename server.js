@@ -1537,31 +1537,44 @@ app.post('/:locale/register', async (req, res) => {
     res.redirect(`/${locale}/register`);
   }
 });
-app.get('/:locale/2fa', (req, res) => {
-  const { locale } = req.params;
+app.get('/:locale/2fa', async (req, res) => { // ⬅️ AJOUT DE 'async' ICI
+  const { locale } = req.params;
 
-  if (!req.session.tmpUserId) {
-    return res.redirect(`/${locale}/login`);
-  }
+  // 🔑 Identifiant de l'utilisateur. On utilise req.user s'il existe (session OK) 
+  // OU on utilise req.session.tmpUserId (session post-login)
+  const userId = req.user?._id || req.session.tmpUserId; 
 
-  const translationsPath = `./locales/${locale}/2fa.json`;
-  let i18n = {};
-  try {
-    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
-  } catch (error) {
-    console.error(`Erreur lors du chargement des traductions pour ${locale}:`, error);
-    return res.status(500).send('Erreur lors du chargement des traductions.');
-  }
+  if (!userId) {
+    console.warn('⚠️ Redirection vers /2fa échouée: ID utilisateur manquant dans la session.');
+    return res.redirect(`/${locale}/login`);
+  }
+  
+  const translationsPath = `./locales/${locale}/2fa.json`;
+  let i18n = {};
 
-  res.render('2fa', {
-  locale,
-  i18n,
-  messages: req.flash(),
-  currentPath: req.originalUrl,
-  showAccountButtons: false 
+  try {
+    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+
+    // Optionnel: Charger l'utilisateur pour s'assurer qu'il existe et a la 2FA activée
+    const user = await User.findById(userId);
+    if (!user || !user.twoFactorEnabled) {
+        // Si l'utilisateur a perdu son statut 2FA, on nettoie la session temporaire.
+        delete req.session.tmpUserId;
+        return res.redirect(`/${locale}/login`);
+    }
+
+  } catch (error) {
+    console.error(`Erreur chargement traductions 2FA:`, error);
+    return res.status(500).send('Erreur chargement traductions');
+  }
+
+  res.render('2fa', {
+    locale,
+    i18n,
+    messages: req.flash(),
+    currentPath: req.originalUrl,
+    showAccountButtons: false
 });
-
-
 });
 
 
