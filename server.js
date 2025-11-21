@@ -169,13 +169,12 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  // AJOUTEZ CETTE LIGNE :
-  proxy: true, 
+  proxy: true, // ⬅️ AJOUT CRUCIAL POUR LES COOKIES SÉCURISÉS DERRIÈRE UN PROXY
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { 
         maxAge: 1000 * 60 * 60 * 2, 
-        secure: process.env.NODE_ENV === 'production', // Doit être true en prod
-        sameSite: 'Lax', // 'Lax' est plus tolérant que 'Strict' pour les redirections
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'Lax', // Garder Lax, c'est le standard
         httpOnly: true
     }
 }));
@@ -1617,7 +1616,7 @@ app.post('/:locale/2fa', async (req, res) => {
   const { locale } = req.params;
   const { code } = req.body;
 
-  const userId = req.cookies['2fa_pending_id']; 
+  const userId = req.cookies['2fa_pending_id'];
 
   if (!userId) {
     console.warn('2FA POST: Cookie manquant. Retour au login.');
@@ -1641,16 +1640,10 @@ app.post('/:locale/2fa', async (req, res) => {
 
     if (!verified) {
       req.flash('error', 'Code 2FA invalide.');
-      // On ne supprime pas le cookie ici pour permettre de réessayer
       return res.redirect(`/${locale}/2fa`);
     }
 
-    // ✅ CODE VALIDE
-    
-    // 1. On supprime le cookie temporaire MAINTENANT
-    res.clearCookie('2fa_pending_id');
-
-    // 2. On connecte l'utilisateur
+    // ✅ Connexion réussie
     req.login(user, (err) => {
       if (err) {
         console.error('❌ ÉCHEC REQ.LOGIN POST-2FA:', err);
@@ -1658,11 +1651,14 @@ app.post('/:locale/2fa', async (req, res) => {
         return res.redirect(`/${locale}/login`);
       }
 
-      // 3. On force la sauvegarde
+      // ❌ ON SUPPRIME LA LIGNE res.clearCookie('2fa_pending_id');
+      // On laisse le cookie expirer seul pour éviter le conflit d'en-têtes.
+
       req.session.save((saveErr) => {
           if (saveErr) console.error("Erreur sauvegarde session:", saveErr);
           
           console.log(`✅ 2FA validée. Session ${req.sessionID} active pour ${user.email}.`);
+          // On redirige. Le navigateur ne recevra qu'un seul Set-Cookie (celui de la session)
           return res.redirect(`/${locale}/user`);
       });
     });
