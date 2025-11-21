@@ -2616,12 +2616,13 @@ ${JSON.stringify(jsonLD)}
       }
 
       .property-lorem {
-        font-size: 0.9rem;
+        font-size: 1rem;
+        font-weight: 500;
         letter-spacing: 0.16em;
         border-bottom: 1px solid #C4B990;
         padding-bottom: 4px;
         margin-bottom: 16px;
-        color: #7a7a7a;
+        color: #000000;
       }
 
       .property-title {
