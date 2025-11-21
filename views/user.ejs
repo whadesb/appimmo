@@ -1616,7 +1616,19 @@ progress {
                 </td>
                 <td><%= [property.contactFirstName, property.contactLastName].filter(Boolean).join(' ') || 'NC' %></td>
                 <td><%= property.contactPhone || 'NC' %></td>
-                <td <% if (descriptionText) { %>title="<%= descriptionText %>"<% } %>><%= descriptionText ? truncatedDescription : 'NC' %></td>
+                <td>
+    <% if (descriptionText) { %>
+        <span 
+            style="cursor: copy;" 
+            title="Double-cliquez pour copier tout le texte"
+            data-full="<%= descriptionText.replace(/"/g, '&quot;') %>" 
+            ondblclick="copyAdminDescription(this)">
+            <%= truncatedDescription %>
+        </span>
+    <% } else { %>
+        NC
+    <% } %>
+</td>
                <td class="text-nowrap">
 <div class="d-flex flex-nowrap gap-2">
 <% if (property.url) { %>
@@ -3242,6 +3254,37 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
+</script>
+<script>
+/**
+ * Fonction pour copier le texte complet en mode Admin
+ * Déclenchée par un double-clic sur la description
+ */
+function copyAdminDescription(element) {
+    // Récupère le texte complet caché dans l'attribut data-full
+    const fullText = element.getAttribute('data-full');
+    const originalText = element.innerText; // Le texte tronqué (ex: "Belle maison...")
+
+    if (!fullText) return;
+
+    // Copie dans le presse-papier
+    navigator.clipboard.writeText(fullText).then(() => {
+        // Feedback visuel : Change le texte et la couleur
+        element.innerText = "✅ Copié !";
+        element.style.color = "#198754"; // Vert
+        element.style.fontWeight = "bold";
+        
+        // Revient à la normale après 1.5 secondes
+        setTimeout(() => {
+            element.innerText = originalText;
+            element.style.color = "";
+            element.style.fontWeight = "";
+        }, 1500);
+    }).catch(err => {
+        console.error('Erreur lors de la copie :', err);
+        alert("Impossible de copier le texte.");
+    });
+}
 </script>
 <!-- ======================================================= -->
 <!-- MODAL / BANDEAU DE CONSENTEMENT COOKIE TECHNIQUE -->
