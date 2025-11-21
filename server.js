@@ -457,7 +457,6 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
       return res.status(500).send('Erreur lors du chargement des traductions.');
     }
 
-    // ✅ Déclarer la config AVANT le render (une seule fois)
     const cfg = getPaypalConfig();
 
     res.render('payment', {
@@ -471,8 +470,9 @@ app.get('/:locale/payment', isAuthenticated, async (req, res) => {
       country: property.country,
       url: property.url,
       currentPath: req.originalUrl,
-      // ✅ Une seule ligne PAYPAL_CLIENT_ID
-      PAYPAL_CLIENT_ID: cfg.clientId
+      PAYPAL_CLIENT_ID: cfg.clientId,
+      // 🔑 AJOUT : On passe l'utilisateur complet à la vue pour afficher ses infos
+      user: req.user 
     });
   } catch (error) {
     console.error('Error fetching property:', error);
