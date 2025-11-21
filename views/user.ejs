@@ -870,13 +870,54 @@ progress {
     <p class="card-text user-info"><strong><%= i18n.name %> :</strong> <%= user.lastName %></p>
     <p class="card-text user-info"><strong><%= i18n.first_name %> :</strong> <%= user.firstName %></p>
     <p class="card-text user-info"><strong><%= i18n.email %> :</strong> <%= user.email %></p>
- <% if (user.billingAddress && user.billingAddress.street) { %>
+<!-- GESTION ADRESSE DE FACTURATION -->
         <hr class="my-3">
-        <h6 class="mb-2 text-muted"><i class="bi bi-geo-alt-fill me-2"></i>Adresse de facturation</h6>
-        <p class="card-text user-info text-muted mb-0"><%= user.billingAddress.street %></p>
-        <p class="card-text user-info text-muted mb-0"><%= user.billingAddress.zipCode %> <%= user.billingAddress.city %></p>
-        <p class="card-text user-info text-muted"><%= user.billingAddress.country %></p>
-    <% } %>
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h6 class="mb-0 text-muted"><i class="bi bi-geo-alt-fill me-2"></i>Adresse de facturation</h6>
+            <button class="btn btn-sm btn-outline-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#editAddressCollapse" aria-expanded="false">
+                <i class="bi bi-pencil-square"></i> <%= (user.billingAddress && user.billingAddress.street) ? 'Modifier' : 'Ajouter' %>
+            </button>
+        </div>
+
+        <!-- Affichage de l'adresse (si existante) -->
+        <div id="address-display" class="<%= (user.billingAddress && user.billingAddress.street) ? '' : 'd-none' %>">
+            <p class="card-text user-info text-muted mb-0" id="display-street"><%= user.billingAddress ? user.billingAddress.street : '' %></p>
+            <p class="card-text user-info text-muted mb-0">
+                <span id="display-zip"><%= user.billingAddress ? user.billingAddress.zipCode : '' %></span> 
+                <span id="display-city"><%= user.billingAddress ? user.billingAddress.city : '' %></span>
+            </p>
+            <p class="card-text user-info text-muted" id="display-country"><%= user.billingAddress ? user.billingAddress.country : '' %></p>
+        </div>
+        
+        <div id="address-empty-msg" class="<%= (user.billingAddress && user.billingAddress.street) ? 'd-none' : '' %>">
+            <p class="text-muted small"><em>Aucune adresse enregistrée.</em></p>
+        </div>
+
+        <!-- Formulaire d'édition (Caché par défaut) -->
+        <div class="collapse mt-3" id="editAddressCollapse">
+            <div class="card card-body bg-light border-0 p-3">
+                <form id="dashboard-address-form">
+                    <div class="mb-2">
+                        <input type="text" id="dash-street" class="form-control form-control-sm" placeholder="N° et Rue" value="<%= user.billingAddress ? user.billingAddress.street : '' %>" required>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-6">
+                            <input type="text" id="dash-zip" class="form-control form-control-sm" placeholder="Code Postal" value="<%= user.billingAddress ? user.billingAddress.zipCode : '' %>" required>
+                        </div>
+                        <div class="col-6">
+                            <input type="text" id="dash-city" class="form-control form-control-sm" placeholder="Ville" value="<%= user.billingAddress ? user.billingAddress.city : '' %>" required>
+                        </div>
+                    </div>
+                    <div class="mb-2">
+                        <input type="text" id="dash-country" class="form-control form-control-sm" placeholder="Pays" value="<%= user.billingAddress ? user.billingAddress.country : '' %>" required>
+                    </div>
+                    <button type="submit" class="btn btn-dark btn-sm w-100" id="btn-save-addr">
+                        Enregistrer l'adresse
+                    </button>
+                </form>
+            </div>
+        </div>
+        <!-- FIN GESTION ADRESSE -->
     <p class="card-text user-info d-flex align-items-center">
       <strong><%= i18n.two_factor_auth %></strong>
       <% if (!user.twoFactorEnabled) { %>
