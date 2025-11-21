@@ -13,6 +13,7 @@
     'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
     })(window,document,'script','dataLayer','GTM-TF7HSC3N');
   </script>
+  <!-- Fin Google Tag Manager -->
 
   <!-- CSS -->
   <link href="/css/bootstrap.min.css" rel="stylesheet">
@@ -23,8 +24,8 @@
     .form-container {
         max-width: 600px;
         margin: 50px auto;
-        padding: 30px; /* Un peu plus d'espace */
-        background: #fff; /* Fond blanc pour plus de propreté */
+        padding: 30px;
+        background: #fff;
         border-radius: 12px;
         box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
     }
@@ -64,7 +65,7 @@
 
     .new-section {
         padding: 60px 0;
-        background-color: #f0f2f5; /* Fond de page légèrement grisé */
+        background-color: #f0f2f5;
     }
     .hero-section {
         padding-top: 100px;
@@ -80,7 +81,7 @@
 
     /* --- STYLE BOUTON BITCOIN --- */
     .btn-btc {
-        background-color: #F7931A; 
+        background-color: #F7931A;
         border-color: #F7931A;
         color: #fff;
         font-weight: 600;
@@ -96,7 +97,6 @@
         border-color: #d87d10;
         color: #fff;
     }
-    /* --------------------------- */
 
     .navbar { background-color: #C4B990; }
     .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon { color: #000; }
@@ -248,20 +248,40 @@
             <p><strong>Nom :</strong> <%= user.lastName.toUpperCase() %></p>
             <p><strong>Prénom :</strong> <%= user.firstName %></p>
             <p><strong>Email :</strong> <%= user.email %></p>
+            
+            <!-- FORMULAIRE ADRESSE INTEGRE -->
+            <div id="address-form" class="mt-3 pt-3 border-top border-secondary">
+                <p class="mb-2"><strong>Adresse :</strong></p>
+                <div class="row g-2">
+                    <div class="col-12">
+                        <input type="text" id="street" class="form-control form-control-sm" placeholder="N° et Rue" value="<%= user.billingAddress ? user.billingAddress.street : '' %>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" id="postalCode" class="form-control form-control-sm" placeholder="Code Postal" value="<%= user.billingAddress ? user.billingAddress.zipCode : '' %>" required>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" id="city" class="form-control form-control-sm" placeholder="Ville" value="<%= user.billingAddress ? user.billingAddress.city : '' %>" required>
+                    </div>
+                    <div class="col-12">
+                        <input type="text" id="country" class="form-control form-control-sm" placeholder="Pays" value="<%= user.billingAddress ? user.billingAddress.country : '' %>" required>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- BOUTON DE VALIDATION -->
         <div id="validation-step">
-             <p class="form-text text-muted mb-3"><small><i class="bi bi-info-circle"></i> En cliquant sur "Valider et Payer", vous confirmez l'exactitude de vos informations.</small></p>
+             <p class="form-text text-muted mb-3"><small><i class="bi bi-info-circle"></i> Confirmez vos coordonnées pour voir les options de paiement.</small></p>
              <button id="btn-validate-info" class="btn btn-primary w-100 py-2 fw-bold">
-                 Valider et choisir le paiement
+                 Confirmer l'adresse et Payer
              </button>
+             <div id="save-msg" class="text-center mt-2" style="display:none;"></div>
         </div>
         
         <!-- ZONE DE PAIEMENT (CACHÉE PAR DÉFAUT) -->
         <div id="payment-options" class="collapse mt-4">
-            <div class="alert alert-light border text-center mb-4">
-                <p class="mb-1"><strong>Choisissez votre moyen de paiement sécurisé :</strong></p>
+            <div class="alert alert-success border text-center mb-4">
+                <i class="bi bi-check-circle-fill me-2"></i> Adresse validée. Choisissez votre moyen de paiement :
             </div>
             
             <div class="row g-3 align-items-start">
@@ -351,21 +371,57 @@
 <script src="https://www.paypal.com/sdk/js?client-id=<%= PAYPAL_CLIENT_ID %>&currency=EUR&intent=capture&components=buttons&disable-funding=card,credit,bancontact,blik,eps,giropay,ideal,mybank,p24,sepa,sofort"></script>
 
 <script>
-    // Gestion de l'étape de validation
-    document.getElementById('btn-validate-info').addEventListener('click', function() {
-        // 1. Cacher le bouton de validation
-        document.getElementById('validation-step').style.display = 'none';
+    // --- LOGIQUE DE SAUVEGARDE ADRESSE ---
+    document.getElementById('btn-validate-info').addEventListener('click', async function() {
+        const btn = this;
+        const msg = document.getElementById('save-msg');
         
-        // 2. Dérouler la zone de paiement
-        var paymentOptions = document.getElementById('payment-options');
-        var bsCollapse = new bootstrap.Collapse(paymentOptions, {
-            toggle: true
-        });
+        const street = document.getElementById('street').value;
+        const zipCode = document.getElementById('postalCode').value;
+        const city = document.getElementById('city').value;
+        const country = document.getElementById('country').value;
+
+        if (!street || !zipCode || !city || !country) {
+            alert("Veuillez remplir tous les champs de l'adresse.");
+            return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Sauvegarde...';
+
+        try {
+            const response = await fetch('/api/user/update-address', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ street, zipCode, city, country })
+            });
+            
+            const result = await response.json();
+
+            if (result.success) {
+                // Cacher le bouton et montrer les options de paiement
+                document.getElementById('validation-step').style.display = 'none';
+                
+                var paymentOptions = document.getElementById('payment-options');
+                var bsCollapse = new bootstrap.Collapse(paymentOptions, {
+                    toggle: true
+                });
+            } else {
+                alert('Erreur: ' + result.message);
+                btn.disabled = false;
+                btn.innerHTML = "Confirmer l'adresse et Payer";
+            }
+        } catch (error) {
+            console.error(error);
+            alert('Erreur de connexion');
+            btn.disabled = false;
+            btn.innerHTML = "Confirmer l'adresse et Payer";
+        }
     });
 </script>
 
 <script>
-// --- PAYPAL LOGIC ---
+// --- PAYPAL LOGIC (Reste inchangée) ---
 function initPaypal() {
   paypal.Buttons({
     style: {
@@ -452,6 +508,10 @@ document.getElementById('btc-button').addEventListener('click', async function (
       const result = await response.json().catch(() => ({}));
 
       if (response.ok && result.success && result.invoiceUrl) {
+          // Mise à jour libellé
+          const pm = document.getElementById('payment-method');
+          if (pm) pm.textContent = '<%= i18n.pay_with_btc %>';
+
           // Injection Iframe
           const iframe = document.getElementById('btcpay-iframe');
           const modalEl = document.getElementById('btcpay-modal');
