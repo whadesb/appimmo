@@ -2279,62 +2279,76 @@ app.get('/user/orders', isAuthenticated, async (req, res) => {
 });
 
 app.get('/user/orders/:orderId/invoice', isAuthenticated, async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const query = { _id: orderId };
+  try {
+    const { orderId } = req.params;
+    
+    // Sécurisation : L'admin peut tout voir, l'utilisateur ne voit que les siennes
+    const query = { _id: orderId };
+    if (!req.user || req.user.role !== 'admin') {
+      query.userId = req.user._id;
+    }
 
-    if (!req.user || req.user.role !== 'admin') {
-      query.userId = req.user._id;
-    }
+    const order = await Order.findOne(query);
 
-    const order = await Order.findOne(query);
+    if (!order) {
+      return res.status(404).json({ error: 'Commande introuvable' });
+    }
 
-    if (!order) {
-      return res.status(404).json({ error: 'Commande introuvable' });
-    }
-
-    if (order.status !== 'paid') {
-      return res.status(400).json({ error: 'La facture est disponible après confirmation du paiement.' });
-    }
-    
-    // --- DÉFINITION DES CONSTANTES POUR LE PDF (Doivent être locales à cette fonction) ---
+    if (order.status !== 'paid') {
+      return res.status(400).json({ error: 'La facture est disponible après confirmation du paiement.' });
+    }
+    
+    // --- DÉFINITION DES CONSTANTES POUR LE PDF ---
+    // Ces infos sont nécessaires car elles ne sont pas en BDD
     const clientDetails = {
-        // Utilise req.user car le paiement est lié à l'utilisateur connecté
         userId: req.user._id.toString(),
         firstName: req.user.firstName,
         lastName: req.user.lastName,
     };
     const companyDetails = {
         name: 'UAP Immo',
-        address: ['123 Rue de la Liberté', '75000 Paris'], // 👈 VOS VRAIES ADRESSES
-        siret: '123 456 789 00012', // 👈 VOTRE VRAI SIRET
-        tva: 'FR12345678901', // 👈 VOTRE VRAI NUMÉRO (ou N/A)
+        address: ['123 Rue de la Liberté', '75000 Paris'], // 👈 VOS ADRESSES
+        siret: '123 456 789 00012', // 👈 VOTRE SIRET
+        tva: 'FR12345678901', // 👈 VOTRE TVA
     };
     const serviceDetails = {
         product: 'Pack de diffusion publicitaire',
         duration: '90 jours',
     };
-    // ----------------------------------------------------------------------------------
 
-    const { invoicePath, fileBase } = await generateInvoicePDF({
-      orderIdUap: order.orderId,
-      paypalOrderId: order.paypalOrderId,
-      paypalCaptureId: order.paypalCaptureId,
-      amount: order.amount,
-      currency: order.currency || 'EUR',
-      // PASSAGE DES NOUVELLES DONNÉES :
+    // 🧠 DÉTECTION INTELLIGENTE DU MODE DE PAIEMENT
+    // Si btcPayInvoiceId existe, c'est du Bitcoin, sinon c'est PayPal
+    const paymentMethod = order.btcPayInvoiceId ? 'Bitcoin' : 'PayPal';
+
+    const { invoicePath, fileBase } = await generateInvoicePDF({
+      orderIdUap: order.orderId,
+      
+      // Si Bitcoin, on affiche l'ID BTCPay, sinon l'ID PayPal
+      paypalOrderId: order.paypalOrderId || (order.btcPayInvoiceId ? 'BTCPAY-' + order.btcPayInvoiceId : '-'),
+      
+      // Si Bitcoin, on met 'CRYPTO', sinon le Capture ID PayPal
+      paypalCaptureId: order.paypalCaptureId || (order.btcPayInvoiceId ? 'CRYPTO' : '-'),
+      
+      amount: order.amount,
+      currency: order.currency || 'EUR',
+      
+      // Passage des objets complets
       client: clientDetails,
       companyInfo: companyDetails,
-      serviceDetails: serviceDetails
-    });
+      serviceDetails: serviceDetails,
+      
+      // Passage du mode de paiement pour l'affichage dans le PDF
+      paymentMethod: paymentMethod 
+    });
 
-    return res.download(invoicePath, `facture-${fileBase}.pdf`);
-  } catch (error) {
-    console.error('Erreur lors de la génération de la facture :', error);
-    return res.status(500).json({ error: 'Impossible de générer la facture.' });
-  }
+    // Téléchargement du fichier
+    return res.download(invoicePath, `facture-${fileBase}.pdf`);
+
+  } catch (error) {
+    console.error('Erreur lors de la génération de la facture :', error);
+    return res.status(500).json({ error: 'Impossible de générer la facture.' });
+  }
 });
-
 
 
 function slugify(str) {
@@ -4169,23 +4183,19 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
 app.post('/btcpay/webhook', express.json(), async (req, res) => {
   try {
     const event = req.body;
-    // BTCPay envoie l'ID soit dans 'invoiceId', soit dans 'data.id' selon la version
     const invoiceId = event.invoiceId || event.data?.id;
 
-    // On filtre les événements qui confirment le paiement
     if (['InvoicePaid', 'InvoicePaidInFull', 'InvoiceSettled'].includes(event.type)) {
       
-      // 1. Trouver et mettre à jour la commande
       const order = await Order.findOneAndUpdate(
         { btcPayInvoiceId: invoiceId },
-        { status: 'paid', paidAt: new Date() }, // Ajout de la date de paiement
-        { new: true } // Retourne l'objet mis à jour
+        { status: 'paid', paidAt: new Date() }, 
+        { new: true } 
       ).populate('userId');
 
       if (order) {
         const user = order.userId;
 
-        // --- DÉFINITION DES DONNÉES POUR LA FACTURE (OBLIGATOIRE POUR LE PDF) ---
         const clientDetails = {
             userId: user._id.toString(),
             firstName: user.firstName,
@@ -4201,27 +4211,26 @@ app.post('/btcpay/webhook', express.json(), async (req, res) => {
             product: 'Pack de diffusion publicitaire (BTC)',
             duration: '90 jours',
         };
-        // ---------------------------------------------------------------------
 
         console.log(`💰 Paiement BTC confirmé pour la commande ${order.orderId}`);
 
-        // 2. Envoi de la facture
         try {
+            // Envoi de l'email avec le paramètre 'Bitcoin' à la fin
             await sendInvoiceByEmail(
               user.email,
               `${user.firstName} ${user.lastName}`,
               order.orderId,
-              'BTCPAY-' + invoiceId, // On utilise l'ID BTC comme ref PayPal pour l'affichage
-              'CRYPTO',              // Capture ID fictif
+              'BTCPAY-' + invoiceId, 
+              'CRYPTO',              
               String(order.amount),
               'EUR',
-              clientDetails,   // 👈 Argument 8
-              companyDetails,  // 👈 Argument 9
-              serviceDetails   // 👈 Argument 10
+              clientDetails,   
+              companyDetails,  
+              serviceDetails,
+              'Bitcoin' // <== INDIQUE QUE C'EST UN PAIEMENT CRYPTO
             );
         } catch (emailErr) {
             console.error('⚠️ Erreur envoi email facture BTC:', emailErr.message);
-            // On ne renvoie pas d'erreur 500 à BTCPay car la commande est validée
         }
 
       } else {
@@ -4229,7 +4238,6 @@ app.post('/btcpay/webhook', express.json(), async (req, res) => {
       }
     }
 
-    // Toujours répondre 200 OK à BTCPay pour qu'il arrête d'envoyer la notification
     res.sendStatus(200);
   } catch (error) {
     console.error('❌ Erreur dans le webhook BTCPay :', error);
