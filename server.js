@@ -1694,6 +1694,26 @@ app.post('/:locale/2fa', async (req, res) => {
     res.redirect(`/${locale}/login`);
   }
 });
+app.post('/api/user/update-address', isAuthenticated, async (req, res) => {
+    try {
+        const { street, city, zipCode, country } = req.body;
+
+        // Mise à jour de l'utilisateur connecté
+        const user = await User.findByIdAndUpdate(req.user._id, {
+            billingAddress: {
+                street: street || '',
+                city: city || '',
+                zipCode: zipCode || '',
+                country: country || ''
+            }
+        }, { new: true }); // Retourne l'objet mis à jour
+
+        res.json({ success: true, message: 'Adresse mise à jour', user: user });
+    } catch (error) {
+        console.error('Erreur mise à jour adresse :', error);
+        res.status(500).json({ success: false, message: 'Erreur serveur lors de la sauvegarde.' });
+    }
+});
 // REMPLACEZ app.post('/add-property', ...) PAR CECI :
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
