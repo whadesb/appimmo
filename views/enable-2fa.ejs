@@ -61,7 +61,7 @@
 
     /* CONTAINER 2FA */
     .twofa-container {
-      max-width: 1100px;
+      max-width: 1000px; /* Largeur max globale légèrement réduite */
       width: 100%;
       margin: auto;
       display: flex;
@@ -86,42 +86,43 @@
     .twofa-left li::before { content: "✓"; color: #8f97c4; margin-right: 8px; }
 
     .twofa-form-wrapper {
-      flex: 0 0 420px; /* Fixe la largeur sur desktop */
+      /* MODIFICATION ICI : Largeur réduite sur desktop (360px au lieu de 420px) */
+      flex: 0 0 360px; 
       background-color: #f8f9fa;
-      padding: 32px;
+      padding: 28px; /* Padding légèrement réduit */
       border-radius: 10px;
       border: 1px solid #e2e6ea;
     }
 
     /* CLAVIER ET INPUTS */
     #code-display {
-      height: 50px;
+      height: 46px; /* Hauteur réduite */
       background: #fff;
       border: 1px solid #ced4da;
       border-radius: 8px;
-      line-height: 50px;
-      font-size: 1.6rem;
+      line-height: 46px;
+      font-size: 1.5rem;
       font-weight: 600;
       text-align: center;
-      letter-spacing: 8px;
+      letter-spacing: 6px;
     }
 
     #numeric-keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      max-width: 100%; /* Prend toute la largeur du wrapper */
-      margin: 20px auto;
+      gap: 8px; /* Espace réduit */
+      max-width: 100%; 
+      margin: 16px auto; /* Marges réduites */
     }
 
     #numeric-keypad button {
-      font-size: 1.6rem;
-      padding: 15px 0;
+      font-size: 1.4rem; /* Police réduite */
+      padding: 12px 0; /* Padding réduit */
       border-radius: 8px;
       border: 1px solid #ced4da;
       background-color: #ffffff;
       transition: transform 0.1s ease, box-shadow 0.1s ease;
-      touch-action: manipulation; /* Optimisation mobile */
+      touch-action: manipulation; 
     }
 
     #numeric-keypad button:active {
@@ -130,27 +131,27 @@
     }
 
     .btn-primary {
-      width: 100%; background-color: #8f97c4; border: none; padding: 14px;
+      width: 100%; background-color: #8f97c4; border: none; padding: 12px; /* Padding réduit */
       font-size: 1rem; font-weight: 600; border-radius: 8px;
     }
     .btn-primary:hover { background-color: #7a81b8; }
     
     .qr-code-container img {
-      max-width: 100%; height: auto; display: block; margin: auto;
-      border: 1px solid #eee; padding: 10px; background: white; border-radius: 8px;
+      max-width: 180px; /* Taille max QR code réduite pour coller au container plus petit */
+      height: auto; display: block; margin: auto;
+      border: 1px solid #eee; padding: 8px; background: white; border-radius: 8px;
     }
 
     /* --- RESPONSIVE MOBILE / TABLETTE --- */
     @media (max-width: 991px) {
       main {
-        /* Réduit le padding du haut sur mobile pour ne pas avoir un grand vide */
         padding-top: 90px;
         padding-bottom: 40px;
-        align-items: flex-start; /* Aligne en haut sur mobile */
+        align-items: flex-start; 
       }
 
       .twofa-container {
-        flex-direction: column; /* Empile les éléments */
+        flex-direction: column; 
         gap: 30px;
         padding: 0 15px;
       }
@@ -158,26 +159,33 @@
       .twofa-left {
         width: 100%;
         text-align: center;
-        order: 1; /* Instructions en premier */
+        order: 1; 
       }
       
       .twofa-left ul {
         text-align: left;
         margin: 0 auto;
-        max-width: 350px; /* Centre la liste visuellement */
+        max-width: 350px; 
       }
 
       .twofa-form-wrapper {
-        width: 100%; /* Prend toute la largeur */
-        flex: none; /* Annule la largeur fixe */
-        max-width: 450px; /* Limite la largeur max pour que ce soit joli */
+        width: 100%; 
+        flex: none; 
+        max-width: 450px; /* Sur mobile, on garde une largeur confortable */
         margin: 0 auto;
-        order: 2; /* Formulaire en dessous */
+        order: 2; 
         padding: 20px;
       }
       
+      /* Sur mobile, on remet des boutons plus grands pour le tactile */
       #numeric-keypad button {
-        padding: 20px 0; /* Boutons plus hauts pour le tactile */
+        padding: 18px 0; 
+        font-size: 1.6rem;
+      }
+      
+      #code-display {
+        height: 50px;
+        line-height: 50px;
       }
     }
     
@@ -244,18 +252,18 @@
     <!-- Colonne droite : Formulaire et Clavier -->
     <div class="twofa-form-wrapper">
       <% if (messages.error && messages.error.length > 0) { %>
-        <div class="alert alert-danger text-center py-2 mb-3"><%= messages.error[0] %></div>
+        <div class="alert alert-danger text-center py-2 mb-3" style="font-size: 0.9rem;"><%= messages.error[0] %></div>
       <% } %>
       <% if (messages.success && messages.success.length > 0) { %>
-        <div class="alert alert-success text-center py-2 mb-3"><%= messages.success[0] %></div>
+        <div class="alert alert-success text-center py-2 mb-3" style="font-size: 0.9rem;"><%= messages.success[0] %></div>
       <% } %>
 
       <form action="/<%= locale %>/enable-2fa" method="POST">
         <!-- Code QR -->
-        <div class="text-center mb-4 qr-code-container">
+        <div class="text-center mb-3 qr-code-container">
           <img src="<%= qrCode %>" alt="QR Code 2FA">
-          <p class="mt-3 mb-0 small text-muted"><strong><%= i18n.secret_label %> :</strong></p>
-          <code class="d-block mb-3" style="font-size: 1.1em; color: #333;"><%= user.twoFactorSecret %></code>
+          <p class="mt-2 mb-0 small text-muted" style="font-size: 0.85rem;"><strong><%= i18n.secret_label %> :</strong></p>
+          <code class="d-block mb-2" style="font-size: 0.95em; color: #333; word-break: break-all;"><%= user.twoFactorSecret %></code>
         </div>
 
         <!-- Zone de code -->
@@ -270,12 +278,12 @@
         <!-- Boutons -->
         <div class="row g-2 mt-3">
             <div class="col-6">
-                 <button type="button" id="clear-code" class="btn btn-outline-secondary w-100">
+                 <button type="button" id="clear-code" class="btn btn-outline-secondary w-100 py-2" style="font-size: 0.95rem;">
                     <i class="bi bi-backspace"></i> <%= i18n.menu && i18n.menu.clear_button ? i18n.menu.clear_button : (locale === 'fr' ? 'Effacer' : 'Clear') %>
                  </button>
             </div>
             <div class="col-6">
-                <button id="submit-code" type="submit" class="btn btn-primary w-100" disabled>
+                <button id="submit-code" type="submit" class="btn btn-primary w-100 py-2" style="font-size: 0.95rem;" disabled>
                     <%= i18n.menu && i18n.menu.submit_button ? i18n.menu.submit_button : i18n.verify %>
                 </button>
             </div>
