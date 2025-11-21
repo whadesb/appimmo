@@ -1396,11 +1396,15 @@ progress {
         <%= i18n.orders_table_date %>
       </span>
     </th>
+  
     <th>
       <span data-bs-toggle="tooltip" title="Statut de la commande (payée ou en attente)">
         <%= i18n.orders_table_status %>
       </span>
     </th>
+
+<th>Paiement</th>
+
     <th>
       <span data-bs-toggle="tooltip" title="Nombre de jours de diffusion restants (max 90 jours)">
         <%= i18n.orders_table_days_left %>
@@ -2515,63 +2519,86 @@ async function loadOrders() {
 
     const orders = await response.json();
     const ordersList = document.getElementById('orders-list');
+    const msg = document.getElementById('no-orders-message');
+    
+    // Nettoyage
     ordersList.innerHTML = '';
 
-    const noOrdersMessage = document.getElementById('no-orders-message');
     if (orders.length === 0) {
-      noOrdersMessage.style.display = 'block';
+      if (msg) msg.style.display = 'block';
     } else {
-      noOrdersMessage.style.display = 'none';
+      if (msg) msg.style.display = 'none';
+      
       orders.forEach(order => {
-        const orderDate = new Date(order.createdAt);
-        const expiryDate = new Date(order.expiryDate);
+        const orderDate = new Date(order.createdAt).toLocaleDateString('fr-FR');
+        const expiryDate = order.expiryDate ? new Date(order.expiryDate).toLocaleDateString('fr-FR') : '-';
+        
+        // 1. Badge Statut
+        const statusBadge = order.status === 'paid' 
+            ? '<span class="badge bg-success">Payé</span>' 
+            : '<span class="badge bg-warning text-dark">En attente</span>';
+
+        // 2. Badge Moyen de Paiement (NOUVEAU)
+        let paymentBadge = '';
+        if (order.btcPayInvoiceId) {
+            paymentBadge = '<span class="badge bg-warning text-dark"><i class="bi bi-currency-bitcoin"></i> Bitcoin</span>';
+        } else {
+            // Par défaut PayPal si pas d'ID BTCPay
+            paymentBadge = '<span class="badge bg-primary"><i class="bi bi-paypal"></i> PayPal</span>';
+        }
+
+        // 3. Barre de progression
         const today = new Date();
-        const timeDiff = expiryDate - today;
+        const exp = new Date(order.expiryDate);
+        const timeDiff = exp - today;
         const daysRemaining = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
-        const adjustedDaysRemaining = daysRemaining >= 0 ? daysRemaining : 0;
-        const progress = Math.min(((90 - adjustedDaysRemaining) / 90) * 100, 100);
+        const adjustedDays = daysRemaining >= 0 ? daysRemaining : 0;
+        const progress = Math.min(((90 - adjustedDays) / 90) * 100, 100);
 
         let progressBarColor = '#8BC34A';
-        if (adjustedDaysRemaining <= 30) progressBarColor = '#FFC107';
-        if (adjustedDaysRemaining <= 15) progressBarColor = '#FF5722';
+        if (adjustedDays <= 30) progressBarColor = '#FFC107';
+        if (adjustedDays <= 15) progressBarColor = '#FF5722';
+
+        let daysDisplay = 'Expiré';
+        if (order.status === 'paid' && adjustedDays > 0) {
+            daysDisplay = `
+                ${adjustedDays} jours
+                <div class="progress" style="height: 6px; margin-top: 5px; width: 100px;">
+                    <div class="progress-bar" role="progressbar" style="width: ${progress}%; background-color: ${progressBarColor};"></div>
+                </div>`;
+        } else if (order.status !== 'paid') {
+            daysDisplay = '-';
+        }
 
         const url = order.propertyId?.url || `/landing-pages/${order.propertyId?._id}.html`;
-        const canDownloadInvoice = order.status === 'paid';
-        const invoiceButton = canDownloadInvoice
-          ? `<button class="btn btn-sm btn-outline-danger" onclick="downloadInvoice('${order._id}')" title="Télécharger la facture">
-              <i class="bi bi-file-earmark-text"></i>
-            </button>`
-          : `<button class="btn btn-sm btn-outline-secondary disabled" title="Facture disponible après paiement">
-              <i class="bi bi-file-earmark-text"></i>
-            </button>`;
+        
+        // Boutons Actions
+        let actions = `
+            <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${url}" title="Copier l'URL"><i class="bi bi-clipboard"></i></button>
+            <button class="btn btn-sm btn-dark me-1" onclick="window.open('https://uap.immo${url}', '_blank')" title="Voir"><i class="bi bi-eye"></i></button>
+        `;
+
+        if (order.status === 'paid') {
+            actions += `<button class="btn btn-sm btn-outline-danger" onclick="downloadInvoice('${order._id}')" title="Facture"><i class="bi bi-file-earmark-text"></i></button>`;
+        } else {
+            actions += `<button class="btn btn-sm btn-outline-secondary disabled"><i class="bi bi-file-earmark-text"></i></button>`;
+        }
 
         const row = document.createElement('tr');
         row.innerHTML = `
           <td>${order.orderId || order._id}</td>
-          <td>${orderDate.toLocaleDateString('fr-FR')}</td>
-          <td>${order.status === 'paid' ? '<span class="badge bg-success">Payé</span>' : '<span class="badge bg-warning">En attente</span>'}</td>
-          <td data-bs-toggle="tooltip" title="Nombre de jours de diffusion restants">
-  ${adjustedDaysRemaining} jours restants
-  <div class="progress" style="height: 10px; margin-top: 5px;">
-    <div class="progress-bar" role="progressbar" style="width: ${progress}%; background-color: ${progressBarColor};"></div>
-  </div>
-</td>
-
-          <td>${expiryDate.toLocaleDateString('fr-FR')}</td>
-          <td>
-            <button class="btn btn-sm btn-outline-dark me-1 copy-btn" data-url="${url}" title="Copier l'URL">
-              <i class="bi bi-clipboard"></i>
-            </button>
-            <button class="btn btn-sm btn-dark me-1" onclick="window.open('https://uap.immo${url}', '_blank')" title="Voir la page">
-              <i class="bi bi-eye"></i>
-            </button>
-            ${invoiceButton}
-          </td>
+          <td>${orderDate}</td>
+          <td>${statusBadge}</td>
+          <td>${paymentBadge}</td> <!-- NOUVELLE COLONNE ICI -->
+          <td>${daysDisplay}</td>
+          <td>${expiryDate}</td>
+          <td>${actions}</td>
         `;
         ordersList.appendChild(row);
       });
     }
 
+    // Réactiver les boutons copier
     document.querySelectorAll('#orders-list .copy-btn').forEach(button => {
       button.addEventListener('click', function () {
         const url = `https://uap.immo${this.dataset.url}`;
@@ -2587,7 +2614,8 @@ async function loadOrders() {
       });
     });
   } catch (error) {
-    document.getElementById('orders-list').innerHTML = '<tr><td colspan="6" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
+    const list = document.getElementById('orders-list');
+    if(list) list.innerHTML = '<tr><td colspan="7" class="text-center">Erreur lors du chargement des commandes.</td></tr>';
     console.error(error);
   }
 }
