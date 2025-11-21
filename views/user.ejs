@@ -1673,68 +1673,77 @@ progress {
       <div class="table-responsive">
         <table class="table table-striped table-hover align-middle">
           <thead class="table-dark">
-            <tr>
-              <th scope="col"><%= i18n.admin_orders_table_order_id %></th>
-              <th scope="col"><%= i18n.admin_orders_table_date %></th>
-              <th scope="col"><%= i18n.admin_orders_table_payment_method %></th>
-              <th scope="col"><%= i18n.admin_orders_table_property_id %></th>
-              <th scope="col"><%= i18n.admin_orders_amount %></th>
-              <th scope="col"><%= i18n.admin_orders_table_currency %></th>
-              <th scope="col"><%= i18n.admin_orders_status %></th>
-              <th scope="col"><%= i18n.admin_orders_table_user_id %></th>
-              <th scope="col"><%= i18n.admin_orders_table_user_name %></th>
-              <th scope="col" class="text-center"><%= i18n.admin_orders_table_invoice %></th>
-            </tr>
-          </thead>
-          <tbody>
-            <% adminOrders.forEach(function(order) { %>
-              <% const populatedUser = (order.userId && typeof order.userId === 'object' && order.userId._id) ? order.userId : null; %>
-              <% const userIdentifier = populatedUser ? populatedUser._id : order.userId; %>
-              <% const userIdDisplay = userIdentifier ? userIdentifier.toString() : '-'; %>
-              <% const fullNameParts = []; %>
-              <% if (populatedUser && populatedUser.firstName) { fullNameParts.push(populatedUser.firstName); } %>
-              <% if (populatedUser && populatedUser.lastName) { fullNameParts.push(populatedUser.lastName); } %>
-              <% const fullName = fullNameParts.join(' '); %>
-              <% const formattedAmount = typeof order.amount === 'number' ? order.amount.toLocaleString(locale === 'en' ? 'en-GB' : 'fr-FR') : '-'; %>
-              <% const paymentDate = order.paidAt || order.createdAt; %>
-              <% const propertyIdDisplay = order.propertyId ? order.propertyId.toString() : '-'; %>
-              <% const isPaid = order.status === 'paid'; %>
-            <tr>
-              <td><%= order.orderId || order._id %></td>
-              <td><%= paymentDate ? new Date(paymentDate).toLocaleString(locale === 'en' ? 'en-GB' : 'fr-FR') : '-' %></td>
-              <td>
-                <% if (order.paypalCaptureId || order.paypalOrderId) { %>
-                  <%= i18n.admin_orders_payment_method_paypal %>
-                <% } else if (order.btcPayInvoiceId) { %>
-                  <%= i18n.admin_orders_payment_method_btcpay %>
-                <% } else { %>
-                  <%= i18n.admin_orders_payment_method_other %>
-                <% } %>
-              </td>
-              <td><%= propertyIdDisplay %></td>
-              <td><%= formattedAmount %></td>
-              <td><%= (order.currency || 'EUR').toUpperCase() %></td>
-              <td>
-                <span class="badge <%= isPaid ? 'bg-success' : 'bg-warning text-dark' %>">
-                  <%= isPaid ? i18n.admin_orders_status_paid : i18n.admin_orders_status_pending %>
-                </span>
-              </td>
-              <td><%= userIdDisplay %></td>
-              <td><%= fullName || (populatedUser && populatedUser.email ? populatedUser.email : '-') %></td>
-              <td class="text-center">
-                <% if (isPaid) { %>
-                  <button type="button" class="btn btn-sm btn-outline-danger" onclick="downloadInvoice('<%= order._id %>')" title="<%= i18n.admin_orders_invoice_download %>">
-                    <i class="bi bi-file-earmark-text"></i>
-                  </button>
-                <% } else { %>
-                  <button type="button" class="btn btn-sm btn-outline-secondary disabled" title="<%= i18n.admin_orders_invoice_unavailable %>">
-                    <i class="bi bi-file-earmark-text"></i>
-                  </button>
-                <% } %>
-              </td>
-            </tr>
-            <% }); %>
-          </tbody>
+      <tr>
+        <th scope="col"><%= i18n.admin_orders_table_order_id %></th>
+        <th scope="col"><%= i18n.admin_orders_table_date %></th>
+        
+        <!-- COLONNE MODIFIÉE -->
+        <th scope="col">Type de paiement</th>
+        
+        <th scope="col"><%= i18n.admin_orders_table_property_id %></th>
+        <th scope="col"><%= i18n.admin_orders_amount %></th>
+        <th scope="col"><%= i18n.admin_orders_table_currency %></th>
+        <th scope="col"><%= i18n.admin_orders_status %></th>
+        <th scope="col"><%= i18n.admin_orders_table_user_id %></th>
+        <th scope="col"><%= i18n.admin_orders_table_user_name %></th>
+        <th scope="col" class="text-center"><%= i18n.admin_orders_table_invoice %></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% adminOrders.forEach(function(order) { %>
+        <% const populatedUser = (order.userId && typeof order.userId === 'object' && order.userId._id) ? order.userId : null; %>
+        <% const userIdentifier = populatedUser ? populatedUser._id : order.userId; %>
+        <% const userIdDisplay = userIdentifier ? userIdentifier.toString() : '-'; %>
+        <% const fullNameParts = []; %>
+        <% if (populatedUser && populatedUser.firstName) { fullNameParts.push(populatedUser.firstName); } %>
+        <% if (populatedUser && populatedUser.lastName) { fullNameParts.push(populatedUser.lastName); } %>
+        <% const fullName = fullNameParts.join(' '); %>
+        <% const formattedAmount = typeof order.amount === 'number' ? order.amount.toLocaleString(locale === 'en' ? 'en-GB' : 'fr-FR') : '-'; %>
+        <% const paymentDate = order.paidAt || order.createdAt; %>
+        <% const propertyIdDisplay = order.propertyId ? order.propertyId.toString() : '-'; %>
+        <% const isPaid = order.status === 'paid'; %>
+      <tr>
+        <td><%= order.orderId || order._id %></td>
+        <td><%= paymentDate ? new Date(paymentDate).toLocaleDateString('fr-FR') : '-' %></td>
+        
+        <!-- ✅ AFFICHAGE AVEC BADGES & ICONES -->
+        <td>
+          <% if (order.btcPayInvoiceId) { %>
+            <span class="badge bg-warning text-dark">
+                <i class="bi bi-currency-bitcoin"></i> Bitcoin
+            </span>
+          <% } else { %>
+            <span class="badge bg-primary">
+                <i class="bi bi-paypal"></i> PayPal
+            </span>
+          <% } %>
+        </td>
+        <!-- FIN MODIFICATION -->
+
+        <td><%= propertyIdDisplay %></td>
+        <td><%= formattedAmount %></td>
+        <td><%= (order.currency || 'EUR').toUpperCase() %></td>
+        <td>
+          <span class="badge <%= isPaid ? 'bg-success' : 'bg-warning text-dark' %>">
+            <%= isPaid ? i18n.admin_orders_status_paid : i18n.admin_orders_status_pending %>
+          </span>
+        </td>
+        <td><%= userIdDisplay %></td>
+        <td><%= fullName || (populatedUser && populatedUser.email ? populatedUser.email : '-') %></td>
+        <td class="text-center">
+          <% if (isPaid) { %>
+            <button type="button" class="btn btn-sm btn-outline-danger" onclick="downloadInvoice('<%= order._id %>')" title="<%= i18n.admin_orders_invoice_download %>">
+              <i class="bi bi-file-earmark-text"></i>
+            </button>
+          <% } else { %>
+            <button type="button" class="btn btn-sm btn-outline-secondary disabled" title="<%= i18n.admin_orders_invoice_unavailable %>">
+              <i class="bi bi-file-earmark-text"></i>
+            </button>
+          <% } %>
+        </td>
+      </tr>
+      <% }); %>
+    </tbody>
         </table>
       </div>
     <% } else { %>
