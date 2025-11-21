@@ -3076,6 +3076,112 @@ function redirectToPayment(propertyId) {
       });
   });
 </script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Navigation Sidebar
+    const sectionLinks = document.querySelectorAll('.sidebar a, .sidebar-mobile-links a');
+    
+    sectionLinks.forEach(link => {
+        if (link.href && link.href.includes('#')) {
+            const dataSection = link.getAttribute('data-section');
+            if (dataSection) {
+                link.onclick = null; 
+                link.addEventListener('click', function(event) {
+                    event.preventDefault(); 
+                    showSection(dataSection);
+                });
+            }
+        }
+    });
+
+    // 2. Initialisation de la section par défaut
+    const savedSection = localStorage.getItem('defaultSection');
+    
+    if (savedSection) {
+        showSection(savedSection); 
+        localStorage.removeItem('defaultSection'); 
+    } else {
+        // Utilisation de guillemets doubles pour éviter les erreurs de syntaxe
+        const defaultSection = "<%= activeSection || 'account' %>";
+        showSection(defaultSection);
+    }
+
+    // 3. SCRIPT DE SAUVEGARDE DE L'ADRESSE (CORRIGÉ)
+    const addrForm = document.getElementById('dashboard-address-form');
+    if(addrForm) {
+        addrForm.addEventListener('submit', async function(e) {
+            e.preventDefault(); // Empêche le rechargement de la page (?#)
+            
+            const btn = document.getElementById('btn-save-addr');
+            const originalText = btn.innerText;
+            
+            // Récupération des valeurs
+            const streetVal = document.getElementById('dash-street').value;
+            const zipVal = document.getElementById('dash-zip').value;
+            const cityVal = document.getElementById('dash-city').value;
+            const countryVal = document.getElementById('dash-country').value;
+
+            // Validation simple
+            if (!streetVal || !zipVal || !cityVal || !countryVal) {
+                alert("Veuillez remplir tous les champs.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerText = 'Sauvegarde...';
+
+            try {
+                const response = await fetch('/api/user/update-address', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        street: streetVal, 
+                        zipCode: zipVal, 
+                        city: cityVal, 
+                        country: countryVal 
+                    })
+                });
+                const res = await response.json();
+
+                if(res.success) {
+                    // ✅ CORRECTION ICI : On utilise les variables locales (streetVal, etc.) 
+                    // au lieu de 'data' qui n'était pas défini.
+                    document.getElementById('display-street').innerText = streetVal;
+                    document.getElementById('display-zip').innerText = zipVal;
+                    document.getElementById('display-city').innerText = cityVal;
+                    document.getElementById('display-country').innerText = countryVal;
+
+                    // Bascule affichage
+                    document.getElementById('address-display').classList.remove('d-none');
+                    document.getElementById('address-empty-msg').classList.add('d-none');
+                    
+                    // Ferme le formulaire proprement
+                    const collapseEl = document.getElementById('editAddressCollapse');
+                    // Utilisation robuste de Bootstrap pour fermer
+                    if (window.bootstrap) {
+                        const bsCollapse = bootstrap.Collapse.getOrCreateInstance(collapseEl);
+                        bsCollapse.hide();
+                    } else {
+                        collapseEl.classList.remove('show');
+                    }
+
+                    // Petit feedback visuel ou alerte
+                    // alert('Adresse enregistrée avec succès.'); 
+                    // (Optionnel: retirer l'alert pour une UX plus fluide si souhaité)
+                } else {
+                    alert('Erreur: ' + res.message);
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Erreur de connexion au serveur.');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        });
+    }
+});
+</script>
 <!-- ======================================================= -->
 <!-- MODAL / BANDEAU DE CONSENTEMENT COOKIE TECHNIQUE -->
 <!-- ======================================================= -->
