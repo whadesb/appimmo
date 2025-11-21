@@ -954,8 +954,8 @@ progress {
     <p class="card-text"><%= i18n.property_details %></p>
 
     <div class="progress mb-4">
-      <div class="progress-bar" role="progressbar" id="formProgress" style="width: 25%;">Étape 1 sur 4</div>
-    </div>
+  <div class="progress-bar" role="progressbar" id="formProgress" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Étape 1 sur 4</div>
+</div>
 
     <div id="success-message-container"></div>
 
@@ -1227,10 +1227,11 @@ progress {
 
         // Mise à jour de la barre de progression
         const progressBar = document.getElementById('formProgress');
-        if (progressBar) {
-          progressBar.style.width = `${step * 25}%`;
-          progressBar.innerText = `Étape ${step} sur 4`;
-        }
+if (progressBar) {
+  progressBar.style.width = `${step * 25}%`;
+  // Assurez-vous que ${step} est bien présent au milieu de la phrase
+  progressBar.innerText = `Étape ${step} sur 4`; 
+}
 
         // --- CORRECTION SCROLL ---
         // Remonte automatiquement en haut du formulaire
