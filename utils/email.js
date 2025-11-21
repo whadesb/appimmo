@@ -33,12 +33,19 @@ async function generateInvoicePDF(data) {
     paymentMethod = 'PayPal',
   } = data;
 
-  // ... (Calculs inchangés) ...
+  // --- FORMATAGE DE LA RÉFÉRENCE UAP (Ajout de ORD- si manquant) ---
+  const displayOrderId = String(orderIdUap).startsWith('ORD-') 
+      ? orderIdUap 
+      : `ORD-${orderIdUap}`;
+
   const amountTTC = Number(amount) || 500;
   const tvaRate = 0;
   const amountHT = amountTTC;
   const amountTVA = 0;
-  const invoiceNumber = `F-${new Date().getFullYear()}-${orderIdUap.replace('ORD-', '').slice(-6)}`;
+  
+  // Numéro de facture basé sur la partie numérique de la commande
+  // Ex: F-2025-123456 (on garde les 6 derniers chiffres)
+  const invoiceNumber = `F-${new Date().getFullYear()}-${displayOrderId.replace('ORD-', '').slice(-6)}`;
   
   const now = new Date();
   const paymentDate = now.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
@@ -51,7 +58,7 @@ async function generateInvoicePDF(data) {
     fs.mkdirSync(invoicesDir, { recursive: true });
   }
 
-  const fileBase = String(orderIdUap || 'FACTURE').replace(/[^a-zA-Z0-9_-]/g, '_');
+  const fileBase = String(displayOrderId || 'FACTURE').replace(/[^a-zA-Z0-9_-]/g, '_');
   const invoicePath = path.join(invoicesDir, `invoice-${fileBase}.pdf`);
 
   const doc = new PDFDocument({ size: 'A4', margin: 40 });
@@ -94,14 +101,12 @@ async function generateInvoicePDF(data) {
   doc.text(`Payé le : ${paymentDate} à ${paymentTime}`, 300, doc.y - 12)
     .text(`Mode : ${displayPaymentMethod}`, 300, doc.y);
 
-  // Affichage SIMPLIFIÉ des IDs (Suppression des doublons inutiles)
-  doc.text(`Réf. interne : ${orderIdUap.replace('ORD-', '')}`, 300, doc.y + 12);
+  // Affichage de la référence interne AVEC "ORD-"
+  doc.text(`Réf. interne : ${displayOrderId}`, 300, doc.y + 12);
   
   if (paymentMethod === 'Bitcoin') {
      doc.text(`Ref. Paiement : ${paypalOrderId.replace('BTCPAY-', '')}`, 300, doc.y + 24);
   } else {
-     // Pour PayPal, on affiche uniquement le Transaction ID (Preuve finale)
-     // Si pas de transaction ID (rare en succes), on met l'Order ID en fallback
      const finalRef = (paypalCaptureId && paypalCaptureId !== '-') ? paypalCaptureId : paypalOrderId;
      doc.text(`Ref. Paiement : ${finalRef}`, 300, doc.y + 24);
   }
@@ -154,6 +159,11 @@ async function sendInvoiceByEmail(
   to, fullName, orderIdUap, paypalOrderId, paypalCaptureId, amount, currency = 'EUR',
   clientDetails, companyInfo, serviceDetails, paymentMethod = 'PayPal' 
 ) {
+  // Formatage de l'ID avec ORD-
+  const displayOrderId = String(orderIdUap).startsWith('ORD-') 
+      ? orderIdUap 
+      : `ORD-${orderIdUap}`;
+
   // Génère le PDF avec la bonne méthode
   const { invoicePath, fileBase } = await generateInvoicePDF({
     orderIdUap, paypalOrderId, paypalCaptureId, amount, currency,
@@ -162,20 +172,19 @@ async function sendInvoiceByEmail(
 
   const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
 
-  // Construction dynamique du HTML pour l'email (Version Simplifiée)
+  // Construction dynamique du HTML pour l'email
   let paymentRowsHtml = '';
   
   if (paymentMethod === 'Bitcoin') {
       paymentRowsHtml = `
-        <li><b>Réf. interne :</b> ${orderIdUap.replace('ORD-', '')}</li>
+        <li><b>Réf. interne :</b> ${displayOrderId}</li>
         <li><b>Ref. Paiement (BTCPay) :</b> ${paypalOrderId.replace('BTCPAY-', '')}</li>
         <li><b>Moyen de paiement :</b> Bitcoin (Crypto)</li>
       `;
   } else {
-      // Pour PayPal, on n'affiche que la référence la plus pertinente (Capture ID)
       const finalRef = (paypalCaptureId && paypalCaptureId !== '-') ? paypalCaptureId : paypalOrderId;
       paymentRowsHtml = `
-        <li><b>Réf. interne :</b> ${orderIdUap.replace('ORD-', '')}</li>
+        <li><b>Réf. interne :</b> ${displayOrderId}</li>
         <li><b>Ref. Paiement (PayPal) :</b> ${finalRef}</li>
         <li><b>Moyen de paiement :</b> PayPal / CB</li>
       `;
@@ -183,7 +192,7 @@ async function sendInvoiceByEmail(
 
   const mailOptions = {
     from, to,
-    subject: `Facture Disponible - Commande ${orderIdUap.replace('ORD-', '')}`,
+    subject: `Facture Disponible - Commande ${displayOrderId}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
         <h2 style="color:#2c3e50;">Bonjour ${fullName || ''},</h2>
