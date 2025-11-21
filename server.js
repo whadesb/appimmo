@@ -4167,29 +4167,67 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
 app.post('/btcpay/webhook', express.json(), async (req, res) => {
   try {
     const event = req.body;
+    // BTCPay envoie l'ID soit dans 'invoiceId', soit dans 'data.id' selon la version
     const invoiceId = event.invoiceId || event.data?.id;
 
+    // On filtre les événements qui confirment le paiement
     if (['InvoicePaid', 'InvoicePaidInFull', 'InvoiceSettled'].includes(event.type)) {
+      
+      // 1. Trouver et mettre à jour la commande
       const order = await Order.findOneAndUpdate(
         { btcPayInvoiceId: invoiceId },
-        { status: 'paid' }
+        { status: 'paid', paidAt: new Date() }, // Ajout de la date de paiement
+        { new: true } // Retourne l'objet mis à jour
       ).populate('userId');
 
       if (order) {
         const user = order.userId;
-        await sendInvoiceByEmail(
-          user.email,
-          `${user.firstName} ${user.lastName}`,
-          order.orderId,
-          invoiceId,
-          order.amount,
-          'EUR'
-        );
+
+        // --- DÉFINITION DES DONNÉES POUR LA FACTURE (OBLIGATOIRE POUR LE PDF) ---
+        const clientDetails = {
+            userId: user._id.toString(),
+            firstName: user.firstName,
+            lastName: user.lastName,
+        };
+        const companyDetails = {
+            name: 'UAP Immo',
+            address: ['123 Rue de la Liberté', '75000 Paris'], // 👈 VOS ADRESSES
+            siret: '123 456 789 00012', 
+            tva: 'FR12345678901',
+        };
+        const serviceDetails = {
+            product: 'Pack de diffusion publicitaire (BTC)',
+            duration: '90 jours',
+        };
+        // ---------------------------------------------------------------------
+
+        console.log(`💰 Paiement BTC confirmé pour la commande ${order.orderId}`);
+
+        // 2. Envoi de la facture
+        try {
+            await sendInvoiceByEmail(
+              user.email,
+              `${user.firstName} ${user.lastName}`,
+              order.orderId,
+              'BTCPAY-' + invoiceId, // On utilise l'ID BTC comme ref PayPal pour l'affichage
+              'CRYPTO',              // Capture ID fictif
+              String(order.amount),
+              'EUR',
+              clientDetails,   // 👈 Argument 8
+              companyDetails,  // 👈 Argument 9
+              serviceDetails   // 👈 Argument 10
+            );
+        } catch (emailErr) {
+            console.error('⚠️ Erreur envoi email facture BTC:', emailErr.message);
+            // On ne renvoie pas d'erreur 500 à BTCPay car la commande est validée
+        }
+
       } else {
-        console.warn(`⚠️ Aucune commande trouvée avec BTCPay ID : ${invoiceId}`);
+        console.warn(`⚠️ Webhook BTC: Aucune commande trouvée pour Invoice ID : ${invoiceId}`);
       }
     }
 
+    // Toujours répondre 200 OK à BTCPay pour qu'il arrête d'envoyer la notification
     res.sendStatus(200);
   } catch (error) {
     console.error('❌ Erreur dans le webhook BTCPay :', error);
