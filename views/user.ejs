@@ -1206,60 +1206,96 @@ progress {
       <div id="generatedLink" class="mt-3"></div>
     </form>
 
-    <script>
-      let currentStep = 1;
+<script>
+  let currentStep = 1;
 
-      function showStep(step) {
-        document.querySelectorAll('.form-step').forEach(div => {
-          div.classList.add('d-none');
-          div.style.opacity = 0;
-        });
-        const stepEl = document.querySelector(`.form-step[data-step='${step}']`);
+  function showStep(step) {
+    // 1. Masquer toutes les étapes
+    document.querySelectorAll('.form-step').forEach(div => {
+      div.classList.add('d-none');
+      div.style.opacity = 0;
+    });
+
+    // 2. Afficher l'étape courante
+    const stepEl = document.querySelector(`.form-step[data-step='${step}']`);
+    
+    if(stepEl) {
         stepEl.classList.remove('d-none');
-        stepEl.style.opacity = 1;
+        
+        // Petit délai pour permettre la transition CSS d'opacité (si vous en avez une)
+        setTimeout(() => { stepEl.style.opacity = 1; }, 50);
 
+        // Mise à jour de la barre de progression
         const progressBar = document.getElementById('formProgress');
         if (progressBar) {
           progressBar.style.width = `${step * 25}%`;
           progressBar.innerText = `Étape ${step} sur 4`;
         }
+
+        // --- CORRECTION SCROLL ---
+        // Remonte automatiquement en haut du formulaire
+        // On cible le conteneur du formulaire
+        const cardContainer = document.querySelector('#landing .card-body');
+        if(cardContainer) {
+            // On calcule la position absolue moins 100px pour laisser de la place à la navbar fixe
+            const y = cardContainer.getBoundingClientRect().top + window.pageYOffset - 120;
+            window.scrollTo({top: y, behavior: 'smooth'});
+        }
+    }
+  }
+
+  // Gestionnaire bouton SUIVANT avec validation
+  document.querySelectorAll('.next-step').forEach(btn => {
+    btn.addEventListener('click', () => {
+      // Récupérer les champs de l'étape actuelle
+      const currentStepDiv = document.querySelector(`.form-step[data-step='${currentStep}']`);
+      const inputs = currentStepDiv.querySelectorAll('input, select, textarea');
+      let valid = true;
+
+      // Vérifier la validité HTML5 (required, type, etc.)
+      for (let field of inputs) {
+        if (!field.checkValidity()) {
+          field.reportValidity(); // Affiche le message d'erreur natif du navigateur
+          valid = false;
+          return; // Arrête la boucle à la première erreur
+        }
       }
 
-      document.querySelectorAll('.next-step').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const currentFields = document.querySelector(`.form-step[data-step='${currentStep}']`).querySelectorAll('input, select, textarea');
-          for (let field of currentFields) {
-            if (!field.checkValidity()) {
-              field.reportValidity();
-              return;
-            }
-          }
-          currentStep++;
-          showStep(currentStep);
-        });
-      });
+      // Si tout est valide, on passe à l'étape suivante
+      if (valid) {
+        currentStep++;
+        showStep(currentStep);
+      }
+    });
+  });
 
-      document.querySelectorAll('.prev-step').forEach(btn => {
-        btn.addEventListener('click', () => {
-          currentStep--;
-          showStep(currentStep);
-        });
-      });
-
-      document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
-        const postalCode = document.getElementById('postalCode')?.value;
-        const postalCodePattern = /^\d{5}$/;
-        if (postalCode && !postalCodePattern.test(postalCode)) {
-          e.preventDefault();
-          alert('Le code postal doit contenir exactement 5 chiffres.');
-        }
-      });
-
-      const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-      tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
-
+  // Gestionnaire bouton PRÉCÉDENT
+  document.querySelectorAll('.prev-step').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentStep--;
       showStep(currentStep);
-    </script>
+    });
+  });
+
+  // Validation spécifique lors de la soumission finale
+  document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
+    const postalCode = document.getElementById('postalCode')?.value;
+    const postalCodePattern = /^\d{5}$/;
+    
+    // Double vérification du code postal au cas où
+    if (postalCode && !postalCodePattern.test(postalCode)) {
+      e.preventDefault();
+      alert('Le code postal doit contenir exactement 5 chiffres.');
+    }
+  });
+
+  // Initialisation des tooltips Bootstrap
+  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+  tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+
+  // Lancer l'étape 1 au chargement
+  showStep(currentStep);
+</script>
   </div>
 </div>
 
