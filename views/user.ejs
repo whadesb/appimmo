@@ -870,7 +870,13 @@ progress {
     <p class="card-text user-info"><strong><%= i18n.name %> :</strong> <%= user.lastName %></p>
     <p class="card-text user-info"><strong><%= i18n.first_name %> :</strong> <%= user.firstName %></p>
     <p class="card-text user-info"><strong><%= i18n.email %> :</strong> <%= user.email %></p>
-
+ <% if (user.billingAddress && user.billingAddress.street) { %>
+        <hr class="my-3">
+        <h6 class="mb-2 text-muted"><i class="bi bi-geo-alt-fill me-2"></i>Adresse de facturation</h6>
+        <p class="card-text user-info text-muted mb-0"><%= user.billingAddress.street %></p>
+        <p class="card-text user-info text-muted mb-0"><%= user.billingAddress.zipCode %> <%= user.billingAddress.city %></p>
+        <p class="card-text user-info text-muted"><%= user.billingAddress.country %></p>
+    <% } %>
     <p class="card-text user-info d-flex align-items-center">
       <strong><%= i18n.two_factor_auth %></strong>
       <% if (!user.twoFactorEnabled) { %>
