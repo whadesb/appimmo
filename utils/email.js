@@ -30,7 +30,7 @@ async function generateInvoicePDF(data) {
     client,
     companyInfo,
     serviceDetails,
-    paymentMethod = 'PayPal', // Nouveau paramètre (par défaut PayPal)
+    paymentMethod = 'PayPal',
   } = data;
 
   // ... (Calculs inchangés) ...
@@ -94,15 +94,16 @@ async function generateInvoicePDF(data) {
   doc.text(`Payé le : ${paymentDate} à ${paymentTime}`, 300, doc.y - 12)
     .text(`Mode : ${displayPaymentMethod}`, 300, doc.y);
 
-  // Affichage conditionnel des IDs
-  doc.text(`Réf. commande UAP : ${orderIdUap.replace('ORD-', '')}`, 300, doc.y + 12);
+  // Affichage SIMPLIFIÉ des IDs (Suppression des doublons inutiles)
+  doc.text(`Réf. interne : ${orderIdUap.replace('ORD-', '')}`, 300, doc.y + 12);
   
   if (paymentMethod === 'Bitcoin') {
-     doc.text(`Invoice ID : ${paypalOrderId.replace('BTCPAY-', '')}`, 300, doc.y + 24);
-     // On masque le Capture ID s'il vaut 'CRYPTO'
+     doc.text(`Ref. Paiement : ${paypalOrderId.replace('BTCPAY-', '')}`, 300, doc.y + 24);
   } else {
-     doc.text(`Order ID : ${paypalOrderId}`, 300, doc.y + 24);
-     doc.text(`Transaction ID : ${paypalCaptureId}`, 300, doc.y + 36);
+     // Pour PayPal, on affiche uniquement le Transaction ID (Preuve finale)
+     // Si pas de transaction ID (rare en succes), on met l'Order ID en fallback
+     const finalRef = (paypalCaptureId && paypalCaptureId !== '-') ? paypalCaptureId : paypalOrderId;
+     doc.text(`Ref. Paiement : ${finalRef}`, 300, doc.y + 24);
   }
   
   doc.moveDown(4);
@@ -151,40 +152,43 @@ async function generateInvoicePDF(data) {
  */
 async function sendInvoiceByEmail(
   to, fullName, orderIdUap, paypalOrderId, paypalCaptureId, amount, currency = 'EUR',
-  clientDetails, companyInfo, serviceDetails, paymentMethod = 'PayPal' // Nouvel argument à la fin
+  clientDetails, companyInfo, serviceDetails, paymentMethod = 'PayPal' 
 ) {
   // Génère le PDF avec la bonne méthode
   const { invoicePath, fileBase } = await generateInvoicePDF({
     orderIdUap, paypalOrderId, paypalCaptureId, amount, currency,
-    client: clientDetails, companyInfo, serviceDetails, paymentMethod // Passage de l'argument
+    client: clientDetails, companyInfo, serviceDetails, paymentMethod 
   });
 
   const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
 
-  // Construction dynamique du HTML selon le mode de paiement
+  // Construction dynamique du HTML pour l'email (Version Simplifiée)
   let paymentRowsHtml = '';
+  
   if (paymentMethod === 'Bitcoin') {
       paymentRowsHtml = `
-        <li><b>Réf. commande UAP :</b> ${orderIdUap.replace('ORD-', '')}</li>
-        <li><b>BTCPay – Invoice ID :</b> ${paypalOrderId.replace('BTCPAY-', '')}</li>
+        <li><b>Réf. interne :</b> ${orderIdUap.replace('ORD-', '')}</li>
+        <li><b>Ref. Paiement (BTCPay) :</b> ${paypalOrderId.replace('BTCPAY-', '')}</li>
         <li><b>Moyen de paiement :</b> Bitcoin (Crypto)</li>
       `;
   } else {
+      // Pour PayPal, on n'affiche que la référence la plus pertinente (Capture ID)
+      const finalRef = (paypalCaptureId && paypalCaptureId !== '-') ? paypalCaptureId : paypalOrderId;
       paymentRowsHtml = `
-        <li><b>Réf. commande UAP :</b> ${orderIdUap.replace('ORD-', '')}</li>
-        <li><b>PayPal – Order ID :</b> ${paypalOrderId}</li>
-        <li><b>PayPal – Transaction (Capture ID) :</b> ${paypalCaptureId}</li>
+        <li><b>Réf. interne :</b> ${orderIdUap.replace('ORD-', '')}</li>
+        <li><b>Ref. Paiement (PayPal) :</b> ${finalRef}</li>
+        <li><b>Moyen de paiement :</b> PayPal / CB</li>
       `;
   }
 
   const mailOptions = {
     from, to,
-    subject: `Commande ${orderIdUap.replace('ORD-', '')} – Paiement confirmé`,
+    subject: `Facture Disponible - Commande ${orderIdUap.replace('ORD-', '')}`,
     html: `
       <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
         <h2 style="color:#2c3e50;">Bonjour ${fullName || ''},</h2>
         <p>Nous confirmons la réception de votre paiement de <b>${amount} ${currency}</b>.</p>
-        <p>Voici le détail de votre transaction :</p>
+        <p>Voici le résumé de votre transaction :</p>
         <ul>
           ${paymentRowsHtml}
           <li><b>Durée :</b> ${serviceDetails.duration}</li>
