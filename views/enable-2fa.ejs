@@ -61,13 +61,14 @@
 
     /* CONTAINER 2FA */
     .twofa-container {
-      max-width: 1000px; /* Largeur max globale légèrement réduite */
+      max-width: 1000px; 
       width: 100%;
       margin: auto;
       display: flex;
       flex-direction: row;
       gap: 60px;
-      align-items: flex-start;
+      /* MODIFICATION ICI : Centrage vertical des deux colonnes */
+      align-items: center; 
       justify-content: space-between;
     }
 
@@ -86,17 +87,16 @@
     .twofa-left li::before { content: "✓"; color: #8f97c4; margin-right: 8px; }
 
     .twofa-form-wrapper {
-      /* MODIFICATION ICI : Largeur réduite sur desktop (360px au lieu de 420px) */
       flex: 0 0 360px; 
       background-color: #f8f9fa;
-      padding: 28px; /* Padding légèrement réduit */
+      padding: 28px; 
       border-radius: 10px;
       border: 1px solid #e2e6ea;
     }
 
     /* CLAVIER ET INPUTS */
     #code-display {
-      height: 46px; /* Hauteur réduite */
+      height: 46px; 
       background: #fff;
       border: 1px solid #ced4da;
       border-radius: 8px;
@@ -110,14 +110,14 @@
     #numeric-keypad {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px; /* Espace réduit */
+      gap: 8px; 
       max-width: 100%; 
-      margin: 16px auto; /* Marges réduites */
+      margin: 16px auto; 
     }
 
     #numeric-keypad button {
-      font-size: 1.4rem; /* Police réduite */
-      padding: 12px 0; /* Padding réduit */
+      font-size: 1.4rem; 
+      padding: 12px 0; 
       border-radius: 8px;
       border: 1px solid #ced4da;
       background-color: #ffffff;
@@ -131,13 +131,13 @@
     }
 
     .btn-primary {
-      width: 100%; background-color: #8f97c4; border: none; padding: 12px; /* Padding réduit */
+      width: 100%; background-color: #8f97c4; border: none; padding: 12px; 
       font-size: 1rem; font-weight: 600; border-radius: 8px;
     }
     .btn-primary:hover { background-color: #7a81b8; }
     
     .qr-code-container img {
-      max-width: 180px; /* Taille max QR code réduite pour coller au container plus petit */
+      max-width: 180px; 
       height: auto; display: block; margin: auto;
       border: 1px solid #eee; padding: 8px; background: white; border-radius: 8px;
     }
@@ -154,6 +154,8 @@
         flex-direction: column; 
         gap: 30px;
         padding: 0 15px;
+        /* Sur mobile, on peut vouloir aligner à gauche ou garder centré. 
+           align-items: center ici centrera horizontalement les blocs empilés. */
       }
 
       .twofa-left {
@@ -171,13 +173,12 @@
       .twofa-form-wrapper {
         width: 100%; 
         flex: none; 
-        max-width: 450px; /* Sur mobile, on garde une largeur confortable */
+        max-width: 450px; 
         margin: 0 auto;
         order: 2; 
         padding: 20px;
       }
       
-      /* Sur mobile, on remet des boutons plus grands pour le tactile */
       #numeric-keypad button {
         padding: 18px 0; 
         font-size: 1.6rem;
