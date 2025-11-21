@@ -357,7 +357,7 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
 </p>
   </div>
 </footer>
-<div class="modal fade" id="btcpay-modal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="btcpay-modal" tabindex="-1" aria-labelledby="btcpayModalLabel">
   <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 900px;"> 
     <div class="modal-content" style="height: 95vh;"> <!-- ✅ plus grand -->
       <div class="modal-header">
@@ -443,43 +443,55 @@ function initPaypal() {
 
 <script>
 /* ---------- BTCPay (Bitcoin) ---------- */
-document.getElementById('btc-button').addEventListener('click', function () {
-  const pm = document.getElementById('payment-method');
-  if (pm) pm.textContent = '<%= i18n.pay_with_btc %>';
+document.getElementById('btc-button').addEventListener('click', async function () {
+  const btn = this;
+  const originalText = btn.innerHTML;
+  
+  // 1. Mise à jour UI (Chargement)
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Chargement...';
 
   const propertyIdEl = document.getElementById('propertyId');
   const propertyId = propertyIdEl ? propertyIdEl.value : null;
 
-  fetch('/process-btcpay-payment', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ propertyId: propertyId, amount: '500.00' })
-  })
-  .then(async (res) => {
-    const json = await res.json().catch(() => ({}));
-    if (!res.ok) throw new Error(json.message || ('HTTP ' + res.status));
-    return json;
-  })
-  .then((result) => {
-    if (result.success && result.invoiceUrl) {
-      // Tente d’ouvrir dans un modal si présent, sinon redirige
-      const iframe = document.getElementById('btcpay-iframe');
-      const modalEl = document.getElementById('btcpay-modal');
-      if (iframe && modalEl && window.bootstrap && bootstrap.Modal) {
-        iframe.src = result.invoiceUrl;
-        const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
-        modal.show();
+  try {
+      // 2. Création de la facture via votre serveur
+      const response = await fetch('/process-btcpay-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ propertyId: propertyId, amount: '500.00' })
+      });
+
+      const result = await response.json().catch(() => ({}));
+
+      if (response.ok && result.success && result.invoiceUrl) {
+          // Mise à jour libellé
+          const pm = document.getElementById('payment-method');
+          if (pm) pm.textContent = '<%= i18n.pay_with_btc %>';
+
+          // Injection Iframe
+          const iframe = document.getElementById('btcpay-iframe');
+          const modalEl = document.getElementById('btcpay-modal');
+          
+          if (iframe && modalEl && window.bootstrap) {
+             iframe.src = result.invoiceUrl;
+             const modal = new bootstrap.Modal(modalEl);
+             modal.show();
+          } else {
+             // Fallback si problème modale
+             window.location.href = result.invoiceUrl;
+          }
       } else {
-        window.location.href = result.invoiceUrl;
+          alert('Erreur : ' + (result.message || 'Impossible de créer la facture.'));
       }
-    } else {
-      alert('Erreur : ' + (result.message || 'Réponse inattendue.'));
-    }
-  })
-  .catch((err) => {
-    console.error('Erreur BTC Pay :', err);
-    alert("Une erreur s'est produite avec Bitcoin : " + (err.message || err));
-  });
+  } catch (err) {
+      console.error('Erreur BTC Pay :', err);
+      alert("Une erreur technique est survenue.");
+  } finally {
+      // 3. Rétablissement bouton
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+  }
 });
 </script>
 </body>
