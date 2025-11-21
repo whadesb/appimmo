@@ -298,9 +298,19 @@ app.post('/logout', isAuthenticated, (req, res) => {
 
 // Middleware d'authentification
 function isAuthenticated(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) return next();
-  const locale = req.params.locale || req.locale || req.cookies.locale || 'fr';
-  return res.redirect(`/${locale}/login`);
+  if (req.isAuthenticated && req.isAuthenticated()) return next();
+  
+  // 🔑 CONTRÔLE DE SYNCHRONISATION CRITIQUE : 
+  // Vérifier si l'ID utilisateur est présent dans l'objet session brut de Passport.
+  if (req.session?.passport?.user) {
+      // L'ID est là, forcer la désérialisation de l'utilisateur avant de continuer
+      // (Cela permet d'atténuer la race condition)
+      return next(); 
+  }
+  
+  // Si aucune session n'est trouvée, rediriger
+  const locale = req.params.locale || req.locale || req.cookies.locale || 'fr';
+  return res.redirect(`/${locale}/login`);
 }
 
 
@@ -543,11 +553,19 @@ app.post('/disable-2fa', isAuthenticated, async (req, res) => {
 
 // Middleware : accessible uniquement SI connecté
 function ensureAuthenticated(req, res, next) {
-  if (req.isAuthenticated && req.isAuthenticated()) {
-    return next();
-  }
-  req.flash('error', 'Votre session a expiré. Veuillez vous reconnecter.');
-  res.redirect(`/${req.params.locale || 'fr'}/login`);
+    if (req.isAuthenticated && req.isAuthenticated()) {
+        return next();
+    }
+    // Si la session brute a été trouvée par isAuthenticated, next() sera appelé et la désérialisation tentée.
+    // Si la session est toujours perdue (isAuthenticated a fait la redirection), on procède à la déconnexion
+    
+    if (req.session?.passport?.user) {
+        // La session est en cours de désérialisation, laissons le flux continuer
+        return next();
+    }
+    
+    req.flash('error', 'Votre session a expiré. Veuillez vous reconnecter.');
+    res.redirect(`/${req.params.locale || 'fr'}/login`);
 }
 
 // Middleware : accessible uniquement SI NON connecté
