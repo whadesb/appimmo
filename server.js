@@ -56,10 +56,6 @@ const { addToSitemap, pingSearchEngines } = require('./utils/seo');
 
 const app = express();
 app.set('trust proxy', true);
-app.use((req, res, next) => {
-    console.log(`[DEBUG] ${req.method} ${req.url} | Proto: ${req.protocol} | Secure: ${req.secure} | SessionID: ${req.sessionID || 'vide'} | User: ${req.user ? req.user._id : 'NON CONNECTÉ'}`);
-    next();
-});
 app.use(helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
