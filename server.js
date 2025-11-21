@@ -1616,7 +1616,7 @@ app.post('/:locale/2fa', async (req, res) => {
   const { locale } = req.params;
   const { code } = req.body;
 
-  const userId = req.session.tmpUserId; // 🔑 L'ID doit venir de la session
+  const userId = req.session.tmpUserId; // L'ID doit venir de la session
 
   if (!userId) {
     console.warn('2FA POST: ID utilisateur manquant dans la session. Redirection immédiate.');
@@ -1625,12 +1625,7 @@ app.post('/:locale/2fa', async (req, res) => {
 
   try {
     const user = await User.findById(userId);
-    if (!user || !user.twoFactorSecret) {
-      req.flash('error', 'Erreur de validation 2FA: Utilisateur ou secret manquant.');
-      return res.redirect(`/${locale}/login`);
-    }
-
-    const verified = speakeasy.totp.verify({ /* ... */ });
+    // ... (Logique de vérification du code Speakeasy) ...
 
     if (!verified) {
       req.flash('error', 'Code 2FA invalide.');
@@ -1639,19 +1634,30 @@ app.post('/:locale/2fa', async (req, res) => {
 
     // Connexion réussie
     delete req.session.tmpUserId; // Nettoyer l'ID temporaire
+    
     // Passport va maintenant sérialiser l'utilisateur et le garder connecté.
-    req.login(user, (err) => { 
+    req.login(user, (err) => {
       if (err) {
         console.error('❌ ÉCHEC FINAL DE REQ.LOGIN APRÈS 2FA:', err);
         req.flash('error', 'Échec de la session. Veuillez vous reconnecter.');
         return res.redirect(`/${locale}/login`);
       }
-      
-      console.log(`✅ 2FA validée. Connexion finalisée pour ${user.email}.`);
-      return res.redirect(`/${locale}/user`);
+
+      // 🔑 CORRECTION CRITIQUE: Forcer la sauvegarde de la session persistante
+      req.session.save(function(saveErr) { // ⬅️ AJOUT DE REQ.SESSION.SAVE
+          if (saveErr) return next(saveErr);
+
+          console.log(`✅ 2FA validée. Connexion finalisée pour ${user.email}.`);
+          return res.redirect(`/${locale}/user`);
+      });
+      // NE PAS AJOUTER DE REDIRECTION ICI DANS LE BLOC SYNCHRONE
     });
 
-  } catch (err) { /* ... */ }
+  } catch (err) { 
+    console.error('Erreur 2FA:', err);
+    req.flash('error', 'Une erreur est survenue.');
+    res.redirect(`/${locale}/login`);
+  }
 });
 // REMPLACEZ app.post('/add-property', ...) PAR CECI :
 app.post('/add-property', isAuthenticated, upload.fields([
