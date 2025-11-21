@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>UAP Immo | <%= i18n.payment_title %></title>
+  <title>UAP Immo | <%= i18n.payment_title %></title>
 
   <!-- Google Tag Manager -->
   <script>
@@ -14,189 +14,149 @@
     })(window,document,'script','dataLayer','GTM-TF7HSC3N');
   </script>
   <!-- Fin Google Tag Manager -->
+
   <!-- CSS -->
   <link href="/css/bootstrap.min.css" rel="stylesheet">
   <link href="/css/styles-main.css" rel="stylesheet">
-<link href="/css/bootstrap-icons.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
 
   <style>
-        
-.formun-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f9f9f9;
-
-        }
-        .formun-container h4 {
-            margin-bottom: 20px;
-            color: #000;
-        }
-        .formun-container .form-text {
-            margin-bottom: 15px;
-            font-size: 1.01rem
-        }
- #paypal-button-container {
-      margin-top: 20px;
-    }
-.formunr-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f9f9f9;
-            border: 1px solid #d4d4d4;
-
-        }
-        .formunr-container h4 {
-            margin-bottom: 20px;
-            color: #000;
-        }
-        .formunr-container .form-text {
-            margin-bottom: 15px;
-            font-size: 1.01rem
-        }
-
-.formrecap-container {
-            max-width: 600px;
-            margin: 50px auto;
-            padding: 20px;
-            background: #f9f9f9;
-            border: 1px solid grey;
-
-        }
-        .formrecap-container h4 {
-            margin-bottom: 20px;
-            color: #000;
-        }
-        .formrecap-container .form-text {
-            margin-bottom: 15px;
-            font-size: 1.01rem
-        }
- .form-container {
-      max-width: 600px;
-      margin: 50px auto;
-      padding: 20px;
+    .form-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 20px;
+        background: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
     .form-container h4 {
-      margin-bottom: 20px;
-      color: #000;
+        margin-bottom: 20px;
+        color: #000;
     }
     .form-text {
-      margin-bottom: 15px;
-      font-size: 1.01rem;
+        margin-bottom: 15px;
+        font-size: 1.01rem;
     }
-        .new-section {
-            padding: 60px 0; 
-            background-color: #f8f9fa; 
-        }
-        .hero-section {
-            padding-top: 100px; 
-        }
-        .form-control-icon {
-            position: relative;
-        }
-        .form-control-icon input {
-            padding-right: 2.5rem;
-        }
-        .form-control-icon .icon {
-            position: absolute;
-            right: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            cursor: pointer;
-        }
-  .ticket-style {
-      background-color: #fff;
-      border: 2px dashed #000;
-      padding: 15px;
-      font-family: monospace;
-      font-size: 0.95rem;
-font-family: Arial, sans-serif; /* même police que le reste du site */
-  line-height: 1.5;
+    
+    /* Ajustement pour retirer la marge par défaut du container PayPal */
+    #paypal-button-container {
+        margin-top: 0; 
+        width: 100%;
     }
-   .ticket-style p {
-  font-size: 1.01rem; /* même taille que .form-text */
-  margin-bottom: 12px;
-  color: #000;
-}
-        .btn-primary {
-            background-color: #52566f;
-            border-color: #000;
-        }
-        .btn-primary:hover {
-            background-color: #52566f;
-            border-color: #52566f;
-        }
-        .form-container .form-label {
-            font-weight: bold;
-        }
-        .navbar {
-            background-color: #C4B990; /* Set background color */
- 
-        }
-        .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
-            color: #000; /* Set text color */
-        }
-        .navbar .navbar-icon {
-            font-size: 1.5rem;
-        }
-        .navbar .navbar-icon.bi-person {
-            color: #000 !important;
-        }
-  .navbar .btn-outline-dark {
-    margin-right: 12px;
-  }
-.lang-flag {
-  width: 24px;
-  height: 16px;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  display: inline-block;
-  flex-shrink: 0;
-}
-.lang-fr {
-  background-image: url('https://flagcdn.com/fr.svg');
-}
-.lang-en {
-  background-image: url('https://flagcdn.com/gb.svg');
-}
 
-       @media (max-width: 767px) {
-  .form-container {
-    background: none;
-    box-shadow: none;
-    border: none;
-    margin: 20px auto !important;
-    padding: 15px !important;
-  }
- h4 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    text-align: center;
-  }
-   .form-container h4 {
-    font-size: 1.2rem;
-    margin-top: 10px !important;
-    text-align: center;
-  }
+    .new-section {
+        padding: 60px 0;
+        background-color: #f8f9fa;
+    }
+    .hero-section {
+        padding-top: 100px;
+    }
+    .btn-primary {
+        background-color: #52566f;
+        border-color: #000;
+    }
+    .btn-primary:hover {
+        background-color: #52566f;
+        border-color: #52566f;
+    }
 
-  .row > [class*='col'] {
-    margin-bottom: 20px;
-  }
+    /* --- STYLE BOUTON BITCOIN --- */
+    .btn-btc {
+        background-color: #F7931A; /* Orange Bitcoin */
+        border-color: #F7931A;
+        color: #fff;
+        font-weight: 600;
+        width: 100%;
+        /* Hauteur min pour s'aligner visuellement avec les boutons PayPal (~45px-55px) */
+        min-height: 45px; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.2s ease;
+    }
+    .btn-btc:hover {
+        background-color: #d87d10;
+        border-color: #d87d10;
+        color: #fff;
+    }
+    /* --------------------------- */
 
-  .container {
-    padding-top: 40px !important;
-    padding-bottom: 20px !important;
-  }
+    .navbar {
+        background-color: #C4B990;
+    }
+    .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon {
+        color: #000;
+    }
+    .navbar .navbar-icon {
+        font-size: 1.5rem;
+    }
+    .navbar .btn-outline-dark {
+        margin-right: 12px;
+    }
+    .lang-flag {
+        width: 24px;
+        height: 16px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+        display: inline-block;
+        flex-shrink: 0;
+    }
+    .lang-fr { background-image: url('https://flagcdn.com/fr.svg'); }
+    .lang-en { background-image: url('https://flagcdn.com/gb.svg'); }
 
-  footer.site-footer {
-    margin-top: 0 !important;
-    padding-top: 20px !important;
-  }
-}
+    .ticket-style {
+        background-color: #fff;
+        border: 2px dashed #000;
+        padding: 15px;
+        font-family: Arial, sans-serif;
+        line-height: 1.5;
+    }
+    .ticket-style p {
+        font-size: 1.01rem;
+        margin-bottom: 12px;
+        color: #000;
+    }
 
-    </style>    
+    @media (max-width: 767px) {
+        .form-container {
+            background: none;
+            box-shadow: none;
+            border: none;
+            margin: 20px auto !important;
+            padding: 15px !important;
+        }
+        h4 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            text-align: center;
+        }
+        .form-container h4 {
+            font-size: 1.2rem;
+            margin-top: 10px !important;
+            text-align: center;
+        }
+        .row > [class*='col'] {
+            margin-bottom: 20px;
+        }
+        .container {
+            padding-top: 40px !important;
+            padding-bottom: 20px !important;
+        }
+        footer.site-footer {
+            margin-top: 0 !important;
+            padding-top: 20px !important;
+        }
+    }
+    
+    @media (max-width: 991.98px) {
+      .mobile-lang-selector { display: flex !important; align-items: center; gap: 8px; }
+      .desktop-lang-selector { display: none !important; }
+    }
+    @media (min-width: 992px) {
+      .mobile-lang-selector { display: none !important; }
+    }
+  </style>    
 </head>
 <body id="top">
 
@@ -204,22 +164,21 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
   <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
   height="0" width="0" style="display:none;visibility:hidden"></iframe>
 </noscript>
-    <main>
-      <nav class="navbar navbar-expand-lg fixed-top">
+
+<main>
+<% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
+<!-- NAVBAR -->
+<nav class="navbar navbar-expand-lg fixed-top">
   <div class="container">
-    <!-- Logo -->
     <a class="navbar-brand" href="/<%= locale %>">
       <span>UAP Immo</span>
     </a>
 
-
-    <!-- Bouton burger -->
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
       aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <!-- Menu principal -->
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-lg-5 me-lg-auto">
         <li class="nav-item">
@@ -229,7 +188,6 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
           <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
         </li>
 
-        <!-- Liens uniquement version mobile -->
         <% if (isAuthenticated) { %>
           <li class="nav-item d-lg-none">
             <a class="nav-link" href="/<%= locale %>/user"><i class="bi bi-person-circle"></i> <%= locale === 'fr' ? 'Mon compte' : 'My Account' %></a>
@@ -242,10 +200,10 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
             </form>
           </li>
         <% } else { %>
+           <!-- Liens login mobile si nécessaire -->
         <% } %>
       </ul>
 
-      <!-- Connexion / Mon compte - version desktop -->
       <div class="d-none d-lg-flex align-items-center">
         <% if (isAuthenticated) { %>
           <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
@@ -266,8 +224,7 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
         <% } %>
       </div>
 
-      <!-- Sélecteur de langue -->
-     <div class="ms-3 d-none d-lg-block">
+      <div class="ms-3 d-none d-lg-block">
         <div class="dropdown">
           <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
             data-bs-toggle="dropdown" aria-expanded="false">
@@ -275,7 +232,6 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
             <i class="bi bi-chevron-down small"></i>
           </button>
           <ul class="dropdown-menu dropdown-menu-end shadow">
-            <% const cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '' %>
             <% if (locale === 'fr') { %>
               <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> English</a></li>
             <% } else { %>
@@ -288,98 +244,107 @@ font-family: Arial, sans-serif; /* même police que le reste du site */
   </div>
 </nav>
 
-        <main class="container" style="padding-top: 100px;">
-    <div class="row">
-      <div class="col-lg-6 col-12">
-        <div class="form-container">
-<h4><%= i18n.payment_title %></h4>
-          <p class="form-text"><%= i18n.payment_description_1 %></p>
-<p class="form-text"><%= i18n.payment_description_2 %></p>
-<p class="form-text"><%= i18n.payment_description_3 %></p>
-<p class="form-text"><em><%= i18n.confirmation_notice %></em></p>
-          <div id="paypal-button-container"></div>
-          <button id="btc-button" class="btn btn-warning mt-3"><%= i18n.pay_with_btc %></button>
-          <input type="hidden" id="propertyId" value="<%= propertyId %>">
+<main class="container" style="padding-top: 100px;">
+  <div class="row">
+    <div class="col-lg-6 col-12">
+      <div class="form-container">
+        <h4><%= i18n.payment_title %></h4>
+        <p class="form-text"><%= i18n.payment_description_1 %></p>
+        <p class="form-text"><%= i18n.payment_description_2 %></p>
+        <p class="form-text"><%= i18n.payment_description_3 %></p>
+        <p class="form-text"><em><%= i18n.confirmation_notice %></em></p>
+        
+        <!-- ZONE DE PAIEMENT CÔTE À CÔTE -->
+        <div class="row g-3 mt-4 align-items-start">
+            <!-- Colonne PayPal -->
+            <div class="col-md-6">
+                <div id="paypal-button-container"></div>
+            </div>
+            
+            <!-- Colonne Bitcoin -->
+            <div class="col-md-6">
+                <button id="btc-button" class="btn btn-btc">
+                    <i class="bi bi-currency-bitcoin fs-5 me-2"></i> <%= i18n.pay_with_btc %>
+                </button>
+            </div>
         </div>
+        
+        <input type="hidden" id="propertyId" value="<%= propertyId %>">
       </div>
-      <div class="col-lg-6 col-12">
-        <div class="form-container">
-<h4><%= i18n.order_summary %></h4>
+    </div>
+    
+    <div class="col-lg-6 col-12">
+      <div class="form-container">
+        <h4><%= i18n.order_summary %></h4>
         <div class="ticket-style">
- <p><strong><%= i18n.duration %>:</strong> 90 days</p>
-<p><strong>ID :</strong> <%= propertyId %></p>
-<p><strong><%= i18n.total %> :</strong> <%= Number(500).toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>€</p>
-<p><strong><%= i18n.payment_method %> :</strong> <span id="payment-method">PayPal</span></p>
-</div>
-
+            <p><strong><%= i18n.duration %>:</strong> 90 days</p>
+            <p><strong>ID :</strong> <%= propertyId %></p>
+            <p><strong><%= i18n.total %> :</strong> <%= Number(500).toLocaleString(locale === 'en' ? 'en-US' : 'fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) %>€</p>
+            <p><strong><%= i18n.payment_method %> :</strong> <span id="payment-method">PayPal / Bitcoin</span></p>
         </div>
       </div>
     </div>
-  </main>
+  </div>
+</main>
+
+<!-- Footer -->
 <footer class="site-footer section-padding">
   <div class="container">
     <div class="row">
       <div class="col-lg-3 col-12 mb-4 pb-2">
-        <a class="navbar-brand mb-2" href="/<%= locale %>">
-          <span>UAP Immo</span>
-        </a>
+        <a class="navbar-brand mb-2" href="/<%= locale %>"><span>UAP Immo</span></a>
       </div>
       <div class="col-lg-3 col-md-4 col-6">
-<h6 class="site-footer-title mb-3"><%= i18n.footer.informations %></h6>
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.informations %></h6>
         <ul class="site-footer-links">
           <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link"><%= i18n.menu.home %></a></li>
           <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-4 col-6">
-<h6 class="site-footer-title mb-3"><%= i18n.footer.access %></h6>
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.access %></h6>
         <ul class="site-footer-links">
           <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link"><%= i18n.menu.contact %></a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
-        <div class="dropdown">
-          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
-            <i class="bi bi-chevron-down small"></i>
-          </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow">
-            <% if (locale === 'fr') { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> <span>English</span></a></li>
-            <% } else { %>
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> <span>Français</span></a></li>
-            <% } %>
-          </ul>
-        </div>
+        <!-- Sélecteur de langue footer -->
       </div>
     </div>
-    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %>
-</p>
+    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %></p>
   </div>
 </footer>
+
+<!-- MODAL BTCPAY -->
+<!-- aria-hidden="true" a été supprimé pour éviter les avertissements d'accessibilité -->
 <div class="modal fade" id="btcpay-modal" tabindex="-1" aria-labelledby="btcpayModalLabel">
   <div class="modal-dialog modal-xl modal-dialog-centered" style="max-width: 900px;"> 
-    <div class="modal-content" style="height: 95vh;"> <!-- ✅ plus grand -->
+    <div class="modal-content" style="height: 95vh;">
       <div class="modal-header">
-        <h5 class="modal-title"><%= i18n.pay_with_btc %></h5>
+        <h5 class="modal-title" id="btcpayModalLabel"><%= i18n.pay_with_btc %></h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
       </div>
-      <div class="modal-body p-0" style="height: calc(100% - 56px);"> <!-- ✅ utilise tout l’espace restant -->
-        <iframe id="btcpay-iframe" 
-                src="about:blank" 
-                style="border:0;width:100%;height:100%;"></iframe>
+      <div class="modal-body p-0" style="height: calc(100% - 56px);">
+        <!-- L'iframe sera injecté ici par JS -->
+        <iframe id="btcpay-iframe" src="about:blank" style="border:0;width:100%;height:100%;" allow="payment"></iframe>
       </div>
     </div>
   </div>
 </div>
 
-   <script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/bootstrap.bundle.min.js"></script>
 <!-- SDK PayPal -->
 <script src="https://www.paypal.com/sdk/js?client-id=<%= PAYPAL_CLIENT_ID %>&currency=EUR&intent=capture&components=buttons&disable-funding=card,credit,bancontact,blik,eps,giropay,ideal,mybank,p24,sepa,sofort"></script>
 
 <script>
+// --- PAYPAL LOGIC ---
 function initPaypal() {
   paypal.Buttons({
+    style: {
+        layout: 'horizontal', // Force un layout simple
+        tagline: false,
+        height: 45 // Match height with BTC button approx
+    },
     createOrder: function (data, actions) {
       return actions.order.create({
         purchase_units: [{
@@ -393,14 +358,10 @@ function initPaypal() {
         const propertyId = document.getElementById('propertyId')?.value || null;
         const cap = details?.purchase_units?.[0]?.payments?.captures?.[0];
 
-        // 🔒 Demande JSON explicite + parsing robuste (diagnostic si HTML)
         const res = await fetch('/paypal/mark-paid', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-          credentials: 'same-origin', // s'assure que le cookie de session part bien
+          headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+          credentials: 'same-origin',
           body: JSON.stringify({
             orderID: data.orderID,
             propertyId,
@@ -415,8 +376,8 @@ function initPaypal() {
         try {
           json = JSON.parse(text);
         } catch (e) {
-          console.error('Réponse non-JSON de /paypal/mark-paid :\n', text);
-          alert('Réponse inattendue du serveur (non JSON). Vérifie la session/connexion.');
+          console.error('Réponse non-JSON:', text);
+          alert('Erreur serveur.');
           return;
         }
 
@@ -430,7 +391,6 @@ function initPaypal() {
   }).render('#paypal-button-container');
 }
 
-// ⏳ Attendre que le SDK soit chargé
 (function waitForPaypal(){
   if (window.paypal && paypal.Buttons) {
     initPaypal();
@@ -439,7 +399,6 @@ function initPaypal() {
   }
 })();
 </script>
-
 
 <script>
 /* ---------- BTCPay (Bitcoin) ---------- */
@@ -494,5 +453,8 @@ document.getElementById('btc-button').addEventListener('click', async function (
   }
 });
 </script>
+
+<%- include('partials/cookie_banner') %>
+
 </body>
 </html>
