@@ -1940,6 +1940,7 @@ function loadLandingPages() {
                 var numberLocale = htmlLocale === 'en' ? 'en-GB' : 'fr-FR';
                 var currencySymbol = '€';
 
+                // Titres pour les bulles d'aide
                 var COPY_TITLE = "Copier l'URL";
                 var SHOW_URL_TITLE = "Afficher l'URL";
                 var QR_CODE_TITLE = "QR Code";
@@ -1953,14 +1954,6 @@ function loadLandingPages() {
                 function formatPrice(value) {
                     if (typeof value === 'number' && !isNaN(value)) {
                         return value.toLocaleString(numberLocale) + ' ' + currencySymbol;
-                    }
-                    if (typeof value === 'string') {
-                        var trimmed = value.trim();
-                        if (!trimmed) return 'X';
-                        if (trimmed.indexOf(currencySymbol) !== -1) {
-                            return escapeHtml(trimmed);
-                        }
-                        return escapeHtml(trimmed) + ' ' + currencySymbol;
                     }
                     return 'X';
                 }
@@ -3295,6 +3288,31 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 });
+</script>
+<script>
+/**
+ * Copie le texte complet au double clic et affiche un feedback visuel
+ */
+function copyDescription(element) {
+    const fullText = element.getAttribute('data-full');
+    const originalText = element.innerText; // Le texte tronqué actuel
+    
+    if (!fullText) return;
+
+    navigator.clipboard.writeText(fullText).then(() => {
+        // Feedback visuel
+        element.innerText = "✅ Copié !";
+        element.style.color = "#198754"; // Vert Bootstrap
+        element.style.fontWeight = "bold";
+        
+        // Revenir à la normale après 1.5s
+        setTimeout(() => {
+            element.innerText = originalText;
+            element.style.color = "";
+            element.style.fontWeight = "";
+        }, 1500);
+    }).catch(err => console.error('Erreur copie :', err));
+}
 </script>
 <!-- FIN BANDEAU DE CONSENTEMENT -->
 </body>
