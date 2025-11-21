@@ -1674,7 +1674,7 @@ app.post('/:locale/2fa', async (req, res) => {
     res.redirect(`/${locale}/login`);
   }
 });
-});
+
 // REMPLACEZ app.post('/add-property', ...) PAR CECI :
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
