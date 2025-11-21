@@ -11,14 +11,21 @@ const UserSchema = new mongoose.Schema({
     default: 'user',
     required: true,
   },
+  // --- NOUVEAUX CHAMPS ADRESSE ---
+  billingAddress: {
+      street: { type: String, default: '' },
+      city: { type: String, default: '' },
+      zipCode: { type: String, default: '' },
+      country: { type: String, default: '' }
+  },
+  // -------------------------------
   resetPasswordToken: String,
   resetPasswordExpires: Date,
   resetPasswordCode: String,
-  twoFactorSecret: { type: String }, // Secret utilisé pour la 2FA (Google Authenticator)
-  twoFactorEnabled: { type: Boolean, default: false } // Indique si 2FA est activé ou non
+  twoFactorSecret: { type: String },
+  twoFactorEnabled: { type: Boolean, default: false }
 }, { timestamps: true });
 
-// Configurer passportLocalMongoose pour utiliser l'email comme nom d'utilisateur
 UserSchema.plugin(passportLocalMongoose, { usernameField: 'email' });
 
 module.exports = mongoose.model('User', UserSchema);
