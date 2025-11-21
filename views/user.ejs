@@ -1922,57 +1922,102 @@ const formatNumber = (value) => (value === 0 || value) ? escapeHtml(value) : 'X'
 const boolIcon = (value) => (value === true) ? '<span style="color: green;">✓</span>' : 'X'; 
 
 function loadLandingPages() {
+    fetch('/user/landing-pages')
+        .then(res => res.json())
+        .then(landingPages => {
+            var list = document.getElementById('properties-list');
+            var msg = document.getElementById('no-properties-message');
+            if (!list) return;
+            list.innerHTML = '';
+            
+            if (!landingPages || !landingPages.length) {
+                if (msg) msg.style.display = 'block';
+                return;
+            }
+            if (msg) msg.style.display = 'none';
+
+            landingPages.forEach(property => {
+                var row = document.createElement('tr');
+                // ... logiques de formatage ...
+                var normalizedPath = normalizeUrlPath(property.url);
+                var fullUrl = normalizedPath ? buildFullUrl(normalizedPath) : '';
+                var idDisplay = normalizedPath ? `<a href="${escapeHtml(fullUrl)}" target="_blank">${escapeHtml(property._id)}</a>` : escapeHtml(property._id);
+                
+                var rawDesc = property.description || '';
+                var shortDesc = rawDesc.length > 40 ? rawDesc.substring(0, 40) + '...' : rawDesc;
+                var safeFullDesc = rawDesc.replace(/"/g, '&quot;');
+                
+                var detailsData = JSON.stringify(property).replace(/'/g, "&apos;");
+                
+                // Boutons
+                var btnEdit = `<button class="btn btn-sm btn-success edit-btn" data-id="${property._id}" title="Modifier"><i class="bi bi-pencil-square"></i></button>`;
+                var btnDetails = `<button class="btn btn-sm btn-info show-details-btn" data-details='${detailsData}' title="Détails"><i class="bi bi-info-circle"></i></button>`;
+                var btnBroadcast = `<button class="btn btn-sm btn-dark broadcast-btn" data-id="${property._id}" title="Diffuser"><i class="bi bi-megaphone"></i></button>`;
+                
+                row.innerHTML = `
+                    <td>${idDisplay}</td>
+                    <td>${escapeHtml(property.propertyType)}</td>
+                    <td>${escapeHtml(property.city)}</td>
+                    <td style="max-width: 250px;">
+                        <span style="cursor: copy;" title="Double-cliquez pour copier" data-full="${safeFullDesc}" ondblclick="copyDescription(this)">
+                            ${escapeHtml(shortDesc)}
+                        </span>
+                    </td>
+                    <td>${Number(property.price).toLocaleString()} €</td>
+                    <td class="text-nowrap">
+                        <div class="d-flex gap-1">${btnDetails}${btnBroadcast}${btnEdit}</div>
+                    </td>
+                `;
+                list.appendChild(row);
+            });
+            
+            // Attacher écouteurs
+            document.querySelectorAll('.edit-btn').forEach(btn => btn.addEventListener('click', () => editProperty(btn.getAttribute('data-id'))));
+            document.querySelectorAll('.broadcast-btn').forEach(btn => btn.addEventListener('click', () => redirectToPayment(btn.getAttribute('data-id'))));
+        })
+        .catch(err => console.error(err));
+}
+
+// --- UPLOAD ---
+window.handleFileUpload = function(input, progressId, statusId) {
+    const p = document.getElementById(progressId);
+    const s = document.getElementById(statusId);
+    if(input.files[0]) {
+        if(p) { p.style.display='block'; p.value=100; }
+        if(s) { s.style.display='inline'; s.innerText='Prêt'; s.style.color='green'; }
+    }
+};
+
+// --- HELPERS ---
+function normalizeUrlPath(value) { 
+    if (!value && value !== 0) return '';
+    var raw = String(value).trim();
+    if (!raw) return '';
     try {
-        fetch('/user/landing-pages')
-            .then(function (response) {
-                if (!response.ok) throw new Error('Erreur lors du chargement des données');
-                return response.json();
-            })
-            .then(function (landingPages) {
-                var landingPagesList = document.getElementById('properties-list');
-                var noPropertiesMessage = document.getElementById('no-properties-message');
-
-                if (!landingPagesList) return;
-
-                landingPagesList.innerHTML = '';
-
-                var htmlLocale = document.documentElement.lang || 'fr';
-                var numberLocale = htmlLocale === 'en' ? 'en-GB' : 'fr-FR';
-                var currencySymbol = '€';
-
-                // Titres pour les bulles d'aide
-                var COPY_TITLE = "Copier l'URL";
-                var SHOW_URL_TITLE = "Afficher l'URL";
-                var QR_CODE_TITLE = "QR Code";
-                var BROADCAST_TITLE = "Diffuser";
-                var EDIT_TITLE = "Modifier";
-                var ACTIVE_ORDER_TITLE = "Commande active en cours";
-                var EDIT_DISABLED_TITLE = "Modification temporairement désactivée";
-                var URL_UNAVAILABLE_TITLE = "URL indisponible";
-                var DETAILS_LABEL = "Détails";
-
-                function formatPrice(value) {
-                    if (typeof value === 'number' && !isNaN(value)) {
-                        return value.toLocaleString(numberLocale) + ' ' + currencySymbol;
-                    }
-                    return 'X';
-                }
-
-                function normalizeUrlPath(value) {
-                    if (!value && value !== 0) return '';
-                    var raw = String(value).trim();
-                    if (!raw) return '';
-                    try {
-                        var parsed = raw.indexOf('http') === 0 ? new URL(raw) : new URL(raw, 'https://uap.immo');
-                        var path = (parsed.pathname || '') + (parsed.search || '') + (parsed.hash || '');
-                        if (path && path !== 'null') {
-                            return path.charAt(0) === '/' ? path : '/' + path;
-                        }
-                        return '';
-                    } catch (e) {
-                        return raw.charAt(0) === '/' ? raw : '/' + raw;
-                    }
-                }
+        var parsed = raw.indexOf('http') === 0 ? new URL(raw) : new URL(raw, 'https://uap.immo');
+        var path = (parsed.pathname || '') + (parsed.search || '') + (parsed.hash || '');
+        if (path && path !== 'null') {
+            return path.charAt(0) === '/' ? path : '/' + path;
+        }
+        return '';
+    } catch (e) {
+        return raw.charAt(0) === '/' ? raw : '/' + raw;
+    }
+}
+function copyDescription(element) {
+    const fullText = element.getAttribute('data-full');
+    const originalText = element.innerText;
+    if (!fullText) return;
+    navigator.clipboard.writeText(fullText).then(() => {
+        element.innerText = "✅ Copié !";
+        element.style.color = "#198754";
+        setTimeout(() => {
+            element.innerText = originalText;
+            element.style.color = "";
+            element.style.fontWeight = "";
+        }, 1500);
+    }).catch(err => console.error('Erreur copie :', err));
+}
 
                 function buildFullUrl(path) {
                     if (!path) return '';
