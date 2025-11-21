@@ -67,6 +67,8 @@ app.use(helmet.contentSecurityPolicy({
             "https://www.google.com", 
             "https://www.gstatic.com", 
             "https://www.paypalobjects.com", 
+            "https://www.paypal.com", // <== AJOUT PAYPAL (SDK)
+            "https://www.sandbox.paypal.com", // <== AJOUT PAYPAL (SANDBOX)
             "https://cdnjs.cloudflare.com",
             "https://cdn.jsdelivr.net",
             "'unsafe-inline'", 
@@ -83,34 +85,48 @@ app.use(helmet.contentSecurityPolicy({
             "'unsafe-inline'"
         ],
         
-        imgSrc: ["'self'", "data:", "https://flagcdn.com", "https://www.google-analytics.com", "https://www.paypalobjects.com"],
+        imgSrc: [
+            "'self'", 
+            "data:", 
+            "https://flagcdn.com", 
+            "https://www.google-analytics.com", 
+            "https://www.paypalobjects.com",
+            "https://www.paypal.com", // <== AJOUT PAYPAL (Logos)
+            "https://t.paypal.com",   // <== AJOUT PAYPAL (Pixel de tracking)
+            "https://*.basemaps.cartocdn.com", // <== AJOUT CARTE (Tuiles)
+            "https://*.openstreetmap.org"      // <== AJOUT CARTE (Tuiles)
+        ],
         
-        // Connexions/Fetch: AJOUT DE *.map POUR LES SOURCE MAPS DE CDN
         connectSrc: [
             "'self'", 
             "https://www.google-analytics.com",
             "https://region1.google-analytics.com", 
             "https://nominatim.openstreetmap.org", 
             "https://www.google.com",
-            "https://cdn.jsdelivr.net" // <== AJOUTÉ POUR LES CONNEXIONS/MAPS
+            "https://cdn.jsdelivr.net",
+            "https://www.paypal.com", // <== AJOUT PAYPAL (API)
+            "https://www.sandbox.paypal.com" // <== AJOUT PAYPAL (API)
         ],
         
-        frameSrc: ["'self'", "https://www.youtube.com", "https://www.google.com", "https://www.recaptcha.net"],
+        frameSrc: [
+            "'self'", 
+            "https://www.youtube.com", 
+            "https://www.google.com", 
+            "https://www.recaptcha.net",
+            "https://www.paypal.com", // <== AJOUT PAYPAL (Iframe boutons)
+            "https://www.sandbox.paypal.com" // <== AJOUT PAYPAL (Iframe)
+        ],
         
-        // Polices: AJOUT DE CLOUDFLARE POUR LES FONTS
         fontSrc: [
             "'self'", 
             "https://pro.fontawesome.com", 
             "https://fonts.gstatic.com",
-            "https://cdnjs.cloudflare.com" // <== AJOUTÉ POUR LES POLICES
+            "https://cdnjs.cloudflare.com"
         ],
         
-        // NOUVELLE DIRECTIVE CRUCIALE POUR LES ONCLICK INLINE
-        // Note: La directive script-src-attr est implicite et prend 'none' par défaut.
-        // Nous allons l'autoriser ici pour vos onclick.
         scriptSrcAttr: ["'unsafe-inline'"], 
-
-        formAction: ["'self'", "https://www.paypal.com"] 
+        
+        formAction: ["'self'", "https://www.paypal.com", "https://www.sandbox.paypal.com"] 
     }
 }));
 function getPaypalConfig() {
