@@ -56,6 +56,10 @@ const { addToSitemap, pingSearchEngines } = require('./utils/seo');
 
 const app = express();
 app.set('trust proxy', 1);
+app.use((req, res, next) => {
+    console.log(`[DEBUG] Req: ${req.method} ${req.url} | SessionID: ${req.sessionID} | User: ${req.user ? req.user._id : 'NON CONNECTÉ'}`);
+    next();
+});
 app.use(helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
@@ -165,18 +169,14 @@ app.use(session({
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
+  // AJOUTEZ CETTE LIGNE :
+  proxy: true, 
   store: MongoStore.create({ mongoUrl: process.env.MONGODB_URI }),
   cookie: { 
-        maxAge: 1000 * 60 * 60 * 2, // 2 heures
-        
-        // Conserve secure: true car vous êtes en HTTPS
-        secure: process.env.NODE_ENV === 'production', 
-        
-        // Conserve SameSite
-        sameSite: 'Lax',
-        
-        // ❌ SUPPRESSION DE LA DIRECTIVE DOMAIN QUI CRÉE LE CONFLIT
-        // domain: process.env.NODE_ENV === 'production' ? 'uap.immo' : undefined 
+        maxAge: 1000 * 60 * 60 * 2, 
+        secure: process.env.NODE_ENV === 'production', // Doit être true en prod
+        sameSite: 'Lax', // 'Lax' est plus tolérant que 'Strict' pour les redirections
+        httpOnly: true
     }
 }));
 app.use('/', qrRoutes);
@@ -1614,67 +1614,65 @@ app.get('/:locale/2fa', async (req, res) => {
   }
 });
 app.post('/:locale/2fa', async (req, res) => {
-  const { locale } = req.params;
-  const { code } = req.body;
+  const { locale } = req.params;
+  const { code } = req.body;
 
-  // 🔑 LECTURE DE L'ID DANS LE COOKIE (comme pour le GET)
-  const userId = req.cookies['2fa_pending_id'];
+  const userId = req.cookies['2fa_pending_id']; 
 
-  if (!userId) {
-    console.warn('⚠️ 2FA POST: Cookie manquant ou expiré. Retour au login.');
-    return res.redirect(`/${locale}/login`);
-  }
+  if (!userId) {
+    console.warn('2FA POST: Cookie manquant. Retour au login.');
+    return res.redirect(`/${locale}/login`);
+  }
 
-  try {
-    const user = await User.findById(userId);
+  try {
+    const user = await User.findById(userId);
     
     if (!user || !user.twoFactorSecret) {
         req.flash('error', 'Erreur utilisateur.');
         return res.redirect(`/${locale}/login`);
     }
 
-    // Vérification du code TOTP
-    const verified = speakeasy.totp.verify({
-      secret: user.twoFactorSecret,
-      encoding: 'base32',
-      token: code,
-      window: 1
-    });
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code,
+      window: 1
+    });
 
-    if (!verified) {
-      req.flash('error', 'Code 2FA invalide.');
-      return res.redirect(`/${locale}/2fa`);
-    }
+    if (!verified) {
+      req.flash('error', 'Code 2FA invalide.');
+      // On ne supprime pas le cookie ici pour permettre de réessayer
+      return res.redirect(`/${locale}/2fa`);
+    }
 
-    // ✅ CODE VALIDE : ON CRÉE LA VRAIE SESSION MAINTENANT
-    req.login(user, (err) => {
-      if (err) {
-        console.error('❌ ÉCHEC REQ.LOGIN POST-2FA:', err);
-        req.flash('error', 'Erreur de session.');
-        return res.redirect(`/${locale}/login`);
-      }
+    // ✅ CODE VALIDE
+    
+    // 1. On supprime le cookie temporaire MAINTENANT
+    res.clearCookie('2fa_pending_id');
 
-      // 1. Nettoyage du cookie temporaire (on n'en a plus besoin)
-      res.clearCookie('2fa_pending_id', {
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'Lax'
-      });
+    // 2. On connecte l'utilisateur
+    req.login(user, (err) => {
+      if (err) {
+        console.error('❌ ÉCHEC REQ.LOGIN POST-2FA:', err);
+        req.flash('error', 'Erreur de session.');
+        return res.redirect(`/${locale}/login`);
+      }
 
-      // 2. Sauvegarde forcée de la session avant redirection finale
+      // 3. On force la sauvegarde
       req.session.save((saveErr) => {
           if (saveErr) console.error("Erreur sauvegarde session:", saveErr);
-          console.log(`✅ 2FA validée et Session créée pour ${user.email}. Redirection /user.`);
-          return res.redirect(`/${locale}/user`);
+          
+          console.log(`✅ 2FA validée. Session ${req.sessionID} active pour ${user.email}.`);
+          return res.redirect(`/${locale}/user`);
       });
-    });
+    });
 
-  } catch (err) {
-    console.error('Erreur POST 2FA:', err);
-    req.flash('error', 'Erreur serveur.');
-    res.redirect(`/${locale}/login`);
-  }
+  } catch (err) {
+    console.error('Erreur POST 2FA:', err);
+    req.flash('error', 'Erreur serveur.');
+    res.redirect(`/${locale}/login`);
+  }
 });
-
 // REMPLACEZ app.post('/add-property', ...) PAR CECI :
 app.post('/add-property', isAuthenticated, upload.fields([
   { name: 'photo1', maxCount: 1 },
