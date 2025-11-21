@@ -2968,6 +2968,67 @@ function redirectToPayment(propertyId) {
     }
 }
 </script>
+<script>
+  /**
+   * Fonction appelée par l'attribut onchange des inputs file
+   * Permet de simuler une barre de progression pour l'UX
+   */
+  window.handleFileUpload = function(input, progressId, statusId) {
+    const file = input.files[0];
+    const progressBar = document.getElementById(progressId);
+    const statusSpan = document.getElementById(statusId);
+
+    if (file) {
+      // Afficher la barre
+      if (progressBar) {
+        progressBar.style.display = 'block';
+        progressBar.value = 0;
+      }
+      
+      if (statusSpan) {
+        statusSpan.style.display = 'inline';
+        statusSpan.innerText = 'Analyse...';
+        statusSpan.style.color = '#666';
+      }
+
+      // Simulation visuelle (l'upload réel se fait au submit du formulaire)
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        if (progressBar) progressBar.value = progress;
+        
+        if (progress >= 100) {
+          clearInterval(interval);
+          if (statusSpan) {
+            statusSpan.innerText = 'Prêt à envoyer';
+            statusSpan.style.color = 'green';
+          }
+        }
+      }, 50);
+    }
+  };
+
+  // Gestion de la prévisualisation des photos supplémentaires (Extra Photos)
+  document.addEventListener('DOMContentLoaded', function() {
+      const extraInputs = document.querySelectorAll('.extra-photo-input');
+      extraInputs.forEach(input => {
+          input.addEventListener('change', function() {
+              const file = this.files[0];
+              // On cherche l'image qui suit immédiatement l'input
+              const imgPreview = this.nextElementSibling; 
+              
+              if (file && imgPreview && imgPreview.tagName === 'IMG') {
+                  const reader = new FileReader();
+                  reader.onload = function(e) {
+                      imgPreview.src = e.target.result;
+                      imgPreview.classList.remove('d-none');
+                  }
+                  reader.readAsDataURL(file);
+              }
+          });
+      });
+  });
+</script>
 <!-- ======================================================= -->
 <!-- MODAL / BANDEAU DE CONSENTEMENT COOKIE TECHNIQUE -->
 <!-- ======================================================= -->
