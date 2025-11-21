@@ -59,7 +59,6 @@ app.set('trust proxy', true);
 app.use(helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
-        
         scriptSrc: [
             "'self'", 
             "https://www.googletagmanager.com", 
@@ -67,36 +66,36 @@ app.use(helmet.contentSecurityPolicy({
             "https://www.google.com", 
             "https://www.gstatic.com", 
             "https://www.paypalobjects.com", 
-            "https://www.paypal.com", // <== AJOUT PAYPAL (SDK)
-            "https://www.sandbox.paypal.com", // <== AJOUT PAYPAL (SANDBOX)
             "https://cdnjs.cloudflare.com",
             "https://cdn.jsdelivr.net",
+            "https://www.paypal.com",
+            "https://www.sandbox.paypal.com",
+            "https://mainnet.demo.btcpayserver.org", // <== AJOUT BTCPAY
             "'unsafe-inline'", 
             "'unsafe-eval'"
         ],
-        
         styleSrc: [
             "'self'", 
             "https://pro.fontawesome.com", 
             "https://unpkg.com", 
             "https://cdn.jsdelivr.net", 
             "https://fonts.googleapis.com", 
-            "https://cdnjs.cloudflare.com", 
+            "https://cdnjs.cloudflare.com",
+            "https://mainnet.demo.btcpayserver.org", // <== AJOUT BTCPAY (Styles modale)
             "'unsafe-inline'"
         ],
-        
         imgSrc: [
             "'self'", 
             "data:", 
             "https://flagcdn.com", 
             "https://www.google-analytics.com", 
             "https://www.paypalobjects.com",
-            "https://www.paypal.com", // <== AJOUT PAYPAL (Logos)
-            "https://t.paypal.com",   // <== AJOUT PAYPAL (Pixel de tracking)
-            "https://*.basemaps.cartocdn.com", // <== AJOUT CARTE (Tuiles)
-            "https://*.openstreetmap.org"      // <== AJOUT CARTE (Tuiles)
+            "https://www.paypal.com", 
+            "https://t.paypal.com",
+            "https://*.basemaps.cartocdn.com",
+            "https://*.openstreetmap.org",
+            "https://mainnet.demo.btcpayserver.org" // <== AJOUT BTCPAY (QR Codes)
         ],
-        
         connectSrc: [
             "'self'", 
             "https://www.google-analytics.com",
@@ -104,29 +103,32 @@ app.use(helmet.contentSecurityPolicy({
             "https://nominatim.openstreetmap.org", 
             "https://www.google.com",
             "https://cdn.jsdelivr.net",
-            "https://www.paypal.com", // <== AJOUT PAYPAL (API)
-            "https://www.sandbox.paypal.com" // <== AJOUT PAYPAL (API)
+            "https://www.paypal.com",
+            "https://www.sandbox.paypal.com",
+            "https://mainnet.demo.btcpayserver.org" // <== AJOUT BTCPAY (API)
         ],
-        
         frameSrc: [
             "'self'", 
             "https://www.youtube.com", 
             "https://www.google.com", 
             "https://www.recaptcha.net",
-            "https://www.paypal.com", // <== AJOUT PAYPAL (Iframe boutons)
-            "https://www.sandbox.paypal.com" // <== AJOUT PAYPAL (Iframe)
+            "https://www.paypal.com",
+            "https://www.sandbox.paypal.com",
+            "https://mainnet.demo.btcpayserver.org" // <== AJOUT BTCPAY (Iframe)
         ],
-        
         fontSrc: [
             "'self'", 
             "https://pro.fontawesome.com", 
             "https://fonts.gstatic.com",
             "https://cdnjs.cloudflare.com"
         ],
-        
         scriptSrcAttr: ["'unsafe-inline'"], 
-        
-        formAction: ["'self'", "https://www.paypal.com", "https://www.sandbox.paypal.com"] 
+        formAction: [
+            "'self'", 
+            "https://www.paypal.com", 
+            "https://www.sandbox.paypal.com",
+            "https://mainnet.demo.btcpayserver.org" // <== AJOUT BTCPAY (Redirections)
+        ] 
     }
 }));
 function getPaypalConfig() {
