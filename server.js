@@ -796,53 +796,54 @@ app.get('/api/stats/:id', async (req, res) => {
 
 // DANS server.js
 app.post('/:locale/login', (req, res, next) => {
-    const locale = req.params.locale || 'fr';
+    const locale = req.params.locale || 'fr';
 
-    passport.authenticate('local', (err, user, info) => {
-        if (err) {
-            console.error('❌ ERREUR AUTHENTICATION PASSPORT:', err);
-            return next(err);
-        }
-        if (!user) {
-            console.warn('⚠️ CONNEXION ÉCHOUÉE: Utilisateur non trouvé ou mot de passe incorrect.', info);
-            req.flash('error', 'Identifiants incorrects.');
-            return res.redirect(`/${locale}/login`);
-        }
-        
-        console.log(`✅ AUTHENTIFICATION RÉUSSIE pour: ${user.email}. Tentative de création de session...`);
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error('❌ ERREUR AUTHENTICATION PASSPORT:', err);
+            return next(err);
+        }
+        if (!user) {
+            console.warn('⚠️ CONNEXION ÉCHOUÉE: Identifiants incorrects.');
+            req.flash('error', 'Identifiants incorrects.');
+            return res.redirect(`/${locale}/login`);
+        }
+        
+        console.log(`✅ AUTHENTIFICATION RÉUSSIE pour: ${user.email}.`);
 
-        req.logIn(user, (err) => {
-            if (err) {
-                console.error('❌ ERREUR REQ.LOGIN (Session):', err);
-                return next(err);
-            }
-            
-            // Logique de Double Authentification (2FA)
-            if (user.twoFactorEnabled) {
-                
-                // 🔑 DÉFINITION DE L'ID TEMPORAIRE DANS LA SESSION
-                req.session.tmpUserId = user._id; 
-                
-                // CORRECTION: Forcer la sauvegarde de la session pour garantir l'ID pour la redirection GET /2fa
-                req.session.save(function(saveErr) {
-                    if (saveErr) return next(saveErr);
-                    
-                    console.log('➡️ Redirection 2FA nécessaire. Session forcée.');
-                    return res.redirect(`/${locale}/2fa`);
+        // CAS 1 : L'utilisateur a la 2FA activée
+        if (user.twoFactorEnabled) {
+            // On déconnecte toute session précédente par sécurité
+            req.logout(() => {
+                // 🔑 CRÉATION DU COOKIE TEMPORAIRE
+                // Ce cookie sert de "passeport" temporaire pour accéder à la page 2FA
+                res.cookie('2fa_pending_id', user._id.toString(), {
+                    maxAge: 300000, // 5 minutes
+                    httpOnly: true, // Accessible uniquement par le serveur (plus sécurisé)
+                    secure: process.env.NODE_ENV === 'production', // HTTPS en prod
+                    sameSite: 'Lax'
                 });
-                return; // S'assurer de ne pas exécuter le code de redirection suivant
-            }
+                
+                console.log('➡️ 2FA requise. Cookie temporaire défini. Redirection vers /2fa.');
+                return res.redirect(`/${locale}/2fa`);
+            });
+            return; 
+        }
 
-            // Redirection finale réussie (pas de 2FA ou après 2FA)
-            
-            // CORRECTION: Si req.logIn réussit, forcer la sauvegarde AVANT la redirection
-            req.session.save(function(saveErr) {
+        // CAS 2 : Connexion standard (Pas de 2FA)
+        req.logIn(user, (err) => {
+            if (err) {
+                console.error('❌ ERREUR REQ.LOGIN:', err);
+                return next(err);
+            }
+            // Sauvegarde forcée de la session avant redirection
+            req.session.save((saveErr) => {
                 if (saveErr) return next(saveErr);
-                console.log('✅ CONNEXION TERMINÉE. Redirection vers /user. Session forcée.');
+                console.log('✅ CONNEXION TERMINÉE (Sans 2FA). Redirection vers /user.');
                 return res.redirect(`/${locale}/user`);
             });
-        });
-    })(req, res, next);
+        });
+    })(req, res, next);
 });
 // Route pour enregistrer le choix de l'utilisateur concernant la durée du consentement
 app.post('/set-cookie-consent', (req, res) => {
@@ -1562,102 +1563,117 @@ app.post('/:locale/register', async (req, res) => {
 });
 // DANS server.js
 app.get('/:locale/2fa', async (req, res) => {
-  const { locale } = req.params;
-  
-    // 🔑 CONTRÔLE DE SÉCURITÉ CRITIQUE : Vérifier l'état de la session Passport.
-    // L'utilisateur DOIT être authentifié à ce stade (grâce à req.logIn dans /login).
-    if (!req.isAuthenticated() || !req.user) {
-       console.warn('⚠️ 2FA GET: Accès refusé (non authentifié). Retour au login.');
-       return res.redirect(`/${locale}/login`);
-    }
+  const { locale } = req.params;
 
-    // Récupérer l'ID à partir de l'objet utilisateur sérialisé
-    const userId = req.user._id; 
-    const translationsPath = `./locales/${locale}/2fa.json`;
-    let i18n = {};
+  // 🔑 LECTURE DU COOKIE TEMPORAIRE
+  // On cherche l'ID dans le cookie défini par la route login
+  const userId = req.cookies['2fa_pending_id']; 
 
-    try {
-       i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+  // Si pas de cookie, l'utilisateur n'a rien à faire ici -> Login
+  if (!userId) {
+    console.warn('⚠️ 2FA GET: Cookie "2fa_pending_id" manquant. Retour au login.');
+    return res.redirect(`/${locale}/login`);
+  }
+  
+  const translationsPath = `./locales/${locale}/2fa.json`;
+  let i18n = {};
 
-        // Charger l'utilisateur complet pour le secret 2FA
-       const user = await User.findById(userId);
+  try {
+    i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    
+    // On vérifie que l'utilisateur existe toujours
+    const user = await User.findById(userId);
 
-        if (!user || !user.twoFactorEnabled) {
-            // Si 2FA n'est plus activé pour une raison quelconque, déconnecter l'utilisateur.
-            req.logout(() => {
-                 res.redirect(`/${locale}/login`);
-            });
-            return;
-        }
+    if (!user || !user.twoFactorEnabled) {
+        // Si l'utilisateur n'est pas valide, on nettoie le cookie
+        res.clearCookie('2fa_pending_id');
+        return res.redirect(`/${locale}/login`);
+    }
 
-       const otpAuthUrl = speakeasy.otpauthURL({
-         secret: user.twoFactorSecret,
-         label: `UAP Immo (${user.email})`,
-         issuer: 'UAP Immo',
-         encoding: 'base32'
-       });
+    // Génération du QR Code (pour affichage si besoin)
+    const otpAuthUrl = speakeasy.otpauthURL({
+      secret: user.twoFactorSecret,
+      label: `UAP Immo (${user.email})`,
+      issuer: 'UAP Immo',
+      encoding: 'base32'
+    });
 
-       const qrCode = await QRCode.toDataURL(otpAuthUrl);
+    const qrCode = await QRCode.toDataURL(otpAuthUrl);
 
-       res.render('2fa', {
-         locale,
-         i18n,
-         messages: req.flash(),
-         currentPath: req.originalUrl,
-         showAccountButtons: false
-       });
+    res.render('2fa', {
+      locale,
+      i18n,
+      messages: req.flash(),
+      currentPath: req.originalUrl,
+      showAccountButtons: false
+    });
 
-    } catch (error) {
-       console.error("Erreur dans GET /2fa :", error);
-       return res.status(500).send('Erreur lors du chargement de la vérification 2FA.');
-    }
+  } catch (error) {
+    console.error("Erreur dans GET /2fa :", error);
+    return res.status(500).send('Erreur serveur 2FA');
+  }
 });
 app.post('/:locale/2fa', async (req, res) => {
-  const { locale } = req.params;
-  const { code } = req.body;
+  const { locale } = req.params;
+  const { code } = req.body;
 
-  const userId = req.session.tmpUserId; // L'ID doit venir de la session
+  // 🔑 LECTURE DE L'ID DANS LE COOKIE (comme pour le GET)
+  const userId = req.cookies['2fa_pending_id'];
 
-  if (!userId) {
-    console.warn('2FA POST: ID utilisateur manquant dans la session. Redirection immédiate.');
-    return res.redirect(`/${locale}/login`);
-  }
+  if (!userId) {
+    console.warn('⚠️ 2FA POST: Cookie manquant ou expiré. Retour au login.');
+    return res.redirect(`/${locale}/login`);
+  }
 
-  try {
-    const user = await User.findById(userId);
-    // ... (Logique de vérification du code Speakeasy) ...
+  try {
+    const user = await User.findById(userId);
+    
+    if (!user || !user.twoFactorSecret) {
+        req.flash('error', 'Erreur utilisateur.');
+        return res.redirect(`/${locale}/login`);
+    }
 
-    if (!verified) {
-      req.flash('error', 'Code 2FA invalide.');
-      return res.redirect(`/${locale}/2fa`);
-    }
+    // Vérification du code TOTP
+    const verified = speakeasy.totp.verify({
+      secret: user.twoFactorSecret,
+      encoding: 'base32',
+      token: code,
+      window: 1
+    });
 
-    // Connexion réussie
-    delete req.session.tmpUserId; // Nettoyer l'ID temporaire
-    
-    // Passport va maintenant sérialiser l'utilisateur et le garder connecté.
-    req.login(user, (err) => {
-      if (err) {
-        console.error('❌ ÉCHEC FINAL DE REQ.LOGIN APRÈS 2FA:', err);
-        req.flash('error', 'Échec de la session. Veuillez vous reconnecter.');
-        return res.redirect(`/${locale}/login`);
-      }
+    if (!verified) {
+      req.flash('error', 'Code 2FA invalide.');
+      return res.redirect(`/${locale}/2fa`);
+    }
 
-      // 🔑 CORRECTION CRITIQUE: Forcer la sauvegarde de la session persistante
-      req.session.save(function(saveErr) { // ⬅️ AJOUT DE REQ.SESSION.SAVE
-          if (saveErr) return next(saveErr);
+    // ✅ CODE VALIDE : ON CRÉE LA VRAIE SESSION MAINTENANT
+    req.login(user, (err) => {
+      if (err) {
+        console.error('❌ ÉCHEC REQ.LOGIN POST-2FA:', err);
+        req.flash('error', 'Erreur de session.');
+        return res.redirect(`/${locale}/login`);
+      }
 
-          console.log(`✅ 2FA validée. Connexion finalisée pour ${user.email}.`);
-          return res.redirect(`/${locale}/user`);
+      // 1. Nettoyage du cookie temporaire (on n'en a plus besoin)
+      res.clearCookie('2fa_pending_id', {
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'Lax'
       });
-      // NE PAS AJOUTER DE REDIRECTION ICI DANS LE BLOC SYNCHRONE
-    });
 
-  } catch (err) { 
-    console.error('Erreur 2FA:', err);
-    req.flash('error', 'Une erreur est survenue.');
-    res.redirect(`/${locale}/login`);
-  }
+      // 2. Sauvegarde forcée de la session avant redirection finale
+      req.session.save((saveErr) => {
+          if (saveErr) console.error("Erreur sauvegarde session:", saveErr);
+          console.log(`✅ 2FA validée et Session créée pour ${user.email}. Redirection /user.`);
+          return res.redirect(`/${locale}/user`);
+      });
+    });
+
+  } catch (err) {
+    console.error('Erreur POST 2FA:', err);
+    req.flash('error', 'Erreur serveur.');
+    res.redirect(`/${locale}/login`);
+  }
+});
 });
 // REMPLACEZ app.post('/add-property', ...) PAR CECI :
 app.post('/add-property', isAuthenticated, upload.fields([
