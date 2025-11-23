@@ -3512,7 +3512,7 @@ document.addEventListener('DOMContentLoaded', function () {
             // 2. Afficher "..." (Bot réfléchit)
             const loadingId = addMessage('...', 'bot');
 
-            try {
+          try {
                 const res = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -3520,56 +3520,84 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 const data = await res.json();
 
-                // 3. Supprimer "..." et afficher la réponse
                 const loadingEl = document.querySelector(`[data-id="${loadingId}"]`);
                 if(loadingEl) loadingEl.remove();
 
-                addMessage(data.response, 'bot', data.action);
-
-                // Si c'est une action auto-exécutable (sans bouton), on peut la lancer ici
-                // Mais nous avons privilégié les boutons pour l'UX
-
+                // Modifié ici pour accepter 'actions' (pluriel) ou 'action' (singulier)
+                const actionsData = data.actions || data.action; 
+                addMessage(data.response, 'bot', actionsData);
             } catch (err) {
                 console.error(err);
                 addMessage("Désolé, une erreur de connexion est survenue.", 'bot');
             }
         }
 
-        function addMessage(text, sender, action = null) {
+       function addMessage(text, sender, actions = null) { // Notez le paramètre 'actions'
             const div = document.createElement('div');
             const id = Date.now();
             div.className = `message ${sender}`;
             div.setAttribute('data-id', id);
             
-            // Convertir markdown basique
+            // Conversion simple des sauts de ligne et gras
             let formatted = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
             div.innerHTML = formatted;
 
-            // Ajouter un bouton si une action est présente
-            if (action) {
-                if (action.type === 'link') {
-                    // Lien externe ou interne (ex: Forgot Password)
-                    div.innerHTML += `<br><a href="${action.url}" class="chat-action-btn">${action.text}</a>`;
-                } else if (action.type === 'script' && action.label) {
-                     // Bouton qui exécute un script (ex: showSection)
-                     // Note: On utilise un attribut onclick sécurisé ou une fonction globale
-                     const btn = document.createElement('button');
-                     btn.className = 'chat-action-btn';
-                     btn.innerText = action.label;
-                     btn.onclick = function() { 
-                         try { eval(action.code); } catch(e) { console.error(e); }
-                         // Sur mobile, on ferme le chat après le clic pour voir le résultat
-                         if(window.innerWidth < 768) toggleChat();
-                     };
-                     div.appendChild(document.createElement('br'));
-                     div.appendChild(btn);
-                     // On retourne ici pour ne pas écraser avec div.innerHTML
-                     const container = document.getElementById('chatMessages');
-                     container.appendChild(div);
-                     container.scrollTop = container.scrollHeight;
-                     return id;
-                }
+            // 🔑 GESTION DES ACTIONS MULTIPLES OU SIMPLES
+            if (actions) {
+                // Si c'est un objet unique (ancienne version), on le met dans un tableau
+                const actionsList = Array.isArray(actions) ? actions : [actions];
+                
+                const btnContainer = document.createElement('div');
+                btnContainer.style.display = 'flex';
+                btnContainer.style.gap = '5px';
+                btnContainer.style.flexWrap = 'wrap';
+                btnContainer.style.marginTop = '8px';
+
+                actionsList.forEach(action => {
+                    if (action.type === 'link') {
+                        // Lien (Voir la page)
+                        // Utilisation de classes Bootstrap pour le style si défini, sinon défaut
+                        const styleClass = action.style ? `btn btn-sm ${action.style}` : 'chat-action-btn';
+                        // Si c'est une classe bootstrap, on ajoute un style inline pour la taille
+                        const extraStyle = action.style ? 'font-size: 12px; padding: 4px 10px;' : '';
+                        
+                        btnContainer.innerHTML += `<a href="${action.url}" class="${styleClass}" style="${extraStyle}" target="_blank">${action.label || action.text}</a>`;
+                    } 
+                    else if (action.type === 'script') {
+                        // Script (Modifier)
+                        const btn = document.createElement('button');
+                        // Style personnalisé ou classe CSS existante
+                        btn.className = action.style ? `btn btn-sm ${action.style}` : 'chat-action-btn';
+                        if(action.style) btn.style.cssText = 'font-size: 12px; padding: 4px 10px; border:none;';
+                        
+                        btn.innerText = action.label;
+                        btn.onclick = function() { 
+                             try { eval(action.code); } catch(e) { console.error(e); }
+                             if(window.innerWidth < 768) toggleChat();
+                        };
+                        btnContainer.appendChild(btn);
+                    }
+                });
+                
+                div.appendChild(btnContainer);
+                
+                // Scroll auto
+                setTimeout(() => {
+                    const container = document.getElementById('chatMessages');
+                    container.scrollTop = container.scrollHeight;
+                }, 50);
+                
+                // On retourne l'ID mais on ne l'ajoute pas tout de suite car on a manipulé le DOM
+                const container = document.getElementById('chatMessages');
+                container.appendChild(div);
+                return id;
             }
+
+            const container = document.getElementById('chatMessages');
+            container.appendChild(div);
+            container.scrollTop = container.scrollHeight;
+            return id;
+        }
 
             const container = document.getElementById('chatMessages');
             container.appendChild(div);
