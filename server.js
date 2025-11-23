@@ -4266,89 +4266,98 @@ app.post('/btcpay/webhook', express.json(), async (req, res) => {
   }
 });
 
-// 🤖 ROUTE API CHATBOT (Accessible uniquement aux admins pour le moment)
+// 🤖 ROUTE API CHATBOT
 app.post('/api/chat', isAuthenticated, isAdmin, async (req, res) => {
     const { message } = req.body;
     const user = req.user;
 
     try {
-        // 1. Analyse NLP
         const result = await manager.process('fr', message);
         let answer = result.answer;
         let action = null;
         const intent = result.intent;
 
-        // 2. Logique Contextuelle (Réponses Dynamiques)
-        
-        // --- COMPTE & ADRESSE ---
+        // --- STATISTIQUES ---
+        if (intent === 'stats.info') {
+            answer = "Le tableau de statistiques vous montre qui visite votre page (Vues, Pays, Appareil). C'est utile pour savoir si votre annonce est performante.";
+            action = { 
+                type: 'script', 
+                code: "showSection('donnees');", 
+                label: "Voir les statistiques" // ✅ Bouton ajouté
+            };
+        }
+
+        // --- COMPTE ---
         if (intent === 'account.address') {
             if (user.billingAddress && user.billingAddress.street) {
-                answer = `Votre adresse actuelle est : **${user.billingAddress.street}, ${user.billingAddress.city}**. Souhaitez-vous la modifier ?`;
-                // On déclenche l'ouverture du collapse via le front
-                action = { type: 'script', code: `document.getElementById('editAddressCollapse').classList.add('show'); document.getElementById('dash-street').focus();` };
+                answer = `Votre adresse est : **${user.billingAddress.street}**. Voulez-vous la modifier ?`;
+                action = { 
+                    type: 'script', 
+                    code: "document.getElementById('editAddressCollapse').classList.add('show'); document.getElementById('dash-street').focus();",
+                    label: "Modifier mon adresse" // ✅ Bouton ajouté
+                };
             } else {
-                answer = "Vous n'avez pas encore renseigné d'adresse de facturation. C'est nécessaire pour commander.";
-                action = { type: 'script', code: `document.getElementById('editAddressCollapse').classList.add('show'); document.getElementById('dash-street').focus();` };
+                answer = "Vous n'avez pas d'adresse. Ajoutez-en une :";
+                action = { 
+                    type: 'script', 
+                    code: "document.getElementById('editAddressCollapse').classList.add('show'); document.getElementById('dash-street').focus();",
+                    label: "Ajouter une adresse" // ✅ Bouton ajouté
+                };
             }
         }
 
         if (intent === 'account.password') {
-            answer = "Pour changer votre mot de passe, utilisez notre formulaire sécurisé.";
+            answer = "Pour changer votre mot de passe, cliquez ci-dessous :";
             action = { type: 'link', text: 'Réinitialiser mot de passe', url: `/${req.locale}/forgot-password` };
         }
 
-        // --- CRÉATION / PROPRIÉTÉS ---
+        // --- CRÉATION ---
         if (intent === 'property.create') {
-            answer = "Pour créer une annonce, cliquez sur l'onglet **Ajouter une propriété** ou utilisez le bouton ci-dessous. Le processus se fait en 4 étapes simples.";
-            action = { type: 'script', code: `showSection('landing');` };
+            answer = "Pour créer une annonce, cliquez sur le bouton ci-dessous pour ouvrir le formulaire. Le processus se fait en 4 étapes.";
+            action = { 
+                type: 'script', 
+                code: "showSection('landing');", 
+                label: "Ouvrir le formulaire" // ✅ C'est ce label qui crée le bouton !
+            };
         }
 
-        // --- COMMANDES & FACTURES ---
+        // --- COMMANDES ---
         if (intent === 'order.invoice') {
-            // Vérifier s'il y a des commandes payées
             const paidOrders = await Order.find({ userId: user._id, status: 'paid' });
             if (paidOrders.length > 0) {
-                answer = `Vous avez **${paidOrders.length} facture(s)** disponible(s). Vous pouvez les télécharger dans l'onglet "Mes Commandes" en cliquant sur l'icône PDF rouge.`;
-                action = { type: 'script', code: `showSection('orders');` };
+                answer = `Vous avez **${paidOrders.length} facture(s)**. Téléchargez-les ici :`;
+                action = { type: 'script', code: "showSection('orders');", label: "Voir mes commandes" };
             } else {
-                answer = "Vous n'avez aucune facture disponible pour le moment (aucune commande payée).";
+                answer = "Vous n'avez aucune facture disponible.";
             }
         }
 
         if (intent === 'order.status') {
             const lastOrder = await Order.findOne({ userId: user._id }).sort({ createdAt: -1 });
             if (lastOrder) {
-                const statusMap = { 'paid': 'Payée ✅', 'pending': 'En attente ⏳', 'cancelled': 'Annulée ❌' };
-                const st = statusMap[lastOrder.status] || lastOrder.status;
-                answer = `Votre dernière commande (Réf: ${lastOrder.orderId}) du ${new Date(lastOrder.createdAt).toLocaleDateString()} est **${st}**.`;
-                action = { type: 'script', code: `showSection('orders');` };
+                const statusMap = { 'paid': 'Payée ✅', 'pending': 'En attente ⏳' };
+                answer = `Votre dernière commande est **${statusMap[lastOrder.status] || lastOrder.status}**.`;
+                action = { type: 'script', code: "showSection('orders');", label: "Détails commande" };
             } else {
-                answer = "Vous n'avez pas encore passé de commande.";
+                answer = "Vous n'avez pas encore de commande.";
             }
         }
 
-        // --- PAIEMENT ---
         if (intent === 'payment.broadcast') {
-            // Vérifier s'il a des propriétés non payées
-            // On triche un peu en renvoyant vers la liste
-            answer = "Pour diffuser une annonce, allez dans 'Pages créées' et cliquez sur le bouton **Mégaphone** noir à côté de votre bien.";
-            action = { type: 'script', code: `showSection('created-pages');` };
+            answer = "Pour diffuser, allez dans 'Pages créées' et cliquez sur le **Mégaphone**.";
+            action = { type: 'script', code: "showSection('created-pages');", label: "Voir mes pages" };
         }
 
         // Fallback
         if (!answer && result.score < 0.5) {
-            answer = "Je ne suis pas sûr de comprendre. Je peux vous aider sur : vos annonces, vos factures, le paiement Bitcoin/PayPal ou votre profil.";
+            answer = "Je n'ai pas bien compris. Essayez : 'Créer une annonce', 'Mes factures' ou 'Modifier mon adresse'.";
         }
 
-        res.json({ 
-            response: answer || "Désolé, je n'ai pas compris.", 
-            intent: intent,
-            action: action 
-        });
+        res.json({ response: answer || "Désolé, je n'ai pas compris.", intent, action });
 
     } catch (error) {
         console.error('Erreur Chatbot:', error);
-        res.status(500).json({ response: "Erreur interne du cerveau du robot 🤯" });
+        res.status(500).json({ response: "Erreur interne du chatbot." });
     }
 });
 
