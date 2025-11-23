@@ -3398,78 +3398,29 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- 🤖 CHATBOT (VISIBLE UNIQUEMENT PAR ADMIN) -->
 <% if (isAdminUser) { %>
     <style>
-        #chat-widget {
-            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
-            font-family: 'Arial', sans-serif;
-        }
-        #chat-toggle {
-            width: 60px; height: 60px; border-radius: 50%;
-            background: #52566f; color: white; border: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;
-            font-size: 24px; display: flex; align-items: center; justify-content: center;
-            transition: transform 0.2s;
-        }
+        #chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Arial', sans-serif; }
+        #chat-toggle { width: 60px; height: 60px; border-radius: 50%; background: #52566f; color: white; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
         #chat-toggle:hover { transform: scale(1.1); }
-        
-        #chat-box {
-            display: none;
-            width: 350px; height: 450px;
-            background: white; border-radius: 12px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
-            flex-direction: column; overflow: hidden;
-            position: absolute; bottom: 80px; right: 0;
-            border: 1px solid #eee;
-        }
-        .chat-header {
-            background: #52566f; color: white; padding: 15px;
-            font-weight: bold; display: flex; justify-content: space-between;
-        }
-        .chat-messages {
-            flex: 1; padding: 15px; overflow-y: auto;
-            background: #f9f9f9; display: flex; flex-direction: column; gap: 10px;
-        }
-        .chat-input-area {
-            padding: 10px; border-top: 1px solid #eee; display: flex; gap: 5px;
-        }
-        .message {
-            padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 14px;
-            line-height: 1.4;
-        }
-        .message.user {
-            background: #8f97c4; color: white; align-self: flex-end;
-            border-bottom-right-radius: 2px;
-        }
-        .message.bot {
-            background: #e9ecef; color: #333; align-self: flex-start;
-            border-bottom-left-radius: 2px;
-        }
-        .chat-action-btn {
-            display: inline-block; margin-top: 5px; padding: 5px 10px;
-            background: #C4B990; color: black; text-decoration: none;
-            border-radius: 4px; font-size: 12px; font-weight: bold;
-        }
+        #chat-box { display: none; width: 350px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; position: absolute; bottom: 80px; right: 0; border: 1px solid #eee; }
+        .chat-header { background: #52566f; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; }
+        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
+        .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 5px; }
+        .message { padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 14px; line-height: 1.4; }
+        .message.user { background: #8f97c4; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .message.bot { background: #e9ecef; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .chat-action-btn { display: inline-block; margin-top: 5px; padding: 5px 10px; background: #C4B990; color: black; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; }
     </style>
 
     <div id="chat-widget">
-        <!-- Fenêtre de chat -->
         <div id="chat-box">
-            <div class="chat-header">
-                <span>🤖 Assistant UAP (Beta Admin)</span>
-                <span style="cursor:pointer;" onclick="toggleChat()">✕</span>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-                <div class="message bot">Bonjour Admin ! Je suis en phase de test. Posez-moi une question (ex: "mes commandes").</div>
-            </div>
+            <div class="chat-header"><span>🤖 Assistant UAP (Beta Admin)</span><span style="cursor:pointer;" onclick="toggleChat()">✕</span></div>
+            <div class="chat-messages" id="chatMessages"><div class="message bot">Bonjour Admin ! Je suis en phase de test.</div></div>
             <div class="chat-input-area">
                 <input type="text" id="chatInput" class="form-control form-control-sm" placeholder="Votre message..." onkeypress="handleChatKey(event)">
                 <button class="btn btn-sm btn-dark" onclick="sendMessage()"><i class="bi bi-send"></i></button>
             </div>
         </div>
-        
-        <!-- Bouton flottant -->
-        <button id="chat-toggle" onclick="toggleChat()">
-            <i class="bi bi-chat-dots-fill"></i>
-        </button>
+        <button id="chat-toggle" onclick="toggleChat()"><i class="bi bi-chat-dots-fill"></i></button>
     </div>
 
     <script>
@@ -3478,41 +3429,22 @@ document.addEventListener('DOMContentLoaded', function () {
             box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
             if(box.style.display === 'flex') document.getElementById('chatInput').focus();
         }
-
-        function handleChatKey(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
-
+        function handleChatKey(e) { if (e.key === 'Enter') sendMessage(); }
+        
         async function sendMessage() {
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
             if (!text) return;
-
-            // 1. Afficher message user
             addMessage(text, 'user');
             input.value = '';
-
-            // 2. Afficher indicateur de frappe
             const loadingId = addMessage('...', 'bot');
-
             try {
-                const res = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: text })
-                });
+                const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text }) });
                 const data = await res.json();
-
-                // 3. Remplacer loading par réponse
                 const loadingEl = document.querySelector(`[data-id="${loadingId}"]`);
                 if(loadingEl) loadingEl.remove();
-
                 addMessage(data.response, 'bot', data.action);
-
-            } catch (err) {
-                console.error(err);
-                addMessage("Erreur de connexion au cerveau.", 'bot');
-            }
+            } catch (err) { console.error(err); addMessage("Erreur connexion.", 'bot'); }
         }
 
         function addMessage(text, sender, action = null) {
@@ -3520,15 +3452,20 @@ document.addEventListener('DOMContentLoaded', function () {
             const id = Date.now();
             div.className = `message ${sender}`;
             div.setAttribute('data-id', id);
-            
-            // Conversion simple des sauts de ligne et gras
-            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
-            div.innerHTML = formatted;
+            div.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
 
-            if (action && action.type === 'link') {
-                div.innerHTML += `<br><a href="${action.url}" class="chat-action-btn">${action.text}</a>`;
+            if (action) {
+                const btn = document.createElement('button');
+                btn.className = 'chat-action-btn';
+                btn.innerText = action.text;
+                if (action.type === 'link') {
+                    btn.onclick = () => window.location.href = action.url;
+                } else if (action.type === 'section_trigger') {
+                    btn.onclick = () => { showSection(action.target); if(window.innerWidth < 768) toggleChat(); };
+                }
+                div.appendChild(document.createElement('br'));
+                div.appendChild(btn);
             }
-
             const container = document.getElementById('chatMessages');
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
