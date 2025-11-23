@@ -3398,46 +3398,118 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- 🤖 CHATBOT (VISIBLE UNIQUEMENT PAR ADMIN) -->
 <% if (isAdminUser) { %>
     <style>
-        #chat-widget { position: fixed; bottom: 20px; right: 20px; z-index: 9999; font-family: 'Arial', sans-serif; }
-        #chat-toggle { width: 60px; height: 60px; border-radius: 50%; background: #52566f; color: white; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer; font-size: 24px; display: flex; align-items: center; justify-content: center; transition: transform 0.2s; }
+        #chat-widget {
+            position: fixed; bottom: 20px; right: 20px; z-index: 9999;
+            font-family: 'Arial', sans-serif;
+        }
+        #chat-toggle {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: #52566f; color: white; border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2); cursor: pointer;
+            font-size: 24px; display: flex; align-items: center; justify-content: center;
+            transition: transform 0.2s;
+        }
         #chat-toggle:hover { transform: scale(1.1); }
-        #chat-box { display: none; width: 350px; height: 450px; background: white; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.2); flex-direction: column; overflow: hidden; position: absolute; bottom: 80px; right: 0; border: 1px solid #eee; }
-        .chat-header { background: #52566f; color: white; padding: 15px; font-weight: bold; display: flex; justify-content: space-between; }
-        .chat-messages { flex: 1; padding: 15px; overflow-y: auto; background: #f9f9f9; display: flex; flex-direction: column; gap: 10px; }
-        .chat-input-area { padding: 10px; border-top: 1px solid #eee; display: flex; gap: 5px; }
-        .message { padding: 8px 12px; border-radius: 15px; max-width: 80%; font-size: 14px; line-height: 1.4; }
-        .message.user { background: #8f97c4; color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .message.bot { background: #e9ecef; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .chat-action-btn { display: inline-block; margin-top: 5px; padding: 5px 10px; background: #C4B990; color: black; text-decoration: none; border-radius: 4px; font-size: 12px; font-weight: bold; cursor: pointer; border: none; }
+        
+        #chat-box {
+            display: none;
+            width: 350px; height: 500px; /* Un peu plus haut */
+            background: white; border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            flex-direction: column; overflow: hidden;
+            position: absolute; bottom: 80px; right: 0;
+            border: 1px solid #eee;
+        }
+        .chat-header {
+            background: #52566f; color: white; padding: 15px;
+            font-weight: bold; display: flex; justify-content: space-between;
+            align-items: center;
+        }
+        .chat-messages {
+            flex: 1; padding: 15px; overflow-y: auto;
+            background: #f9f9f9; display: flex; flex-direction: column; gap: 12px;
+        }
+        .chat-input-area {
+            padding: 10px; border-top: 1px solid #eee; display: flex; gap: 5px; background: #fff;
+        }
+        
+        /* Styles des bulles de message */
+        .message {
+            padding: 10px 14px; border-radius: 15px; max-width: 85%; font-size: 14px;
+            line-height: 1.4; word-wrap: break-word;
+        }
+        /* Message Utilisateur (Droite) */
+        .message.user {
+            background: #8f97c4; 
+            color: white; 
+            align-self: flex-end; /* IMPORTANT : Aligne à droite */
+            border-bottom-right-radius: 2px;
+            text-align: right;
+        }
+        /* Message Bot (Gauche) */
+        .message.bot {
+            background: #e9ecef; 
+            color: #333; 
+            align-self: flex-start; /* IMPORTANT : Aligne à gauche */
+            border-bottom-left-radius: 2px;
+        }
+        
+        /* Bouton d'action dans le chat */
+        .chat-action-btn {
+            display: inline-block; margin-top: 8px; padding: 6px 12px;
+            background: #C4B990; color: black; text-decoration: none;
+            border-radius: 6px; font-size: 12px; font-weight: bold;
+            cursor: pointer; border: none; width: 100%; text-align: center;
+        }
+        .chat-action-btn:hover { background: #b3a579; }
     </style>
 
     <div id="chat-widget">
         <div id="chat-box">
-            <div class="chat-header"><span>🤖 Assistant UAP (Beta Admin)</span><span style="cursor:pointer;" onclick="toggleChat()">✕</span></div>
-            <div class="chat-messages" id="chatMessages"><div class="message bot">Bonjour Admin ! Je suis en phase de test.</div></div>
+            <div class="chat-header">
+                <span>🤖 Assistant UAP</span>
+                <span style="cursor:pointer; font-size: 1.2rem;" onclick="toggleChat()">✕</span>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">Bonjour ! Je suis votre assistant virtuel. Posez-moi une question ou demandez-moi de créer une annonce.</div>
+            </div>
             <div class="chat-input-area">
-                <input type="text" id="chatInput" class="form-control form-control-sm" placeholder="Votre message..." onkeypress="handleChatKey(event)">
+                <input type="text" id="chatInput" class="form-control form-control-sm" placeholder="Posez votre question..." onkeypress="handleChatKey(event)">
                 <button class="btn btn-sm btn-dark" onclick="sendMessage()"><i class="bi bi-send"></i></button>
             </div>
         </div>
-        <button id="chat-toggle" onclick="toggleChat()"><i class="bi bi-chat-dots-fill"></i></button>
+        
+        <button id="chat-toggle" onclick="toggleChat()">
+            <i class="bi bi-chat-dots-fill"></i>
+        </button>
     </div>
 
     <script>
         function toggleChat() {
             const box = document.getElementById('chat-box');
-            box.style.display = box.style.display === 'flex' ? 'none' : 'flex';
-            if(box.style.display === 'flex') document.getElementById('chatInput').focus();
+            if (box.style.display === 'flex') {
+                box.style.display = 'none';
+            } else {
+                box.style.display = 'flex';
+                // Focus sur l'input pour écrire direct
+                setTimeout(() => document.getElementById('chatInput').focus(), 100);
+            }
         }
-        function handleChatKey(e) { if (e.key === 'Enter') sendMessage(); }
-        
-    async function sendMessage() {
+
+        function handleChatKey(e) {
+            if (e.key === 'Enter') sendMessage();
+        }
+
+        async function sendMessage() {
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
             if (!text) return;
 
+            // 1. Afficher message utilisateur (aligné à droite)
             addMessage(text, 'user');
             input.value = '';
+
+            // 2. Afficher "..." (Bot réfléchit)
             const loadingId = addMessage('...', 'bot');
 
             try {
@@ -3448,24 +3520,18 @@ document.addEventListener('DOMContentLoaded', function () {
                 });
                 const data = await res.json();
 
+                // 3. Supprimer "..." et afficher la réponse
                 const loadingEl = document.querySelector(`[data-id="${loadingId}"]`);
                 if(loadingEl) loadingEl.remove();
 
                 addMessage(data.response, 'bot', data.action);
 
-                // 🚀 EXÉCUTION D'ACTION AUTOMATIQUE
-                if (data.action && data.action.type === 'script') {
-                    // On attend un peu que l'utilisateur lise la réponse
-                    setTimeout(() => {
-                        try {
-                            eval(data.action.code); // Exécute le script (ex: showSection('orders'))
-                        } catch(e) { console.error("Erreur action bot", e); }
-                    }, 1000);
-                }
+                // Si c'est une action auto-exécutable (sans bouton), on peut la lancer ici
+                // Mais nous avons privilégié les boutons pour l'UX
 
             } catch (err) {
                 console.error(err);
-                addMessage("Erreur de connexion.", 'bot');
+                addMessage("Désolé, une erreur de connexion est survenue.", 'bot');
             }
         }
 
@@ -3475,22 +3541,39 @@ document.addEventListener('DOMContentLoaded', function () {
             div.className = `message ${sender}`;
             div.setAttribute('data-id', id);
             
-            // Markdown simple (**gras**)
+            // Convertir markdown basique
             let formatted = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
             div.innerHTML = formatted;
 
-            // Bouton d'action (Lien)
-            if (action && action.type === 'link') {
-                div.innerHTML += `<br><a href="${action.url}" class="chat-action-btn mt-2" target="_blank">${action.text}</a>`;
-            }
-            // Bouton d'action (Script interne - Optionnel si on veut laisser le choix)
-            if (action && action.type === 'script' && action.label) {
-                 // Si on veut un bouton au lieu de l'auto-exécution
-                 div.innerHTML += `<br><button class="chat-action-btn mt-2 border-0" onclick="${action.code}">${action.label}</button>`;
+            // Ajouter un bouton si une action est présente
+            if (action) {
+                if (action.type === 'link') {
+                    // Lien externe ou interne (ex: Forgot Password)
+                    div.innerHTML += `<br><a href="${action.url}" class="chat-action-btn">${action.text}</a>`;
+                } else if (action.type === 'script' && action.label) {
+                     // Bouton qui exécute un script (ex: showSection)
+                     // Note: On utilise un attribut onclick sécurisé ou une fonction globale
+                     const btn = document.createElement('button');
+                     btn.className = 'chat-action-btn';
+                     btn.innerText = action.label;
+                     btn.onclick = function() { 
+                         try { eval(action.code); } catch(e) { console.error(e); }
+                         // Sur mobile, on ferme le chat après le clic pour voir le résultat
+                         if(window.innerWidth < 768) toggleChat();
+                     };
+                     div.appendChild(document.createElement('br'));
+                     div.appendChild(btn);
+                     // On retourne ici pour ne pas écraser avec div.innerHTML
+                     const container = document.getElementById('chatMessages');
+                     container.appendChild(div);
+                     container.scrollTop = container.scrollHeight;
+                     return id;
+                }
             }
 
             const container = document.getElementById('chatMessages');
             container.appendChild(div);
+            // Scroll auto vers le bas
             container.scrollTop = container.scrollHeight;
             return id;
         }
