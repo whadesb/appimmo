@@ -4310,19 +4310,36 @@ app.post('/api/chat', isAuthenticated, isAdmin, async (req, res) => {
             }
 
             // B. Est-ce une PROPRIÉTÉ ?
-            if (mongoose.isValidObjectId(detectedId)) {
+           if (mongoose.isValidObjectId(detectedId)) {
                 const property = await Property.findOne({ _id: detectedId, userId: user._id });
                 if (property) {
+                    // Formatage de la date
+                    const dateCreation = new Date(property.createdAt).toLocaleDateString('fr-FR');
+                    
                     answer = `**Page trouvée :** ${property.propertyType} à ${property.city}.<br>` +
-                             `Créée le : ${new Date(property.createdAt).toLocaleDateString()}.<br>` +
+                             `Créée le : ${dateCreation}.<br>` +
                              `Que voulez-vous faire ?`;
                     
-                    // On propose de modifier directement
-                    action = { type: 'script', code: `editProperty('${property._id}')`, label: "Modifier cette page" };
-                    return res.json({ response: answer, action });
+                    // 🔑 NOUVEAU : On envoie un tableau d'actions (Voir + Modifier)
+                    const actions = [
+                        { 
+                            type: 'link', 
+                            url: property.url, // L'URL de la landing page
+                            label: "Voir la page",
+                            style: "btn-outline-dark" // Style optionnel
+                        },
+                        { 
+                            type: 'script', 
+                            code: `editProperty('${property._id}')`, 
+                            label: "Modifier",
+                            style: "btn-dark"
+                        }
+                    ];
+                    
+                    // On renvoie 'actions' (pluriel)
+                    return res.json({ response: answer, actions: actions });
                 }
             }
-        }
 
         // 2. ANALYSE NLP CLASSIQUE (Si pas d'ID détecté)
         const result = await manager.process('fr', message);
