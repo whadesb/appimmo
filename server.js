@@ -62,21 +62,24 @@ app.set('trust proxy', true);
 app.use(helmet.contentSecurityPolicy({
     directives: {
         defaultSrc: ["'self'"],
-        scriptSrc: [
-            "'self'", 
-            "https://www.googletagmanager.com", 
-            "https://www.google-analytics.com", 
-            "https://www.google.com", 
-            "https://www.gstatic.com", 
-            "https://www.paypalobjects.com", 
-            "https://cdnjs.cloudflare.com",
-            "https://cdn.jsdelivr.net",
-            "https://www.paypal.com",
-            "https://www.sandbox.paypal.com",
-            "https://mainnet.demo.btcpayserver.org", // <== AJOUT BTCPAY
-            "'unsafe-inline'", 
-            "'unsafe-eval'"
-        ],
+      scriptSrc: [
+    "'self'", 
+    "https://www.googletagmanager.com", 
+    "https://www.google-analytics.com", 
+    "https://www.google.com", 
+    "https://www.gstatic.com", 
+    "https://www.paypalobjects.com", 
+    "https://cdnjs.cloudflare.com",
+    
+    // 👇 CETTE LIGNE EST OBLIGATOIRE POUR BOOTSTRAP CDN 👇
+    "https://cdn.jsdelivr.net", 
+    
+    "https://www.paypal.com",
+    "https://www.sandbox.paypal.com",
+    "https://mainnet.demo.btcpayserver.org",
+    "'unsafe-inline'", 
+    "'unsafe-eval'"
+],
         styleSrc: [
             "'self'", 
             "https://pro.fontawesome.com", 
