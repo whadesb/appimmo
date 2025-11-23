@@ -3,9 +3,6 @@ const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
-/**
- * Transporteur IONOS (STARTTLS sur 587)
- */
 const transporter = nodemailer.createTransport({
   host: 'smtp.ionos.fr',
   port: 587,
@@ -18,7 +15,6 @@ const transporter = nodemailer.createTransport({
 
 /**
  * Génère un PDF de facture professionnelle.
- * @param {object} data - Toutes les données nécessaires pour la facture
  */
 async function generateInvoicePDF(data) {
   const {
@@ -33,7 +29,7 @@ async function generateInvoicePDF(data) {
     paymentMethod = 'PayPal',
   } = data;
 
-  // --- FORMATAGE DE LA RÉFÉRENCE UAP (Ajout de ORD- si manquant) ---
+  // --- FORMATAGE DE LA RÉFÉRENCE UAP ---
   const displayOrderId = String(orderIdUap).startsWith('ORD-') 
       ? orderIdUap 
       : `ORD-${orderIdUap}`;
@@ -43,8 +39,6 @@ async function generateInvoicePDF(data) {
   const amountHT = amountTTC;
   const amountTVA = 0;
   
-  // Numéro de facture basé sur la partie numérique de la commande
-  // Ex: F-2025-123456 (on garde les 6 derniers chiffres)
   const invoiceNumber = `F-${new Date().getFullYear()}-${displayOrderId.replace('ORD-', '').slice(-6)}`;
   
   const now = new Date();
@@ -81,37 +75,69 @@ async function generateInvoicePDF(data) {
 
   // --- SECTION CLIENT & PAIEMENT ---
   doc.moveDown(2);
-  doc.rect(40, doc.y, 515, 1).fillColor('#C4B990').fill();
+  // Ligne de séparation
+  const startY = doc.y;
+  doc.rect(40, startY, 515, 1).fillColor('#C4B990').fill();
   doc.moveDown(0.5);
 
-  doc.fillColor('#52566f').fontSize(12).font('Helvetica-Bold')
-    .text('Client & Réf.', 40, doc.y)
-    .text('Détails du Paiement', 300, doc.y);
+  doc.fillColor('#52566f').fontSize(12).font('Helvetica-Bold');
+  doc.text('Client & Facturation', 40, doc.y);
+  doc.text('Détails du Paiement', 300, doc.y - 12); // -12 car on vient d'écrire la ligne précédente
     
   doc.moveDown(0.5);
   doc.fillColor('#333').fontSize(10).font('Helvetica');
 
-  // Colonne Client
-  doc.text(`Nom : ${client.firstName} ${client.lastName}`, 40, doc.y)
-    .text(`ID Client : ${client.userId}`, 40, doc.y + 12);
-
-  // Colonne Paiement (Adaptative)
-  const displayPaymentMethod = paymentMethod === 'Bitcoin' ? 'Bitcoin (BTCPay)' : 'PayPal';
+  // --- COLONNE GAUCHE : CLIENT ---
+  let currentY = doc.y;
   
-  doc.text(`Payé le : ${paymentDate} à ${paymentTime}`, 300, doc.y - 12)
-    .text(`Mode : ${displayPaymentMethod}`, 300, doc.y);
+  // Nom
+  doc.text(`Nom : ${client.firstName} ${client.lastName}`, 40, currentY);
+  currentY += 14;
 
-  // Affichage de la référence interne AVEC "ORD-"
-  doc.text(`Réf. interne : ${displayOrderId}`, 300, doc.y + 12);
-  
-  if (paymentMethod === 'Bitcoin') {
-     doc.text(`Ref. Paiement : ${paypalOrderId.replace('BTCPAY-', '')}`, 300, doc.y + 24);
-  } else {
-     const finalRef = (paypalCaptureId && paypalCaptureId !== '-') ? paypalCaptureId : paypalOrderId;
-     doc.text(`Ref. Paiement : ${finalRef}`, 300, doc.y + 24);
+  // Adresse (Si disponible)
+  if (client.address) {
+      if (client.address.street) {
+          doc.text(client.address.street, 40, currentY);
+          currentY += 12;
+      }
+      if (client.address.zipCode || client.address.city) {
+          doc.text(`${client.address.zipCode || ''} ${client.address.city || ''}`, 40, currentY);
+          currentY += 12;
+      }
+      if (client.address.country) {
+          doc.text(client.address.country, 40, currentY);
+          currentY += 12;
+      }
   }
   
-  doc.moveDown(4);
+  // ID Client (avec un petit espace avant)
+  currentY += 4;
+  doc.text(`ID Client : ${client.userId}`, 40, currentY);
+
+
+  // --- COLONNE DROITE : PAIEMENT ---
+  // On reprend la hauteur initiale pour aligner les colonnes
+  // Attention : doc.y a bougé, on utilise une variable fixe pour la colonne de droite
+  let rightColumnY = startY + 25; // Ajustement par rapport à la ligne de séparation
+
+  const displayPaymentMethod = paymentMethod === 'Bitcoin' ? 'Bitcoin (BTCPay)' : 'PayPal';
+  
+  doc.text(`Payé le : ${paymentDate} à ${paymentTime}`, 300, rightColumnY);
+  rightColumnY += 12;
+  doc.text(`Mode : ${displayPaymentMethod}`, 300, rightColumnY);
+  rightColumnY += 12;
+  doc.text(`Réf. interne : ${displayOrderId}`, 300, rightColumnY);
+  rightColumnY += 12;
+  
+  if (paymentMethod === 'Bitcoin') {
+     doc.text(`Ref. Paiement : ${paypalOrderId.replace('BTCPAY-', '')}`, 300, rightColumnY);
+  } else {
+     const finalRef = (paypalCaptureId && paypalCaptureId !== '-') ? paypalCaptureId : paypalOrderId;
+     doc.text(`Ref. Paiement : ${finalRef}`, 300, rightColumnY);
+  }
+  
+  // On déplace le curseur global en dessous de la colonne la plus longue pour la suite
+  doc.y = Math.max(currentY, rightColumnY) + 30;
 
   // --- TABLEAU SERVICE ---
   doc.fillColor('#52566f').rect(40, doc.y, 515, 20).fill()
@@ -159,12 +185,10 @@ async function sendInvoiceByEmail(
   to, fullName, orderIdUap, paypalOrderId, paypalCaptureId, amount, currency = 'EUR',
   clientDetails, companyInfo, serviceDetails, paymentMethod = 'PayPal' 
 ) {
-  // Formatage de l'ID avec ORD-
   const displayOrderId = String(orderIdUap).startsWith('ORD-') 
       ? orderIdUap 
       : `ORD-${orderIdUap}`;
 
-  // Génère le PDF avec la bonne méthode
   const { invoicePath, fileBase } = await generateInvoicePDF({
     orderIdUap, paypalOrderId, paypalCaptureId, amount, currency,
     client: clientDetails, companyInfo, serviceDetails, paymentMethod 
@@ -172,7 +196,6 @@ async function sendInvoiceByEmail(
 
   const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
 
-  // Construction dynamique du HTML pour l'email
   let paymentRowsHtml = '';
   
   if (paymentMethod === 'Bitcoin') {
