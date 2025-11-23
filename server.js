@@ -4271,17 +4271,14 @@ app.post('/api/chat', isAuthenticated, isAdmin, async (req, res) => {
     const user = req.user;
 
     try {
-        // 1. Analyse du message par NLP
         const result = await manager.process('fr', message);
         
         console.log(`🤖 Bot Analysis: "${message}" -> Intent: ${result.intent} (Score: ${result.score})`);
 
-        // 🛑 CORRECTION CRITIQUE : LE SEUIL DE CONFIANCE (THRESHOLD)
-        // Si le bot est sûr à moins de 75%, on force le "Je ne comprends pas".
-        // Cela évite qu'il réponde n'importe quoi sur la météo.
-        if (result.score < 0.75 || result.intent === 'None') {
+        // Seuil de tolérance (0.5)
+        if (result.score < 0.5 || result.intent === 'None') {
             return res.json({ 
-                response: "Je ne suis pas sûr de comprendre. Je suis spécialisé dans l'immobilier UAP (commandes, compte, paiements).", 
+                response: "Je ne suis pas sûr de comprendre. Essayez 'Ajouter un bien', 'Mes commandes' ou 'Mot de passe'.", 
                 intent: 'None',
                 action: null 
             });
@@ -4290,48 +4287,55 @@ app.post('/api/chat', isAuthenticated, isAdmin, async (req, res) => {
         let answer = result.answer;
         let action = null;
 
-        // --- Logique Intelligente (ne s'exécute que si le score > 0.75) ---
+        // --- GESTION DES ACTIONS SPÉCIFIQUES ---
 
-        // 1. Commandes
+        // 1. CRÉATION D'ANNONCE (C'est le bloc qui manquait)
+        if (result.intent === 'property.create') {
+            answer = "C'est très simple ! Cliquez sur le bouton ci-dessous pour ouvrir le formulaire d'ajout de propriété.";
+            action = { 
+                type: 'section_trigger', 
+                target: 'landing', 
+                text: 'Créer une annonce maintenant' 
+            };
+        }
+
+        // 2. COMMANDES
         if (result.intent === 'order.status') {
             const lastOrder = await Order.findOne({ userId: user._id }).sort({ createdAt: -1 });
             if (lastOrder) {
-                const statusText = lastOrder.status === 'paid' ? 'payée ✅' : 'en attente ⏳';
-                const date = new Date(lastOrder.createdAt).toLocaleDateString('fr-FR');
-                answer = `Votre dernière commande du ${date} (Réf: ${lastOrder.orderId}) est **${statusText}** et son montant est de ${lastOrder.amount}€.`;
-                
-                if (lastOrder.status !== 'paid') {
-                    action = { type: 'link', text: 'Finaliser le paiement', url: `/${req.locale}/payment?propertyId=${lastOrder.propertyId}` };
-                } else {
-                     action = { type: 'link', text: 'Voir mes commandes', url: '#' };
-                }
+                 const statusText = lastOrder.status === 'paid' ? 'payée ✅' : 'en attente ⏳';
+                 const date = new Date(lastOrder.createdAt).toLocaleDateString('fr-FR');
+                 answer = `Votre dernière commande du ${date} (Réf: ${lastOrder.orderId}) est **${statusText}** et son montant est de ${lastOrder.amount}€.`;
+                 
+                 if (lastOrder.status !== 'paid') {
+                     action = { type: 'link', text: 'Payer maintenant', url: `/${req.locale}/payment?propertyId=${lastOrder.propertyId}` };
+                 } else {
+                     action = { type: 'section_trigger', target: 'orders', text: 'Voir mes commandes' };
+                 }
             } else {
-                answer = "Vous n'avez aucune commande enregistrée pour le moment.";
+                 answer = "Vous n'avez aucune commande enregistrée pour le moment.";
             }
         }
-
-        // 2. Mot de passe
+        
+        // 3. MOT DE PASSE
         if (result.intent === 'account.password') {
-            answer = "Pour changer votre mot de passe, cliquez sur le bouton ci-dessous. Vous recevrez un email sécurisé.";
-            action = { type: 'link', text: 'Réinitialiser mon mot de passe', url: `/${req.locale}/forgot-password` };
+             answer = "Pour changer votre mot de passe, cliquez sur le bouton ci-dessous. Vous recevrez un email sécurisé.";
+             action = { type: 'link', text: 'Réinitialiser mon mot de passe', url: `/${req.locale}/forgot-password` };
         }
 
-        // Si une réponse NLP existe mais pas de logique spécifique (ex: Salutations, Aide)
+        // Réponse par défaut si une réponse NLP existe (dans chatbot.js) mais pas d'action spéciale
         if (!answer) {
-            answer = "Je peux vous aider sur vos commandes ou votre compte, mais je n'ai pas la réponse à cette question précise.";
+            answer = "J'ai compris votre demande, mais je n'ai pas d'action spécifique configurée pour le moment.";
         }
 
-        res.json({ 
-            response: answer, 
-            intent: result.intent,
-            action: action 
-        });
+        res.json({ response: answer, intent: result.intent, action: action });
 
     } catch (error) {
         console.error('Erreur Chatbot:', error);
-        res.status(500).json({ response: "Erreur interne du cerveau du robot 🤯" });
+        res.status(500).json({ response: "Désolé, une erreur technique est survenue." });
     }
 });
+
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
