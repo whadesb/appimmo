@@ -233,7 +233,7 @@ app.use((req, res, next) => {
   next();
 });
 
-
+trainChatbot();
 // Middleware : définir la locale en fonction de l’URL
 app.use((req, res, next) => {
   const path = req.path;
