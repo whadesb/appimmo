@@ -3431,20 +3431,42 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         function handleChatKey(e) { if (e.key === 'Enter') sendMessage(); }
         
-        async function sendMessage() {
+    async function sendMessage() {
             const input = document.getElementById('chatInput');
             const text = input.value.trim();
             if (!text) return;
+
             addMessage(text, 'user');
             input.value = '';
             const loadingId = addMessage('...', 'bot');
+
             try {
-                const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: text }) });
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text })
+                });
                 const data = await res.json();
+
                 const loadingEl = document.querySelector(`[data-id="${loadingId}"]`);
                 if(loadingEl) loadingEl.remove();
+
                 addMessage(data.response, 'bot', data.action);
-            } catch (err) { console.error(err); addMessage("Erreur connexion.", 'bot'); }
+
+                // 🚀 EXÉCUTION D'ACTION AUTOMATIQUE
+                if (data.action && data.action.type === 'script') {
+                    // On attend un peu que l'utilisateur lise la réponse
+                    setTimeout(() => {
+                        try {
+                            eval(data.action.code); // Exécute le script (ex: showSection('orders'))
+                        } catch(e) { console.error("Erreur action bot", e); }
+                    }, 1000);
+                }
+
+            } catch (err) {
+                console.error(err);
+                addMessage("Erreur de connexion.", 'bot');
+            }
         }
 
         function addMessage(text, sender, action = null) {
@@ -3452,20 +3474,21 @@ document.addEventListener('DOMContentLoaded', function () {
             const id = Date.now();
             div.className = `message ${sender}`;
             div.setAttribute('data-id', id);
-            div.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+            
+            // Markdown simple (**gras**)
+            let formatted = text.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>').replace(/\n/g, '<br>');
+            div.innerHTML = formatted;
 
-            if (action) {
-                const btn = document.createElement('button');
-                btn.className = 'chat-action-btn';
-                btn.innerText = action.text;
-                if (action.type === 'link') {
-                    btn.onclick = () => window.location.href = action.url;
-                } else if (action.type === 'section_trigger') {
-                    btn.onclick = () => { showSection(action.target); if(window.innerWidth < 768) toggleChat(); };
-                }
-                div.appendChild(document.createElement('br'));
-                div.appendChild(btn);
+            // Bouton d'action (Lien)
+            if (action && action.type === 'link') {
+                div.innerHTML += `<br><a href="${action.url}" class="chat-action-btn mt-2" target="_blank">${action.text}</a>`;
             }
+            // Bouton d'action (Script interne - Optionnel si on veut laisser le choix)
+            if (action && action.type === 'script' && action.label) {
+                 // Si on veut un bouton au lieu de l'auto-exécution
+                 div.innerHTML += `<br><button class="chat-action-btn mt-2 border-0" onclick="${action.code}">${action.label}</button>`;
+            }
+
             const container = document.getElementById('chatMessages');
             container.appendChild(div);
             container.scrollTop = container.scrollHeight;
