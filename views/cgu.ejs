@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="<%= locale %>">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UAP Immo | Conditions Générales d'Utilisation</title>
+
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-TF7HSC3N');
+  </script>
+  <!-- Fin Google Tag Manager -->
+
+  <!-- CSS -->
+  <link href="/css/bootstrap.min.css" rel="stylesheet">
+  <link href="/css/styles-main.css" rel="stylesheet">
+  <link href="/css/bootstrap-icons.css" rel="stylesheet">
+
+  <style>
+    /* Styles hérités de payment.ejs pour la cohérence */
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Arial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    
+    main {
+      flex: 1;
+    }
+
+    .content-container {
+        max-width: 900px; /* Largeur de lecture confortable */
+        margin: 0 auto;
+        padding: 40px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    }
+
+    h1 {
+        color: #52566f;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+        border-bottom: 2px solid #C4B990;
+        padding-bottom: 15px;
+    }
+
+    h2 {
+        color: #333;
+        font-size: 1.5rem;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        font-weight: 600;
+    }
+
+    h3 {
+        color: #555;
+        font-size: 1.2rem;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        font-weight: 500;
+    }
+
+    p {
+        line-height: 1.7;
+        color: #444;
+        margin-bottom: 15px;
+        text-align: justify;
+    }
+
+    .navbar { background-color: #C4B990; }
+    .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon { color: #000; }
+    .navbar .navbar-icon { font-size: 1.5rem; }
+    .navbar .btn-outline-dark { margin-right: 12px; }
+    
+    .lang-flag {
+        width: 24px; height: 16px; background-size: contain;
+        background-repeat: no-repeat; background-position: center;
+        display: inline-block; flex-shrink: 0;
+    }
+    .lang-fr { background-image: url('https://flagcdn.com/fr.svg'); }
+    .lang-en { background-image: url('https://flagcdn.com/gb.svg'); }
+
+    /* Footer */
+    .footer { background-color: #343a40; color: #fff; padding: 20px 0; }
+    
+    @media (max-width: 767px) {
+        .content-container {
+            padding: 20px;
+            margin: 20px 10px;
+        }
+        h1 { font-size: 1.8rem; }
+    }
+
+    @media (max-width: 991.98px) {
+      .mobile-lang-selector { display: flex !important; align-items: center; gap: 8px; }
+      .desktop-lang-selector { display: none !important; }
+    }
+    @media (min-width: 992px) {
+      .mobile-lang-selector { display: none !important; }
+    }
+  </style>    
+</head>
+<body id="top">
+
+<noscript>
+  <iframe src="https://www.googletagmanager.com/ns.html?id=GTM-TF7HSC3N"
+  height="0" width="0" style="display:none;visibility:hidden"></iframe>
+</noscript>
+
+<main>
+<% let cleanPath = currentPath.replace(/^\/(fr|en)/, '') || '/'; %>
+<!-- NAVBAR (Identique aux autres pages) -->
+<nav class="navbar navbar-expand-lg fixed-top">
+  <div class="container">
+    <a class="navbar-brand" href="/<%= locale %>">
+      <span>UAP Immo</span>
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+      aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-lg-5 me-lg-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>"><%= i18n.menu.home %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/<%= locale %>/contact"><%= i18n.menu.contact %></a>
+        </li>
+
+        <% if (isAuthenticated) { %>
+          <li class="nav-item d-lg-none">
+            <a class="nav-link" href="/<%= locale %>/user"><i class="bi bi-person-circle"></i> <%= locale === 'fr' ? 'Mon compte' : 'My Account' %></a>
+          </li>
+          <li class="nav-item d-lg-none">
+            <form action="/logout" method="POST">
+              <button class="nav-link btn btn-link text-start w-100" type="submit" style="border: none; background: none;">
+                <i class="bi bi-box-arrow-right"></i> <%= locale === 'fr' ? 'Déconnexion' : 'Logout' %>
+              </button>
+            </form>
+          </li>
+        <% } else { %>
+           <!-- Liens login mobile si nécessaire -->
+        <% } %>
+      </ul>
+
+      <div class="d-none d-lg-flex align-items-center">
+        <% if (isAuthenticated) { %>
+          <a href="/<%= locale %>/user" class="btn btn-outline-dark rounded-pill px-3 py-1 me-2 d-flex align-items-center gap-2">
+            <i class="bi bi-person-circle"></i>
+            <span><%= locale === 'fr' ? 'Mon compte' : 'My Account' %></span>
+          </a>
+          <form action="/logout" method="POST" class="d-inline">
+            <button type="submit" class="btn btn-outline-dark rounded-pill px-3 py-1 d-flex align-items-center gap-2">
+              <i class="bi bi-box-arrow-right"></i>
+              <span><%= locale === 'fr' ? 'Déconnexion' : 'Logout' %></span>
+            </button>
+          </form>
+        <% } else { %>
+          <a href="/<%= locale %>/login" class="btn btn-outline-dark rounded-pill px-3 py-1 me-3 d-flex align-items-center gap-2">
+            <i class="bi bi-person-fill"></i>
+            <span><%= locale === 'fr' ? 'Connexion' : 'Login' %></span>
+          </a>
+        <% } %>
+      </div>
+
+      <div class="ms-3 d-none d-lg-block">
+        <div class="dropdown">
+          <button class="btn btn-light border rounded-pill px-3 py-1 d-flex align-items-center gap-2" type="button"
+            data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="lang-flag <%= locale === 'fr' ? 'lang-fr' : 'lang-en' %>"></span>
+            <i class="bi bi-chevron-down small"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow">
+            <% if (locale === 'fr') { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/en<%= cleanPath %>"><span class="lang-flag lang-en"></span> English</a></li>
+            <% } else { %>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="/fr<%= cleanPath %>"><span class="lang-flag lang-fr"></span> Français</a></li>
+            <% } %>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="container" style="padding-top: 120px; padding-bottom: 60px;">
+  <div class="content-container">
+    
+    <h1>Conditions Générales d'Utilisation</h1>
+
+    <p>Dernière mise à jour : 23 Novembre 2025</p>
+
+    <p>Bienvenue sur UAP Immo. En accédant à notre site web et en utilisant nos services, vous acceptez d'être lié par les présentes Conditions Générales d'Utilisation (CGU). Veuillez les lire attentivement.</p>
+
+    <h2>1. Objet</h2>
+    <p>Les présentes CGU ont pour objet de définir les modalités de mise à disposition des services du site UAP Immo, ci-après nommé « le Service » et les conditions d'utilisation du Service par l'Utilisateur.</p>
+
+    <h2>2. Accès au service</h2>
+    <p>Le Service est accessible gratuitement à tout Utilisateur disposant d'un accès à internet. Tous les coûts afférents à l'accès au Service, que ce soient les frais matériels, logiciels ou d'accès à internet sont exclusivement à la charge de l'utilisateur. Il est seul responsable du bon fonctionnement de son équipement informatique ainsi que de son accès à internet.</p>
+
+    <h3>2.1 Disponibilité</h3>
+    <p>UAP Immo met en œuvre tous les moyens raisonnables à sa disposition pour assurer un accès de qualité au Service, mais n'est tenu à aucune obligation d'y parvenir. UAP Immo ne peut, en outre, être tenue responsable de tout dysfonctionnement du réseau ou des serveurs ou de tout autre événement échappant au contrôle raisonnable, qui empêcherait ou dégraderait l'accès au Service.</p>
+
+    <h2>3. Propriété intellectuelle</h2>
+    <p>La structure générale du site UAP Immo, ainsi que les textes, graphiques, images, sons et vidéos la composant, sont la propriété de l'éditeur ou de ses partenaires. Toute représentation et/ou reproduction et/ou exploitation partielle ou totale des contenus et services proposés par le site UAP Immo, par quelque procédé que ce soit, sans l'autorisation préalable et par écrit de UAP Immo est strictement interdite.</p>
+
+    <h3>3.1 Contenu utilisateur</h3>
+    <p>L'Utilisateur reste titulaire de l'intégralité de ses droits de propriété intellectuelle. Toutefois, en publiant une annonce sur le site, il cède à la société éditrice le droit non exclusif et gratuit de représenter, reproduire, adapter, modifier, diffuser et distribuer sa publication, directement ou par un tiers autorisé.</p>
+
+    <h2>4. Responsabilité</h2>
+    <p>Les informations et/ou documents figurant sur ce site et/ou accessibles par ce site proviennent de sources considérées comme étant fiables. Toutefois, ces informations et/ou documents sont susceptibles de contenir des inexactitudes techniques et des erreurs typographiques.</p>
+
+    <h2>5. Données personnelles</h2>
+    <p>Les informations demandées à l’inscription au site sont nécessaires et obligatoires pour la création du compte de l'Utilisateur. En particulier, l'adresse électronique pourra être utilisée par le site pour l'administration, la gestion et l'animation du service.</p>
+
+    <h2>6. Droit applicable</h2>
+    <p>Tant le présent site que les modalités et conditions de son utilisation sont régis par le droit français, quel que soit le lieu d’utilisation. En cas de contestation éventuelle, et après l’échec de toute tentative de recherche d’une solution amiable, les tribunaux français seront seuls compétents pour connaître de ce litige.</p>
+
+  </div>
+</div>
+
+</main>
+
+<!-- Footer -->
+<footer class="site-footer section-padding">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3 col-12 mb-4 pb-2">
+        <a class="navbar-brand mb-2" href="/<%= locale %>"><span>UAP Immo</span></a>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.informations %></h6>
+        <ul class="site-footer-links">
+          <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link"><%= i18n.menu.home %></a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-6">
+        <h6 class="site-footer-title mb-3"><%= i18n.footer.access %></h6>
+        <ul class="site-footer-links">
+          <li class="site-footer-link-item"><a href="/<%= locale %>/contact" class="site-footer-link"><%= i18n.menu.contact %></a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
+        <!-- Sélecteur de langue footer -->
+      </div>
+    </div>
+    <p class="copyright-text mt-lg-5 mt-4">Copyright © 2025 UAP Company. <%= i18n.footer && i18n.footer.all_rights ? i18n.footer.all_rights : 'Tous droits réservés.' %></p>
+  </div>
+</footer>
+
+<script src="/js/bootstrap.bundle.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const navbarCollapse = document.getElementById('navbarNav');
+    document.querySelectorAll('.navbar-nav .nav-link').forEach(function (link) {
+      link.addEventListener('click', function () {
+        if (navbarCollapse.classList.contains('show')) {
+          new bootstrap.Collapse(navbarCollapse).hide();
+        }
+      });
+    });
+});
+</script>
+<%- include('partials/cookie_banner') %>
+</body>
+</html>
