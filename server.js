@@ -4272,92 +4272,117 @@ app.post('/api/chat', isAuthenticated, isAdmin, async (req, res) => {
     const user = req.user;
 
     try {
-        const result = await manager.process('fr', message);
-        let answer = result.answer;
+        let answer = null;
         let action = null;
-        const intent = result.intent;
 
-        // --- STATISTIQUES ---
-        if (intent === 'stats.info') {
-            answer = "Le tableau de statistiques vous montre qui visite votre page (Vues, Pays, Appareil). C'est utile pour savoir si votre annonce est performante.";
-            action = { 
-                type: 'script', 
-                code: "showSection('donnees');", 
-                label: "Voir les statistiques" // ✅ Bouton ajouté
-            };
-        }
+        // 1. DÉTECTION INTELLIGENTE D'ID (Priorité absolue)
+        // Regex pour détecter un ID de commande (ORD-...) ou un ID Mongo (24 hex chars)
+        const orderIdMatch = message.match(/(ORD-\d+|[0-9a-fA-F]{24})/);
+        
+        if (orderIdMatch) {
+            const detectedId = orderIdMatch[0];
+            
+            // A. Est-ce une COMMANDE ?
+            // On cherche par orderId (ORD-...) ou par _id
+            const order = await Order.findOne({ 
+                $or: [{ orderId: detectedId }, { _id: (mongoose.isValidObjectId(detectedId) ? detectedId : null) }],
+                userId: user._id 
+            });
 
-        // --- COMPTE ---
-        if (intent === 'account.address') {
-            if (user.billingAddress && user.billingAddress.street) {
-                answer = `Votre adresse est : **${user.billingAddress.street}**. Voulez-vous la modifier ?`;
-                action = { 
-                    type: 'script', 
-                    code: "document.getElementById('editAddressCollapse').classList.add('show'); document.getElementById('dash-street').focus();",
-                    label: "Modifier mon adresse" // ✅ Bouton ajouté
-                };
-            } else {
-                answer = "Vous n'avez pas d'adresse. Ajoutez-en une :";
-                action = { 
-                    type: 'script', 
-                    code: "document.getElementById('editAddressCollapse').classList.add('show'); document.getElementById('dash-street').focus();",
-                    label: "Ajouter une adresse" // ✅ Bouton ajouté
-                };
+            if (order) {
+                const today = new Date();
+                const expiryDate = new Date(order.expiryDate);
+                const daysLeft = Math.max(0, Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24)));
+                const statusMap = { 'paid': 'Payée ✅', 'pending': 'En attente ⏳' };
+                
+                answer = `**Commande ${order.orderId}** trouvée.<br>` +
+                         `• Statut : ${statusMap[order.status] || order.status}<br>` +
+                         `• Montant : ${order.amount} ${order.currency}<br>` +
+                         (order.status === 'paid' ? `• Diffusion : Reste **${daysLeft} jours**` : '• Diffusion : Non active');
+                
+                action = { type: 'script', code: "showSection('orders');", label: "Voir dans Mes Commandes" };
+                return res.json({ response: answer, action });
+            }
+
+            // B. Est-ce une PROPRIÉTÉ ?
+            if (mongoose.isValidObjectId(detectedId)) {
+                const property = await Property.findOne({ _id: detectedId, userId: user._id });
+                if (property) {
+                    answer = `**Page trouvée :** ${property.propertyType} à ${property.city}.<br>` +
+                             `Créée le : ${new Date(property.createdAt).toLocaleDateString()}.<br>` +
+                             `Que voulez-vous faire ?`;
+                    
+                    // On propose de modifier directement
+                    action = { type: 'script', code: `editProperty('${property._id}')`, label: "Modifier cette page" };
+                    return res.json({ response: answer, action });
+                }
             }
         }
 
-        if (intent === 'account.password') {
-            answer = "Pour changer votre mot de passe, cliquez ci-dessous :";
-            action = { type: 'link', text: 'Réinitialiser mot de passe', url: `/${req.locale}/forgot-password` };
+        // 2. ANALYSE NLP CLASSIQUE (Si pas d'ID détecté)
+        const result = await manager.process('fr', message);
+        const intent = result.intent;
+        answer = result.answer; // Réponse par défaut du fichier d'entraînement
+
+        // 3. RÉPONSES DYNAMIQUES (Surcharge la réponse par défaut)
+
+        // --- PROFIL & ADRESSE ---
+        if (intent === 'profile.info') {
+             answer = "Vos informations personnelles sont dans l'onglet **Mon Profil**.";
+             action = { type: 'script', code: "showSection('account');", label: "Voir mon profil" };
+        }
+
+        if (intent === 'profile.address') {
+            // Pour que le bouton fonctionne, on appelle une fonction globale qu'on va créer dans user.ejs
+            if (user.billingAddress && user.billingAddress.street) {
+                answer = `Adresse actuelle : ${user.billingAddress.street}, ${user.billingAddress.city}.`;
+                action = { type: 'script', code: "openAddressEdit();", label: "Modifier mon adresse" };
+            } else {
+                answer = "Aucune adresse enregistrée. C'est nécessaire pour la facturation.";
+                action = { type: 'script', code: "openAddressEdit();", label: "Ajouter une adresse" };
+            }
         }
 
         // --- CRÉATION ---
-        if (intent === 'property.create') {
-            answer = "Pour créer une annonce, cliquez sur le bouton ci-dessous pour ouvrir le formulaire. Le processus se fait en 4 étapes.";
-            action = { 
-                type: 'script', 
-                code: "showSection('landing');", 
-                label: "Ouvrir le formulaire" // ✅ C'est ce label qui crée le bouton !
-            };
+        if (intent === 'listing.create') {
+            answer = "Pour créer une annonce, suivez le guide en 4 étapes (Infos, Équipements, Photos, Description).";
+            action = { type: 'script', code: "showSection('landing');", label: "Ouvrir le formulaire" };
         }
 
         // --- COMMANDES ---
-        if (intent === 'order.invoice') {
-            const paidOrders = await Order.find({ userId: user._id, status: 'paid' });
-            if (paidOrders.length > 0) {
-                answer = `Vous avez **${paidOrders.length} facture(s)**. Téléchargez-les ici :`;
-                action = { type: 'script', code: "showSection('orders');", label: "Voir mes commandes" };
-            } else {
-                answer = "Vous n'avez aucune facture disponible.";
-            }
-        }
-
-        if (intent === 'order.status') {
+        if (intent === 'order.last') {
             const lastOrder = await Order.findOne({ userId: user._id }).sort({ createdAt: -1 });
             if (lastOrder) {
                 const statusMap = { 'paid': 'Payée ✅', 'pending': 'En attente ⏳' };
-                answer = `Votre dernière commande est **${statusMap[lastOrder.status] || lastOrder.status}**.`;
-                action = { type: 'script', code: "showSection('orders');", label: "Détails commande" };
+                answer = `Votre dernière commande (${lastOrder.orderId}) est **${statusMap[lastOrder.status]}**.`;
+                if(lastOrder.status === 'paid') {
+                     // Calcul jours restants
+                     const days = Math.max(0, Math.ceil((new Date(lastOrder.expiryDate) - new Date()) / (1000 * 60 * 60 * 24)));
+                     answer += `<br>Il reste **${days} jours** de diffusion.`;
+                }
+                action = { type: 'script', code: "showSection('orders');", label: "Voir mes commandes" };
             } else {
-                answer = "Vous n'avez pas encore de commande.";
+                answer = "Aucune commande trouvée.";
+                action = { type: 'script', code: "showSection('landing');", label: "Créer une annonce" };
             }
         }
-
-        if (intent === 'payment.broadcast') {
-            answer = "Pour diffuser, allez dans 'Pages créées' et cliquez sur le **Mégaphone**.";
-            action = { type: 'script', code: "showSection('created-pages');", label: "Voir mes pages" };
+        
+        // --- STATISTIQUES ---
+        if (intent === 'stats.info') {
+             // On garde la réponse par défaut du NLP mais on ajoute le bouton
+             action = { type: 'script', code: "showSection('donnees');", label: "Voir le tableau" };
         }
 
-        // Fallback
+        // Fallback final
         if (!answer && result.score < 0.5) {
-            answer = "Je n'ai pas bien compris. Essayez : 'Créer une annonce', 'Mes factures' ou 'Modifier mon adresse'.";
+            answer = "Je n'ai pas compris. Essayez de me donner un numéro de commande (ORD-...) ou demandez 'Comment créer une page'.";
         }
 
         res.json({ response: answer || "Désolé, je n'ai pas compris.", intent, action });
 
     } catch (error) {
         console.error('Erreur Chatbot:', error);
-        res.status(500).json({ response: "Erreur interne du chatbot." });
+        res.status(500).json({ response: "Erreur interne." });
     }
 });
 
