@@ -4386,7 +4386,27 @@ app.post('/api/chat', isAuthenticated, isAdmin, async (req, res) => {
     }
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+try {
+    const privateKey = fs.readFileSync('/home/ec2-user/appimmo/ssl/server.key', 'utf8');
+    const certificate = fs.readFileSync('/home/ec2-user/appimmo/ssl/server.crt', 'utf8');
+    const credentials = { key: privateKey, cert: certificate };
+
+    const httpsServer = https.createServer(credentials, app);
+
+    httpsServer.listen(443, () => {
+        console.log('✅ Serveur HTTPS démarré sur le port 443');
+    });
+} catch (e) {
+    console.error("❌ Erreur démarrage HTTPS (certificats manquants ?) :", e.message);
+    // Fallback sur HTTP si le SSL échoue pour éviter le crash total
+    app.listen(8080, () => console.log('⚠️ Fallback: Serveur HTTP sur 8080'));
+}
+
+// 2. Redirection HTTP vers HTTPS (Port 80)
+// Cela force les utilisateurs qui tapent "uap.immo" à aller sur "https://uap.immo"
+http.createServer((req, res) => {
+    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+    res.end();
+}).listen(80, () => {
+    console.log('🔄 Redirection HTTP > HTTPS active sur le port 80');
 });
