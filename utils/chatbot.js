@@ -3,59 +3,77 @@ const { NlpManager } = require('node-nlp');
 const manager = new NlpManager({ languages: ['fr'], forceNER: true, nlu: { log: false } });
 
 async function trainChatbot() {
-    console.log('🧠 Entraînement du cerveau UAP Immo...');
+    console.log('🧠 Entraînement du cerveau UAP Immo (Mode Expert)...');
 
-    // --- 1. AIDE GÉNÉRALE ---
-    manager.addDocument('fr', 'bonjour', 'greetings.hello');
-    manager.addDocument('fr', 'salut', 'greetings.hello');
-    manager.addAnswer('fr', 'greetings.hello', 'Bonjour ! Je suis l\'assistant UAP Immo. Je peux vous aider à créer, gérer ou diffuser vos annonces.');
-
-    manager.addDocument('fr', 'peux tu m\'aider', 'agent.help');
-    manager.addDocument('fr', 'j\'ai besoin d\'aide', 'agent.help');
-    manager.addDocument('fr', 'je suis perdu', 'agent.help');
-    manager.addDocument('fr', 'comment ça marche', 'agent.help');
-    manager.addAnswer('fr', 'agent.help', 'Bien sûr ! Je peux vous aider sur : la création d\'annonces, la modification de votre profil, les paiements ou le suivi de vos commandes. Dites-moi ce que vous cherchez.');
-
-    // --- 2. COMPTE & SÉCURITÉ ---
-    manager.addDocument('fr', 'changer mon mot de passe', 'account.password');
-    manager.addDocument('fr', 'réinitialiser mot de passe', 'account.password');
+    // --- 1. PROFIL & ADRESSE ---
+    manager.addDocument('fr', 'ou sont mes informations personnelles', 'profile.info');
+    manager.addDocument('fr', 'voir mon profil', 'profile.info');
+    manager.addDocument('fr', 'mon compte', 'profile.info');
     
-    manager.addDocument('fr', 'changer mon adresse', 'account.address');
-    manager.addDocument('fr', 'modifier ma facturation', 'account.address');
+    manager.addDocument('fr', 'comment modifier mon adresse', 'profile.address');
+    manager.addDocument('fr', 'changer adresse facturation', 'profile.address');
+    manager.addDocument('fr', 'ajouter une adresse', 'profile.address');
+    manager.addDocument('fr', 'mettre a jour mes coordonnées', 'profile.address');
 
-    manager.addDocument('fr', 'c\'est quoi la 2fa', 'account.2fa');
-    manager.addDocument('fr', 'activer la double authentification', 'account.2fa');
-    manager.addAnswer('fr', 'account.2fa', 'La 2FA sécurise votre compte. Vous pouvez l\'activer dans la section "Mon Profil".');
+    // --- 2. PROCESSUS GÉNÉRAL ---
+    manager.addDocument('fr', 'comment fonctionne la plateforme', 'platform.guide');
+    manager.addDocument('fr', 'que dois-je faire', 'platform.guide');
+    manager.addDocument('fr', 'expliquer le fonctionnement', 'platform.guide');
+    manager.addAnswer('fr', 'platform.guide', 'Le processus est simple : 1. Créez une annonce via le formulaire. 2. Une page web est générée instantanément. 3. Partagez le lien ou le QR Code gratuitement. 4. (Optionnel) Payez un pack pour diffuser l\'annonce professionnellement.');
 
-    // --- 3. GESTION DES ANNONCES ---
-    manager.addDocument('fr', 'créer une annonce', 'property.create');
-    manager.addDocument('fr', 'ajouter un bien', 'property.create');
-    manager.addDocument('fr', 'nouvelle page', 'property.create');
-    manager.addDocument('fr', 'comment créer une page', 'property.create');
+    // --- 3. CRÉATION D'ANNONCE (DÉTAILS) ---
+    manager.addDocument('fr', 'comment créer une page', 'listing.create');
+    manager.addDocument('fr', 'ajouter une propriété', 'listing.create');
+    manager.addDocument('fr', 'faire une nouvelle annonce', 'listing.create');
 
-    manager.addDocument('fr', 'modifier une annonce', 'property.edit');
-    manager.addDocument('fr', 'changer le prix', 'property.edit');
-    manager.addAnswer('fr', 'property.edit', 'Allez dans l\'onglet "Pages créées" et cliquez sur le bouton vert (crayon) à côté de la propriété.');
+    manager.addDocument('fr', 'mettre une vidéo', 'listing.media');
+    manager.addDocument('fr', 'photos ou vidéo', 'listing.media');
+    manager.addDocument('fr', 'comment marche le slider', 'listing.media');
+    manager.addAnswer('fr', 'listing.media', 'C\'est flexible : Si vous ajoutez un lien YouTube, la page aura un **fond vidéo immersif**. Si vous ne mettez pas de vidéo, la page affichera un **slider (carrousel)** avec vos photos principales.');
 
-    // --- 4. STATISTIQUES (Nouveau) ---
+    manager.addDocument('fr', 'quelle langue choisir', 'listing.lang');
+    manager.addDocument('fr', 'traduire mon annonce', 'listing.lang');
+    manager.addAnswer('fr', 'listing.lang', 'Vous pouvez choisir entre Français, Anglais, Espagnol ou Portugais à la fin du formulaire. Attention : écrivez votre description dans la langue choisie, le site ne traduit pas automatiquement votre texte.');
+
+    manager.addDocument('fr', 'format des photos', 'listing.format');
+    manager.addDocument('fr', 'taille images', 'listing.format');
+    manager.addDocument('fr', 'poids photos', 'listing.format');
+    manager.addAnswer('fr', 'listing.format', 'Nous acceptons les formats JPG, PNG et WEBP. Pour une performance optimale, essayez de garder des images sous 5 Mo chacune.');
+
+    // --- 4. GESTION (PAGES CRÉÉES) ---
+    manager.addDocument('fr', 'ou sont mes pages', 'listing.manage');
+    manager.addDocument('fr', 'modifier mon annonce', 'listing.manage');
+    manager.addDocument('fr', 'comment partager', 'listing.manage');
+    manager.addDocument('fr', 'trouver le qr code', 'listing.manage');
+    manager.addAnswer('fr', 'listing.manage', 'Tout se passe dans l\'onglet **"Pages créées"**. Vous y trouverez les boutons pour : Modifier (crayon), Voir (œil), Copier le lien, Afficher le QR Code et Diffuser (mégaphone).');
+
+    // --- 5. STATISTIQUES ---
     manager.addDocument('fr', 'a quoi sert le tableau statistics', 'stats.info');
-    manager.addDocument('fr', 'c\'est quoi les statistiques', 'stats.info');
-    manager.addDocument('fr', 'comprendre mes vues', 'stats.info');
-    manager.addDocument('fr', 'voir les stats', 'stats.info');
-    // Réponse gérée par le serveur pour ajouter un bouton d'action
+    manager.addDocument('fr', 'comprendre les stats', 'stats.info');
+    manager.addDocument('fr', 'qui visite ma page', 'stats.info');
+    manager.addAnswer('fr', 'stats.info', 'Le tableau de statistiques vous permet de suivre la performance de vos annonces : nombre de vues, visiteurs uniques, pays d\'origine, type d\'appareil (mobile/PC) et source du trafic.');
 
-    // --- 5. PAIEMENT & COMMANDES ---
-    manager.addDocument('fr', 'télécharger ma facture', 'order.invoice');
-    manager.addDocument('fr', 'suivi de commande', 'order.status');
-    manager.addDocument('fr', 'c\'est quoi diffuser', 'payment.broadcast');
+    // --- 6. COMMANDES & PAIEMENT ---
+    manager.addDocument('fr', 'comment payer', 'payment.how');
+    manager.addDocument('fr', 'moyens de paiement', 'payment.how');
+    manager.addAnswer('fr', 'payment.how', 'Pour payer, allez dans "Pages créées" et cliquez sur l\'icône Mégaphone. Vous pourrez régler 500€ via **PayPal** (Carte bancaire) ou **Bitcoin** (Crypto).');
+
+    manager.addDocument('fr', 'ma dernière commande', 'order.last');
+    manager.addDocument('fr', 'statut de ma commande', 'order.last');
+    manager.addDocument('fr', 'ai-je payé', 'order.last');
+
+    // --- 7. RECHERCHE SPÉCIFIQUE (ID) ---
+    // Ces phrases servent à détecter l'intention de recherche, le serveur extraira l'ID
+    manager.addDocument('fr', 'info sur la commande', 'lookup.order');
+    manager.addDocument('fr', 'statut commande', 'lookup.order');
+    manager.addDocument('fr', 'combien de temps reste-t-il', 'lookup.order');
     
-    manager.addDocument('fr', 'combien ça coûte', 'payment.price');
-    manager.addDocument('fr', 'quel est le prix', 'payment.price');
-    manager.addAnswer('fr', 'payment.price', 'Le pack de diffusion professionnelle coûte **500€** pour une durée de **90 jours**.');
+    manager.addDocument('fr', 'voir la page', 'lookup.page');
+    manager.addDocument('fr', 'modifier la page', 'lookup.page');
 
     await manager.train();
     manager.save();
-    console.log('🤖 Chatbot UAP : Entraînement terminé !');
+    console.log('🤖 Cerveau UAP mis à jour !');
 }
 
 module.exports = { manager, trainChatbot };
