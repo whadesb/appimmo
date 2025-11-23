@@ -4136,10 +4136,11 @@ app.post('/paypal/mark-paid', isAuthenticatedJson, async (req, res) => {
     // Ces constantes sont définies ici pour être utilisées par le bloc asynchrone ci-dessous
     const fullName = [req.user.firstName, req.user.lastName].filter(Boolean).join(' ') || req.user.email;
     const clientDetails = {
-      userId: req.user._id.toString(),
-      firstName: req.user.firstName,
-      lastName: req.user.lastName,
-    };
+        userId: req.user._id.toString(),
+        firstName: req.user.firstName,
+        lastName: req.user.lastName,
+        address: req.user.billingAddress // On passe l'objet adresse complet
+    };
     const companyDetails = {
         name: 'UAP Immo',
         address: ['123 Rue de la Liberté', '75000 Paris'], // 👈 VOS VRAIES ADRESSES
@@ -4252,6 +4253,7 @@ app.post('/btcpay/webhook', express.json(), async (req, res) => {
             userId: user._id.toString(),
             firstName: user.firstName,
             lastName: user.lastName,
+            address: user.billingAddress // On passe l'objet adresse complet
         };
         const companyDetails = {
             name: 'UAP Immo',
