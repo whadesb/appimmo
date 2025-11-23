@@ -3526,6 +3526,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 // Modifié ici pour accepter 'actions' (pluriel) ou 'action' (singulier)
                 const actionsData = data.actions || data.action; 
                 addMessage(data.response, 'bot', actionsData);
+}
             } catch (err) {
                 console.error(err);
                 addMessage("Désolé, une erreur de connexion est survenue.", 'bot');
