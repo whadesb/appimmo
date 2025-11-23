@@ -2037,7 +2037,33 @@ app.get('/user/landing-pages', isAuthenticated, async (req, res) => {
   }
 });
 
+app.get('/:locale/cgu', (req, res) => {
+    const locale = req.params.locale || 'fr';
 
+    // Chargement des traductions pour le menu/footer (on réutilise user.json ou global.json)
+    // Assurez-vous que le chemin est correct par rapport à votre structure
+    const translationsPath = `./locales/${locale}/user.json`; 
+    let i18n = {};
+    try {
+        i18n = JSON.parse(fs.readFileSync(translationsPath, 'utf8'));
+    } catch (e) {
+        console.error("Erreur chargement trad CGU:", e);
+        // Fallback minimal pour éviter le crash si le fichier manque
+        i18n = { menu: { home: 'Home', contact: 'Contact' }, footer: {} }; 
+    }
+
+    res.render('cgu', {
+        locale: locale,
+        i18n: i18n,
+        currentPath: req.originalUrl,
+        // isAuthenticated et user sont gérés par le middleware global res.locals
+    });
+});
+
+// Redirection par défaut
+app.get('/cgu', (req, res) => {
+    res.redirect('/fr/cgu');
+})
 app.post('/process-paypal-payment', isAuthenticated, async (req, res) => {
   const axios = require('axios');
   const cfg = getPaypalConfig();
