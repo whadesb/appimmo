@@ -81,7 +81,7 @@
 
     /* --- STYLE BOUTON BITCOIN --- */
     .btn-btc {
-        background-color: #F7931A;
+        background-color: #F7931A; 
         border-color: #F7931A;
         color: #fff;
         font-weight: 600;
@@ -97,6 +97,7 @@
         border-color: #d87d10;
         color: #fff;
     }
+    /* --------------------------- */
 
     .navbar { background-color: #C4B990; }
     .navbar .navbar-brand, .navbar .nav-link, .navbar .navbar-icon { color: #000; }
@@ -128,6 +129,20 @@
         padding-bottom: 8px;
     }
     .ticket-style p:last-child { border-bottom: none; }
+    
+    /* Style Checkbox CGU */
+    .cgu-wrapper {
+        background-color: #fff3cd;
+        border: 1px solid #ffeeba;
+        color: #856404;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+    .form-check-input:checked {
+        background-color: #52566f;
+        border-color: #52566f;
+    }
 
     @media (max-width: 767px) {
         .form-container {
@@ -269,19 +284,29 @@
             </div>
         </div>
 
-        <!-- BOUTON DE VALIDATION -->
+        <!-- BOUTON DE VALIDATION ADRESSE -->
         <div id="validation-step">
-             <p class="form-text text-muted mb-3"><small><i class="bi bi-info-circle"></i> Confirmez vos coordonnées pour voir les options de paiement.</small></p>
+             <p class="form-text text-muted mb-3"><small><i class="bi bi-info-circle"></i> Confirmez vos coordonnées pour passer à l'étape suivante.</small></p>
              <button id="btn-validate-info" class="btn btn-primary w-100 py-2 fw-bold">
-                 Confirmer l'adresse et Payer
+                 Confirmer mes informations
              </button>
              <div id="save-msg" class="text-center mt-2" style="display:none;"></div>
         </div>
         
+        <!-- ✅ NOUVELLE ÉTAPE : CGU (Caché par défaut) -->
+        <div id="cgu-step" class="cgu-wrapper" style="display: none;">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" value="" id="cgu-checkbox" style="cursor: pointer;">
+                <label class="form-check-label" for="cgu-checkbox" style="font-weight: 500; cursor: pointer;">
+                    J'ai lu et j'accepte les <a href="/<%= locale %>/cgu" target="_blank" class="text-decoration-underline fw-bold text-dark">Conditions Générales d'Utilisation</a> <i class="bi bi-box-arrow-up-right small ms-1"></i>
+                </label>
+            </div>
+        </div>
+        
         <!-- ZONE DE PAIEMENT (CACHÉE PAR DÉFAUT) -->
         <div id="payment-options" class="collapse mt-4">
-            <div class="alert alert-success border text-center mb-4">
-                <i class="bi bi-check-circle-fill me-2"></i> Adresse validée. Choisissez votre moyen de paiement :
+            <div class="alert alert-light border text-center mb-4">
+                <p class="mb-1"><strong>Choisissez votre moyen de paiement sécurisé :</strong></p>
             </div>
             
             <div class="row g-3 align-items-start">
@@ -334,7 +359,7 @@
         <h6 class="site-footer-title mb-3"><%= i18n.footer.informations %></h6>
         <ul class="site-footer-links">
           <li class="site-footer-link-item"><a href="/<%= locale %>" class="site-footer-link"><%= i18n.menu.home %></a></li>
-          <li class="site-footer-link-item"><a href="/<%= locale %>/cgu" class="site-footer-link">CGU</a></li>
+          <li class="site-footer-link-item"><a href="/<%= locale %>/register" class="site-footer-link"><%= i18n.footer.create_account %></a></li>
         </ul>
       </div>
       <div class="col-lg-3 col-md-4 col-6">
@@ -371,7 +396,9 @@
 <script src="https://www.paypal.com/sdk/js?client-id=<%= PAYPAL_CLIENT_ID %>&currency=EUR&intent=capture&components=buttons&disable-funding=card,credit,bancontact,blik,eps,giropay,ideal,mybank,p24,sepa,sofort"></script>
 
 <script>
-    // --- LOGIQUE DE SAUVEGARDE ADRESSE ---
+    // --- LOGIQUE DE VALIDATION EN CASCADE ---
+    
+    // 1. Sauvegarde de l'adresse
     document.getElementById('btn-validate-info').addEventListener('click', async function() {
         const btn = this;
         const msg = document.getElementById('save-msg');
@@ -399,23 +426,50 @@
             const result = await response.json();
 
             if (result.success) {
-                // Cacher le bouton et montrer les options de paiement
+                // Cacher le bouton d'adresse
                 document.getElementById('validation-step').style.display = 'none';
                 
-                var paymentOptions = document.getElementById('payment-options');
-                var bsCollapse = new bootstrap.Collapse(paymentOptions, {
-                    toggle: true
-                });
+                // Désactiver les champs pour montrer que c'est validé
+                document.getElementById('street').disabled = true;
+                document.getElementById('postalCode').disabled = true;
+                document.getElementById('city').disabled = true;
+                document.getElementById('country').disabled = true;
+                
+                // ✅ AFFICHER LA ZONE CGU
+                const cguStep = document.getElementById('cgu-step');
+                cguStep.style.display = 'block';
+                cguStep.classList.add('animate__animated', 'animate__fadeIn'); // Animation optionnelle
+                
             } else {
                 alert('Erreur: ' + result.message);
                 btn.disabled = false;
-                btn.innerHTML = "Confirmer l'adresse et Payer";
+                btn.innerHTML = "Confirmer mes informations";
             }
         } catch (error) {
             console.error(error);
             alert('Erreur de connexion');
             btn.disabled = false;
-            btn.innerHTML = "Confirmer l'adresse et Payer";
+            btn.innerHTML = "Confirmer mes informations";
+        }
+    });
+
+    // 2. Gestion de la case à cocher CGU
+    document.getElementById('cgu-checkbox').addEventListener('change', function() {
+        const paymentOptions = document.getElementById('payment-options');
+        const bsCollapse = new bootstrap.Collapse(paymentOptions, {
+            toggle: false
+        });
+        
+        if (this.checked) {
+            // Si coché, on déroule les paiements
+            bsCollapse.show();
+            // Scroll doux vers les paiements
+            setTimeout(() => {
+                paymentOptions.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        } else {
+            // Si décoché, on replie
+            bsCollapse.hide();
         }
     });
 </script>
@@ -425,11 +479,16 @@
 function initPaypal() {
   paypal.Buttons({
     style: {
-        layout: 'horizontal', // Force un layout simple
+        layout: 'horizontal', 
         tagline: false,
-        height: 45 // Match height with BTC button approx
+        height: 45 
     },
     createOrder: function (data, actions) {
+      // Double vérification CGU au clic (sécurité supplémentaire)
+      if(!document.getElementById('cgu-checkbox').checked) {
+          alert("Veuillez accepter les CGU.");
+          return false;
+      }
       return actions.order.create({
         purchase_units: [{
           amount: { currency_code: 'EUR', value: '500.00' },
@@ -487,10 +546,15 @@ function initPaypal() {
 <script>
 /* ---------- BTCPay (Bitcoin) ---------- */
 document.getElementById('btc-button').addEventListener('click', async function () {
+  // Vérification CGU
+  if(!document.getElementById('cgu-checkbox').checked) {
+      alert("Veuillez accepter les CGU.");
+      return;
+  }
+  
   const btn = this;
   const originalText = btn.innerHTML;
   
-  // 1. Mise à jour UI (Chargement)
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Chargement...';
 
@@ -498,7 +562,6 @@ document.getElementById('btc-button').addEventListener('click', async function (
   const propertyId = propertyIdEl ? propertyIdEl.value : null;
 
   try {
-      // 2. Création de la facture via votre serveur
       const response = await fetch('/process-btcpay-payment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -508,11 +571,9 @@ document.getElementById('btc-button').addEventListener('click', async function (
       const result = await response.json().catch(() => ({}));
 
       if (response.ok && result.success && result.invoiceUrl) {
-          // Mise à jour libellé
           const pm = document.getElementById('payment-method');
           if (pm) pm.textContent = '<%= i18n.pay_with_btc %>';
 
-          // Injection Iframe
           const iframe = document.getElementById('btcpay-iframe');
           const modalEl = document.getElementById('btcpay-modal');
           
@@ -521,7 +582,6 @@ document.getElementById('btc-button').addEventListener('click', async function (
              const modal = new bootstrap.Modal(modalEl);
              modal.show();
           } else {
-             // Fallback si problème modale
              window.location.href = result.invoiceUrl;
           }
       } else {
@@ -531,7 +591,6 @@ document.getElementById('btc-button').addEventListener('click', async function (
       console.error('Erreur BTC Pay :', err);
       alert("Une erreur technique est survenue.");
   } finally {
-      // 3. Rétablissement bouton
       btn.disabled = false;
       btn.innerHTML = originalText;
   }
