@@ -2352,10 +2352,11 @@ app.get('/user/orders/:orderId/invoice', isAuthenticated, async (req, res) => {
     
     // --- DÉFINITION DES CONSTANTES POUR LE PDF ---
     // Ces infos sont nécessaires car elles ne sont pas en BDD
-    const clientDetails = {
+   const clientDetails = {
         userId: req.user._id.toString(),
         firstName: req.user.firstName,
         lastName: req.user.lastName,
+        address: req.user.billingAddress // On passe l'objet adresse complet
     };
     const companyDetails = {
         name: 'UAP Immo',
