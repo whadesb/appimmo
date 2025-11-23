@@ -13,6 +13,8 @@ const express = require('express');
 const path = require('path');
 const helmet = require('helmet'); 
 const mongoose = require('mongoose');
+const http = require('http');
+const https = require('https');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
 const passport = require('passport');
@@ -4385,28 +4387,36 @@ app.post('/api/chat', isAuthenticated, isAdmin, async (req, res) => {
         res.status(500).json({ response: "Erreur interne." });
     }
 });
-
 try {
+    // On essaie de lire les certificats
     const privateKey = fs.readFileSync('/home/ec2-user/appimmo/ssl/server.key', 'utf8');
     const certificate = fs.readFileSync('/home/ec2-user/appimmo/ssl/server.crt', 'utf8');
     const credentials = { key: privateKey, cert: certificate };
 
+    // Création du serveur HTTPS
     const httpsServer = https.createServer(credentials, app);
 
     httpsServer.listen(443, () => {
-        console.log('✅ Serveur HTTPS démarré sur le port 443');
+        console.log('✅ Serveur HTTPS lancé sur le port 443 (Sécurisé)');
     });
+
 } catch (e) {
-    console.error("❌ Erreur démarrage HTTPS (certificats manquants ?) :", e.message);
-    // Fallback sur HTTP si le SSL échoue pour éviter le crash total
-    app.listen(8080, () => console.log('⚠️ Fallback: Serveur HTTP sur 8080'));
+    console.error("❌ Erreur démarrage HTTPS :", e.message);
+    // Si le HTTPS échoue (ex: certificats manquants), on lance en HTTP sur 8080 pour ne pas tout casser
+    app.listen(8080, () => {
+        console.log('⚠️ Fallback: Serveur HTTP de secours lancé sur le port 8080');
+    });
 }
 
-// 2. Redirection HTTP vers HTTPS (Port 80)
-// Cela force les utilisateurs qui tapent "uap.immo" à aller sur "https://uap.immo"
-http.createServer((req, res) => {
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-    res.end();
-}).listen(80, () => {
-    console.log('🔄 Redirection HTTP > HTTPS active sur le port 80');
-});
+// 3. Serveur de Redirection HTTP (Port 80) -> HTTPS
+// Redirige automatiquement http://uap.immo vers https://uap.immo
+try {
+    http.createServer((req, res) => {
+        res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+        res.end();
+    }).listen(80, () => {
+        console.log('🔄 Serveur de redirection HTTP > HTTPS actif sur le port 80');
+    });
+} catch (e) {
+    console.warn("⚠️ Impossible de lancer le serveur de redirection sur le port 80 (Permission denied ou occupé ?)");
+}
