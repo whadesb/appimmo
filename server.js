@@ -37,6 +37,7 @@ const crypto = require('crypto');
 const { getPageStats } = require('./getStats');
 const Page = require('./models/Page');
 const nodemailer = require('nodemailer');
+const { manager, trainChatbot } = require('./utils/chatbot');
 const mongoSanitize = require('express-mongo-sanitize');
 const { getMultiplePageStats } = require('./getStats');
 const { BetaAnalyticsDataClient } = require('@google-analytics/data');
@@ -4265,6 +4266,55 @@ app.post('/btcpay/webhook', express.json(), async (req, res) => {
   }
 });
 
+app.post('/api/chat', isAuthenticated, isAdmin, async (req, res) => {
+    const { message } = req.body;
+    const user = req.user;
+
+    try {
+        // 1. Analyse du message par NLP
+        const result = await manager.process('fr', message);
+        let answer = result.answer;
+        let action = null;
+
+        // 2. Logique "Intelligente" (Overriding de la réponse basique)
+        
+        // Cas : Demande sur les commandes
+        if (result.intent === 'order.status') {
+            // On cherche les commandes réelles de l'utilisateur
+            const lastOrder = await Order.findOne({ userId: user._id }).sort({ createdAt: -1 });
+            if (lastOrder) {
+                const statusText = lastOrder.status === 'paid' ? 'payée ✅' : 'en attente ⏳';
+                answer = `Votre dernière commande (Réf: ${lastOrder.orderId}) est actuellement **${statusText}**.`;
+                if (lastOrder.status !== 'paid') {
+                    action = { type: 'link', text: 'Payer maintenant', url: `/${req.locale}/payment?propertyId=${lastOrder.propertyId}` };
+                }
+            } else {
+                answer = "Vous n'avez pas encore passé de commande.";
+            }
+        }
+
+        // Cas : Demande mot de passe
+        if (result.intent === 'account.password') {
+            answer = "Vous pouvez modifier votre mot de passe via la page de réinitialisation.";
+            action = { type: 'link', text: 'Réinitialiser le mot de passe', url: `/${req.locale}/forgot-password` };
+        }
+
+        // Fallback si le bot ne comprend pas (score faible)
+        if (!answer && result.score < 0.5) {
+            answer = "Je ne suis pas sûr de comprendre. Pouvez-vous reformuler ?";
+        }
+
+        res.json({ 
+            response: answer || "Désolé, je n'ai pas compris.", 
+            intent: result.intent,
+            action: action 
+        });
+
+    } catch (error) {
+        console.error('Erreur Chatbot:', error);
+        res.status(500).json({ response: "Erreur interne du cerveau du robot 🤯" });
+    }
+});
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
