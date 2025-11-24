@@ -262,7 +262,7 @@ async function sendInvoiceByEmail(
           <li><b>Durée :</b> ${serviceDetails.duration}</li>
           ${addressHtml}
         </ul>
-        <p>📎 <b>Votre facture officielle est jointe à cet email au format PDF.</b></p>
+        <p>📎 <b>Votre facture est jointe à cet email au format PDF.</b></p>
         <p style="margin-top: 16px;">👉 Mon compte : <a href="https://uap.immo/fr/login">https://uap.immo/fr/login</a></p>
         <hr/><p style="font-size:12px;color:#888;">Cet email a été envoyé automatiquement.</p>
       </div>
