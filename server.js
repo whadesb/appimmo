@@ -52,7 +52,14 @@ const pdfRoutes = require('./routes/pdf');
 const LandingPage = require('./models/Page'); // nom du fichier réel
 const qrRoutes = require('./routes/qr');
 const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-const { sendInvoiceByEmail, sendMailPending, generateInvoicePDF } = require('./utils/email');
+const { 
+    sendInvoiceByEmail, 
+    sendMailPending, 
+    generateInvoicePDF, 
+    sendAdminNewUser,     
+    sendAdminNewProperty,  
+    sendAdminNewOrder      
+} = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
 const { addToSitemap, pingSearchEngines } = require('./utils/seo');
 
@@ -1564,9 +1571,11 @@ app.post('/:locale/register', async (req, res) => {
         }), password);
         
         await sendAccountCreationEmail(newUser.email, newUser.firstName, newUser.lastName, locale);
+    // 👇 AJOUTER CECI ICI 👇
+await sendAdminNewUser(newUser); 
+// 👆 FIN AJOUT 👆
 
-    console.log(`[REGISTER DEBUG] Compte créé pour ${newUser.email}. Tentative de login...`);
-
+console.log(`[REGISTER DEBUG] Compte créé pour ${newUser.email}. Tentative de login...`);
     // Connexion via Passport (Async)
     req.logIn(newUser, (err) => {
       if (err) {
@@ -1814,6 +1823,7 @@ app.post('/add-property', isAuthenticated, upload.fields([
     // ✅ Envoi d’email après sauvegarde complète
     const user = await User.findById(req.user._id);
     await sendPropertyCreationEmail(user, property);
+    await sendAdminNewProperty(user, property);
 
   const successMessage = `
   <div class="alert alert-success small text-muted" role="alert">
@@ -2158,6 +2168,7 @@ const serviceDetails = {
         expiryDate: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000) // 90 jours
       });
       await newOrder.save();
+      await sendAdminNewOrder(req.user, newOrder, 'PayPal');
       console.log('✅ Order enregistrée comme PAID', {
         orderId: newOrder._id.toString(),
         paypalOrderId: orderID,
@@ -2277,6 +2288,7 @@ app.post('/process-btcpay-payment', isAuthenticated, async (req, res) => {
 
     newOrder.btcPayInvoiceId = invoiceRes.data.id;
     await newOrder.save();
+    await sendAdminNewOrder(req.user, newOrder, 'Bitcoin (Pending)');
 
     try {
       await sendMailPending(
