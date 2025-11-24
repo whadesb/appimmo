@@ -247,9 +247,104 @@ async function sendMailPending(to, fullName, orderId, amount) {
   });
   return info;
 }
+/**
+ * Envoie une notification à l'admin lors d'une nouvelle inscription
+ */
+async function sendAdminNewUser(user) {
+  const adminEmail = 'info@uap.immo'; // L'adresse de réception admin
+
+  const mailOptions = {
+    from: `"UAP Immo Bot" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: `🔔 Nouvel utilisateur : ${user.email}`,
+    html: `
+      <h3>Nouvelle inscription sur la plateforme</h3>
+      <ul>
+        <li><strong>Nom :</strong> ${user.lastName}</li>
+        <li><strong>Prénom :</strong> ${user.firstName}</li>
+        <li><strong>Email :</strong> ${user.email}</li>
+        <li><strong>ID :</strong> ${user._id}</li>
+        <li><strong>Date :</strong> ${new Date().toLocaleString('fr-FR')}</li>
+      </ul>
+    `
+  };
+  
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`🔔 Admin notifié pour l'inscription de ${user.email}`);
+  } catch (e) {
+    console.error('Erreur notification admin (User):', e);
+  }
+}
+
+/**
+ * Envoie une notification à l'admin lors de la création d'une page
+ */
+async function sendAdminNewProperty(user, property) {
+  const adminEmail = 'info@uap.immo';
+
+  const mailOptions = {
+    from: `"UAP Immo Bot" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: `🏠 Nouvelle page créée : ${property.propertyType} à ${property.city}`,
+    html: `
+      <h3>Nouvelle Landing Page générée</h3>
+      <p><strong>Utilisateur :</strong> ${user.firstName} ${user.lastName} (${user.email})</p>
+      <hr>
+      <ul>
+        <li><strong>Type :</strong> ${property.propertyType}</li>
+        <li><strong>Lieu :</strong> ${property.city}, ${property.country}</li>
+        <li><strong>Prix :</strong> ${property.price} €</li>
+        <li><strong>URL :</strong> <a href="https://uap.immo${property.url}">https://uap.immo${property.url}</a></li>
+      </ul>
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`🔔 Admin notifié pour la propriété ${property._id}`);
+  } catch (e) {
+    console.error('Erreur notification admin (Property):', e);
+  }
+}
+
+/**
+ * Envoie une notification à l'admin lors d'une commande
+ */
+async function sendAdminNewOrder(user, order, method) {
+  const adminEmail = 'info@uap.immo';
+  
+  const mailOptions = {
+    from: `"UAP Immo Bot" <${process.env.EMAIL_USER}>`,
+    to: adminEmail,
+    subject: `💰 Nouvelle commande (${method}) : ${order.amount} €`,
+    html: `
+      <h3>Nouvelle commande reçue</h3>
+      <p><strong>Client :</strong> ${user.firstName} ${user.lastName} (${user.email})</p>
+      <hr>
+      <ul>
+        <li><strong>Montant :</strong> ${order.amount} €</li>
+        <li><strong>Order ID (UAP) :</strong> ${order.orderId}</li>
+        <li><strong>Statut :</strong> ${order.status}</li>
+        <li><strong>Méthode :</strong> ${method}</li>
+        <li><strong>ID Propriété :</strong> ${order.propertyId}</li>
+      </ul>
+    `
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`🔔 Admin notifié pour la commande ${order.orderId}`);
+  } catch (e) {
+    console.error('Erreur notification admin (Order):', e);
+  }
+}
 
 module.exports = {
   sendInvoiceByEmail,
   sendMailPending,
   generateInvoicePDF,
+  sendAdminNewUser,      
+  sendAdminNewProperty,  
+  sendAdminNewOrder      
 };
