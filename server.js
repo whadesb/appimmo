@@ -1429,12 +1429,11 @@ app.post('/send-contact', async (req, res) => {
 
     // 1. VÉRIFICATION DU CAPTCHA
     if (!captcha) {
-        console.warn("Tentative de soumission sans CAPTCHA.");
-        // Gérer le cas où le captcha est manquant (rediriger avec un message si possible)
         return res.redirect(`${contactUrl}?error=captcha_missing`);
     }
 
     try {
+        // ... (Logique de vérification CAPTCHA avec Axios - inchangée) ...
         const secretKey = process.env.RECAPTCHA_SECRET_KEY;
         const verificationURL = `https://www.google.com/recaptcha/api/siteverify`;
 
@@ -1447,34 +1446,44 @@ app.post('/send-contact', async (req, res) => {
 
         if (!response.data.success) {
             console.warn("CAPTCHA échoué pour l'email:", email);
-            // Redirection vers la page de contact avec un indicateur d'échec
             return res.redirect(`${contactUrl}?error=captcha_failed`);
         }
         
-        // --- 2. TRAITEMENT DE L'EMAIL (Uniquement si CAPTCHA SUCCESS) ---
+        // 2. PRÉPARATION DU CONTENU HTML
+        const subject = `Nouveau message de contact - Type: ${type}`;
+        const bodyHtml = `
+            <p><b>Nom :</b> ${firstName} ${lastName}</p>
+            <p><b>Email :</b> ${email}</p>
+            <p><b>Type :</b> ${type}</p>
+            <p><b>Message :</b><br>${message}</p>
+        `;
 
-        // Configurer les options d'email
-        const mailOptions = {
-            from: `"UAP Immo" <${process.env.EMAIL_USER}>`,
-            to: process.env.CONTACT_EMAIL,
-            subject: `Nouveau message de contact - Type: ${type}`,
-            html: `
-                <p><b>Nom :</b> ${firstName} ${lastName}</p>
-                <p><b>Email :</b> ${email}</p>
-                <p><b>Type :</b> ${type}</p>
-                <p><b>Message :</b><br>${message}</p>
-            `
+        // 3. ENVOI AU SUPPORT (contact@uap.immo)
+        const supportMailOptions = {
+            to: process.env.CONTACT_EMAIL, // Support client (contact@uap.immo)
+            subject: subject,
+            html: bodyHtml
         };
-
-        // Envoyer l'email
-        await sendEmail(mailOptions);
+        await sendEmail(supportMailOptions); 
         
-        // Redirection en cas de succès
+        // 4. ENVOI DE L'ALERTE À L'ADMIN (inf@uap.company)
+        const adminAlertHtml = `
+            <p>Un utilisateur a soumis un formulaire de contact :</p>
+            <ul>
+                <li><strong>Nom/Prénom :</strong> ${firstName} ${lastName}</li>
+                <li><strong>Email :</strong> ${email}</li>
+                <li><strong>Type de demande :</strong> ${type}</li>
+                <li><strong>Message :</strong><br>${message}</li>
+            </ul>
+        `;
+        await sendAdminAlert(`Formulaire Contact Reçu (${type})`, adminAlertHtml);
+
+        // 5. REDIRECTION EN CAS DE SUCCÈS
         res.redirect(`${contactUrl}?messageEnvoye=true`);
+
     } catch (error) {
         console.error('Erreur lors de la vérification CAPTCHA ou de l\'envoi de l\'email :', error.message || error);
-        // Redirection générique en cas d'erreur interne
-        res.redirect(`${contactUrl}?error=internal_error`);
+        return res.redirect(`${contactUrl}?error=internal_error`);
     }
 });
 app.get('/:locale/register', (req, res) => {
