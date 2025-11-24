@@ -281,28 +281,80 @@ async function sendAdminNewUser(user) {
  * Envoie une notification à l'admin lors de la création d'une page
  */
 async function sendAdminNewProperty(user, property) {
-  const adminEmail = 'info@uap.immo';
+  const adminEmail = 'info@uap.immo'; // L'adresse de réception admin
+
+  // Petite fonction pour afficher la valeur ou "NC"
+  const val = (v) => (v !== undefined && v !== null && v !== '') ? v : 'NC';
+  
+  // Petite fonction pour afficher Oui/Non pour les booléens (plus propre que true/false)
+  const bool = (b) => b ? 'Oui' : 'Non';
+
+  // Compter les photos
+  const photoCount = (property.photos && Array.isArray(property.photos)) ? property.photos.length : 0;
 
   const mailOptions = {
-    from: `"UAP Immo Bot" <${process.env.EMAIL_USER}>`,
+    from: `"UAP Immo notif Palteforme" <${process.env.EMAIL_USER}>`,
     to: adminEmail,
-    subject: `🏠 Nouvelle page créée : ${property.propertyType} à ${property.city}`,
+    subject: `🏠 Nouvelle page (${val(property.city)}) : ${val(property.propertyType)}`,
     html: `
-      <h3>Nouvelle Landing Page générée</h3>
+      <h2 style="color: #2c3e50;">Nouvelle Landing Page générée</h2>
       <p><strong>Utilisateur :</strong> ${user.firstName} ${user.lastName} (${user.email})</p>
+      
+      <p><strong>Lien de la page :</strong> <a href="https://uap.immo${property.url}">https://uap.immo${property.url}</a></p>
+
       <hr>
+
+      <h3 style="color: #52566f;">📍 Localisation & Type</h3>
       <ul>
-        <li><strong>Type :</strong> ${property.propertyType}</li>
-        <li><strong>Lieu :</strong> ${property.city}, ${property.country}</li>
-        <li><strong>Prix :</strong> ${property.price} €</li>
-        <li><strong>URL :</strong> <a href="https://uap.immo${property.url}">https://uap.immo${property.url}</a></li>
+        <li><strong>Type de bien :</strong> ${val(property.propertyType)}</li>
+        <li><strong>Ville :</strong> ${val(property.city)}</li>
+        <li><strong>Code Postal :</strong> ${val(property.postalCode)}</li>
+        <li><strong>Pays :</strong> ${val(property.country)}</li>
+      </ul>
+
+      <h3 style="color: #52566f;">💰 Infos Principales</h3>
+      <ul>
+        <li><strong>Prix :</strong> ${val(property.price)} €</li>
+        <li><strong>Surface :</strong> ${val(property.surface)} m²</li>
+        <li><strong>Pièces :</strong> ${val(property.rooms)}</li>
+        <li><strong>Chambres :</strong> ${val(property.bedrooms)}</li>
+        <li><strong>Année construction :</strong> ${val(property.yearBuilt)}</li>
+        <li><strong>DPE :</strong> ${val(property.dpe)}</li>
+      </ul>
+
+      <h3 style="color: #52566f;">🛠 Équipements & Options</h3>
+      <ul>
+        <li><strong>Piscine :</strong> ${bool(property.pool)}</li>
+        <li><strong>Parking :</strong> ${bool(property.parking)}</li>
+        <li><strong>Abri voiture :</strong> ${bool(property.carShelter)}</li>
+        <li><strong>Maison gardien :</strong> ${bool(property.caretakerHouse)}</li>
+        <li><strong>Double vitrage :</strong> ${bool(property.doubleGlazing)}</li>
+        <li><strong>Arrosage auto :</strong> ${bool(property.wateringSystem)}</li>
+        <li><strong>Barbecue :</strong> ${bool(property.barbecue)}</li>
+        <li><strong>Volets élec. :</strong> ${bool(property.electricShutters)}</li>
+        <li><strong>Éclairage ext. :</strong> ${bool(property.outdoorLighting)}</li>
+      </ul>
+
+      <h3 style="color: #52566f;">📞 Contact affiché</h3>
+      <ul>
+        <li><strong>Prénom :</strong> ${val(property.contactFirstName)}</li>
+        <li><strong>Nom :</strong> ${val(property.contactLastName)}</li>
+        <li><strong>Téléphone :</strong> ${val(property.contactPhone)}</li>
+        <li><strong>Langue :</strong> ${val(property.language)}</li>
+      </ul>
+
+      <h3 style="color: #52566f;">📸 Médias & Description</h3>
+      <ul>
+        <li><strong>Nombre de photos :</strong> ${photoCount}</li>
+        <li><strong>Vidéo Youtube :</strong> ${val(property.videoUrl)}</li>
+        <li><strong>Description :</strong> <br><em>${val(property.description)}</em></li>
       </ul>
     `
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    console.log(`🔔 Admin notifié pour la propriété ${property._id}`);
+    console.log(`🔔 Admin notifié avec détails complets pour la propriété ${property._id}`);
   } catch (e) {
     console.error('Erreur notification admin (Property):', e);
   }
@@ -315,7 +367,7 @@ async function sendAdminNewOrder(user, order, method) {
   const adminEmail = 'info@uap.immo';
   
   const mailOptions = {
-    from: `"UAP Immo Bot" <${process.env.EMAIL_USER}>`,
+    from: `"UAP Immo notif Plateforme<${process.env.EMAIL_USER}>`,
     to: adminEmail,
     subject: `💰 Nouvelle commande (${method}) : ${order.amount} €`,
     html: `
