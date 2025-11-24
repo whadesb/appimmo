@@ -14,9 +14,10 @@ const transporter = nodemailer.createTransport({
 });
 
 /**
- * Génère un PDF de facture professionnelle.
+ * Génère un PDF de facture professionnelle. (Inchangé)
  */
 async function generateInvoicePDF(data) {
+// ... (code inchangé pour generateInvoicePDF)
   const {
     orderIdUap,
     paypalOrderId,
@@ -179,12 +180,13 @@ async function generateInvoicePDF(data) {
 }
 
 /**
- * Envoie la facture par email (avec PDF).
+ * Envoie la facture par email (avec PDF). (Inchangé)
  */
 async function sendInvoiceByEmail(
   to, fullName, orderIdUap, paypalOrderId, paypalCaptureId, amount, currency = 'EUR',
   clientDetails, companyInfo, serviceDetails, paymentMethod = 'PayPal' 
 ) {
+// ... (code inchangé pour sendInvoiceByEmail)
   const displayOrderId = String(orderIdUap).startsWith('ORD-') 
       ? orderIdUap 
       : `ORD-${orderIdUap}`;
@@ -238,41 +240,280 @@ async function sendInvoiceByEmail(
 
   const info = await transporter.sendMail(mailOptions);
   console.log('📧 Facture envoyée', { to, messageId: info.messageId });
+  
+  // --- NOUVEAU : NOTIFICATION ADMIN COMMANDE ---
+  // On n'envoie la notification que si l'email client a réussi
+  try {
+      await notifyAdminNewOrder(clientDetails, displayOrderId, amount, currency, paymentMethod, serviceDetails);
+  } catch(error) {
+      console.error('Erreur lors de l\'envoi de la notification admin (Commande):', error);
+  }
+  
   return info;
 }
-/**
- * Mail "commande en attente" (ex: BTCPay encore non confirmée).
- */
-async function sendMailPending(to, fullName, orderId, amount) {
-  const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
 
-  const info = await transporter.sendMail({
+/**
+ * Envoie un email d'activation de compte. (Inchangé)
+ */
+async function sendAccountCreationEmail(email, token, firstName, lastName) {
+// ... (code inchangé pour sendAccountCreationEmail)
+  const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
+  const activationUrl = `${process.env.APP_URL}/fr/activate?token=${token}`;
+
+  const mailOptions = {
     from,
-    to,
-    subject: `Commande ${orderId} – En attente de confirmation`,
+    to: email,
+    subject: "Bienvenue chez UAP Immo - Activation de votre compte",
     html: `
-      <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333;">
-        <h2 style="color:#2c3e50;">Bonjour ${fullName || ''},</h2>
-        <p>Votre commande <b>${orderId}</b> (montant : <b>${amount} €</b>) est en attente de paiement/validation.</p>
-        <p>Vous recevrez automatiquement votre facture dès confirmation.</p>
-        <p style="margin-top:16px;">
-          👉 Mon compte : <a href="https://uap.immo/fr/login">https://uap.immo/fr/login</a>
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #52566f;">Bonjour ${firstName},</h2>
+        <p>Bienvenue sur UAP Immo ! Votre inscription a été enregistrée.</p>
+        <p>Veuillez cliquer sur le lien ci-dessous pour activer votre compte et commencer à utiliser nos services :</p>
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="${activationUrl}" style="background-color: #C4B990; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Activer mon compte</a>
         </p>
+        <p>Si vous ne parvenez pas à cliquer sur le bouton, copiez et collez ce lien dans votre navigateur :<br/>
+        <small>${activationUrl}</small></p>
+        <p>Merci de nous rejoindre !<br/>L'équipe UAP Immo</p>
       </div>
     `,
-  });
+  };
 
-  console.log('📩 Mail pending envoyé', {
-    to,
-    messageId: info.messageId,
-    accepted: info.accepted,
-    rejected: info.rejected
-  });
+  const info = await transporter.sendMail(mailOptions);
+  console.log('📧 Email d\'activation envoyé', info.messageId);
+  
+  // --- NOUVEAU : NOTIFICATION ADMIN NOUVEL UTILISATEUR ---
+  try {
+      await notifyAdminNewUser({ firstName, lastName, email, token });
+  } catch(error) {
+      console.error('Erreur lors de l\'envoi de la notification admin (Nouvel User):', error);
+  }
+  
   return info;
 }
 
-module.exports = {
-  sendInvoiceByEmail,
-  sendMailPending,
-  generateInvoicePDF,
+
+/**
+ * Envoie un email de réinitialisation de mot de passe. (Inchangé)
+ */
+async function sendPasswordResetEmail(email, token) {
+// ... (code inchangé pour sendPasswordResetEmail)
+  const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
+  const resetUrl = `${process.env.APP_URL}/fr/reset-password?token=${token}`;
+
+  const mailOptions = {
+    from,
+    to: email,
+    subject: "Réinitialisation de votre mot de passe UAP Immo",
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #52566f;">Bonjour,</h2>
+        <p>Vous avez demandé à réinitialiser votre mot de passe. Veuillez cliquer sur le lien ci-dessous :</p>
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="${resetUrl}" style="background-color: #C4B990; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Réinitialiser mon mot de passe</a>
+        </p>
+        <p>Si vous n'avez pas demandé cette réinitialisation, veuillez ignorer cet e-mail.</p>
+        <p>L'équipe UAP Immo</p>
+      </div>
+    `,
+  };
+  const info = await transporter.sendMail(mailOptions);
+  console.log('📧 Email de réinitialisation envoyé', info.messageId);
+  return info;
+}
+
+/**
+ * Envoie une notification au client après la création de l'annonce.
+ */
+async function sendPropertyCreationEmail(user, propertyId) {
+  const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
+  const propertyUrl = `${process.env.APP_URL}/fr/property/${propertyId}`;
+
+  const mailOptions = {
+    from,
+    to: user.email,
+    subject: "Votre annonce a été publiée sur UAP Immo",
+    html: `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <h2 style="color: #52566f;">Bonjour ${user.firstName},</h2>
+        <p>Félicitations ! Votre nouvelle annonce a été publiée avec succès sur UAP Immo.</p>
+        <p>Vous pouvez la consulter ici :</p>
+        <p style="text-align: center; margin: 30px 0;">
+          <a href="${propertyUrl}" style="background-color: #52566f; color: #fff; padding: 10px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Voir mon annonce (ID: ${propertyId})</a>
+        </p>
+        <p>Si vous avez besoin de la modifier ou de la retirer, vous pouvez le faire depuis votre espace "Mon Compte".</p>
+        <p>Merci de faire confiance à UAP Immo !</p>
+      </div>
+    `,
+  };
+
+  const info = await transporter.sendMail(mailOptions);
+  console.log('📧 Email de création d\'annonce envoyé', info.messageId);
+
+  // --- NOUVEAU : NOTIFICATION ADMIN NOUVELLE ANNONCE ---
+  try {
+      await notifyAdminNewProperty(user, propertyId);
+  } catch(error) {
+      console.error('Erreur lors de l\'envoi de la notification admin (Nouvelle Annonce):', error);
+  }
+  
+  return info;
+}
+
+// ... (sendMailPending inchangé)
+
+/**
+ * Envoie un email à l'admin suite à une mise à jour sensible sur le compte d'un user.
+ */
+async function notifyAdminUserUpdate(user, updatedField, oldValue, newValue) {
+    const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
+    const subject = `[ALERTE] MAJ Compte User - ${user.firstName} ${user.lastName} (${user.email})`;
+    
+    const bodyHtml = `
+      <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333; padding: 15px; border: 1px solid #ddd; border-radius: 8px; max-width: 600px; margin: auto;">
+        <h3 style="color:#e67e22;">🔔 Mise à Jour Sensible du Compte Client</h3>
+        <p>L'utilisateur <strong>${user.firstName} ${user.lastName}</strong> a mis à jour une information sensible sur son profil.</p>
+        <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+          <tr style="background-color: #f2f2f2;"><td style="padding: 8px; border: 1px solid #ddd;">Champ mis à jour</td><td style="padding: 8px; border: 1px solid #ddd;"><strong>${updatedField}</strong></td></tr>
+          <tr><td style="padding: 8px; border: 1px solid #ddd;">Ancienne valeur</td><td style="padding: 8px; border: 1px solid #ddd;">${oldValue}</td></tr>
+          <tr style="background-color: #f2f2f2;"><td style="padding: 8px; border: 1px solid #ddd;">Nouvelle valeur</td><td style="padding: 8px; border: 1px solid #ddd;"><strong>${newValue}</strong></td></tr>
+        </table>
+        
+        <p style="margin-top: 20px;"><strong>Détails du Compte :</strong></p>
+        <ul>
+          <li><strong>Nom / Prénom :</strong> ${user.firstName} ${user.lastName}</li>
+          <li><strong>Email :</strong> ${user.email}</li>
+          <li><strong>ID MongoDB :</strong> ${user._id}</li>
+        </ul>
+        <p>Action à titre informatif.</p>
+      </div>
+    `;
+
+    const mailOptions = { from, to: ADMIN_EMAIL, subject, html: bodyHtml };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`📧 Notification admin (MAJ User) envoyée: ${info.messageId}`);
+    return info;
+}
+
+
+// ------------------------------------------
+// --- FONCTIONS DE NOTIFICATION ADMIN ---
+// ------------------------------------------
+
+/**
+ * Notifie l'admin d'une nouvelle inscription.
+ */
+async function notifyAdminNewUser(userData) {
+    const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
+    const subject = `[NOUVEAU] Inscription Client : ${userData.firstName} ${userData.lastName}`;
+    
+    const bodyHtml = `
+        <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333; padding: 15px; border: 1px solid #27ae60; border-radius: 8px; max-width: 600px; margin: auto;">
+            <h3 style="color:#27ae60;">🎉 Nouvelle Inscription Client</h3>
+            <p>Un nouvel utilisateur s'est inscrit sur la plateforme. Son compte est en attente d'activation.</p>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                <tr style="background-color: #f9f9f9;"><td style="padding: 8px; border: 1px solid #ddd; width: 30%;">Nom Complet</td><td style="padding: 8px; border: 1px solid #ddd;"><strong>${userData.firstName} ${userData.lastName}</strong></td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">Email</td><td style="padding: 8px; border: 1px solid #ddd;">${userData.email}</td></tr>
+                <tr style="background-color: #f9f9f9;"><td style="padding: 8px; border: 1px solid #ddd;">Statut</td><td style="padding: 8px; border: 1px solid #ddd;">Non Actif (Email envoyé)</td></tr>
+                <tr style="background-color: #f9f9f9;"><td style="padding: 8px; border: 1px solid #ddd;">2FA Actif</td><td style="padding: 8px; border: 1px solid #ddd;">Non</td></tr>
+            </table>
+        </div>
+    `;
+
+    const mailOptions = { from, to: ADMIN_EMAIL, subject, html: bodyHtml };
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`📧 Notification admin (Nouvel User) envoyée: ${info.messageId}`);
+    return info;
+}
+
+/**
+ * Notifie l'admin d'une nouvelle création d'annonce.
+ */
+async function notifyAdminNewProperty(user, propertyId) {
+    const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
+    const subject = `[NOUVELLE PAGE] Annonce Publiée par ${user.lastName.toUpperCase()}`;
+    const propertyUrl = `${process.env.APP_URL}/fr/property/${propertyId}`;
+
+    const bodyHtml = `
+        <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333; padding: 15px; border: 1px solid #3498db; border-radius: 8px; max-width: 600px; margin: auto;">
+            <h3 style="color:#3498db;">🏡 Nouvelle Page d'Annonce Créée</h3>
+            <p>Une nouvelle annonce a été créée et est désormais publiée.</p>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                <tr style="background-color: #f9f9f9;"><td style="padding: 8px; border: 1px solid #ddd; width: 30%;">ID Annonce</td><td style="padding: 8px; border: 1px solid #ddd;"><strong>${propertyId}</strong></td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">Par Client</td><td style="padding: 8px; border: 1px solid #ddd;">${user.firstName} ${user.lastName}</td></tr>
+                <tr style="background-color: #f9f9f9;"><td style="padding: 8px; border: 1px solid #ddd;">Email Client</td><td style="padding: 8px; border: 1px solid #ddd;">${user.email}</td></tr>
+            </table>
+
+            <p style="text-align: center; margin-top: 20px;">
+                <a href="${propertyUrl}" style="background-color: #52566f; color: #fff; padding: 8px 15px; text-decoration: none; border-radius: 5px; font-weight: bold;">Voir l'Annonce en Ligne</a>
+            </p>
+        </div>
+    `;
+
+    const mailOptions = { from, to: ADMIN_EMAIL, subject, html: bodyHtml };
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`📧 Notification admin (Nouvelle Annonce) envoyée: ${info.messageId}`);
+    return info;
+}
+
+/**
+ * Notifie l'admin d'une nouvelle commande/paiement.
+ */
+async function notifyAdminNewOrder(clientDetails, orderIdUap, amount, currency, paymentMethod, serviceDetails) {
+    const from = process.env.EMAIL_FROM || `"UAP Immo" <${process.env.EMAIL_USER}>`;
+    const subject = `[COMMANDE] Nouveau Paiement Reçu : ${orderIdUap}`;
+
+    const clientName = `${clientDetails.firstName} ${clientDetails.lastName}`;
+
+    let addressHtml = 'Non renseignée';
+    if (clientDetails.address && clientDetails.address.street) {
+        addressHtml = `${clientDetails.address.street}<br/>${clientDetails.address.zipCode} ${clientDetails.address.city}<br/>${clientDetails.address.country}`;
+    }
+
+    const bodyHtml = `
+        <div style="font-family: Arial, sans-serif; line-height:1.6; color:#333; padding: 15px; border: 1px solid #2ecc71; border-radius: 8px; max-width: 600px; margin: auto;">
+            <h3 style="color:#2ecc71;">💰 Nouvelle Commande Payée !</h3>
+            <p>Un nouveau paiement a été reçu pour un service d'annonce.</p>
+            
+            <table style="width: 100%; border-collapse: collapse; margin: 15px 0;">
+                <tr style="background-color: #f9f9f9;"><td style="padding: 8px; border: 1px solid #ddd; width: 30%;"><strong>Référence UAP</strong></td><td style="padding: 8px; border: 1px solid #ddd;"><strong>${orderIdUap}</strong></td></tr>
+                <tr><td style="padding: 8px; border: 1px solid #ddd;">Montant Total</td><td style="padding: 8px; border: 1px solid #ddd;"><strong>${amount} ${currency}</strong></td></tr>
+                <tr style="background-color: #f9f9f9;"><td style="padding: 8px; border: 1px solid #ddd;">Mode Paiement</td><td style="padding: 8px; border: 1px solid #ddd;">${paymentMethod}</td></tr>
+            </table>
+
+            <p><strong>Détails Client :</strong></p>
+            <ul>
+                <li><strong>Nom/Prénom :</strong> ${clientName}</li>
+                <li><strong>Email :</strong> ${clientDetails.email || 'N/A'}</li>
+                <li><strong>ID User :</strong> ${clientDetails.userId}</li>
+                <li><strong>Adresse de Facturation :</strong> ${addressHtml}</li>
+            </ul>
+            
+            <p><strong>Détails Service :</strong></p>
+            <ul>
+                <li><strong>Produit :</strong> ${serviceDetails.product}</li>
+                <li><strong>Durée :</strong> ${serviceDetails.duration}</li>
+                <li><strong>ID Annonce :</strong> ${serviceDetails.propertyId}</li>
+            </ul>
+        </div>
+    `;
+
+    const mailOptions = { from, to: ADMIN_EMAIL, subject, html: bodyHtml };
+    const info = await transporter.sendMail(mailOptions);
+    console.log(`📧 Notification admin (Nouvelle Commande) envoyée: ${info.messageId}`);
+    return info;
+}
+
+
+module.exports = { 
+  sendInvoiceByEmail, 
+  sendMailPending, 
+  generateInvoicePDF, 
+  sendAccountCreationEmail, 
+  sendPasswordResetEmail, 
+  sendPropertyCreationEmail,
+  notifyAdminUserUpdate // Exporté pour la 2FA ou autres mises à jour futures
 };
