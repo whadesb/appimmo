@@ -20,6 +20,7 @@ const transporter = nodemailer.createTransport({
  * Fonction interne pour envoyer une alerte à l'admin
  */
 async function sendAdminAlert(subject, htmlContent) {
+  console.log(`🔔 Tentative envoi Admin vers : ${ADMIN_RECEIVER_EMAIL}`);
     try {
         const mailOptions = {
             from: `"UAP Bot" <${process.env.EMAIL_USER}>`, 
