@@ -43,8 +43,8 @@
     function draw(lat, lon) {
       /* eslint-disable no-undef */
       var map = L.map(node, { scrollWheelZoom: false, attributionControl: true }).setView([lat, lon], 13);
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; OpenStreetMap, &copy; CARTO',
+           L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap',
         maxZoom: 18
       }).addTo(map);
       // Zone approximative : l'adresse exacte n'est pas publiée.
