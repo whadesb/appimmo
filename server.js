@@ -62,7 +62,7 @@ const {
 } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
 const { addToSitemap, pingSearchEngines } = require('./utils/seo');
-
+const { renderLandingPage } = require('./lib/landing');
 
 const app = express();
 app.set('trust proxy', true);
@@ -2423,7 +2423,6 @@ function slugify(str) {
     .replace(/^-+|-+$/g, "");
 }
 const seoKeywords = require('./utils/seoKeywords'); 
-const { renderLandingPage } = require('./lib/landing');
 
 async function generateLandingPage(property) {
   const html = await renderLandingPage(property);
