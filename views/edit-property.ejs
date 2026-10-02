@@ -437,10 +437,70 @@
       <div id="miniPhotosPreview" class="d-flex flex-wrap gap-2 mt-2"></div>
     </div>
 
-    <div class="mb-3">
-      <label for="videoUrl" class="form-label">Lien YouTube</label>
-      <input type="url" class="form-control" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=..." value="<%= property.videoUrl || '' %>">
-      <div id="mediaNotice" class="form-text text-muted mt-1">Ajoutez vos photos ou indiquez un lien vidéo plein écran.</div>
+   <!-- ============================================================
+     À INSÉRER dans views/edit-property.ejs
+     Emplacement : juste APRÈS le bloc du champ videoUrl,
+     c'est-à-dire après la ligne 444 (</div> fermant le mb-3
+     qui contient #mediaNotice), et AVANT les boutons
+     "Précédent / Suivant" de l'étape 3.
+     ============================================================ -->
+
+    <div class="mb-4">
+      <label class="form-label d-block">Modèle de page</label>
+      <div class="row g-2">
+        <div class="col-sm-6">
+          <label class="form-check border rounded p-3 h-100 w-100 m-0" style="cursor:pointer">
+            <input class="form-check-input" type="radio" name="layout" value="photo"
+                   <%= property.layout !== 'video' ? 'checked' : '' %>>
+            <span class="form-check-label ms-1">
+              <strong>Galerie photo</strong>
+              <span class="d-block text-muted" style="font-size:.85rem">Carrousel et fiche détaillée.</span>
+            </span>
+          </label>
+        </div>
+        <div class="col-sm-6">
+          <label class="form-check border rounded p-3 h-100 w-100 m-0" style="cursor:pointer">
+            <input class="form-check-input" type="radio" name="layout" value="video"
+                   <%= property.layout === 'video' ? 'checked' : '' %>>
+            <span class="form-check-label ms-1">
+              <strong>Vidéo plein écran</strong>
+              <span class="d-block text-muted" style="font-size:.85rem">Nécessite le lien YouTube ci-dessus.</span>
+            </span>
+          </label>
+        </div>
+      </div>
+      <div class="form-text text-muted mt-2">
+        Sans lien vidéo valide, l'annonce s'affiche automatiquement en galerie photo.
+      </div>
+    </div>
+
+    <div class="mb-4">
+      <label class="form-label d-block">Couleurs de la page</label>
+      <div class="row g-2">
+        <% const editThemes = [
+             { id:'foret',    label:'Forêt',       c:['#19483A','#EDF1EC','#15201C'] },
+             { id:'marine',   label:'Marine',      c:['#1C3454','#E9EDF3','#161C25'] },
+             { id:'terre',    label:'Terre cuite', c:['#8A4B23','#F5EDE5','#241A12'] },
+             { id:'pierre',   label:'Pierre',      c:['#3D3A33','#F0EEE8','#1A1813'] },
+             { id:'bordeaux', label:'Bordeaux',    c:['#6B2340','#F4E9EE','#21141A'] },
+             { id:'encre',    label:'Encre',       c:['#1A1A18','#EFEFEC','#000000'] }
+           ];
+           const currentTheme = property.theme || 'foret'; %>
+        <% editThemes.forEach(th => { %>
+        <div class="col-6 col-md-4">
+          <label class="form-check border rounded p-3 h-100 w-100 m-0" style="cursor:pointer">
+            <span class="d-flex gap-1 mb-2">
+              <% th.c.forEach(hex => { %>
+              <span style="width:22px;height:22px;border-radius:5px;display:block;background:<%= hex %>"></span>
+              <% }); %>
+            </span>
+            <input class="form-check-input" type="radio" name="theme" value="<%= th.id %>"
+                   <%= currentTheme === th.id ? 'checked' : '' %>>
+            <span class="form-check-label ms-1" style="font-size:.9rem"><%= th.label %></span>
+          </label>
+        </div>
+        <% }); %>
+      </div>
     </div>
 
     <button type="button" class="btn btn-secondary prev-step mt-3 me-2">Précédent</button>
