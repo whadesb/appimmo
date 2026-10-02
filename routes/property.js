@@ -1414,7 +1414,9 @@ router.post('/update-property/:id', authMiddleware, upload.fields([
         property.contactPhone = contactPhone;
         property.language = allowedLanguages.includes(req.body.language) ? req.body.language : property.language;
         property.videoUrl = rawVideoUrl;
-
+const allowedThemes = ['foret', 'marine', 'terre', 'pierre', 'bordeaux', 'encre'];
+property.theme = allowedThemes.includes(req.body.theme) ? req.body.theme : (property.theme || 'foret');
+property.layout = req.body.layout === 'video' ? 'video' : 'photo';
         property.pool = req.body.pool === 'true';
         property.doubleGlazing = req.body.doubleGlazing === 'true';
         property.wateringSystem = req.body.wateringSystem === 'true';
