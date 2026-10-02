@@ -1388,10 +1388,11 @@ progress {
     });
   });
 
-  form?.addEventListener('submit', function (e) {
+   form?.addEventListener('submit', function (e) {
     const postalCode = document.getElementById('postalCode')?.value;
     if (postalCode && !/^\d{5}$/.test(postalCode)) {
       e.preventDefault();
+      e.stopImmediatePropagation();
       document.getElementById('postalCode').reportValidity();
       return;
     }
@@ -1399,6 +1400,7 @@ progress {
     const videoUrl = document.getElementById('videoUrl')?.value || '';
     if (isVideo && !/(?:youtube\.com\/.*v=|youtu\.be\/)/.test(videoUrl)) {
       e.preventDefault();
+      e.stopImmediatePropagation();
       alert('Le modèle vidéo nécessite un lien YouTube valide. Vous pouvez aussi choisir le modèle galerie photo.');
     }
   });
@@ -2458,20 +2460,13 @@ function loadLandingPages() {
 </script>
 
 
-<script>
-  const descriptionInput = document.getElementById('description');
-  const charCount = document.getElementById('charCount');
 
-  descriptionInput.addEventListener('input', function() {
-    charCount.textContent = `${descriptionInput.value.length}/820 caractères`;
-  });
-</script>
 <script>
 document.getElementById('add-property-form').addEventListener('submit', async function(event) {
     event.preventDefault();
     
     const formData = new FormData(this);
-    const generatedLinkContainer = document.getElementById('generatedLink');
+    const generatedLinkContainer = document.getElementById('success-message-container');
     const submitButton = this.querySelector('button[type="submit"]');
 
     // Désactiver le bouton et montrer un spinner
@@ -2528,148 +2523,6 @@ document.getElementById('add-property-form').addEventListener('submit', async fu
             submitButton.disabled = false;
             submitButton.innerHTML = `<i class="fa fa-check-circle me-2"></i><%= i18n.create_ad %>`;
         }
-    }
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    function handleFileUpload(input, progressId, statusId) {
-        const file = input.files[0];
-
-        if (file) {
-            const progressBar = document.getElementById(progressId);
-            const status = document.getElementById(statusId);
-
-            // Réinitialisation
-            progressBar.value = 0;
-            progressBar.classList.remove("hidden");
-            status.classList.remove("hidden");
-            status.textContent = "Chargement en cours...";
-
-            // Simulation d'upload progressif (remplace ça par une vraie requête si besoin)
-            let progress = 0;
-            const interval = setInterval(() => {
-                progress += 10;
-                progressBar.value = progress;
-
-                if (progress >= 100) {
-                    clearInterval(interval);
-                    status.textContent = "✅ Image chargée avec succès !";
-                    setTimeout(() => {
-                        progressBar.classList.add("hidden");
-                        status.classList.add("hidden");
-                    }, 2000); // Cache après 2 secondes
-                }
-            }, 200);
-        }
-    }
-
-    // Événements sur les inputs file
-    document.getElementById("photo1").addEventListener("change", function () {
-        handleFileUpload(this, "progress1", "status1");
-    });
-
-    document.getElementById("photo2").addEventListener("change", function () {
-        handleFileUpload(this, "progress2", "status2");
-    });
-
-    const extraPhotoIds = Array.from({ length: 8 }, (_, i) => i + 1);
-    const extraPhotoElements = extraPhotoIds.map(i => {
-        const input = document.getElementById(`extraPhoto${i}`);
-        const preview = document.getElementById(`extraPreview${i}`);
-        input.addEventListener("change", function () {
-            const file = this.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = e => {
-                    preview.src = e.target.result;
-                    preview.classList.remove("d-none");
-                };
-                reader.readAsDataURL(file);
-            } else {
-                preview.src = "";
-                preview.classList.add("d-none");
-            }
-        });
-        return { input, preview };
-    });
-
-    const miniPhotosInput = document.getElementById("miniPhotos");
-    const miniPreview = document.getElementById("miniPhotosPreview");
-    miniPhotosInput.addEventListener("change", function () {
-        miniPreview.innerHTML = "";
-        if (this.files.length > 3) {
-            alert("Vous pouvez télécharger jusqu'à 3 photos.");
-            this.value = "";
-            return;
-        }
-        Array.from(this.files).forEach(file => {
-            const reader = new FileReader();
-            reader.onload = e => {
-                const img = document.createElement("img");
-                img.src = e.target.result;
-                img.classList.add("border", "rounded");
-                img.style.height = "60px";
-                img.style.objectFit = "cover";
-                miniPreview.appendChild(img);
-            };
-            reader.readAsDataURL(file);
-        });
-    });
-
-    const videoInput = document.getElementById("videoUrl");
-    const mainPhotoInputs = [document.getElementById("photo1"), document.getElementById("photo2")];
-    const progressBars = [
-        { progress: document.getElementById("progress1"), status: document.getElementById("status1") },
-        { progress: document.getElementById("progress2"), status: document.getElementById("status2") }
-    ];
-    const mediaNotice = document.getElementById("mediaNotice");
-
-    function resetMainPhotoFeedback() {
-        progressBars.forEach(({ progress, status }) => {
-            if (progress) {
-                progress.value = 0;
-                progress.style.display = "none";
-            }
-            if (status) {
-                status.textContent = "";
-            }
-        });
-    }
-
-    function clearFileInput(input) {
-        if (!input) return;
-        input.value = "";
-        const event = new Event("change");
-        input.dispatchEvent(event);
-    }
-
-    function toggleMediaFields(hasVideo) {
-        mainPhotoInputs.forEach(input => {
-            if (!input) return;
-            input.required = !hasVideo;
-        });
-
-        if (hasVideo) {
-            resetMainPhotoFeedback();
-            if (mediaNotice) {
-                mediaNotice.textContent = "Vous avez renseigné un lien vidéo. Ajoutez également des photos pour enrichir la galerie \"Découvrez le bien\".";
-                mediaNotice.classList.remove("text-muted", "text-danger");
-                mediaNotice.classList.add("text-info");
-            }
-        } else if (mediaNotice) {
-            mediaNotice.textContent = "Ajoutez vos photos ou indiquez un lien vidéo plein écran.";
-            mediaNotice.classList.remove("text-info", "text-danger");
-            mediaNotice.classList.add("text-muted");
-        }
-    }
-
-    if (videoInput) {
-        videoInput.addEventListener("input", function () {
-            const hasVideo = this.value.trim().length > 0;
-            toggleMediaFields(hasVideo);
-        });
-        toggleMediaFields(videoInput.value.trim().length > 0);
     }
 });
 </script>
@@ -3011,23 +2864,6 @@ document.getElementById('statsFilter').addEventListener('submit', async (e) => {
     <td>${stat.source}</td>
   </tr>`;
     tbody.insertAdjacentHTML('beforeend', row);
-  });
-});
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-  const descriptionInput = document.getElementById('description');
-  const charCount = document.getElementById('charCount');
-
-  descriptionInput.addEventListener('input', function () {
-    const count = descriptionInput.value.length;
-    charCount.textContent = `${count}/820 caractères`;
-
-    if (count > 750) {
-      charCount.style.color = '#dc3545'; // rouge
-    } else {
-      charCount.style.color = '#6c757d'; // gris
-    }
   });
 });
 </script>
