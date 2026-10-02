@@ -36,6 +36,8 @@ postalCode: {
   contactLastName: { type: String },
   contactPhone: { type: String },
   videoUrl: { type: String },
+  theme: { type: String, enum: ['foret','marine','terre','pierre','bordeaux','encre'], default: 'foret' },
+layout: { type: String, enum: ['photo','video'], default: 'photo' },
   language: { type: String, enum: ['fr', 'en', 'es', 'pt'], default: 'fr' },
   dpe: {
   type: String,
