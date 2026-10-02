@@ -957,357 +957,464 @@ progress {
 </div>
 
 <!-- ✅ FORMULAIRE AMÉLIORÉ UX - SECTION LANDING -->
+<!-- ============================================================
+     SECTION "landing" — création d'annonce
+     Remplace les lignes 960 à 1310 de views/user.ejs
+     Noms de champs inchangés : la route POST /add-property
+     n'a pas besoin d'être modifiée, hors ajout de layout/theme.
+     ============================================================ -->
 <div id="landing" class="card" style="display: none;">
   <div class="card-body">
+
+    <style>
+      .uap-form { --uap-accent: #19483A; --uap-line: #DFDDD5; --uap-muted: #5E6B65; }
+      .uap-form .uap-steps { display: flex; gap: 0; margin-bottom: 2rem; }
+      .uap-form .uap-step { flex: 1; display: flex; align-items: center; gap: .65rem; font-size: .9rem; color: var(--uap-muted); }
+      .uap-form .uap-step:last-child { flex: 0; }
+      .uap-form .uap-step .num { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #C9C7BE;
+        display: flex; align-items: center; justify-content: center; font-size: .85rem; flex-shrink: 0; background: #fff; }
+      .uap-form .uap-step .bar { flex: 1; height: 1px; background: var(--uap-line); }
+      .uap-form .uap-step.is-active { color: #15201C; font-weight: 500; }
+      .uap-form .uap-step.is-active .num { background: var(--uap-accent); border-color: var(--uap-accent); color: #fff; }
+      .uap-form .uap-card { border: 1px solid var(--uap-line); border-radius: 14px; padding: 1.5rem; margin-bottom: 1.25rem; background: #fff; }
+      .uap-form .uap-card h6 { font-size: 1.05rem; margin-bottom: .35rem; }
+      .uap-form .uap-hint { font-size: .85rem; color: var(--uap-muted); line-height: 1.6; }
+      .uap-pick { display: block; border: 1px solid var(--uap-line); border-radius: 12px; padding: 1rem; cursor: pointer; height: 100%; margin: 0; }
+      .uap-pick input { margin-right: .5rem; }
+      .uap-pick.is-on { border: 2px solid var(--uap-accent); background: #F2F6F3; }
+      .uap-pick .mini { height: 68px; border: 1px solid var(--uap-line); border-radius: 8px; background: #fff; display: flex; gap: 5px; padding: 6px; margin-top: .75rem; }
+      .uap-pick .mini span { background: #E7E5DD; border-radius: 3px; display: block; }
+      .uap-swatch { display: block; border: 1px solid var(--uap-line); border-radius: 11px; padding: .85rem; cursor: pointer; margin: 0; }
+      .uap-swatch.is-on { border: 2px solid var(--uap-accent); background: #F2F6F3; }
+      .uap-swatch .dots { display: flex; gap: 5px; margin-bottom: .6rem; }
+      .uap-swatch .dots i { width: 24px; height: 24px; border-radius: 6px; display: block; }
+      .uap-aside { position: sticky; top: 1rem; }
+      .uap-quality .bar { height: 6px; background: #EDECE6; border-radius: 3px; overflow: hidden; }
+      .uap-quality .bar i { display: block; height: 6px; background: var(--uap-accent); border-radius: 3px; transition: width .25s; }
+      .uap-check { list-style: none; padding: 0; margin: 1rem 0 0; font-size: .85rem; }
+      .uap-check li { display: flex; gap: .6rem; padding: .3rem 0; color: var(--uap-muted); }
+      .uap-check li.ok { color: #15201C; }
+      .uap-check li .mark { color: #9A978C; }
+      .uap-check li.ok .mark { color: var(--uap-accent); }
+      @media (max-width: 991px) { .uap-aside { position: static; margin-top: 1.5rem; } }
+    </style>
+
     <h5 class="card-title"><%= i18n.add_property %></h5>
     <p class="card-text"><%= i18n.property_details %></p>
 
-    <div class="progress mb-4">
-  <div class="progress-bar" role="progressbar" id="formProgress" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">Étape 1 sur 4</div>
-</div>
-
     <div id="success-message-container"></div>
 
-    <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
-      <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
-
-      <!-- Étape 1 -->
-      <div class="form-step" data-step="1">
-        <h6 class="mb-3"><%= i18n.step1_title %></h6>
-        <div class="form-group">
-          <label for="rooms"><%= i18n.rooms %>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Inclut chambres, salon, cuisine, etc."></i>
-          </label>
-          <input type="number" class="form-control" id="rooms" name="rooms" required>
-          <small class="form-text text-muted">Inclut les chambres, salons, etc.</small>
-        </div>
-
-        <div class="form-group">
-          <label for="bedrooms"><%= i18n.bedrooms %>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Nombre de chambres à coucher"></i>
-          </label>
-          <input type="number" class="form-control" id="bedrooms" name="bedrooms" required>
-          <small class="form-text text-muted">Indiquez uniquement les chambres à coucher.</small>
-        </div>
-
-        <div class="form-group">
-          <label for="surface"><%= i18n.surface %> <span style="color:red">*</span>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Surface habitable en m²"></i>
-          </label>
-          <input type="number" class="form-control" id="surface" name="surface" required>
-          <small class="form-text text-muted">Exemple : 120</small>
-        </div>
-
-        <div class="form-group">
-          <label for="price"><%= i18n.price %> <span style="color:red">*</span>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Prix affiché sur l’annonce"></i>
-          </label>
-          <input type="number" class="form-control" id="price" name="price" required>
-          <small class="form-text text-muted">Exemple : 750000</small>
-        </div>
-
-        <div class="form-group">
-          <label for="country"><%= i18n.country %> <span style="color:red">*</span>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Pays où se situe le bien"></i>
-          </label>
-          <input type="text" class="form-control" id="country" name="country" required>
-        </div>
-
-        <div class="form-group">
-          <label for="postalCode"><%= i18n.postal_code %>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Code postal à 5 chiffres"></i>
-          </label>
-          <input type="text" name="postalCode" id="postalCode" class="form-control" required>
-        </div>
-
-        <div class="form-group">
-          <label for="city"><%= i18n.city %> <span style="color: red;">*</span>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Ville ou commune du bien"></i>
-          </label>
-          <input type="text" class="form-control" id="city" name="city" required>
-        </div>
-
-        <div class="form-group">
-          <label for="yearBuilt"><%= i18n.year_built %>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Année de construction du bien"></i>
-          </label>
-          <input type="number" class="form-control" id="yearBuilt" name="yearBuilt">
-          <small class="form-text text-muted">Exemple : 1995</small>
-        </div>
-
-        <div class="form-group">
-          <label for="propertyType"><%= i18n.property_type %> <span style="color:red">*</span>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Type de bien (villa, maison, appartement...)"></i>
-          </label>
-          <select class="form-control" id="propertyType" name="propertyType" required>
-            <option value="">-- Choisir --</option>
-            <option value="Propriété">Propriété</option>
-            <option value="Villa">Villa</option>
-            <option value="Hôtel particulier">Hôtel particulier</option>
-            <option value="Appartement">Appartement</option>
-            <option value="Chateau">Château</option>
-            <option value="Maison">Maison</option>
-          </select>
-        </div>
-
-        <button type="button" class="btn btn-primary next-step mt-3"><%= i18n.next %></button>
+    <div class="uap-form">
+      <div class="uap-steps">
+        <div class="uap-step is-active" data-step-head="1"><span class="num">1</span><span><%= i18n.property_details %></span><span class="bar"></span></div>
+        <div class="uap-step" data-step-head="2"><span class="num">2</span><span><%= i18n.photos_title %></span><span class="bar"></span></div>
+        <div class="uap-step" data-step-head="3"><span class="num">3</span><span><%= i18n.equipment %></span><span class="bar"></span></div>
+        <div class="uap-step" data-step-head="4"><span class="num">4</span><span><%= i18n.description_title %></span></div>
       </div>
 
-      <!-- Étape 2 -->
-       <div class="form-step d-none" data-step="2">
-        <h6 class="mb-3"><%= i18n.equipment %></h6>
-        <% const equipmentOptions = [
-          { id: 'pool', label: 'Piscine' },
-          { id: 'doubleGlazing', label: 'Double vitrage' },
-          { id: 'wateringSystem', label: 'Arrosage automatique' },
-          { id: 'barbecue', label: 'Barbecue' },
-          { id: 'carShelter', label: 'Abri de voiture' },
-          { id: 'parking', label: 'Parking' },
-          { id: 'caretakerHouse', label: 'Maison de gardien' },
-          { id: 'electricShutters', label: 'Stores électriques' },
-          { id: 'outdoorLighting', label: 'Éclairage extérieur' }
-        ]; %>
+      <form id="add-property-form" action="/add-property" method="POST" enctype="multipart/form-data">
+        <input type="hidden" id="userId" name="userId" value="<%= user._id %>">
 
-        <% equipmentOptions.forEach(e => { %>
-          <div class="form-group">
-            <label for="<%= e.id %>"><%= e.label %>
-              <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Présence ou non de cet équipement."></i>
-            </label>
-            <select class="form-control" id="<%= e.id %>" name="<%= e.id %>" <%= e.id === 'parking' ? 'required' : '' %>>
-              <option value="false">Non</option>
-              <option value="true">Oui</option>
-            </select>
-          </div>
-        <% }); %>
+        <div class="row">
+          <div class="col-lg-8">
 
-        <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
-        <button type="button" class="btn btn-primary next-step mt-3"><%= i18n.next %></button>
-      </div>
+            <!-- ÉTAPE 1 ------------------------------------------------ -->
+            <div class="form-step" data-step="1">
 
-      <!-- Étape 3 -->
-       <div class="form-step d-none" data-step="3">
-        <h6 class="mb-3"><%= i18n.photos_title %></h6>
-        <div class="form-group">
-          <label for="dpe"><%= i18n.dpe_label %> <span style="color:red">*</span>
-            <i class="fa fa-question-circle ms-1 text-muted" data-bs-toggle="tooltip" title="Classe énergétique du bien (obligatoire)"></i>
-          </label>
-          <select class="form-control" id="dpe" name="dpe" required>
-            <option value="">-- Sélectionner --</option>
-            <option value="A">A - Excellent</option>
-            <option value="B">B - Très bon</option>
-            <option value="C">C - Bon</option>
-            <option value="D">D - Moyenne</option>
-            <option value="E">E - Passable</option>
-            <option value="F">F - Mauvais</option>
-            <option value="G">G - Très mauvais</option>
-            <option value="En cours">En cours</option>
-          </select>
-        </div>
-
-        <div class="form-group">
-          <label for="photo1"><%= i18n.main_photo %> <span class="text-danger">*</span></label>
-          <input type="file" class="form-control" id="photo1" name="photo1" accept="image/*" required onchange="handleFileUpload(this, 'progress1', 'status1')">
-          <progress id="progress1" value="0" max="100" style="width: 100%; display: none;"></progress>
-          <span id="status1" class="text-muted small d-block mt-1"></span>
-        </div>
-
-        <div class="form-group">
-          <label for="photo2"><%= i18n.secondary_photo %> <span style="color:red">*</span></label>
-          <input type="file" class="form-control" id="photo2" name="photo2" accept="image/*" required onchange="handleFileUpload(this, 'progress2', 'status2')">
-          <progress id="progress2" value="0" max="100" style="width: 100%; display: none;"></progress>
-          <span id="status2" class="text-muted small d-block mt-1"></span>
-        </div>
-
-        <div class="form-group">
-          <label>Photos supplémentaires pour le carrousel</label>
-          <div class="row">
-            <% for (let i = 1; i <= 8; i++) { %>
-              <div class="col-6 col-md-3 mb-3">
-                <input
-                  type="file"
-                  class="form-control extra-photo-input"
-                  id="extraPhoto<%= i %>"
-                  name="extraPhotos"
-                  accept="image/*">
-                <img
-                  id="extraPreview<%= i %>"
-                  class="mt-2 border rounded d-none w-100"
-                  style="height:80px; object-fit:cover;" />
+              <div class="uap-card">
+                <h6>Modèle de page</h6>
+                <p class="uap-hint mb-3">Le modèle détermine la mise en page de votre annonce. Vous pourrez en changer à tout moment.</p>
+                <div class="row g-3">
+                  <div class="col-sm-6">
+                    <label class="uap-pick is-on" data-pick="layout">
+                      <input type="radio" name="layout" value="photo" checked>
+                      <strong>Galerie photo</strong>
+                      <div class="uap-hint">Carrousel en haut, informations et prix en colonne.</div>
+                      <div class="mini"><span style="flex:1.6"></span><span style="flex:1"></span></div>
+                    </label>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="uap-pick" data-pick="layout">
+                      <input type="radio" name="layout" value="video">
+                      <strong>Vidéo plein écran</strong>
+                      <div class="uap-hint">Visite vidéo en fond, informations en surcouche.</div>
+                      <div class="mini"><span style="flex:1"></span></div>
+                    </label>
+                  </div>
+                </div>
+                <p class="uap-hint mt-3 mb-0 p-3" style="background:#F6F5F1;border-radius:8px">
+                  Le modèle vidéo nécessite un lien YouTube valide (étape 2). Sans vidéo, l'annonce bascule automatiquement sur la galerie photo.
+                </p>
               </div>
 
-            <% } %>
+              <div class="uap-card">
+                <h6>Couleurs</h6>
+                <p class="uap-hint mb-3">Six accords testés pour rester lisibles sur mobile comme à l'impression.</p>
+                <div class="row g-2">
+                  <% const themes = [
+                       { id:'foret',    label:'Forêt',       c:['#19483A','#EDF1EC','#15201C'] },
+                       { id:'marine',   label:'Marine',      c:['#1C3454','#E9EDF3','#161C25'] },
+                       { id:'terre',    label:'Terre cuite', c:['#8A4B23','#F5EDE5','#241A12'] },
+                       { id:'pierre',   label:'Pierre',      c:['#3D3A33','#F0EEE8','#1A1813'] },
+                       { id:'bordeaux', label:'Bordeaux',    c:['#6B2340','#F4E9EE','#21141A'] },
+                       { id:'encre',    label:'Encre',       c:['#1A1A18','#EFEFEC','#000000'] }
+                     ]; %>
+                  <% themes.forEach((th, i) => { %>
+                  <div class="col-6 col-md-4">
+                    <label class="uap-swatch <%= i === 0 ? 'is-on' : '' %>" data-pick="theme">
+                      <span class="dots">
+                        <% th.c.forEach(hex => { %><i style="background: <%= hex %>"></i><% }); %>
+                      </span>
+                      <input type="radio" name="theme" value="<%= th.id %>" <%= i === 0 ? 'checked' : '' %>>
+                      <strong style="font-size:.9rem"><%= th.label %></strong>
+                    </label>
+                  </div>
+                  <% }); %>
+                </div>
+              </div>
+
+              <div class="uap-card">
+                <h6><%= i18n.property_details %></h6>
+                <div class="row g-3 mt-1">
+                  <div class="col-sm-6">
+                    <label class="form-label" for="propertyType"><%= i18n.property_type %></label>
+                    <select class="form-control" id="propertyType" name="propertyType" required>
+                      <option value="Maison">Maison</option>
+                      <option value="Appartement">Appartement</option>
+                      <option value="Terrain">Terrain</option>
+                      <option value="Local commercial">Local commercial</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="language"><%= i18n.language_label %></label>
+                    <select class="form-control" id="language" name="language" required>
+                      <option value="fr">Français</option>
+                      <option value="en">English</option>
+                    </select>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="city"><%= i18n.city %></label>
+                    <input type="text" class="form-control" id="city" name="city" required>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="country"><%= i18n.country %></label>
+                    <input type="text" class="form-control" id="country" name="country" required>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="postalCode"><%= i18n.postal_code %></label>
+                    <input type="text" class="form-control" id="postalCode" name="postalCode" pattern="\d{5}" inputmode="numeric" required>
+                    <div class="uap-hint mt-1">Cinq chiffres. Sert à situer le bien sur la carte.</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="surface"><%= i18n.surface %></label>
+                    <input type="number" class="form-control" id="surface" name="surface" min="1" required>
+                  </div>
+                  <div class="col-sm-4">
+                    <label class="form-label" for="rooms"><%= i18n.rooms %></label>
+                    <input type="number" class="form-control" id="rooms" name="rooms" min="1" required>
+                  </div>
+                  <div class="col-sm-4">
+                    <label class="form-label" for="bedrooms"><%= i18n.bedrooms %></label>
+                    <input type="number" class="form-control" id="bedrooms" name="bedrooms" min="0" required>
+                  </div>
+                  <div class="col-sm-4">
+                    <label class="form-label" for="yearBuilt"><%= i18n.year_built %></label>
+                    <input type="number" class="form-control" id="yearBuilt" name="yearBuilt" min="1700" max="2100">
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="price"><%= i18n.price %></label>
+                    <input type="number" class="form-control" id="price" name="price" min="0" required>
+                    <div class="uap-hint mt-1" id="pricePerSqm">Le prix au m² est calculé automatiquement.</div>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="dpe"><%= i18n.dpe_label %></label>
+                    <select class="form-control" id="dpe" name="dpe">
+                      <option value="En cours">Diagnostic en cours</option>
+                      <option value="A">A</option><option value="B">B</option>
+                      <option value="C">C</option><option value="D">D</option>
+                      <option value="E">E</option><option value="F">F</option>
+                      <option value="G">G</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-dark next-step"><%= i18n.next %></button>
+              </div>
+            </div>
+
+            <!-- ÉTAPE 2 ------------------------------------------------ -->
+            <div class="form-step" data-step="2" style="display:none">
+              <div class="uap-card">
+                <h6><%= i18n.photos_title %></h6>
+                <p class="uap-hint mb-3">Format JPEG ou PNG, 5 Mo maximum par image. Les deux premières photos sont mises en avant.</p>
+                <div class="row g-3">
+                  <div class="col-sm-6">
+                    <label class="form-label" for="photo1"><%= i18n.main_photo %></label>
+                    <input type="file" class="form-control" id="photo1" name="photo1" accept="image/jpeg,image/png,image/webp" required>
+                  </div>
+                  <div class="col-sm-6">
+                    <label class="form-label" for="photo2"><%= i18n.secondary_photo %></label>
+                    <input type="file" class="form-control" id="photo2" name="photo2" accept="image/jpeg,image/png,image/webp">
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="extraPhotos">Photos complémentaires</label>
+                    <input type="file" class="form-control" id="extraPhotos" name="extraPhotos" accept="image/jpeg,image/png,image/webp" multiple>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="miniPhotos">Miniatures</label>
+                    <input type="file" class="form-control" id="miniPhotos" name="miniPhotos" accept="image/jpeg,image/png,image/webp" multiple>
+                  </div>
+                  <div class="col-12">
+                    <label class="form-label" for="videoUrl">Lien YouTube</label>
+                    <input type="url" class="form-control" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
+                    <div class="uap-hint mt-1" id="videoNotice">Requis uniquement si vous avez choisi le modèle vidéo.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary prev-step"><%= i18n.previous %></button>
+                <button type="button" class="btn btn-dark next-step"><%= i18n.next %></button>
+              </div>
+            </div>
+
+            <!-- ÉTAPE 3 ------------------------------------------------ -->
+            <div class="form-step" data-step="3" style="display:none">
+              <div class="uap-card">
+                <h6><%= i18n.equipment %></h6>
+                <div class="row g-3 mt-1">
+                  <% const equipmentOptions = [
+                       { id: 'pool', label: 'Piscine' },
+                       { id: 'doubleGlazing', label: 'Double vitrage' },
+                       { id: 'wateringSystem', label: 'Arrosage automatique' },
+                       { id: 'barbecue', label: 'Barbecue' },
+                       { id: 'carShelter', label: 'Abri voiture' },
+                       { id: 'parking', label: 'Parking' },
+                       { id: 'caretakerHouse', label: 'Maison de gardien' },
+                       { id: 'electricShutters', label: 'Stores électriques' },
+                       { id: 'outdoorLighting', label: 'Éclairage extérieur' }
+                     ]; %>
+                  <% equipmentOptions.forEach(e => { %>
+                  <div class="col-sm-6 col-lg-4">
+                    <label class="form-label" for="<%= e.id %>"><%= e.label %></label>
+                    <select class="form-control" id="<%= e.id %>" name="<%= e.id %>" <%= e.id === 'parking' ? 'required' : '' %>>
+                      <option value="false">Non</option>
+                      <option value="true">Oui</option>
+                    </select>
+                  </div>
+                  <% }); %>
+                </div>
+              </div>
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary prev-step"><%= i18n.previous %></button>
+                <button type="button" class="btn btn-dark next-step"><%= i18n.next %></button>
+              </div>
+            </div>
+
+            <!-- ÉTAPE 4 ------------------------------------------------ -->
+            <div class="form-step" data-step="4" style="display:none">
+              <div class="uap-card">
+                <h6><%= i18n.description_title %></h6>
+                <p class="uap-hint mb-3">Les 160 premiers caractères servent de résumé dans les résultats Google.</p>
+                <label class="form-label" for="description"><%= i18n.description_label %></label>
+                <textarea class="form-control" id="description" name="description" rows="6" maxlength="820" required></textarea>
+                <div class="d-flex justify-content-between mt-2">
+                  <span class="uap-hint" id="descAdvice"></span>
+                  <span class="uap-hint"><span id="descCount">0</span> / 820 <%= i18n.characters %></span>
+                </div>
+              </div>
+
+              <div class="uap-card">
+                <h6>Contact visite</h6>
+                <div class="row g-3 mt-1">
+                  <div class="col-sm-4">
+                    <label class="form-label" for="contactFirstName">Prénom</label>
+                    <input type="text" class="form-control" id="contactFirstName" name="contactFirstName" required>
+                  </div>
+                  <div class="col-sm-4">
+                    <label class="form-label" for="contactLastName">Nom</label>
+                    <input type="text" class="form-control" id="contactLastName" name="contactLastName" required>
+                  </div>
+                  <div class="col-sm-4">
+                    <label class="form-label" for="contactPhone">Téléphone</label>
+                    <input type="tel" class="form-control" id="contactPhone" name="contactPhone" required>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary prev-step"><%= i18n.previous %></button>
+                <button type="submit" class="btn btn-dark"><%= i18n.create_ad %></button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- COLONNE LATÉRALE ---------------------------------------- -->
+          <div class="col-lg-4">
+            <div class="uap-aside">
+              <div class="uap-card uap-quality">
+                <div class="d-flex justify-content-between align-items-baseline mb-2">
+                  <strong style="font-size:.95rem">Qualité de l'annonce</strong>
+                  <strong style="font-size:.95rem; color:#19483A" id="qualityPct">0 %</strong>
+                </div>
+                <div class="bar"><i id="qualityBar" style="width:0%"></i></div>
+                <ul class="uap-check" id="qualityList">
+                  <li data-req="city"><span class="mark">○</span> Ville et code postal</li>
+                  <li data-req="surface"><span class="mark">○</span> Surface, pièces et prix</li>
+                  <li data-req="photo1"><span class="mark">○</span> Photo principale</li>
+                  <li data-req="description"><span class="mark">○</span> Description de 160 caractères</li>
+                  <li data-req="contactPhone"><span class="mark">○</span> Contact pour les visites</li>
+                </ul>
+                <p class="uap-hint mt-3 mb-0 pt-3" style="border-top:1px solid #DFDDD5">
+                  Une annonce complète est mieux référencée et reçoit davantage de demandes de visite.
+                </p>
+              </div>
+
+              <div class="uap-card" style="background:#15201C;color:#fff;border:0">
+                <strong style="font-size:.95rem">Pack diffusion</strong>
+                <p style="font-size:.85rem;line-height:1.6;color:#C7CFCB" class="mt-2 mb-3">
+                  Votre page reste gratuite. Le pack publicitaire ajoute la diffusion de l'annonce.
+                </p>
+                <button type="button" class="btn btn-light w-100" onclick="showSection('orders')">Voir les offres</button>
+              </div>
+            </div>
           </div>
         </div>
-
-
-
-        <div class="form-group">
-          <label for="miniPhotos">Petites photos (max 3)</label>
-          <input type="file" class="form-control" id="miniPhotos" name="miniPhotos" accept="image/*" multiple>
-          <div id="miniPhotosPreview" class="d-flex flex-wrap gap-2 mt-2"></div>
-        </div>
-
-        <div class="form-group">
-          <label for="videoUrl">Lien YouTube</label>
-          <input type="url" class="form-control" id="videoUrl" name="videoUrl" placeholder="https://www.youtube.com/watch?v=...">
-          <div id="mediaNotice" class="form-text text-muted mt-1">Ajoutez vos photos ou indiquez un lien vidéo plein écran.</div>
-        </div>
-
-        <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
-        <button type="button" class="btn btn-primary next-step mt-3"><%= i18n.next %></button>
-      </div>
-
-      <!-- Étape 4 -->
-      <div class="form-step d-none" data-step="4">
-        <h6 class="mb-3"><%= i18n.description_title %></h6>
-        <div class="form-group">
-          <label for="description"><%= i18n.description_label %> <span style="color:red">*</span></label>
-          <textarea class="form-control" id="description" name="description" rows="5" maxlength="820" required></textarea>
-          <small id="charCount">0/820 <%= i18n.characters %></small>
-        </div>
-        <div class="row mt-3">
-          <div class="col-md-4">
-            <label for="contactFirstName">Prénom</label>
-            <input type="text" class="form-control" id="contactFirstName" name="contactFirstName">
-          </div>
-          <div class="col-md-4">
-            <label for="contactLastName">Nom</label>
-            <input type="text" class="form-control" id="contactLastName" name="contactLastName">
-          </div>
-          <div class="col-md-4">
-            <label for="contactPhone">Téléphone</label>
-            <input type="text" class="form-control" id="contactPhone" name="contactPhone">
-          </div>
-        </div>
-        <div class="form-group mt-3">
-          <label class="d-block"><%= i18n.language_label %> <span style="color:red">*</span></label>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="language" id="lang-fr" value="fr" required>
-            <label class="form-check-label d-flex align-items-center" for="lang-fr" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">
-              <span class="lang-flag lang-fr me-1"></span>FR
-            </label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="language" id="lang-en" value="en" required>
-            <label class="form-check-label d-flex align-items-center" for="lang-en" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">
-              <span class="lang-flag lang-en me-1"></span>EN
-            </label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="language" id="lang-es" value="es" required>
-            <label class="form-check-label d-flex align-items-center" for="lang-es" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">
-              <span class="lang-flag lang-es me-1"></span>ES
-            </label>
-          </div>
-          <div class="form-check form-check-inline">
-            <input class="form-check-input" type="radio" name="language" id="lang-pt" value="pt" required>
-            <label class="form-check-label d-flex align-items-center" for="lang-pt" data-bs-toggle="tooltip" title="la page sera générée dans la langue choisi, veillez à ce que les informations indiquer dans le formulaire soit bien dans la langue defini">
-              <span class="lang-flag lang-pt me-1"></span>PT
-            </label>
-          </div>
-        </div>
-        <button type="button" class="btn btn-secondary prev-step mt-3 me-2"><%= i18n.previous %></button>
-        <button type="submit" class="btn btn-dark py-2 mt-3">
-          <i class="fa fa-check-circle me-2"></i><%= i18n.create_ad %>
-        </button>
-      </div>
-
-      <div id="generatedLink" class="mt-3"></div>
-    </form>
+      </form>
+    </div>
 
 <script>
+(function () {
   let currentStep = 1;
+  const totalSteps = 4;
 
   function showStep(step) {
-    // 1. Masquer toutes les étapes
     document.querySelectorAll('.form-step').forEach(div => {
-      div.classList.add('d-none');
-      div.style.opacity = 0;
+      div.style.display = Number(div.dataset.step) === step ? 'block' : 'none';
     });
+    document.querySelectorAll('[data-step-head]').forEach(head => {
+      head.classList.toggle('is-active', Number(head.dataset.stepHead) <= step);
+    });
+    window.scrollTo({ top: document.getElementById('landing').offsetTop - 80, behavior: 'smooth' });
+  }
 
-    // 2. Afficher l'étape courante
-    const stepEl = document.querySelector(`.form-step[data-step='${step}']`);
-    
-    if(stepEl) {
-        stepEl.classList.remove('d-none');
-        
-        // Petit délai pour permettre la transition CSS d'opacité (si vous en avez une)
-        setTimeout(() => { stepEl.style.opacity = 1; }, 50);
+  // Surbrillance des cartes de choix (modèle, couleur)
+  document.querySelectorAll('[data-pick]').forEach(label => {
+    label.addEventListener('click', () => {
+      const group = label.dataset.pick;
+      document.querySelectorAll('[data-pick="' + group + '"]').forEach(l => l.classList.remove('is-on'));
+      label.classList.add('is-on');
+      if (group === 'layout') updateVideoNotice();
+    });
+  });
 
-        // Mise à jour de la barre de progression
-        const progressBar = document.getElementById('formProgress');
-if (progressBar) {
-  progressBar.style.width = `${step * 25}%`;
-  // Assurez-vous que ${step} est bien présent au milieu de la phrase
-  progressBar.innerText = `Étape ${step} sur 4`; 
-}
+  function updateVideoNotice() {
+    const isVideo = document.querySelector('input[name="layout"]:checked')?.value === 'video';
+    const notice = document.getElementById('videoNotice');
+    const field = document.getElementById('videoUrl');
+    if (!notice || !field) return;
+    notice.textContent = isVideo
+      ? 'Obligatoire : vous avez choisi le modèle vidéo.'
+      : 'Requis uniquement si vous avez choisi le modèle vidéo.';
+    field.required = isVideo;
+  }
 
-        // --- CORRECTION SCROLL ---
-        // Remonte automatiquement en haut du formulaire
-        // On cible le conteneur du formulaire
-        const cardContainer = document.querySelector('#landing .card-body');
-        if(cardContainer) {
-            // On calcule la position absolue moins 100px pour laisser de la place à la navbar fixe
-            const y = cardContainer.getBoundingClientRect().top + window.pageYOffset - 120;
-            window.scrollTo({top: y, behavior: 'smooth'});
-        }
+  // Prix au m²
+  function updatePricePerSqm() {
+    const price = Number(document.getElementById('price')?.value || 0);
+    const surface = Number(document.getElementById('surface')?.value || 0);
+    const out = document.getElementById('pricePerSqm');
+    if (!out) return;
+    out.textContent = (price > 0 && surface > 0)
+      ? 'Soit ' + Math.round(price / surface).toLocaleString('fr-FR') + ' €/m².'
+      : 'Le prix au m² est calculé automatiquement.';
+  }
+
+  // Compteur de description
+  function updateDescription() {
+    const field = document.getElementById('description');
+    const count = document.getElementById('descCount');
+    const advice = document.getElementById('descAdvice');
+    if (!field || !count) return;
+    const len = field.value.length;
+    count.textContent = len;
+    if (advice) {
+      advice.textContent = len === 0 ? '' : (len < 160 ? 'Encore ' + (160 - len) + ' caractères pour un bon résumé Google.' : 'Longueur idéale atteinte.');
+      advice.style.color = len >= 160 ? '#19483A' : '#5E6B65';
     }
   }
 
-  // Gestionnaire bouton SUIVANT avec validation
+  // Score de complétion
+  function updateQuality() {
+    const checks = {
+      city: () => document.getElementById('city')?.value && /^\d{5}$/.test(document.getElementById('postalCode')?.value || ''),
+      surface: () => document.getElementById('surface')?.value && document.getElementById('rooms')?.value && document.getElementById('price')?.value,
+      photo1: () => document.getElementById('photo1')?.files?.length > 0,
+      description: () => (document.getElementById('description')?.value || '').length >= 160,
+      contactPhone: () => document.getElementById('contactPhone')?.value
+    };
+    let done = 0;
+    const items = document.querySelectorAll('#qualityList li');
+    items.forEach(li => {
+      const ok = !!checks[li.dataset.req] && !!checks[li.dataset.req]();
+      li.classList.toggle('ok', ok);
+      li.querySelector('.mark').textContent = ok ? '✓' : '○';
+      if (ok) done++;
+    });
+    const pct = Math.round((done / items.length) * 100);
+    document.getElementById('qualityBar').style.width = pct + '%';
+    document.getElementById('qualityPct').textContent = pct + ' %';
+  }
+
+  const form = document.getElementById('add-property-form');
+  form?.addEventListener('input', () => { updatePricePerSqm(); updateDescription(); updateQuality(); });
+  form?.addEventListener('change', updateQuality);
+
   document.querySelectorAll('.next-step').forEach(btn => {
     btn.addEventListener('click', () => {
-      // Récupérer les champs de l'étape actuelle
-      const currentStepDiv = document.querySelector(`.form-step[data-step='${currentStep}']`);
-      const inputs = currentStepDiv.querySelectorAll('input, select, textarea');
-      let valid = true;
-
-      // Vérifier la validité HTML5 (required, type, etc.)
-      for (let field of inputs) {
-        if (!field.checkValidity()) {
-          field.reportValidity(); // Affiche le message d'erreur natif du navigateur
-          valid = false;
-          return; // Arrête la boucle à la première erreur
-        }
+      const stepDiv = document.querySelector('.form-step[data-step="' + currentStep + '"]');
+      for (const field of stepDiv.querySelectorAll('input, select, textarea')) {
+        if (!field.checkValidity()) { field.reportValidity(); return; }
       }
-
-      // Si tout est valide, on passe à l'étape suivante
-      if (valid) {
-        currentStep++;
-        showStep(currentStep);
-      }
+      if (currentStep < totalSteps) { currentStep++; showStep(currentStep); }
     });
   });
 
-  // Gestionnaire bouton PRÉCÉDENT
   document.querySelectorAll('.prev-step').forEach(btn => {
     btn.addEventListener('click', () => {
-      currentStep--;
-      showStep(currentStep);
+      if (currentStep > 1) { currentStep--; showStep(currentStep); }
     });
   });
 
-  // Validation spécifique lors de la soumission finale
-  document.querySelector('#add-property-form')?.addEventListener('submit', function (e) {
+  form?.addEventListener('submit', function (e) {
     const postalCode = document.getElementById('postalCode')?.value;
-    const postalCodePattern = /^\d{5}$/;
-    
-    // Double vérification du code postal au cas où
-    if (postalCode && !postalCodePattern.test(postalCode)) {
+    if (postalCode && !/^\d{5}$/.test(postalCode)) {
       e.preventDefault();
-      alert('Le code postal doit contenir exactement 5 chiffres.');
+      document.getElementById('postalCode').reportValidity();
+      return;
+    }
+    const isVideo = document.querySelector('input[name="layout"]:checked')?.value === 'video';
+    const videoUrl = document.getElementById('videoUrl')?.value || '';
+    if (isVideo && !/(?:youtube\.com\/.*v=|youtu\.be\/)/.test(videoUrl)) {
+      e.preventDefault();
+      alert('Le modèle vidéo nécessite un lien YouTube valide. Vous pouvez aussi choisir le modèle galerie photo.');
     }
   });
 
-  // Initialisation des tooltips Bootstrap
-  const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
-  tooltipTriggerList.forEach(el => new bootstrap.Tooltip(el));
+  if (window.bootstrap) {
+    document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(el => new bootstrap.Tooltip(el));
+  }
 
-  // Lancer l'étape 1 au chargement
-  showStep(currentStep);
+  updateVideoNotice();
+  updateQuality();
+  showStep(1);
+})();
 </script>
   </div>
 </div>
+
 
 
 
