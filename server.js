@@ -106,9 +106,9 @@ app.use(helmet.contentSecurityPolicy({
             "https://www.paypalobjects.com",
             "https://www.paypal.com", 
             "https://t.paypal.com",
-            "https://*.basemaps.cartocdn.com",
+                        "https://*.basemaps.cartocdn.com",
             "https://*.openstreetmap.org",
-          "https://*.tile.openstreetmap.org",
+            "https://*.tile.openstreetmap.org",
             "https://mainnet.demo.btcpayserver.org" // <== AJOUT BTCPAY (QR Codes)
         ],
         connectSrc: [
