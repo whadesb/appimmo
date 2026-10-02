@@ -62,7 +62,7 @@ const {
 } = require('./utils/email');
 const supportedLocales = ['fr', 'en'];
 const { addToSitemap, pingSearchEngines } = require('./utils/seo');
-const { renderLandingPage } = require('./lib/landing');
+const { generateLandingPage } = require('./lib/landing');
 
 const app = express();
 app.set('trust proxy', true);
@@ -72,6 +72,7 @@ app.use(helmet.contentSecurityPolicy({
       scriptSrc: [
     "'self'", 
     "https://www.googletagmanager.com", 
+        "https://unpkg.com",
     "https://www.google-analytics.com", 
     "https://www.google.com", 
     "https://www.gstatic.com", 
@@ -1811,15 +1812,19 @@ app.post('/add-property', isAuthenticated, upload.fields([
       language: req.body.language || 'fr',
       userId: req.user._id,
       dpe: req.body.dpe || 'En cours',
+            theme: ['foret','marine','terre','pierre','bordeaux','encre'].includes(req.body.theme) ? req.body.theme : 'foret',
+      layout: req.body.layout === 'video' ? 'video' : 'photo',
       photos: photos // <-- On sauvegarde TOUJOURS les photos
     });
 
     await property.save();
 
-    const landingPageUrl = await generateLandingPage(property);
+      const { url: landingPageUrl, fullUrl } = await generateLandingPage(property);
     property.url = landingPageUrl;
     await property.save();
-
+    addToSitemap(fullUrl);
+    pingSearchEngines('https://uap.immo/sitemap.xml');
+    
     // ✅ Envoi d’email après sauvegarde complète
     const user = await User.findById(req.user._id);
     await sendPropertyCreationEmail(user, property);
@@ -1890,6 +1895,8 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     property.contactPhone = req.body.contactPhone;
     property.language = allowedLanguages.includes(req.body.language) ? req.body.language : property.language;
     property.videoUrl = rawVideoUrl;
+        property.theme = ['foret','marine','terre','pierre','bordeaux','encre'].includes(req.body.theme) ? req.body.theme : (property.theme || 'foret');
+    property.layout = req.body.layout === 'video' ? 'video' : 'photo';
 
     // Champs booléens
     property.pool = req.body.pool === 'true';
@@ -1938,9 +1945,11 @@ app.post('/property/update/:id', isAuthenticated, upload.fields([
     await property.save();
 
     // 🆕 Regénérer la landing page après mise à jour
-    const updatedLandingPageUrl = await generateLandingPage(property);
+      const { url: updatedLandingPageUrl, fullUrl } = await generateLandingPage(property);
     property.url = updatedLandingPageUrl;
     await property.save();
+    addToSitemap(fullUrl);
+    pingSearchEngines('https://uap.immo/sitemap.xml');
 
     // Localisation + traduction pour le rendu
     const locale = req.language || 'fr';
@@ -2415,25 +2424,8 @@ app.get('/user/orders/:orderId/invoice', isAuthenticated, async (req, res) => {
 });
 
 
-function slugify(str) {
-  return str.toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
-const seoKeywords = require('./utils/seoKeywords'); 
 
-async function generateLandingPage(property) {
-  const html = await renderLandingPage(property);
-  const filename = `${property._id}.html`;
-  const filePath = path.join(__dirname, 'public', 'landing-pages', filename);
-  fs.writeFileSync(filePath, html);
-  const fullUrl = `https://uap.immo/landing-pages/${filename}`;
-  addToSitemap(fullUrl);
-  pingSearchEngines('https://uap.immo/sitemap.xml');
-  return `/landing-pages/${filename}`;
-}
+
 
 const transporter = nodemailer.createTransport({
   host: 'smtp.ionos.fr',
