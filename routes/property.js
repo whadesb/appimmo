@@ -373,7 +373,7 @@ router.get('/user/landing-pages', async (req, res) => {
             return res.status(401).json({ error: "Non autorisé" });
         }
 
-        const landingPages = await Property.find({ createdBy: req.user._id });
+                const landingPages = await Property.find({ userId: req.user._id });
 
         console.log("Landing Pages trouvées :", landingPages);
         res.json(landingPages);
